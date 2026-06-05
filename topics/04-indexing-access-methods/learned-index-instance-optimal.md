@@ -42,11 +42,19 @@ Open. The gap is between (a) **worst-case-optimal-within-a-model-class** results
 - Robustness against adversarial / shifting distributions while preserving gains.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[SOTA]** A. Galakatos, M. Markovitch, C. Binnig, R. Fonseca, T. Kraska. *FITing-Tree.* SIGMOD, 2019.
-- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020.
+- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** A. Galakatos, M. Markovitch, C. Binnig, R. Fonseca, T. Kraska. *FITing-Tree.* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1801.10207)
+- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1911.13014)
+
+## 10. Worked Example
+
+Take a sorted array of $n=8$ keys $S=[10,20,30,40,50,60,70,80]$ — a perfectly *uniform* (linear) CDF. Fit one linear segment $F(x)=\tfrac{x-10}{10}$, mapping key to index. For key $50$: $F(50)=4$, the exact position, so last-mile error $\varepsilon=0$ — a single multiply-add finds the key, beating the $\lceil\log_2 8\rceil=3$ comparisons of binary search. This is the *benign instance* where a learned index is essentially $O(1)$.
+
+Now make it adversarial: $S=[1,2,4,8,16,32,64,128]$ (exponential gaps). One line cannot fit this; with a budget of one segment the prediction for $128$ lands near index $4$, forcing a local search over $\approx n/2$ entries. To hold $\varepsilon\le 1$ you need $s\approx 4$ segments — space grows with CDF curvature. Worst case still falls back to $\Omega(\log n)=3$ comparisons.
+
+The open question: is there one structure that gets the $O(1)$ behavior on the first instance *and* never exceeds $O(\log n)$ on the second, provably, for every $S$?
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

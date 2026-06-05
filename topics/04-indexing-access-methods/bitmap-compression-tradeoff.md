@@ -37,10 +37,20 @@ Directions: SIMD/​AVX-512 and GPU Roaring kernels; learned/​workload-adaptiv
 - Adaptive schemes that provably track per-block entropy under updates.
 
 ## 9. Key References
-- **[Foundational]** Wu, Otoo, Shoshani. *Optimizing Bitmap Indices with Efficient Compression (WAH).* ACM TODS, 2006.
-- **[SOTA]** Chambi, Lemire, Kaser, Godin. *Better Bitmap Performance with Roaring Bitmaps.* Software: Practice & Experience, 2016.
-- **[SOTA]** Lemire, Ssi-Yan-Kai, Kaser. *Consistently Faster and Smaller Compressed Bitmaps with Roaring (SIMD).* Software: Practice & Experience, 2016/​2018.
-- **[Foundational]** Lemire, Kaser, Aouiche. *Sorting Improves Word-Aligned Bitmap Indexes (EWAH).* Data & Knowledge Engineering, 2010.
+- **[Foundational]** Wu, Otoo, Shoshani. *Optimizing Bitmap Indices with Efficient Compression (WAH).* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132864)
+- **[SOTA]** Chambi, Lemire, Kaser, Godin. *Better Bitmap Performance with Roaring Bitmaps.* Software: Practice & Experience, 2016. — [DOI](https://doi.org/10.1002/spe.2325)
+- **[SOTA]** Lemire, Ssi-Yan-Kai, Kaser. *Consistently Faster and Smaller Compressed Bitmaps with Roaring (SIMD).* Software: Practice & Experience, 2016/​2018. — [DOI](https://doi.org/10.1002/spe.2402)
+- **[Foundational]** Lemire, Kaser, Aouiche. *Sorting Improves Word-Aligned Bitmap Indexes (EWAH).* Data & Knowledge Engineering, 2010. — [arXiv](https://arxiv.org/abs/0901.3751)
+
+## 10. Worked Example
+
+Index a column over $N = 2^{20}$ rows where value `red` matches just $n = 3$ rows, at positions 5, 6, 7. 
+
+- **Raw bitmap:** $N/w = 2^{20}/64 = 16{,}384$ words — full scan to AND.
+- **Entropy bound:** $\log_2\binom{2^{20}}{3} \approx 56$ bits — about 1 word, but a Golomb/arithmetic code is bit-aligned, so an AND must decode first, costing $\Omega(n)$.
+- **Roaring:** the single nonzero $2^{16}$-chunk holds positions $\{5,6,7\}$. With only 3 values it picks an **array container** = three 16-bit shorts (6 bytes) rather than an 8 KB bitmap container — adaptively near the per-chunk optimum.
+
+Now AND `red` with `blue` = $\{6,7,8\}$ (also an array container). Roaring intersects two sorted short-arrays in $O(c_1 + c_2) = O(3+3)$ word-ops, yielding $\{6,7\}$ — no decode, no $16{,}384$-word scan. This is the trade-off in miniature: the array container costs $48$ bits vs. the $56$-bit entropy floor (a small constant overhead) while keeping the AND at $\Theta(\text{compressed size})$, which the bit-aligned entropy code cannot.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

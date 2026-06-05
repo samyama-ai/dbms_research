@@ -39,11 +39,22 @@ Active work refines failure-detector hierarchies for *generalized* commit (k-set
 - Detectors for *energy/cost-aware* abort decisions.
 
 ## 9. Key References
-- **[Foundational]** Chandra, T., Hadzilacos, V., Toueg, S. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996.
-- **[Foundational]** Guerraoui, R. *Non-Blocking Atomic Commit in Asynchronous Distributed Systems with Failure Detectors.* Distributed Computing, 2002.
-- **[SOTA]** Delporte-Gallet, C., Fauconnier, H., Guerraoui, R., et al. *The Weakest Failure Detectors to Solve Certain Fundamental Problems in Distributed Computing.* PODC, 2004.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Survey]** Raynal, M. *Fault-Tolerant Message-Passing Distributed Systems: An Algorithmic Approach.* Springer, 2018.
+- **[Foundational]** Chandra, T., Hadzilacos, V., Toueg, S. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [ACM](https://dl.acm.org/doi/10.1145/234533.234549)
+- **[Foundational]** Guerraoui, R. *Non-Blocking Atomic Commit in Asynchronous Distributed Systems with Failure Detectors.* Distributed Computing, 2002. — [DOI](https://doi.org/10.1007/s446-002-8027-4)
+- **[SOTA]** Delporte-Gallet, C., Fauconnier, H., Guerraoui, R., et al. *The Weakest Failure Detectors to Solve Certain Fundamental Problems in Distributed Computing.* PODC, 2004. — [ACM](https://dl.acm.org/doi/10.1145/1011767.1011818)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [ACM](https://dl.acm.org/doi/10.1145/3149.214121)
+- **[Survey]** Raynal, M. *Fault-Tolerant Message-Passing Distributed Systems: An Algorithmic Approach.* Springer, 2018. — [DOI](https://doi.org/10.1007/978-3-319-94141-7)
+
+## 10. Worked Example
+
+Why $\Omega$ alone cannot solve NBAC — an indistinguishability argument with $n=3$ processes $\{p_1,p_2,p_3\}$, all voting `yes`.
+
+- **Run A (no failures):** all three are correct. By Validity, since every vote is `yes`, the correct decision is `commit`.
+- **Run B:** $p_3$ crashes *silently right after sending its `yes` vote*, before any further message. By Abort-Validity, a `commit` is permitted but an `abort` is also permitted once a failure occurs — and a correct protocol that cannot rule out the crash may be forced to `abort`.
+
+To $p_1$ and $p_2$, runs A and B are **indistinguishable** up to the decision point: in both they received $p_3$'s `yes` and then heard nothing further (messages can be arbitrarily delayed in async). $\Omega$ only eventually names a correct leader — say $p_1$ — but gives $p_1$ no information about whether $p_3$ crashed. So $p_1$ cannot safely distinguish "decide `commit`" (run A) from "a failure happened" (run B).
+
+Resolving this requires a $?P$-style oracle that senses *whether any failure occurred at all*. Hence $\Omega \prec D_{\text{NBAC}} = \Omega \sqcup\, ?P$: NBAC is strictly harder than consensus.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

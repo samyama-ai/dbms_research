@@ -80,11 +80,20 @@ genuinely open.
 
 ## 9. Key References
 
-- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995.
-- **[Foundational]** Ono, Lohman. *Measuring the Complexity of Join Enumeration in Query Optimization.* VLDB, 1990.
-- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006.
-- **[Foundational]** Graefe, DeWitt. *The EXODUS Optimizer Generator.* SIGMOD, 1987.
-- **[Survey]** Moerkotte. *Building Query Compilers.* (draft monograph), ongoing.
+- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995. — [DOI](https://doi.org/10.1007/3-540-58907-4_6)
+- **[Foundational]** Ono, Lohman. *Measuring the Complexity of Join Enumeration in Query Optimization.* VLDB, 1990. — [DBLP](https://dblp.org/rec/conf/vldb/OnoL90.html)
+- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
+- **[Foundational]** Graefe, DeWitt. *The EXODUS Optimizer Generator.* SIGMOD, 1987. — [DOI](https://doi.org/10.1145/38713.38734)
+- **[Survey]** Moerkotte. *Building Query Compilers.* (draft monograph), ongoing. — [PDF](https://pi3.informatik.uni-mannheim.de/~moer/querycompiler.pdf)
+
+## 10. Worked Example
+
+Star schema: fact table $F$ with $|F|=10^7$ rows, joined to two tiny dimensions $D_1$ ($|D_1|=10$, selectivity $0.1$) and $D_2$ ($|D_2|=20$, selectivity $0.1$), where $D_1$ and $D_2$ share **no** predicate (only both join $F$). Use $C_{out}$ (sum of intermediate cardinalities).
+
+- **Cross-product-free plan** $(F\bowtie D_1)\bowtie D_2$: first join yields $10^7 \times 0.1 = 10^6$ rows; second join yields $10^6 \times 0.1 = 10^5$. Intermediate cost $\approx 10^6 + 10^5 = 1.1\times10^6$.
+- **CP-admitting plan** $(D_1 \times D_2)\bowtie F$: the cross product is tiny, $|D_1\times D_2| = 10 \times 20 = 200$ rows; joining against $F$ applies both selectivities at once: $10^7 \times 0.1 \times 0.1 = 10^5$. Intermediate cost $\approx 200 + 10^5 \approx 1.002\times10^5$.
+
+The CP plan is roughly $11\times$ cheaper because building the $200$-row combined dimension lets the optimizer probe $F$ exactly once. This is the canonical case where the *globally optimal* plan **requires** a cross product — and why disallowing CPs (the default in many optimizers) leaves real performance on the table.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

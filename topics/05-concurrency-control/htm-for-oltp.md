@@ -39,12 +39,21 @@ Directions: HTM on ARM TME and on persistent memory; HTM-assisted latch-free ind
 - HTM CC for persistent memory and ARM/CXL coherence domains.
 
 ## 9. Key References
-- **[Foundational]** Herlihy, Moss. *Transactional Memory: Architectural Support for Lock-Free Data Structures.* ISCA, 1993.
-- **[Foundational]** Rajwar, Goodman. *Speculative Lock Elision: Enabling Highly Concurrent Multithreaded Execution.* MICRO, 2001.
-- **[SOTA]** Leis, Kemper, Neumann. *Exploiting Hardware Transactional Memory in Main-Memory Databases.* ICDE, 2014.
-- **[SOTA]** Wang, Qian, Chen, Tang, et al. *Using Restricted Transactional Memory to Build a Scalable In-Memory Database (DBX).* EuroSys, 2014.
-- **[SOTA]** Yoo, Hughes, Lai, Rajwar. *Performance Evaluation of Intel Transactional Synchronization Extensions for High-Performance Computing.* SC, 2013.
-- **[Survey]** Harris, Larus, Rajwar. *Transactional Memory (2nd ed.).* Morgan & Claypool, 2010.
+- **[Foundational]** Herlihy, Moss. *Transactional Memory: Architectural Support for Lock-Free Data Structures.* ISCA, 1993. — [DOI](https://doi.org/10.1145/165123.165164)
+- **[Foundational]** Rajwar, Goodman. *Speculative Lock Elision: Enabling Highly Concurrent Multithreaded Execution.* MICRO, 2001. — [ACM](https://dl.acm.org/doi/10.5555/563998.564036)
+- **[SOTA]** Leis, Kemper, Neumann. *Exploiting Hardware Transactional Memory in Main-Memory Databases.* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816683)
+- **[SOTA]** Wang, Qian, Li, Chen. *Using Restricted Transactional Memory to Build a Scalable In-Memory Database (DBX).* EuroSys, 2014. — [DOI](https://doi.org/10.1145/2592798.2592815)
+- **[SOTA]** Yoo, Hughes, Lai, Rajwar. *Performance Evaluation of Intel Transactional Synchronization Extensions for High-Performance Computing.* SC, 2013. — [DOI](https://doi.org/10.1145/2503210.2503232)
+- **[Survey]** Harris, Larus, Rajwar. *Transactional Memory (2nd ed.).* Morgan & Claypool, 2010. — [DOI](https://doi.org/10.1007/978-3-031-01728-5)
+
+## 10. Worked Example
+
+Run a transaction inside an RTM region whose read/write set is $|R \cup W| = 8$ cache lines (512 B), well under an L1 capacity of, say, $\sim$32 KB. Model per-region success probability as $p = (1-\rho)^{k}$ where $\rho$ is the per-line conflict probability and $k = |R \cup W|$.
+
+At low contention $\rho = 0.005$: $p = 0.995^{8} \approx 0.961$. With $c_{HTM} = 100$ ns and software-fallback (lock-elision) $c_{fb} = 2000$ ns, expected cost is
+$$\frac{c_{HTM}}{p} + (1-p)\,c_{fb} = \frac{100}{0.961} + 0.039 \times 2000 \approx 104 + 78 = 182\text{ ns.}$$
+
+Now raise contention to $\rho = 0.05$: $p = 0.95^{8} \approx 0.663$, cost $\approx 151 + 674 = 825$ ns — a $4.5\times$ blow-up driven entirely by the fallback term. If instead the transaction's footprint grew to $k = 600$ lines (~38 KB) it would *exceed* L1 and abort on capacity every time ($p \to 0$), forcing the slow path unconditionally — the hard capacity floor, and the regime where chopping into smaller HTM regions becomes mandatory.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

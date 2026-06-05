@@ -45,11 +45,19 @@ Active: differentially-private cube synopses (composing DP mechanisms over the r
 - Learned sketches with distribution-dependent guarantees, not just empirical wins.
 
 ## 9. Key References
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA 2007.
-- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010.
-- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams.* FOCS 2016 (KLL).
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA 2007. — [HAL](https://inria.hal.science/hal-00406166v1)
+- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams.* FOCS 2016 (KLL). — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Take a fact table over $d=3$ dimensions (`region`, `product`, `month`) with a `SUM(sales)` measure. An exact cube materializes all $2^3 = 8$ cuboids: the base `(r,p,m)`, three 2-D rollups, three 1-D, and the grand total — combinatorially explosive as $d$ grows.
+
+Instead keep **one Count-Min sketch** on the base cells. With width $w=\lceil e/\epsilon\rceil$ and depth $\delta'=\lceil\ln(1/\delta)\rceil$, set $\epsilon=0.01,\ \delta=0.01$: $w=\lceil 2.718/0.01\rceil=272$, $\delta'=5$, so $\approx 1360$ counters answer any point query with additive error $\le \epsilon\lVert f\rVert_1$.
+
+Because SUM-rollup is **linear**, the cuboid `SUM by region` is recovered by merging base cells — no separate sketch needed; the same $1360$ counters serve all $8$ cuboids via $\oplus$-merge. Total space is $O(\epsilon^{-1}\log\delta^{-1})$ regardless of $d$, versus $O(2^d \cdot |\text{cells}|)$ exact. For a distinct-count measure we would instead attach one HyperLogLog per query, since $F_0$ is holistic, not linear.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

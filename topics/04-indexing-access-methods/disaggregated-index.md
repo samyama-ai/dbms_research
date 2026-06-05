@@ -48,12 +48,24 @@ The gap is between **strong empirical systems** (Aurora/Socrates/Sherman show or
 - Consistency protocols for multi-writer indexes tolerating compute/storage partition.
 
 ## 9. Key References
-- **[Foundational]** A. Verbitski, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** P. Antonopoulos, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[SOTA]** Q. Wang, et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022.
-- **[SOTA]** H. Huang, S. Ghandeharizadeh. *Nova-LSM: A Distributed, Component-based LSM-tree Key-value Store.* SIGMOD, 2021.
-- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
+- **[Foundational]** A. Verbitski, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** P. Antonopoulos, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[SOTA]** Q. Wang, et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
+- **[SOTA]** H. Huang, S. Ghandeharizadeh. *Nova-LSM: A Distributed, Component-based LSM-tree Key-value Store.* SIGMOD, 2021. — [arXiv](https://arxiv.org/abs/2104.01305)
+- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+Index $n=10^9$ keys on an S3-style tier: round-trip $\lambda=10$ ms, object size $P=16{,}384$ keys/node, bandwidth $\beta$ ample so the round-trip term dominates.
+
+A B-tree of fanout $P$ has depth $\log_P n=\log_{16384}10^9=\frac{\ln 10^9}{\ln 16384}\approx\frac{20.7}{9.7}\approx 2.1$, so $3$ levels. A point lookup is a *chain of dependent fetches* — root, internal, leaf — that cannot be pipelined:
+$$\text{cost}=3\cdot\lambda=30\text{ ms}.$$
+
+Now **cache the top $h=2$ levels** locally (root + internal layer = $1+16384$ nodes, easily resident). The dependent chain collapses to $\log_P n - h = 1$ remote fetch:
+$$\text{cost}=1\cdot\lambda=10\text{ ms} \quad(3\times\text{ faster}).$$
+
+Compare a fanout-$256$ B-tree (smaller nodes): depth $\log_{256}10^9\approx 3.7\Rightarrow 4$ levels, $40$ ms uncached. Fatter nodes trade more bytes/fetch for fewer dependent round-trips — the explicit $\lambda$-vs-$\beta$ tradeoff. The open question: can caching a *sublinear* number of nodes drive lookups to $O(1)$ dependent round-trips with a matching lower bound?
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

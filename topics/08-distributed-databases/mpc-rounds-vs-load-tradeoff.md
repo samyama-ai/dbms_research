@@ -52,11 +52,23 @@ Active threads: output-optimal multi-round joins (Hu, Yi, Tao, HKUST); MPC lower
 
 ## 9. Key References
 
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS 2013 (journal version JACM 2017).
-- **[Foundational]** P. Koutris, P. Beame, D. Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT 2016.
-- **[SOTA]** X. Hu, K. Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS 2019.
-- **[SOTA]** X. Hu. *Cover or Pack: New Upper and Lower Bounds for Massively Parallel Joins.* PODS 2021.
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018.
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS 2013 (journal version JACM 2017). — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
+- **[Foundational]** P. Koutris, P. Beame, D. Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT 2016. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2016.8), [arXiv](https://arxiv.org/abs/1604.01848)
+- **[SOTA]** X. Hu, K. Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS 2019. — [arXiv](https://arxiv.org/abs/1903.09717)
+- **[SOTA]** X. Hu. *Cover or Pack: New Upper and Lower Bounds for Massively Parallel Joins.* PODS 2021. — [DOI](https://doi.org/10.1145/3452021.3458319)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+
+## 10. Worked Example
+
+Consider the 3-path query $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,d)$ (acyclic), input $N$, $p$ servers. Compare two points on the $(r,L)$ frontier.
+
+**One round ($r=1$).** $Q$'s max fractional edge packing is $\psi^*=2$ (set $u_R=u_T=1,u_S=0$: every vertex covered $\le 1$). So the HyperCube one-round load is
+$$L_{1} = \tilde\Theta\!\left(\frac{N}{p^{1/\psi^*}}\right) = \tilde\Theta\!\left(\frac{N}{p^{1/2}}\right) = \tilde\Theta\!\left(\frac{N}{\sqrt p}\right).$$
+
+**Multi-round ($r=O(1)$, semijoin).** Since $Q$ is acyclic, a Yannakakis-style GYM plan semijoin-reduces $R,S,T$ then joins, achieving load
+$$L_{\text{multi}} = \tilde O\!\left(\frac{N}{p}+\frac{\mathrm{OUT}}{p}\right).$$
+
+Numerically, $N=10^9$, $p=10^4$, skew-free, $\mathrm{OUT}=N$: one round needs $L_1\approx 10^9/100 = 10^7$ tuples/server, while a few rounds need only $L\approx 10^9/10^4 = 10^5$ — a $100\times$ load reduction bought with extra rounds. The open problem is the interior: exactly how $L$ decays for $r=2,3,\dots$ on cyclic queries where no acyclic shortcut exists.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

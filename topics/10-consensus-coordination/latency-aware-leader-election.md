@@ -52,11 +52,23 @@ Active directions: workload-driven leaseholder/leader placement with predictive 
 
 ## 9. Key References
 
-- **[Foundational]** James C. Corbett, Jeffrey Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019.
-- **[SOTA]** Yanhua Mao, Flavio P. Junqueira, Keith Marzullo. *Mencius: Building Efficient Replicated State Machines for WANs.* OSDI, 2008.
-- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[Foundational]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
+- **[Foundational]** James C. Corbett, Jeffrey Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019. — [DOI](https://doi.org/10.1109/TPDS.2019.2929793)
+- **[SOTA]** Yanhua Mao, Flavio P. Junqueira, Keith Marzullo. *Mencius: Building Efficient Replicated State Machines for WANs.* OSDI, 2008. — [USENIX](https://www.usenix.org/legacy/event/osdi08/tech/full_papers/mao/mao_html/index.html)
+- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2517350)
+- **[Foundational]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [arXiv](https://arxiv.org/abs/1608.06696)
+
+## 10. Worked Example
+
+**Static 1-median leader placement.** Three sites $V=\{A,B,C\}$, $f=1$ (quorum needs leader + nearest $1$ follower). Symmetric one-way delays (ms): $L[A,B]=20$, $L[A,C]=70$, $L[B,C]=50$. Client load $\lambda_A=0.7,\ \lambda_B=0.2,\ \lambda_C=0.1$ — region $A$ dominates.
+
+For each candidate leader $\ell$, cost $=\sum_r \lambda_r\big(2L[r,\ell]\big) + \text{quorum}_1(\ell)$, where $\text{quorum}_1(\ell)=2\times(\text{nearest follower RTT})$.
+
+- $\ell=A$: client term $=0.7(0)+0.2(40)+0.1(140)=22$; nearest follower $B$ at RTT $40$. Total $=22+40=62$.
+- $\ell=B$: client term $=0.7(40)+0.2(0)+0.1(100)=38$; nearest follower $A$ at RTT $40$. Total $=38+40=78$.
+- $\ell=C$: client term $=0.7(140)+0.2(100)+0.1(0)=118$; nearest follower $B$ at RTT $100$. Total $=118+100=218$.
+
+So $\ell^\star=A$ (cost $62$), co-located with the hot region — exactly "follow-the-workload." Evaluating all $|V|=3$ candidates is the $O(|V|^2)$ exact algorithm. If load later shifts to $C$, the online variant must weigh A→C migration (log transfer + lease handoff) against the per-request savings.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

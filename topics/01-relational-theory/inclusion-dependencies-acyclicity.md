@@ -69,11 +69,22 @@ For the *general* class the problem is closed in the strongest negative sense: *
 
 ## 9. Key References
 
-- **[Foundational]** Casanova, M., Fagin, R., Papadimitriou, C. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* J. Comput. Syst. Sci., 1984.
-- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Comput. / JCSS, 1985.
-- **[Foundational]** Cosmadakis, S., Kanellakis, P., Vardi, M. *Polynomial-time Implication Problems for Unary Inclusion Dependencies.* J. ACM, 1990.
-- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on dependency theory and the chase).
-- **[SOTA]** Papenbrock, T., Kruse, S., Naumann, F. et al. *Divide & Conquer-based Inclusion Dependency Discovery (BINDER).* PVLDB, 2015.
+- **[Foundational]** Casanova, M., Fagin, R., Papadimitriou, C. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* J. Comput. Syst. Sci., 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90075-8)
+- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Comput. / JCSS, 1985. — [DOI](https://doi.org/10.1137/0214049)
+- **[Foundational]** Cosmadakis, S., Kanellakis, P., Vardi, M. *Polynomial-time Implication Problems for Unary Inclusion Dependencies.* J. ACM, 1990. — [DOI](https://doi.org/10.1145/78935.78937)
+- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on dependency theory and the chase). — [book site](http://webdam.inria.fr/Alice/)
+- **[SOTA]** Papenbrock, T., Kruse, S., Naumann, F. et al. *Divide & Conquer-based Inclusion Dependency Discovery (BINDER).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752946)
+
+## 10. Worked Example
+
+Why FD+IND interaction is dangerous, on a tiny schema. Relation $R(A,B)$ with FD $A \to B$ and the *cyclic* IND $R[B] \subseteq R[A]$. The IND graph has a self-loop on $R$ ($B$-column to $A$-column), so it is **not acyclic** — chase termination is not guaranteed.
+
+Chase $\sigma$'s tableau starting from $R(a_0, b_0)$:
+- IND $R[B]\subseteq R[A]$ fires on $b_0$: invent fresh tuple $R(b_0, b_1)$ (the $A$-value must be $b_0$, $B$-value is a new null $b_1$).
+- It fires again on $b_1$: invent $R(b_1, b_2)$.
+- ... producing an unbounded chain $a_0 \to b_0 \to b_1 \to b_2 \to \cdots$.
+
+The FD $A\to B$ never merges these (all $A$-values distinct), so the chase runs forever. This non-termination is the engine behind Chandra–Vardi's undecidability proof — a Turing machine's tape is encoded in such a chain. Contrast the **acyclic** case: drop the IND or make it $R[B]\subseteq S[A]$ across distinct relations forming a DAG; then the chain length is bounded by the longest path in $G_\Sigma$, the chase halts, and implication becomes decidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

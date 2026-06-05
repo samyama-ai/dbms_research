@@ -1,6 +1,7 @@
 # Memory-Bandwidth-Optimal Scans
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/bandwidth-optimal-scans` · **Status:** open
+> **Verification note:** The ByteSlice (SIGMOD 2015) fourth author is Wenjian Xu, not "Li"; corrected in section 3 and the references.
 
 ## 1. Problem Statement
 In a main-memory database, a full-table or large-segment scan with predicate evaluation is no longer disk-bound — it is **memory-bandwidth-bound**. Once a column does not fit in cache, the dominant cost is moving bytes from DRAM (and across NUMA/UPI interconnects) into the cores. **The problem:** design scan and predicate-evaluation kernels that *provably saturate* the available memory bandwidth — driving the achieved fraction of peak STREAM bandwidth toward 1 — across all sockets of a NUMA machine, for realistic predicates (range, equality, conjunctions, LIKE, expression trees) and physical layouts (row, column, PAX, compressed, bit-packed).
@@ -24,7 +25,7 @@ where $\textbf{MLP}$ (memory-level parallelism) is the number of outstanding mis
 ## 3. State of the Art (SOTA)
 - **MonetDB/X100 (Vectorwise)** — Boncz, Zukowski, Nes (CIDR 2005): vectorized, cache-resident batch processing; the foundational bandwidth-conscious execution model.
 - **SIMD scans / BitWeaving** — Li, Patel (SIGMOD 2013): bit-parallel predicate evaluation packing many values per word, approaching one cycle per several values.
-- **ByteSlice / column-scan kernels** — Feng, Lo, Kao, Li (SIGMOD 2015): byte-decomposed layout for early-exit SIMD scans at near-bandwidth rates.
+- **ByteSlice / column-scan kernels** — Feng, Lo, Kao, Xu (SIGMOD 2015): byte-decomposed layout for early-exit SIMD scans at near-bandwidth rates.
 - **NUMA-aware operators** — Leis, Boncz, Kemper, Neumann (*Morsel-Driven Parallelism*, SIGMOD 2014): morsel scheduling that keeps work NUMA-local and load-balanced — the canonical systems answer to multi-socket saturation.
 - Hardware-conscious aggregation/joins: Balkesen, Teubner, Alonso, Özsu (ICDE 2013) establish bandwidth/cache-bound kernel design methodology.
 
@@ -50,12 +51,18 @@ For a **single socket, simple predicates, columnar layout**, the problem is effe
 - Roofline-style analysis extended to CXL/PIM tiers and energy (bandwidth per joule).
 
 ## 9. Key References
-- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[SOTA]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014.
-- **[SOTA]** Y. Li, J. M. Patel. *BitWeaving: Fast Scans for Main Memory Data Processing.* SIGMOD, 2013.
-- **[SOTA]** Z. Feng, E. Lo, B. Kao, W. Li. *ByteSlice: Pushing the Envelope of Main Memory Data Processing with a New Storage Layout.* SIGMOD, 2015.
-- **[Foundational]** S. Williams, A. Waterman, D. Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
+- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [PDF](https://www.cidrdb.org/cidr2005/papers/P19.pdf)
+- **[SOTA]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[SOTA]** Y. Li, J. M. Patel. *BitWeaving: Fast Scans for Main Memory Data Processing.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465322)
+- **[SOTA]** Z. Feng, E. Lo, B. Kao, W. Xu. *ByteSlice: Pushing the Envelope of Main Memory Data Processing with a New Storage Layout.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2747642)
+- **[Foundational]** S. Williams, A. Waterman, D. Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+
+## 10. Worked Example
+
+A column of $V = 4\,\text{GiB}$ of `int32` values is scanned for `x > 100` on one socket with peak bandwidth $\beta_{\text{peak}} = 40\,\text{GB/s}$. The Roofline floor is runtime $\ge V/\beta_{\text{peak}} = 4.29\times10^9 / 40\times10^9 \approx 0.107\,\text{s}$. Operational intensity is tiny: $\sim 1$ compare per 4 bytes, $I \approx 0.25$ ops/byte, so $\pi$ never binds — the kernel is bandwidth-bound and the floor is the target.
+
+Little's Law check: to keep $40\,\text{GB/s}$ in flight at DRAM latency $\ell \approx 80\,\text{ns}$ over 64-byte lines, the needed in-flight lines are $\beta_{\text{peak}}\cdot\ell / 64 = (40\times10^9 \cdot 80\times10^{-9})/64 \approx 50$ outstanding misses. With $\sim 10$ MSHRs/core, that needs $\ge 5$ cores issuing independent prefetched streams. A zone map pruning 75\% of blocks cuts $V$ to $1\,\text{GiB}$, dropping the floor to $\approx 0.027\,\text{s}$ — reading fewer bytes beats reading them faster.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

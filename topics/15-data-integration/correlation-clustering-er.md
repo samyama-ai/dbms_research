@@ -49,12 +49,28 @@ The **theory is essentially closed**: complete-graph CC is APX-hard with sub-2 u
 
 ## 9. Key References
 
-- **[Foundational]** N. Bansal, A. Blum, S. Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004.
-- **[Foundational]** N. Ailon, M. Charikar, A. Newman. *Aggregating Inconsistent Information: Ranking and Clustering.* JACM, 2008. (PIVOT 3-approx, LP 2.5.)
-- **[Foundational]** M. Charikar, V. Guruswami, A. Wirth. *Clustering with Qualitative Information.* JCSS / FOCS, 2005. (APX-hardness, MultiCut equivalence.)
-- **[SOTA]** V. Cohen-Addad, E. Lee, A. Newman, et al. *Correlation Clustering with Sherali–Adams / breaking the 2-approximation barrier.* FOCS, 2022–2023.
-- **[SOTA]** S. Lattanzi, et al. *Scalable Correlation Clustering with the PIVOT algorithm at scale.* NeurIPS, 2021.
-- **[SOTA]** S. Behnezhad, M. Charikar, W. Ma, L.-Y. Tan. *Single-Pass Streaming Correlation Clustering.* FOCS, 2022/2023.
+- **[Foundational]** N. Bansal, A. Blum, S. Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004. — [DOI](https://doi.org/10.1023/B:MACH.0000033116.57574.95)
+- **[Foundational]** N. Ailon, M. Charikar, A. Newman. *Aggregating Inconsistent Information: Ranking and Clustering.* JACM, 2008. (PIVOT 3-approx, LP 2.5.) — [DOI](https://doi.org/10.1145/1411509.1411513)
+- **[Foundational]** M. Charikar, V. Guruswami, A. Wirth. *Clustering with Qualitative Information.* JCSS / FOCS, 2005. (APX-hardness, MultiCut equivalence.) — [DOI](https://doi.org/10.1016/j.jcss.2004.10.012)
+- **[SOTA]** V. Cohen-Addad, E. Lee, A. Newman, et al. *Correlation Clustering with Sherali–Adams / breaking the 2-approximation barrier.* FOCS, 2022–2023. — [arXiv](https://arxiv.org/abs/2207.10889)
+- **[SOTA]** S. Lattanzi, et al. *Scalable Correlation Clustering with the PIVOT algorithm at scale.* NeurIPS, 2021. — [DBLP search](https://dblp.org/search?q=Lattanzi+scalable+correlation+clustering+pivot)
+- **[SOTA]** S. Behnezhad, M. Charikar, W. Ma, L.-Y. Tan. *Single-Pass Streaming Correlation Clustering.* SODA, 2023. — [DOI](https://doi.org/10.1137/1.9781611977554.ch33)
+
+## 10. Worked Example
+
+Four records $\{1,2,3,4\}$ on a complete signed graph (unit weights). Matcher verdicts: $+$ on $(1,2),(2,3),(1,3),(3,4)$ and $-$ on $(1,4),(2,4)$.
+
+Note the inconsistency: $3\!+\!4$ and $1\!+\!3$ suggest $1,3,4$ together, but $1\!-\!4$ contradicts it — no partition agrees with every edge, so we minimize disagreements.
+
+**Candidate A** $\{1,2,3\},\{4\}$: cut $+$ edge $(3,4)$ = **1 disagreement** ($-$ edges $(1,4),(2,4)$ are correctly separated).
+
+**Candidate B** $\{1,2,3,4\}$ all together: violates $-$ edges $(1,4),(2,4)$ = **2 disagreements**.
+
+**Candidate C** $\{1,2\},\{3,4\}$: cuts $+$ edges $(2,3),(1,3)$ = **2 disagreements**.
+
+So **A is optimal** with cost 1.
+
+**PIVOT trace.** Pick random pivot $3$; its $+$-neighborhood $\{1,2,3,4\}$? — pivot forms cluster from $3$'s $+$-edges: $\{1,2,3,4\}$ would be picked, giving cost 2. Picking pivot $1$ instead: $+$-neighbors $\{2,3\}$ → cluster $\{1,2,3\}$, leftover $\{4\}$ → cost 1. This illustrates PIVOT's randomization: expected cost is within $3\times$ optimum, but a lucky pivot hits the optimum directly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

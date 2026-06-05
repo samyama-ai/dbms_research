@@ -46,12 +46,24 @@ For pure submodular objectives the gap is **closed** ($(1-1/e)$ tight). The genu
 - Online/streaming budget allocation with regret bounds.
 
 ## 9. Key References
-- **[Foundational]** D. Golovin, A. Krause. *Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization.* JAIR, 2011.
-- **[Foundational]** A. P. Dawid, A. M. Skene. *Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm.* Applied Statistics, 1979.
-- **[SOTA]** J. Wang, T. Kraska, M. J. Franklin, J. Feng. *CrowdER: Crowdsourcing Entity Resolution.* VLDB, 2012.
-- **[SOTA]** N. Vesdapunt, K. Bellare, N. Dalvi. *Crowdsourcing Algorithms for Entity Resolution.* VLDB, 2014.
-- **[SOTA]** S. Das et al. *Falcon: Scaling Up Hands-Off Crowdsourced Entity Matching to Build Cloud Services.* SIGMOD, 2017.
-- **[Foundational]** D. R. Karger, S. Oh, D. Shah. *Iterative Learning for Reliable Crowdsourcing Systems.* NeurIPS, 2011.
+- **[Foundational]** D. Golovin, A. Krause. *Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization.* JAIR, 2011. — [arXiv](https://arxiv.org/abs/1003.3967)
+- **[Foundational]** A. P. Dawid, A. M. Skene. *Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm.* Applied Statistics, 1979. — [DOI](https://doi.org/10.2307/2346806)
+- **[SOTA]** J. Wang, T. Kraska, M. J. Franklin, J. Feng. *CrowdER: Crowdsourcing Entity Resolution.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.1927)
+- **[SOTA]** N. Vesdapunt, K. Bellare, N. Dalvi. *Crowdsourcing Algorithms for Entity Resolution.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732977.2732982)
+- **[SOTA]** S. Das et al. *Falcon: Scaling Up Hands-Off Crowdsourced Entity Matching to Build Cloud Services.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3035960)
+- **[Foundational]** D. R. Karger, S. Oh, D. Shah. *Iterative Learning for Reliable Crowdsourcing Systems.* NeurIPS, 2011. — [DBLP](https://dblp.org/rec/conf/nips/KargerOS11.html)
+
+## 10. Worked Example
+
+Entity resolution over 4 records $\{a,b,c,d\}$. Blocking proposes 4 candidate pairs as questions, budget $B=2$. Define $f(S)$ = number of record pairs whose match-status becomes *certain* after asking $S$, where transitivity lets answers chain.
+
+Suppose ground truth is $\{a,b,c\}$ one entity, $d$ alone. Marginal gains:
+- Ask $(a,b)$: confirms 1 pair → $f=1$.
+- Then ask $(b,c)$: confirms $(b,c)$ **and** by transitivity $(a,c)$ → gain $2$, $f=3$.
+
+Greedy picks $(a,b)$ then $(b,c)$ (each the best remaining marginal), certifying 3 of the 3 true-match pairs in $B=2$ questions instead of asking all 3 directly — transitivity saved one question.
+
+The set function here is monotone submodular, so greedy guarantees $f(S_{\text{greedy}}) \ge (1-1/e)\,\mathrm{OPT} \approx 0.63\,\mathrm{OPT}$. But the *partition* structure (correlation clustering) means a worker error on $(b,c)$ also corrupts the inferred $(a,c)$ — the correlated-noise regime of Section 6 where the clean $(1-1/e)$ bound no longer holds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

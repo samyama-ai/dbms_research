@@ -49,12 +49,20 @@ Directions: read-time validation / lazy index maintenance with provable orphan-f
 
 ## 9. Key References
 
-- **[Foundational]** Shute, et al. *F1: A Distributed SQL Database That Scales.* VLDB, 2013.
-- **[Foundational]** Gray, Lamport. *Consensus on Transaction Commit (Paxos Commit).* ACM TODS, 2006.
-- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database* (parallel commits). SIGMOD, 2020.
-- **[SOTA]** Huang, et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020.
-- **[SOTA]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Survey]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
+- **[Foundational]** Shute, et al. *F1: A Distributed SQL Database That Scales.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536232)
+- **[Foundational]** Gray, Lamport. *Consensus on Transaction Commit (Paxos Commit).* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database* (parallel commits). SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+- **[SOTA]** Huang, et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415535)
+- **[SOTA]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Survey]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+
+## 10. Worked Example
+
+Base table $R(k,\text{city})$ sharded by $k$; GSI $I(\text{city},k)$ sharded by city. Initially $R[7]=(\text{"NYC"})$, so $I$ holds $(\text{"NYC"},7)$ on shard $A$. Transaction updates $k=7$'s city to "LA": delete $(\text{"NYC"},7)$ from shard $A$, insert $(\text{"LA"},7)$ on shard $B$, update base on shard $C$ — three shards.
+
+**Classic 2PC:** prepare+commit = $2$ round-trips across $3$ shards. **Parallel commit:** stage all three writes, mark the transaction record's commit status as implicitly committed once every write is staged — the common case resolves in $1$ round-trip ($O(1)$), the lower bound from §5 ($\ge 1$ consensus decision per atomic unit).
+
+**Read-side validation:** a query `WHERE city='NYC'` reading $I$ at snapshot $ts$ finds entry $(\text{"NYC"},7)$. It validates against base $R[7]$ at $ts$: if $R[7].\text{city}\ne\text{"NYC"}$ (stale orphan), the entry is filtered. Cost: $O(\text{matches})$ extra base probes, moving coordination from write time to read time.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

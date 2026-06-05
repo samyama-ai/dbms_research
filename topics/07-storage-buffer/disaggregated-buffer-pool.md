@@ -40,12 +40,24 @@ The gap is **definitional and empirical**, not a clean upper/lower mismatch. We 
 Standardize a benchmark and cost model for tiered far-memory buffer pools; prove competitive/learning-augmented bounds for asymmetric multi-tier caching with movement caps; co-design with coherence (when to access-in-place vs. promote); integrate write-back and recovery (dirty pages in far memory); tail-latency SLO-aware admission.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. (external-memory / hierarchy model)
-- **[SOTA]** Z. Ruan, M. Schwarzkopf, et al. *AIFM: High-Performance, Application-Integrated Far Memory.* USENIX OSDI 2020.
-- **[SOTA]** H. A. Maruf et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered-Memory.* ASPLOS 2023.
-- **[SOTA]** H. Li et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS 2023.
-- **[SOTA]** V. Leis et al. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE 2018.
-- **[Foundational]** N. Bansal, N. Buchbinder, A. Madry, J. Naor. *A Polylogarithmic-Competitive Algorithm for the k-Server Problem.* JACM, 2015.
+- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. (external-memory / hierarchy model) — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Z. Ruan, M. Schwarzkopf, et al. *AIFM: High-Performance, Application-Integrated Far Memory.* USENIX OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/ruan)
+- **[SOTA]** H. A. Maruf et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered-Memory.* ASPLOS 2023. — [DOI](https://doi.org/10.1145/3582016.3582063)
+- **[SOTA]** H. Li et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS 2023. — [DOI](https://doi.org/10.1145/3575693.3578835)
+- **[SOTA]** V. Leis et al. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE 2018. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/LeisHK018.html)
+- **[Foundational]** N. Bansal, N. Buchbinder, A. Madry, J. Naor. *A Polylogarithmic-Competitive Algorithm for the k-Server Problem.* JACM, 2015. — [DOI](https://doi.org/10.1145/2783434)
+
+## 10. Worked Example
+
+Three tiers: $T_0$ local DRAM (capacity $k_0 = 1$ page, access $a_0 = 100$ ns), $T_1$ CXL far memory ($k_1 = 2$, $a_1 = 300$ ns), $T_2$ storage ($a_2 = 10000$ ns). Promotion $T_1\to T_0$ costs $m = 300$ ns.
+
+Access trace on pages $\{A, B\}$, both initially in $T_1$: $A, A, A, B, A, A, A$ ($A$ is hot).
+
+Policy 1 — **access-in-place** (never promote): every access pays $a_1 = 300$. Total $= 7 \times 300 = 2100$ ns.
+
+Policy 2 — **promote-on-touch** $A$ into $T_0$: first $A$ costs $m + a_0 = 300 + 100 = 400$; the next two $A$ hits cost $a_0 = 100$ each; $B$ from $T_1$ costs $300$; remaining three $A$ hits cost $100$ each. Total $= 400 + 200 + 300 + 300 = 1200$ ns.
+
+Promotion wins here ($1200 < 2100$) because $A$'s reuse ($6$ accesses) amortizes the one-time $300$ ns move. Flip the trace to $A,B,A,B,\dots$ with $k_0=1$ and promotion thrashes — each promote is immediately evicted, so access-in-place becomes better. The open problem: choosing promote-vs-in-place online, under bandwidth caps and read/write asymmetry, with a provable competitive ratio.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -47,13 +47,26 @@ Active directions: (1) **learned cardinality estimation with guarantees** — ca
 - Robustness to distribution shift and adversarial query workloads.
 
 ## 9. Key References
-- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998.
-- **[Foundational]** C. K. Chow, C. N. Liu. *Approximating Discrete Probability Distributions with Dependence Trees.* IEEE Trans. Information Theory, 1968.
-- **[Foundational]** N. Bruno, S. Chaudhuri, L. Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001.
-- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; and *NeuroCard: One Cardinality Estimator for All Tables.* VLDB, 2020.
-- **[SOTA]** B. Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020.
-- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998. — [ACM](https://dl.acm.org/doi/10.5555/645924.671191)
+- **[Foundational]** C. K. Chow, C. N. Liu. *Approximating Discrete Probability Distributions with Dependence Trees.* IEEE Trans. Information Theory, 1968. — [DOI](https://doi.org/10.1109/TIT.1968.1054142)
+- **[Foundational]** N. Bruno, S. Chaudhuri, L. Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [ACM](https://dl.acm.org/doi/10.1145/375663.375686)
+- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; and *NeuroCard: One Cardinality Estimator for All Tables.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1905.04278)
+- **[SOTA]** B. Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Take $N=1000$ rows over `city`$\in\{$Seattle, Portland$\}$ and `state`$\in\{$WA, OR$\}$, perfectly correlated:
+
+| | WA | OR | row total |
+|--|--|--|--|
+| **Seattle** | 500 | 0 | 500 |
+| **Portland** | 0 | 500 | 500 |
+
+The AVI (product-of-marginals) estimator multiplies marginal selectivities. For $Q=(\texttt{city='Seattle'}\wedge\texttt{state='WA'})$:
+$$\hat f(Q)=N\cdot \frac{500}{1000}\cdot\frac{500}{1000}=1000\cdot 0.25=250,$$
+but the true count is $500$ — a $2\times$ under-estimate. Worse, for $Q'=(\texttt{Seattle}\wedge\texttt{OR})$ AVI predicts $250$ while the truth is $0$ (infinite q-error). The joint here has mutual information $I=\log 2=1$ bit, the maximum for two binary attributes — exactly the regime where AVI fails. A $2\times2$ joint histogram (4 cells) stores the table exactly. A Chow–Liu tree picks the single edge `city`–`state` (highest mutual information), recovering the joint with $O(d)$ space instead of the $\Theta(k^d)$ full grid.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

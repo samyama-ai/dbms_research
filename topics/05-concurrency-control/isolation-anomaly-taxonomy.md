@@ -42,12 +42,23 @@ Active threads: mechanized isolation semantics in proof assistants (extensions o
 - Extending the lattice to geo-distributed and HTAP systems with mixed staleness.
 
 ## 9. Key References
-- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
-- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[SOTA]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015.
-- **[SOTA]** Crooks, Pu, Alvisi, Clement. *Seeing is Believing: A Client-Centric Specification of Database Isolation.* PODC, 2017.
-- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
+- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DOI](https://doi.org/10.1109/ICDE.2000.839388)
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[SOTA]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2015.58)
+- **[SOTA]** Crooks, Pu, Alvisi, Clement. *Seeing is Believing: A Client-Centric Specification of Database Isolation.* PODC, 2017. — [DOI](https://doi.org/10.1145/3087801.3087802)
+- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+
+## 10. Worked Example
+
+Classic **write-skew** under Snapshot Isolation. Two doctors $T_1, T_2$ check an on-call invariant "at least one doctor on call." Initial state: $x = 1$ (Alice on call), $y = 1$ (Bob on call); invariant $x + y \ge 1$. Both transactions read the *same* snapshot, see $x=y=1$, conclude the other covers, and each goes off call:
+
+- $T_1$: $r_1[x{=}1]\, r_1[y{=}1]\; w_1[x{=}0]\; c_1$
+- $T_2$: $r_2[x{=}1]\, r_2[y{=}1]\; w_2[y{=}0]\; c_2$
+
+Under SI both commit (no write-write conflict: $T_1$ writes $x$, $T_2$ writes $y$), leaving $x=y=0$ — invariant violated, yet *no serial order* reproduces this.
+
+Diagnose via $DSG(H)$: $T_1$ read $y$, $T_2$ later wrote $y$, so $T_1 \xrightarrow{rw} T_2$; symmetrically $T_2 \xrightarrow{rw} T_1$. The cycle has **two consecutive rw anti-dependency edges** — exactly the Fekete *dangerous structure*. SI permits this cycle (G2 anomaly); PL-3 serializability forbids all $DSG$ cycles, so a serializable engine (or SSI, which aborts on the dangerous pair) rejects one transaction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

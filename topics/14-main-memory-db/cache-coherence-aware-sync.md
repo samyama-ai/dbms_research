@@ -37,12 +37,20 @@ Threads: delegation/combining generalized to arbitrary structures; NUMA- and CXL
 - Synchronization tuned to CXL/heterogeneous coherence domains with non-uniform transfer cost.
 
 ## 9. Key References
-- **[Foundational]** Mellor-Crummey, J., Scott, M. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors.* ACM TOCS, 1991.
-- **[Foundational]** Attiya, H., Hendler, D., Woelfel, P. *Tight RMR Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008.
-- **[SOTA]** Hendler, D., Incze, I., Shavit, N., Tzafrir, M. *Flat Combining and the Synchronization-Parallelism Tradeoff.* SPAA, 2010.
-- **[SOTA]** Dice, D., Marathe, V., Shavit, N. *Lock Cohorting: A General Technique for Designing NUMA Locks.* PPoPP, 2012.
-- **[SOTA]** Leis, V., Scheibner, F., Kemper, A., Neumann, T. *The ART of Practical Synchronization (Optimistic Lock Coupling).* DaMoN, 2016.
-- **[Survey]** Herlihy, M., Shavit, N. *The Art of Multiprocessor Programming.* Morgan Kaufmann, 2nd ed., 2020.
+- **[Foundational]** Mellor-Crummey, J., Scott, M. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors.* ACM TOCS, 1991. — [DOI](https://doi.org/10.1145/103727.103729)
+- **[Foundational]** Attiya, H., Hendler, D., Woelfel, P. *Tight RMR Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008. — [PDF](https://hagit.net.technion.ac.il/files/2015/09/AHW-STOC08.pdf)
+- **[SOTA]** Hendler, D., Incze, I., Shavit, N., Tzafrir, M. *Flat Combining and the Synchronization-Parallelism Tradeoff.* SPAA, 2010. — [DOI](https://doi.org/10.1145/1810479.1810540)
+- **[SOTA]** Dice, D., Marathe, V., Shavit, N. *Lock Cohorting: A General Technique for Designing NUMA Locks.* PPoPP, 2012. — [DOI](https://doi.org/10.1145/2370036.2145848)
+- **[SOTA]** Leis, V., Scheibner, F., Kemper, A., Neumann, T. *The ART of Practical Synchronization (Optimistic Lock Coupling).* DaMoN, 2016. — [DBLP](https://dblp.org/rec/conf/damon/LeisSK016.html)
+- **[Survey]** Herlihy, M., Shavit, N. *The Art of Multiprocessor Programming.* Morgan Kaufmann, 2nd ed., 2020. — [Publisher](https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming)
+
+## 10. Worked Example
+
+Consider $p = 8$ cores hammering one shared counter. With a naive test-and-set / `lock xadd` on a single cache line, each increment must acquire the line in M state, invalidating the other 7 sharers: per successful update the directory issues $\Omega(p)$ invalidation/transfer messages, so $p$ updates cost $\Theta(p^2) = 64$ coherence transfers — quadratic, the contention collapse.
+
+Now apply **flat combining**: one core becomes the combiner, reads a publication list of the other 7 pending requests (each spinning on its own *local* flag, no remote write), applies all 8 increments locally, and writes back once. The contended line moves $O(1)$ times per combining round, so $p$ updates cost $\Theta(p)$ transfers — here $\approx 8$ instead of 64, an $8\times$ reduction.
+
+For the mutual-exclusion handoff itself, an MCS queue lock makes each waiter spin on a local node, so a passage costs $O(1)$ remote references — but the Attiya–Hendler–Woelfel bound says worst-case RMR is still $\Omega(\log p) = 3$ here, unavoidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

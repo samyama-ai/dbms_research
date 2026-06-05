@@ -46,12 +46,24 @@ Codes and consensus are each near-optimal in isolation, but **the joint optimum 
 - Formal accounting of "durability debt" when acknowledging on fewer copies and back-filling redundancy asynchronously.
 
 ## 9. Key References
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High-Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Antonopoulos, P. et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[Foundational]** Fischer, M., Lynch, N. & Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Dimakis, A., Godfrey, P. B., Wu, Y., Wainwright, M. & Ramchandran, K. *Network Coding for Distributed Storage Systems.* IEEE Trans. Information Theory, 2010.
-- **[SOTA]** Balakrishnan, M. et al. *Virtual Consensus in Delos.* OSDI, 2020.
-- **[Foundational]** Cidon, A. et al. *Copysets: Reducing the Frequency of Data Loss in Cloud Storage.* USENIX ATC, 2013.
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High-Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Antonopoulos, P. et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[Foundational]** Fischer, M., Lynch, N. & Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Dimakis, A., Godfrey, P. B., Wu, Y., Wainwright, M. & Ramchandran, K. *Network Coding for Distributed Storage Systems.* IEEE Trans. Information Theory, 2010. — [arXiv](https://arxiv.org/abs/0803.0632)
+- **[SOTA]** Balakrishnan, M. et al. *Virtual Consensus in Delos.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/balakrishnan)
+- **[Foundational]** Cidon, A. et al. *Copysets: Reducing the Frequency of Data Loss in Cloud Storage.* USENIX ATC, 2013. — [USENIX](https://www.usenix.org/conference/atc13/technical-sessions/presentation/cidon)
+
+## 10. Worked Example
+
+Compare 3-way replication against a $(9,6)$ MDS code for a 1 MB log segment.
+
+**Replication:** store 3 full copies $\Rightarrow$ 3 MB on disk, overhead $3\times$. Tolerates 2 node losses.
+
+**$(9,6)$ MDS:** split the 1 MB into $k=6$ data chunks of $\tfrac{1}{6}$ MB each, compute $n-k=3$ parity chunks of the same size, scatter all 9 over 9 nodes. Storage $= 9 \times \tfrac{1}{6} = 1.5$ MB, overhead $n/k = 1.5\times$. By the Singleton bound any $d = n-k+1 = 4$, so it tolerates $n-k = 3$ erasures — strictly *better* fault tolerance at *half* the storage of replication.
+
+**Commit quorum (RS-Paxos-style):** acknowledge after $\lceil (n+k)/2\rceil = \lceil 15/2\rceil = 8$ chunks land. Any two such write/read quorums of size 8 over 9 nodes intersect in $\ge 8+8-9 = 7 \ge k$ nodes, so every read can reconstruct.
+
+**Correlated-failure caveat:** if all 3 parity chunks sit in one rack and that rack's power domain fails together (one event, weight 3), the segment is *still* recoverable (3 erasures $\le d-1$); but if a 4-node domain fails, no $(9,6)$ code survives — motivating copyset-aware placement, not just raising $n/k$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

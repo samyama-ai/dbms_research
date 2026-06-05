@@ -63,12 +63,24 @@ Empirically driven; no dominant principled solver.
 
 ## 9. Key References
 
-- **[Foundational]** Lembo, Lenzerini, Rosati, Ruzzi, Savo. *Inconsistency-Tolerant Semantics for Description Logics (IAR/ICAR/AR).* RR, 2010.
-- **[Foundational]** Calvanese et al. *Tractable Reasoning and Efficient Query Answering in Description Logics: The DL-Lite Family.* JAR, 2007.
-- **[SOTA]** Galárraga, Teflioudi, Hose, Suchanek. *AMIE: Association Rule Mining under Incomplete Evidence in Ontological KBs.* WWW, 2013 (AMIE+ extension 2015).
-- **[SOTA]** Chu et al. *KATARA: A Data Cleaning System Powered by Knowledge Bases and Crowdsourcing.* SIGMOD, 2015.
-- **[SOTA]** Paulheim. *Knowledge Graph Refinement: A Survey of Approaches and Evaluation Methods.* Semantic Web Journal, 2017.
-- **[Survey]** Corman, Reutter, Savković. *Semantics and Validation of Recursive SHACL.* ISWC, 2018.
+- **[Foundational]** Lembo, Lenzerini, Rosati, Ruzzi, Savo. *Inconsistency-Tolerant Semantics for Description Logics (IAR/ICAR/AR).* RR, 2010. — [DOI](https://doi.org/10.1007/978-3-642-15918-3_9)
+- **[Foundational]** Calvanese et al. *Tractable Reasoning and Efficient Query Answering in Description Logics: The DL-Lite Family.* JAR, 2007. — [DOI](https://doi.org/10.1007/s10817-007-9078-x)
+- **[SOTA]** Galárraga, Teflioudi, Hose, Suchanek. *AMIE: Association Rule Mining under Incomplete Evidence in Ontological KBs.* WWW, 2013 (AMIE+ extension 2015). — [DOI](https://doi.org/10.1145/2488388.2488425)
+- **[SOTA]** Chu et al. *KATARA: A Data Cleaning System Powered by Knowledge Bases and Crowdsourcing.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749431)
+- **[SOTA]** Paulheim. *Knowledge Graph Refinement: A Survey of Approaches and Evaluation Methods.* Semantic Web Journal, 2017. — [DOI](https://doi.org/10.3233/SW-160218)
+- **[Survey]** Corman, Reutter, Savković. *Semantics and Validation of Recursive SHACL.* ISWC, 2018. — [DOI](https://doi.org/10.1007/978-3-030-00671-6_19)
+
+## 10. Worked Example
+
+Take a tiny KG with a DL-Lite TBox stating $\mathsf{Person}\sqsubseteq \neg\mathsf{City}$ (a person is not a city) and the functional role $\mathsf{bornIn}$ has range $\mathsf{City}$. The ABox has three assertions:
+
+$$a_1:\ \mathsf{bornIn}(\text{Marie}, \text{Paris}),\quad a_2:\ \mathsf{Person}(\text{Paris}),\quad a_3:\ \mathsf{City}(\text{Paris}).$$
+
+Here $\{a_2, a_3\}$ is a **minimal inconsistent subset** (Paris is asserted both Person and City, violating disjointness). The **remainder sets** (maximal consistent ABoxes) are $\{a_1,a_2\}$ and $\{a_1,a_3\}$; each drops exactly one assertion.
+
+**Cardinality-minimal repair** removes one assertion — but which? Logic alone cannot decide. An embedding score $f(\text{Paris},\mathsf{type},\mathsf{City})\gg f(\text{Paris},\mathsf{type},\mathsf{Person})$ favors deleting $a_2$, yielding repair $\{a_1,a_3\}$.
+
+**OWA caveat:** under the open-world assumption, the *absence* of $\mathsf{Person}(\text{Marie})$ is not evidence that Marie is not a person — so no algorithm may "repair" by adding $\neg\mathsf{Person}(\text{Marie})$. Repair acts only on the inconsistency $\{a_2,a_3\}$, illustrating the identifiability barrier: missing $\ne$ false.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

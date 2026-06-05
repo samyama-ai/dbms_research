@@ -40,12 +40,23 @@ The *model placement* is closed. What remains open is the **metadata–staleness
 - Composable mixed-consistency transactions with a single proof framework.
 
 ## 9. Key References
-- **[Foundational]** Lloyd, Freedman, Kaminsky, Andersen. *Stronger Semantics for Low-Latency Geo-Replicated Storage* (Eiger). NSDI, 2013.
-- **[Foundational]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015.
-- **[SOTA]** Akkoorath, Tomsic, Bravo, Li, Crain, Bieniusa, Preguiça, Shapiro. *Cure: Strong Semantics Meets High Availability and Low Latency.* ICDCS, 2016.
-- **[SOTA]** Spirovska, Didona, Zwaenepoel. *Wren: Nonblocking Reads in a Partitioned Transactional Causally Consistent Data Store.* DSN, 2018.
-- **[SOTA]** Mehdi, Littley, Crooks, Alvisi, Bronson, Lloyd. *I Can't Believe It's Not Causal! Scalable Causal Consistency with No Slowdown Cascades* (Occult). NSDI, 2017.
-- **[Foundational]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions.* VLDB, 2014.
+- **[Foundational]** Lloyd, Freedman, Kaminsky, Andersen. *Stronger Semantics for Low-Latency Geo-Replicated Storage* (Eiger). NSDI, 2013. — [USENIX](https://www.usenix.org/conference/nsdi13/technical-sessions/presentation/lloyd)
+- **[Foundational]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2015.58)
+- **[SOTA]** Akkoorath, Tomsic, Bravo, Li, Crain, Bieniusa, Preguiça, Shapiro. *Cure: Strong Semantics Meets High Availability and Low Latency.* ICDCS, 2016. — [DOI](https://doi.org/10.1109/ICDCS.2016.98)
+- **[SOTA]** Spirovska, Didona, Zwaenepoel. *Wren: Nonblocking Reads in a Partitioned Transactional Causally Consistent Data Store.* DSN, 2018. — [IEEE Xplore](https://ieeexplore.ieee.org/document/8416466/)
+- **[SOTA]** Mehdi, Littley, Crooks, Alvisi, Bronson, Lloyd. *I Can't Believe It's Not Causal! Scalable Causal Consistency with No Slowdown Cascades* (Occult). NSDI, 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/mehdi)
+- **[Foundational]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions.* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1302.0309)
+
+## 10. Worked Example
+
+Two datacenters $D_1, D_2$, snapshot vector size $O(D)=2$. A user posts a photo then comments on it — a causal chain across two keys.
+
+- $D_1$: `write photo` → version vector $\langle 1, 0\rangle$. Then `write comment` (depends on photo) → $\langle 2, 0\rangle$.
+- These replicate to $D_2$. Causal consistency forbids $D_2$ from exposing the comment before the photo: it installs $\langle 2,0\rangle$ only after $\langle 1,0\rangle$ is applied.
+
+Now a read-only TCC transaction at $D_2$ reads `{comment, photo}`. It is given a **causal snapshot** = downward-closed set $\le \langle 1,0\rangle$ (whatever is stable). If `comment` $\langle 2,0\rangle$ is visible, atomic visibility + causal closure guarantee `photo` $\langle 1,0\rangle$ is too — no "comment on a missing photo" anomaly, in one non-blocking round.
+
+Wren's trick: replace the $O(D)$ vector with two scalars (dependency time, completion time). A fractured snapshot is then ruled out by comparing scalars, trading the $\Omega(n)$ Charron-Bost floor for slightly staler-but-correct snapshots.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Randomized Consensus Round Complexity
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/randomized-round-complexity` · **Status:** open
+> **Verification note:** The Bar-Joseph–Ben-Or $\Theta(t/\sqrt{n\log n})$ bound is proven for the *synchronous* full-information model against a strong adaptive adversary; sections 2/5/6 transfer it to the asynchronous regime (it lower-bounds that case a fortiori), but the original theorem is stated for synchrony.
 
 ## 1. Problem Statement
 Randomization circumvents FLP: in asynchronous systems, coin-flipping protocols solve Byzantine agreement with probability 1, terminating in a finite *expected* number of rounds. The central complexity question: **what is the minimum expected number of rounds (and communication) to solve asynchronous Byzantine agreement with optimal resilience against an *adaptive* adversary, and where exactly do the best known upper and lower bounds meet?**
@@ -45,12 +46,20 @@ For the *cryptographic, static/PKI* setting the round complexity is essentially 
 - Practical adaptively-secure common coins with $\tilde{O}(n)$ communication.
 
 ## 9. Key References
-- **[Foundational]** Michael Ben-Or. *Another Advantage of Free Choice: Completely Asynchronous Agreement Protocols.* PODC, 1983.
-- **[Foundational]** Marshall Pease, Robert Shostak, Leslie Lamport. *Reaching Agreement in the Presence of Faults.* JACM, 1980.
-- **[Foundational]** Ziv Bar-Joseph, Michael Ben-Or. *A Tight Lower Bound for Randomized Synchronous Consensus.* PODC, 1998.
-- **[SOTA]** Christian Cachin, Klaus Kursawe, Victor Shoup. *Random Oracles in Constantinople: Practical Asynchronous Byzantine Agreement Using Cryptography.* PODC, 2000.
-- **[SOTA]** Achour Mostéfaoui, Hamouma Moumen, Michel Raynal. *Signature-Free Asynchronous Byzantine Consensus with t < n/3 and O(n²) Messages.* PODC, 2014.
-- **[SOTA]** Ittai Abraham, Dahlia Malkhi, Alexander Spiegelman et al. *Asymptotically Optimal Validated Asynchronous Byzantine Agreement.* PODC, 2019.
+- **[Foundational]** Michael Ben-Or. *Another Advantage of Free Choice: Completely Asynchronous Agreement Protocols.* PODC, 1983. — [DOI](https://doi.org/10.1145/800221.806707)
+- **[Foundational]** Marshall Pease, Robert Shostak, Leslie Lamport. *Reaching Agreement in the Presence of Faults.* JACM, 1980. — [DOI](https://doi.org/10.1145/322186.322188)
+- **[Foundational]** Ziv Bar-Joseph, Michael Ben-Or. *A Tight Lower Bound for Randomized Synchronous Consensus.* PODC, 1998. — [DOI](https://doi.org/10.1145/277697.277733)
+- **[SOTA]** Christian Cachin, Klaus Kursawe, Victor Shoup. *Random Oracles in Constantinople: Practical Asynchronous Byzantine Agreement Using Cryptography.* PODC, 2000. — [ePrint](https://eprint.iacr.org/2000/034)
+- **[SOTA]** Achour Mostéfaoui, Hamouma Moumen, Michel Raynal. *Signature-Free Asynchronous Byzantine Consensus with t < n/3 and O(n²) Messages.* PODC, 2014. — [DOI](https://doi.org/10.1145/2611462.2611468)
+- **[SOTA]** Ittai Abraham, Dahlia Malkhi, Alexander Spiegelman et al. *Asymptotically Optimal Validated Asynchronous Byzantine Agreement.* PODC, 2019. — [arXiv](https://arxiv.org/abs/1811.01332)
+
+## 10. Worked Example
+
+Take Ben-Or's protocol with $n=4$, $f=1$, binary inputs $\{0,1\}$, asynchronous crash model ($n\ge 3f+1$ holds). Inputs: $p_1=p_2=p_3=1$, $p_4=0$.
+
+Round 1, phase A: each $p_i$ broadcasts its value and waits for $n-f=3$ reports. Say $p_1$ hears $\{1,1,0\}$ — no value has a strict majority ($>n/2=2$), so $p_1$ sees no "supported" value. Phase B: any process seeing $\ge 2f+1=3$ copies of a value adopts it; otherwise it **flips a private coin**. Here $p_4$ flips, getting (say) $1$.
+
+Once coins happen to align all live processes on $1$, the next round sees $\ge 3$ copies of $1$ and everyone decides $1$. With a *shared* common coin (Rabin/CKS) alignment happens with probability $\ge \tfrac12$ each round, giving $\mathbb{E}[\text{rounds}]=O(1)$. With only *private* coins, the probability all $n$ agree is $\sim 2^{-n}$ per round, so $\mathbb{E}[\text{rounds}]$ is exponential — the gap the common coin closes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

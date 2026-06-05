@@ -55,11 +55,21 @@ Active threads: exploiting NVMe atomic-write and CXL semantics to remove doublew
 
 ## 9. Key References
 
-- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[SOTA]** Ashvin Goel, Bhavish Aggarwal, et al. / InnoDB engineering. *The InnoDB Doublewrite Buffer.* (MySQL/InnoDB reference manual and design notes).
-- **[SOTA]** Jayashree Mohan, Ashlie Martinez, Soujanya Ponnapalli, Pandian Raju, Vijay Chidambaram. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (B³ / CrashMonkey).* OSDI, 2018.
-- **[Survey]** Vijay Chidambaram. *Orderless and Eventually Durable File Systems / crash consistency.* (PhD thesis and surveys on crash consistency), 2015.
+- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** Ashvin Goel, Bhavish Aggarwal, et al. / InnoDB engineering. *The InnoDB Doublewrite Buffer.* (MySQL/InnoDB reference manual and design notes). — [MySQL manual](https://dev.mysql.com/doc/refman/8.0/en/innodb-doublewrite-buffer.html)
+- **[SOTA]** Jayashree Mohan, Ashlie Martinez, Soujanya Ponnapalli, Pandian Raju, Vijay Chidambaram. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (B³ / CrashMonkey).* OSDI, 2018. — [arXiv](https://arxiv.org/abs/1810.02904)
+- **[Survey]** Vijay Chidambaram. *Orderless and Eventually Durable File Systems / crash consistency.* (PhD thesis and surveys on crash consistency), 2015. — [PhD thesis](https://research.cs.wisc.edu/adsl/Publications/vijayc-thesis15.pdf)
+
+## 10. Worked Example
+
+A $16$ KB page = $k=4$ device-atomic sectors of $s=4$ KB, transitioning old $(a_1,a_2,a_3,a_4)$ to new $(b_1,b_2,b_3,b_4)$. A crash mid-write can leave any of $2^k = 16$ mixtures, e.g. the torn page $(b_1,b_2,a_3,a_4)$ — half-new, half-old, not a valid version of either transaction state.
+
+**Detection via toggle bits:** before writing, set one bit per sector to a common value (say all = 1, flipping each epoch). On read, the torn page shows sectors 1–2 with the new bit (=1) and sectors 3–4 with the stale bit (=0): a mismatch flags the tear deterministically using $k=4$ bits.
+
+**Recovery via doublewrite:** InnoDB first wrote all $16$ KB sequentially to the doublewrite area (with its own checksum) and `fsync`'d it before the in-place write. The doublewrite copy is intact (its write completed earlier), so recovery copies it over the torn in-place page, yielding a clean version $(b_1,b_2,b_3,b_4)$ that WAL redo then reconciles.
+
+**Cost:** $2\times$ writes on protected pages (section 4's upper bound), but both sequential. The lower bound (section 5) says you cannot do better with a *single* in-place copy of granule $g$: the crash can corrupt the sole copy, so $\ge 1$ extra durable image is unavoidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

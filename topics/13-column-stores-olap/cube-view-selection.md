@@ -59,11 +59,19 @@ View selection is **NP-hard** (HRU note hardness via reduction from set cover). 
 
 ## 9. Key References
 
-- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** Gray, Bosworth, Layman, Pirahesh, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* ICDE, 1996 / Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[SOTA]** Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004.
-- **[Survey]** Mami, Bellahsene. *A Survey of View Selection Methods.* SIGMOD Record, 2012.
+- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** Gray, Bosworth, Layman, Pirahesh, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* ICDE, 1996 / Data Mining and Knowledge Discovery, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843)
+- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Survey]** Mami, Bellahsene. *A Survey of View Selection Methods.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2206869.2206874)
+
+## 10. Worked Example
+
+Consider a lattice over $d=2$ dimensions with four cuboids and sizes (rows to scan): base $AB=100$, $A=20$, $B=30$, apex `none`$=1$. The base $AB$ is always materialized. With a budget of **one** extra view, evaluate greedy HRU benefit. A query on cuboid $v$ is answered from the smallest materialized ancestor.
+
+Initially only $AB$ is materialized, so every query costs $100$. Consider materializing $A$ (size $20$): it answers queries for $A$ (and itself), saving $100-20=80$ per affected cuboid. Cuboids $A$ and `none` can both roll up from $A$, giving benefit $\approx (100-20)\times 2 = 160$. Materializing $B$ (size $30$) saves $(100-30)\times 2 = 140$. Materializing `none` (size $1$) saves only $100-1=99$ for one cuboid.
+
+Greedy picks $A$ (benefit $160$, the max). This matches the HRU greedy step. With submodularity, the chosen set is within $(1-1/e)\approx 0.63$ of the optimal benefit achievable under the same cardinality budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

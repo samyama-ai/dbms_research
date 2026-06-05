@@ -50,12 +50,26 @@ Threads: formal consistency-model algebras and mechanized soundness proofs (buil
 
 ## 9. Key References
 
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[Foundational]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
-- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[SOTA]** Terry, D. et al. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013.
-- **[Foundational]** Yu, H., Vahdat, A. *Design and Evaluation of a Conit-Based Continuous Consistency Model (TACT).* ACM TOCS, 2002.
-- **[Survey]** Viotti, P., Vukolić, M. *Consistency in Non-Transactional Distributed Storage Systems.* ACM Computing Surveys, 2016.
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[SOTA]** Terry, D. et al. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522731)
+- **[Foundational]** Yu, H., Vahdat, A. *Design and Evaluation of a Conit-Based Continuous Consistency Model (TACT).* ACM TOCS, 2002. — [DOI](https://doi.org/10.1145/566340.566342)
+- **[Survey]** Viotti, P., Vukolić, M. *Consistency in Non-Transactional Distributed Storage Systems.* ACM Computing Surveys, 2016. — [DOI](https://doi.org/10.1145/2926965)
+
+## 10. Worked Example
+
+A Pileus-style client declares a ranked SLA for a read, choosing a quorum knob on an $N=3$ store:
+
+| Rank | Consistency | Latency target | Utility |
+|------|-------------|----------------|---------|
+| 1 | strong ($R{+}W>N$) | $\le 100$ ms | 1.0 |
+| 2 | read-your-writes | $\le 100$ ms | 0.7 |
+| 3 | eventual ($R{=}1$) | $\le 20$ ms | 0.5 |
+
+Suppose the strong read needs a remote round trip averaging 140 ms (misses rank 1). A local eventual read is 8 ms. Using PBS with measured write-propagation, $\Pr[\text{staleness}\le t]$ for $R{=}1,W{=}1$ might be $\Pr[\text{stale}\le 8\text{ ms}] = 0.85$.
+
+The runtime picks the highest-utility *achievable* subSLA: rank 1 infeasible (latency), so it serves rank 3 at utility 0.5, latency 8 ms, with an 85% freshness probability. The open gap: Pileus *selects* this point but emits no checkable certificate that the delivered read met $\Pr[s\le\Delta\wedge\text{lat}\le L]\ge 1-\delta$, and cannot compose the guarantee across a multi-read session.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

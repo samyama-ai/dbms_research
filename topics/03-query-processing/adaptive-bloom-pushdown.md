@@ -42,13 +42,24 @@ Offline (known $\sigma$) sizing and placement is **closed**. The **empirically-o
 
 ## 9. Key References
 
-- **[Foundational]** Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
-- **[Foundational]** Pagh, Pagh, Rao. *An Optimal Bloom Filter Replacement.* SODA 2005.
-- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures (learned Bloom filters).* SIGMOD 2018.
-- **[SOTA]** Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS 2018.
-- **[SOTA]** Bender, Farach-Colton, et al. *Bloom Filters, Adaptivity, and the Dictionary Problem (Adaptive AMQ / Broom Filters).* FOCS 2018.
-- **[SOTA]** Zhu, Ghosh, Krishnamurthy, Ross. *Looking Ahead Makes Query Plans Robust (LIP).* PVLDB 2017.
-- **[Survey]** Broder, Mitzenmacher. *Network Applications of Bloom Filters: A Survey.* Internet Mathematics, 2004.
+- **[Foundational]** Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[Foundational]** Pagh, Pagh, Rao. *An Optimal Bloom Filter Replacement.* SODA 2005. — [DBLP](https://dblp.org/rec/conf/soda/PaghPR05.html)
+- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures (learned Bloom filters).* SIGMOD 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS 2018. — [NeurIPS](https://papers.nips.cc/paper_files/paper/2018/hash/0f49c89d1e7298bb9930789c8ed59d48-Abstract.html)
+- **[SOTA]** Bender, Farach-Colton, et al. *Bloom Filters, Adaptivity, and the Dictionary Problem (Adaptive AMQ / Broom Filters).* FOCS 2018. — [arXiv](https://arxiv.org/abs/1711.01616)
+- **[SOTA]** Zhu, Potti, Saurabh, Patel. *Looking Ahead Makes Query Plans Robust (LIP).* PVLDB 2017. — [PVLDB](https://www.vldb.org/pvldb/vol10/p889-zhu.pdf)
+- **[Survey]** Broder, Mitzenmacher. *Network Applications of Bloom Filters: A Survey.* Internet Mathematics, 2004. — [DOI](https://doi.org/10.1080/15427951.2004.10129096)
+
+## 10. Worked Example
+
+Join `orders ⋈ customers` on `cust_id`. Build side `customers` has $n=10^5$ keys; probe side `orders` has $N_p=10^7$ rows. Suppose only $\sigma=2\%$ of orders match a built filter, so the filter could prune $0.98\cdot N_p = 9.8{\times}10^6$ rows. Take $c_{\text{down}}=5$ ns saved per pruned row, $c_{\text{probe}}=1$ ns, and build cost $c_{\text{build}}(n)\approx n\cdot 5\,\text{ns}=0.5$ ms.
+
+Size the filter at $m/n=10$ bits/key (1.2 MB). Optimal hashes $k^\star=\tfrac{m}{n}\ln 2\approx 7$, giving $f\approx 0.6185^{10}\approx 0.0082$.
+
+- Savings: $9.8{\times}10^6 \times 5\,\text{ns} = 49$ ms.
+- Costs: build $0.5$ ms $+$ probe $10^7\times 1\,\text{ns}=10$ ms $+$ false-positive waste $f\cdot N_p\cdot c_{\text{down}} = 0.0082\times10^7\times5\,\text{ns}\approx 0.41$ ms.
+
+Net benefit $\approx 49 - 10.9 = 38.1$ ms: clearly build it. But if runtime sampling revealed $\sigma=90\%$ instead, savings shrink to $10^7\cdot0.1\cdot5\,\text{ns}=5$ ms $<$ the $10.9$ ms cost — the adaptive policy should *abort* the build.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

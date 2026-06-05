@@ -34,12 +34,20 @@ Directions: (a) **deterministic databases** (Calvin/Aria lineage, Abadi & collab
 - Formal machine-checked proofs of parallel-commit-style optimizations in production code.
 
 ## 9. Key References
-- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006.
-- **[Foundational]** Skeen, D. *Nonblocking Commit Protocols.* SIGMOD, 1981.
-- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Zhang, I., et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015.
-- **[SOTA]** Mu, S., Nelson, L., Lloyd, W., Li, J. *Consolidating Concurrency Control and Consensus for Commits under Conflicts (Janus).* OSDI, 2016.
-- **[Survey]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
+- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+- **[Foundational]** Skeen, D. *Nonblocking Commit Protocols.* SIGMOD, 1981. — [DOI](https://doi.org/10.1145/582318.582339)
+- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Zhang, I., et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815404)
+- **[SOTA]** Mu, S., Nelson, L., Lloyd, W., Li, J. *Consolidating Concurrency Control and Consensus for Commits under Conflicts (Janus).* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/mu)
+- **[Survey]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+
+## 10. Worked Example
+
+A transaction $T$ touches two shards $S_1, S_2$; each shard is a Paxos group of $2f+1=3$ replicas, and the transaction record is a third Paxos group. Compare the blocking failure 2PC suffers with the replicated-coordinator fix.
+
+**Classic 2PC trace:** coordinator $C$ sends `PREPARE` → both shards vote `YES` and durably log it → $C$ logs `COMMIT` and crashes *before* sending the decision. Now $S_1, S_2$ hold locks on their rows and cannot unilaterally decide (committing risks violating atomicity if the other aborted). They block until $C$ recovers — possibly forever.
+
+**Paxos-replicated coordinator (Gray–Lamport):** the `COMMIT`/`ABORT` decision is itself a Paxos instance over $2f+1=3$ coordinator replicas. With $f=1$, the decision survives one coordinator crash: a surviving replica learns the committed log entry and informs the shards, so locks release. Common-case cost: $2\delta$ for prepare $+$ one consensus round for the decision $\approx 3\text{–}4$ one-way delays. Parallel Commits collapses these by treating the transaction record's durable write *as* the commit point, so in the failure-free case $T$ commits at the latency of a single consensus instance plus one participant RTT — matching 2PC while staying non-blocking.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

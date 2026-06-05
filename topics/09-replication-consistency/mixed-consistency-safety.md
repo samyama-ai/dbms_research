@@ -48,12 +48,22 @@ Active: extending CISE-style reasoning to richer invariants and to transactions 
 
 ## 9. Key References
 
-- **[Foundational]** Li, C. et al. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012.
-- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016.
-- **[SOTA]** Balegas, V. et al. *Putting Consistency Back into Eventual Consistency (Indigo).* EuroSys, 2015.
-- **[SOTA]** Milano, M., Myers, A. *MixT: A Language for Mixing Consistency in Geodistributed Transactions.* PLDI, 2018.
-- **[SOTA]** Houshmand, F., Lesani, M. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019.
-- **[Foundational]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011.
+- **[Foundational]** Li, C. et al. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/LiPCGPR12.html)
+- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016. — [DOI](https://doi.org/10.1145/2837614.2837625)
+- **[SOTA]** Balegas, V. et al. *Putting Consistency Back into Eventual Consistency (Indigo).* EuroSys, 2015. — [DOI](https://doi.org/10.1145/2741948.2741972)
+- **[SOTA]** Milano, M., Myers, A. *MixT: A Language for Mixing Consistency in Geodistributed Transactions.* PLDI, 2018. — [DOI](https://doi.org/10.1145/3192366.3192375)
+- **[SOTA]** Houshmand, F., Lesani, M. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019. — [DOI](https://doi.org/10.1145/3290387)
+- **[Foundational]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011. — [DBLP](https://dblp.org/rec/conf/pods/AmelootNB11.html)
+
+## 10. Worked Example
+
+Inventory app, one item with $stock = 1$, invariant $I: stock \ge 0$. Operations:
+- `view()` — read-only, marked **weak (blue)**: reading a slightly stale stock harms nothing, so it commutes with everything and stays coordination-free.
+- `buy()` — decrements stock if $stock \ge 1$.
+
+Classify `buy` under RedBlue. Its shadow effect "$stock \mathrel{-}= 1$" does *not* compose safely with a concurrent `buy`: replicas $R_1, R_2$ each see $stock=1$, each locally pass the check, each emit $-1$, merge gives $stock = 1 - 1 - 1 = -1$, violating $I$ — the classic last-item double-sell. So `buy` is **strong (red)**: it must be globally ordered, ruling out one of the two concurrent buys.
+
+The minimal strengthening is exactly $\{$`buy`$\}$ promoted to strong; `view` remains weak. MixT's information-flow types add the dual guard: the boolean "is it in stock?" computed from a *weak* `view` may not flow into the *strong* `buy`'s commit decision, since stale data must not influence a linearizable action. Result: fast reads, coordinated last-item sale, invariant preserved.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

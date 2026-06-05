@@ -38,12 +38,22 @@ Active areas: **learning-augmented (algorithms-with-predictions)** online physic
 - Co-optimization of sort order, partitioning, encoding, and zone maps as one problem.
 
 ## 9. Key References
-- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007.
-- **[SOTA]** Graefe, Kuno. *Self-Selecting, Self-Tuning, Incrementally Optimized Indexes (Adaptive Merging).* EDBT, 2010.
-- **[SOTA]** Pavlo, Angulo, Arulraj, et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Foundational]** Borodin, El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. (MTS / k-server framework.)
-- **[SOTA]** Stonebraker, Abadi, Batkin, et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005. (Projection-based physical design.)
-- **[Survey]** Idreos, et al. *Past and Future Steps for Adaptive Storage Data Systems (Self-Organizing/Cracking).* CIDR / surveys, 2019.
+- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p07.pdf)
+- **[SOTA]** Graefe, Kuno. *Self-Selecting, Self-Tuning, Incrementally Optimized Indexes (Adaptive Merging).* EDBT, 2010. — [PDF](https://openproceedings.org/2010/conf/edbt/GraefeK10.pdf)
+- **[SOTA]** Pavlo, Angulo, Arulraj, et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.uni-trier.de/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Foundational]** Borodin, El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. (MTS / k-server framework.) — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
+- **[SOTA]** Stonebraker, Abadi, Batkin, et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005. (Projection-based physical design.) — [DBLP](https://dblp.org/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[Survey]** Idreos, et al. *Past and Future Steps for Adaptive Storage Data Systems (Self-Organizing/Cracking).* CIDR / surveys, 2019. — [DOI](https://doi.org/10.1007/978-3-030-24124-7_6)
+
+## 10. Worked Example
+
+Consider database cracking on an unsorted column $A=[7,3,9,1,5,8,2]$ ($n=7$). Two range queries arrive.
+
+**Query 1:** `SELECT ... WHERE A < 5`. Cracking partitions $A$ in place around pivot $5$ (one scan, $O(n)$ work), yielding two pieces: $[3,1,2]\;|\;[7,9,5,8]$, with a cracker-index entry "values $<5$ live in positions $1$–$3$." The query answers from the left piece.
+
+**Query 2:** `WHERE A < 3`. Now only the *first piece* (3 elements) is re-partitioned around $3$, not the whole column: $[1,2]\;|\;[3]\;|\;[7,9,5,8]$. Cost $O(3)$, not $O(7)$.
+
+Each query both answers *and* refines the index. After $k$ selective queries on $A$, the column approaches sorted order, with cumulative reorganization work $O(n\log n)$ amortized — versus a one-shot sort paying $O(n\log n)$ up front whether or not $A$ is ever queried. The amortization is the headline guarantee: indexing cost is a byproduct of querying, paid only for columns users actually touch.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

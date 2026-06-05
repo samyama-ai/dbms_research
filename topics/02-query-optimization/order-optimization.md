@@ -47,11 +47,21 @@ For the **inference and propagation** subproblem the gap is essentially **closed
 - Robust interaction with learned cardinality/cost so that order choices remain beneficial under estimation error.
 
 ## 9. Key References
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Simmen, Shekita, Malkemus. *Fundamental Techniques for Order Optimization.* SIGMOD, 1996.
-- **[SOTA]** Neumann, Moerkotte. *A Combined Framework for Grouping and Order Optimization.* VLDB/ICDE, 2004.
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995.
-- **[Survey]** Moerkotte. *Building Query Compilers* (manuscript), chapters on order and grouping optimization.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Simmen, Shekita, Malkemus. *Fundamental Techniques for Order Optimization.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/233269.233320)
+- **[SOTA]** Neumann, Moerkotte. *A Combined Framework for Grouping and Order Optimization.* VLDB/ICDE, 2004. — [DBLP](https://dblp.org/rec/conf/vldb/NeumannM04.html)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[Survey]** Moerkotte. *Building Query Compilers* (manuscript), chapters on order and grouping optimization. *(unverified)*
+
+## 10. Worked Example
+
+Consider `SELECT ... FROM R JOIN S ON R.a = S.a WHERE R.a = R.b ORDER BY R.b`, with index `R(a)` giving a scan already sorted on $\langle a\rangle$.
+
+Interesting orders are collected from the query: the join key $\langle a\rangle$ (enables sort-merge join) and the `ORDER BY` key $\langle b\rangle$. The FD set includes the predicate-induced equivalence $a = b$ (so $a\to b$ and $b\to a$).
+
+Trace: the `R(a)` scan satisfies $\langle a\rangle$. The sort-merge join on $a$ needs $\langle a\rangle$ on both inputs — $R$ already qualifies, saving one sort. The join output is still ordered on $\langle a\rangle$. Now the `ORDER BY b`: naively this requires a sort. But the FSM, reducing modulo $a = b$, rewrites $\langle a\rangle \equiv \langle b\rangle$, so the stream already satisfies $\langle b\rangle$ — **the final sort is eliminated**.
+
+Without FD reasoning the optimizer inserts a needless sort of cost $O(n\log n)$; with it, the plan costs only the merge join. The satisfaction test itself is $O(1)$ via the precomputed automaton.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

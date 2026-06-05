@@ -44,12 +44,22 @@ For uniform access and i.i.d. failures, the **Paths/projective-plane** quorum sy
 - Unified theory linking FPaxos-style read/write asymmetry to skew-optimal load.
 
 ## 9. Key References
-- **[Foundational]** Naor, Wool. *The Load, Capacity, and Availability of Quorum Systems.* SIAM Journal on Computing, 1998.
-- **[Foundational]** Gifford. *Weighted Voting for Replicated Data.* SOSP, 1979.
-- **[Foundational]** Garcia-Molina, Barbara. *How to Assign Votes in a Distributed System.* JACM, 1985.
-- **[SOTA]** Malkhi, Reiter, Wool, Wright. *Probabilistic Quorum Systems.* Information and Computation, 2001.
-- **[SOTA]** Howard, Malkhi, Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[Foundational]** Maekawa. *A √N Algorithm for Mutual Exclusion in Decentralized Systems.* ACM TOCS, 1985.
+- **[Foundational]** Naor, Wool. *The Load, Capacity, and Availability of Quorum Systems.* SIAM Journal on Computing, 1998. — [DOI](https://doi.org/10.1137/S0097539795281232)
+- **[Foundational]** Gifford. *Weighted Voting for Replicated Data.* SOSP, 1979. — [DOI](https://doi.org/10.1145/800215.806583)
+- **[Foundational]** Garcia-Molina, Barbara. *How to Assign Votes in a Distributed System.* JACM, 1985. — [DOI](https://doi.org/10.1145/4221.4223)
+- **[SOTA]** Malkhi, Reiter, Wool, Wright. *Probabilistic Quorum Systems.* Information and Computation, 2001. — [DOI](https://doi.org/10.1006/inco.2001.3054)
+- **[SOTA]** Howard, Malkhi, Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.OPODIS.2016.25)
+- **[Foundational]** Maekawa. *A √N Algorithm for Mutual Exclusion in Decentralized Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214438.214445)
+
+## 10. Worked Example
+
+Take $n=9$ replicas in a $3\times3$ **Grid**. A quorum = one full row $\cup$ one full column, e.g.
+$$Q_1=\{1,2,3\}\cup\{1,4,7\},\qquad Q_2=\{4,5,6\}\cup\{2,5,8\}.$$
+Any two such quorums intersect (their column/row meet), so the intersection property holds. Quorum size $=2\sqrt n - 1 = 5$.
+
+**Uniform load:** with a balanced strategy each of the 9 elements is hit with probability $\approx 1/\sqrt n = 1/3$, matching the Naor–Wool bound $\mathcal{L}\ge 1/\sqrt n$.
+
+**Skew breaks it:** suppose key access is concentrated so node 5 (the grid center) sits in many chosen quorums. Because node 5 belongs to both row $\{4,5,6\}$ and column $\{2,5,8\}$, it appears in a $\Theta(\sqrt n)$ fraction of quorums; under skewed demand its load climbs toward $\ell(5)\approx 1/3 + \text{skew}$, well above $1/3$, while corner node 1 idles. No relabeling of the *symmetric* grid fixes this — you must re-weight quorums per the demand distribution, which is exactly the NP-hard weighted-load optimization the problem targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

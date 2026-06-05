@@ -40,11 +40,20 @@ Active directions: **updatable** learned multidim indexes with bounded reorganiz
 - Unification with ANN/vector indexing and with cost-based query optimization (instance-optimized DBs).
 
 ## 9. Key References
-- **[Foundational]** Tim Kraska, Alex Beutel, Ed H. Chi, Jeffrey Dean, Neoklis Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** Paolo Ferragina, Giorgio Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** Vikram Nathan, Jialin Ding, Mohammad Alizadeh, Tim Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020.
-- **[SOTA]** Jialin Ding, Vikram Nathan, Mohammad Alizadeh, Tim Kraska. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020.
-- **[Foundational]** Bernard Chazelle. *Lower Bounds for Orthogonal Range Searching.* JACM, 1990.
+- **[Foundational]** Tim Kraska, Alex Beutel, Ed H. Chi, Jeffrey Dean, Neoklis Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Paolo Ferragina, Giorgio Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** Vikram Nathan, Jialin Ding, Mohammad Alizadeh, Tim Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380579)
+- **[SOTA]** Jialin Ding, Vikram Nathan, Mohammad Alizadeh, Tim Kraska. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2006.13282)
+- **[Foundational]** Bernard Chazelle. *Lower Bounds for Orthogonal Range Searching.* JACM, 1990. — [DOI](https://doi.org/10.1145/77600.77614)
+
+## 10. Worked Example
+
+Consider 6 points in 2-D, attributes $(x,y)$:
+$(1,1),(2,2),(3,1),(8,9),(9,8),(9,9)$, and the range query $x\in[7,10],\,y\in[7,10]$ (expected answer: the last three points).
+
+A **Flood**-style grid orders dimensions by query frequency and splits each into cells. Split $x$ at $\{5\}$ and $y$ at $\{5\}$, giving four cells. The points cluster: cell $(x{>}5,y{>}5)$ holds exactly $(8,9),(9,8),(9,9)$. The query's box overlaps only that one cell, so we scan 3 records and return all 3 — zero false hits. Cost $=$ cells-touched $\times$ records-per-cell $= 1\times3$.
+
+Now shift the workload so queries concentrate on $x\in[8,9]$. The uniform split at $5$ is wasteful — every hot query still pays the full bottom-right cell. A workload-aware refit places a finer $x$-cut at $8.5$, shrinking the scanned cell. But if the data later drifts (new points scatter across the grid), worst-case cost rises toward a full scan of all $6$ — the missing worst-case guarantee. Classical R-trees instead bound this at $O(\log n + k)$ regardless of distribution.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

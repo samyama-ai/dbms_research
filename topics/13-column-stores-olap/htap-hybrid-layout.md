@@ -54,12 +54,24 @@ The tension is *information-/architecture-theoretic*, not NP-hardness. With a **
 
 ## 9. Key References
 
-- **[Foundational]** A. Ailamaki, D. DeWitt, M. Hill, M. Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001.
-- **[SOTA]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011.
-- **[SOTA]** V. Sikka et al. *Efficient Transaction Processing in SAP HANA Database.* SIGMOD, 2012.
-- **[SOTA]** D. Huang et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020.
-- **[Survey]** F. Özcan, Y. Tian, P. Tözün. *Hybrid Transactional/Analytical Processing: A Survey.* SIGMOD (tutorial), 2017.
-- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
+- **[Foundational]** A. Ailamaki, D. DeWitt, M. Hill, M. Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001. — [VLDB PDF](https://www.vldb.org/conf/2001/P169.pdf)
+- **[SOTA]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011. — [DBLP](https://dblp.org/rec/conf/icde/KemperN11.html)
+- **[SOTA]** V. Sikka et al. *Efficient Transaction Processing in SAP HANA Database.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213946)
+- **[SOTA]** D. Huang et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415535)
+- **[Survey]** F. Özcan, Y. Tian, P. Tözün. *Hybrid Transactional/Analytical Processing: A Survey.* SIGMOD (tutorial), 2017. — [DOI](https://doi.org/10.1145/3035918.3054784)
+- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DiSC lab](https://disc.bu.edu/papers/monkey-optimal-navigable-key-value-store)
+
+## 10. Worked Example
+
+Take a table `orders` with $c=10$ columns, $n=10^6$ rows, cache line $= 64$ B, bandwidth $W$.
+
+**OLAP query:** `SELECT SUM(amount) WHERE region='EU'` touches $k=2$ columns. Column-major scans $2 \times 10^6$ values; row-major must stream all $10$ columns: a $c/k = 5\times$ bandwidth penalty.
+
+**OLTP op:** `SELECT * WHERE order_id=42` reads one full tuple. Row-major: $1$ cache line. Column-major: $10$ scattered fetches, one per column minipage — a $10\times$ access penalty.
+
+No single layout wins both: the Pareto impossibility of section 5.
+
+**Delta/main freshness:** writes land in a row delta at rate $r = 5{,}000$/s; merge into compressed columnar main every $\tau = 2$ s, so the delta holds $\le 10{,}000$ rows. An OLAP scan reads $10^6$ main rows plus $\le 10^4$ delta rows ($1\%$ read amplification). Halving $\tau$ to $1$ s cuts the delta to $5{,}000$ rows but doubles merge work — the read/write/freshness three-way trade-off Monkey-style analysis bounds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

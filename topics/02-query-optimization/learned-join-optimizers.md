@@ -52,11 +52,19 @@ Genuinely open and **empirical**: learned optimizers *sometimes* beat classical 
 - Unified evaluation isolating *search* gains from *cost-model* gains.
 
 ## 9. Key References
-- **[Foundational]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees (DPccp).* VLDB, 2006.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Lehmann, Behr, et al. / Han, Wu, et al. *Is Learned Query Optimization Ready / A Comprehensive Benchmark.* VLDB, 2023–2024.
+- **[Foundational]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees (DPccp).* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** Lehmann, Behr, et al. / Han, Wu, et al. *Is Learned Query Optimization Ready / A Comprehensive Benchmark.* VLDB, 2023–2024. — [PDF](https://www.vldb.org/pvldb/vol17/p1565-lehmann.pdf)
+
+## 10. Worked Example
+
+**Search space vs. DP for $n=4$.** Number of bushy join trees (with cross products) is $\frac{(2(n-1))!}{(n-1)!}=\frac{6!}{3!}=\frac{720}{6}=120$; left-deep trees number $n!/2 = 12$. Naive enumeration scales super-exponentially.
+
+**RL framing of the DP recursion.** The classical DP fills a table $V$ over subsets $S\subseteq\{R_1,R_2,R_3,R_4\}$: $V(S)=\min_{S'\subset S}\,[\,V(S')+V(S\setminus S')+\text{cost}(S'\!\bowtie\!S\setminus S')\,]$, exactly Bellman optimality over the MDP whose state is the joined subset. For $n=4$ there are $2^4-1=15$ non-empty subsets; DP is exact but its table is exponential in $n$.
+
+**Approximation-error compounding.** A learned $\hat V$ with $\|V^\star-\hat V\|_\infty=\epsilon$ and discount $\gamma=0.9$ inflates the chosen-plan suboptimality by up to $\frac{2\gamma\epsilon}{(1-\gamma)^2}=\frac{1.8\epsilon}{0.01}=180\epsilon$. So a tiny per-step value error $\epsilon=0.5$ admits a worst-case plan-cost gap of $90$ — quantifying why learned policies, lacking DP's cost-model-relative optimality, can regress on tail queries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

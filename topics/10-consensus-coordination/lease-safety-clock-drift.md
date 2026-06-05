@@ -32,11 +32,21 @@ Threads: **clock-uncertainty-aware** consensus shrinking $\varepsilon$ with bett
 - Machine-checked end-to-end proofs covering clock-assumption violation.
 
 ## 9. Key References
-- **[Foundational]** Gray, C., Cheriton, D. *Leases: An Efficient Fault-Tolerant Mechanism for Distributed File Cache Consistency.* SOSP, 1989.
-- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Kulkarni, S., et al. *Logical Physical Clocks (HLC).* OPODIS, 2014.
-- **[SOTA]** Demirbas, M., et al. *Hybrid Logical Clocks and Clock Bound Synchronization in Practice.* (CockroachDB / HLC deployment analyses), 2018–2020.
-- **[Survey]** Cristian, F. *Probabilistic Clock Synchronization.* Distributed Computing, 1989.
+- **[Foundational]** Gray, C., Cheriton, D. *Leases: An Efficient Fault-Tolerant Mechanism for Distributed File Cache Consistency.* SOSP, 1989. — [ACM](https://dl.acm.org/doi/10.1145/74850.74870)
+- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Kulkarni, S., et al. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[SOTA]** Demirbas, M., et al. *Hybrid Logical Clocks and Clock Bound Synchronization in Practice.* (CockroachDB / HLC deployment analyses), 2018–2020. — [DBLP search](https://dblp.org/search?q=Hybrid%20Logical%20Clocks%20clock%20bound%20synchronization) *(unverified)*
+- **[Survey]** Cristian, F. *Probabilistic Clock Synchronization.* Distributed Computing, 1989. — [DOI](https://doi.org/10.1007/BF01784024)
+
+## 10. Worked Example
+
+Let the assumed drift bound be $\rho = 10^{-4}$ (100 ppm), lease length $L = 10\text{ s}$, and max message/processing delay $\delta_{\max} = 50\text{ ms}$. The required guard margin is
+$$\epsilon \ge 2\rho L + \delta_{\max} = 2(10^{-4})(10) + 0.05 = 0.002 + 0.05 = 0.052\text{ s}.$$
+So the holder must stop serving $52\text{ ms}$ before its clock reads expiry — within bounds, the unsafe window is $W=0$.
+
+Now suppose a VM pause makes the holder's clock run fast at $\rho_{\text{adv}} = 6\times10^{-3}$ (0.6%, far above the assumed 100 ppm). The unsafe window opens:
+$$W \approx (\rho_{\text{adv}} - \rho)L - \epsilon = (6\times10^{-3} - 10^{-4})(10) - 0.052 = 0.059 - 0.052 = 0.007\text{ s}.$$
+A $7\text{ ms}$ two-leader window — small here, but note $W$ grows linearly in $L$: a $100\text{ s}$ lease under the same drift gives $W\approx 0.54\text{ s}$, illustrating why production leases stay short.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

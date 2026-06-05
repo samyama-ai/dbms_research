@@ -55,11 +55,28 @@ The gap is **wide and open**. Empirically, learned skipping wins big on real, sk
 
 ## 9. Key References
 
-- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[Foundational]** M. Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS, 2018.
-- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-dimensional Indexes (Flood).* SIGMOD, 2020.
-- **[SOTA]** J. Ding et al. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index.* VLDB, 2020.
+- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[Foundational]** M. Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS, 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/0f49c89d1e7298bb9930789c8ed59d48-Abstract.html)
+- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-dimensional Indexes (Flood).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380579)
+- **[SOTA]** J. Ding et al. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3425879.3425880)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+
+## 10. Worked Example
+
+A column is stored in $m=4$ blocks of $250$ rows each, holding sorted-ish `timestamp` values. A query asks `WHERE ts BETWEEN 1700 AND 1750`.
+
+**Classic zone map** stores per-block $[\min,\max]$:
+
+| Block | min | max | overlaps [1700,1750]? |
+|------|------|------|------|
+| $B_1$ | 1000 | 1490 | no — skip |
+| $B_2$ | 1480 | 1720 | yes — scan |
+| $B_3$ | 1710 | 1995 | yes — scan |
+| $B_4$ | 1990 | 2400 | no — skip |
+
+Soundness holds: a block is skipped only if $[\min,\max]\cap[1700,1750]=\emptyset$, so no qualifying row is missed. Here $2$ of $4$ blocks scan; if the matching rows actually all sit in $B_2$, then $B_3$ is a **false positive** — scanned for nothing. Its $\mathrm{FPR}$ contribution is $1$.
+
+A **learned** summary fits the block CDF and predicts where $1750$ lands within $B_3$, possibly pruning it — but only the backup zone map keeps soundness. The information floor still bites: a sound filter on $k$ keys with target FPR $\epsilon$ needs $\ge k\log_2(1/\epsilon)$ bits, so learning helps only when the data has structure (a smooth CDF), not on incompressible keys.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

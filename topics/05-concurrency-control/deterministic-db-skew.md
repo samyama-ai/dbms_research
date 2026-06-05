@@ -45,12 +45,23 @@ Directions: exploiting **operation commutativity** (counters, sets) so hot-key u
 
 ## 9. Key References
 
-- **[Foundational]** Thomson, A.; Diaconu, T.; Ren, K.; Shah, P.; Abadi, D.; et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Faleiro, J.; Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* PVLDB, 2015.
-- **[SOTA]** Lu, Y.; Yu, X.; Suo, L.; Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* PVLDB, 2020.
-- **[SOTA]** Qadah, T.; Sadoghi, M. *QueCC: A Queue-Oriented, Control-Free Concurrency Architecture.* Middleware, 2018.
-- **[SOTA]** Ren, K.; Li, D.; Abadi, D. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* PVLDB, 2019.
-- **[Survey]** Abadi, D.; Faleiro, J. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018.
+- **[Foundational]** Thomson, A.; Diaconu, T.; Ren, K.; Shah, P.; Abadi, D.; et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Faleiro, J.; Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* PVLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)
+- **[SOTA]** Lu, Y.; Yu, X.; Cao, L.; Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** Qadah, T.; Sadoghi, M. *QueCC: A Queue-Oriented, Control-Free Concurrency Architecture.* Middleware, 2018. — [DOI](https://doi.org/10.1145/3274808.3274810)
+- **[SOTA]** Ren, K.; Li, D.; Abadi, D. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342647)
+- **[Survey]** Abadi, D.; Faleiro, J. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+
+## 10. Worked Example
+
+A batch of $n = 8$ transactions runs on a 4-core deterministic engine. Each transaction writes one hot key plus one private key. Suppose 6 of the 8 write the hottest key $x$ and the other 2 write a cold key $y$ each:
+
+- Writers of $x$: $T_1, T_2, T_3, T_4, T_5, T_6$ — must run in $\prec$-order, forming a chain of length 6.
+- Writers of $y$: $T_7, T_8$ — independent, run anywhere.
+
+Per-key critical path bound: $\text{makespan} \ge \max_x(\#\text{writers}) = 6$. With per-transaction hot-section time $\tau = 1$ ms, makespan $\ge 6$ ms regardless of cores — adding cores past 1 cannot help the $x$-chain. The 4 cores sit mostly idle: effective parallelism is $8/6 \approx 1.33$, not 4.
+
+**Amdahl analogy.** Serial fraction $f = 6/8 = 0.75$; speedup $\le 1/(f + (1-f)/4) = 1/(0.75 + 0.0625) = 1.23\times$. Under Zipfian $\theta \to 1$ the hottest-key count grows like $n/H_{N,\theta}$, so the chain — and the bottleneck — scales linearly with $n$. Commutative updates (if writes to $x$ were $+1$ counters) could collapse the chain to $O(\log n)$ or $O(1)$, breaking the barrier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

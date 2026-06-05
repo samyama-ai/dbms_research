@@ -56,12 +56,24 @@ The problem is **partially solved**: for *restricted, decidable* constraint clas
 
 ## 9. Key References
 
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977.
-- **[Foundational]** J. J. King. *QUIST: A System for Semantic Query Optimization in Relational Databases.* VLDB, 1981.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2003–2005 (chase termination via weak acyclicity).
-- **[SOTA]** A. Levy, I. Mumick, Y. Sagiv. *Query Optimization by Predicate Move-Around.* VLDB, 1994.
-- **[SOTA]** U. S. Chakravarthy, J. Grant, J. Minker. *Logic-Based Approach to Semantic Query Optimization.* ACM TODS, 1990.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, dependencies, containment).
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977. — [ACM](https://dl.acm.org/doi/10.1145/800105.803397)
+- **[Foundational]** J. J. King. *QUIST: A System for Semantic Query Optimization in Relational Databases.* VLDB, 1981. — [DBLP](https://dblp.org/db/conf/vldb/vldb81.html)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2003–2005 (chase termination via weak acyclicity). — [DOI](https://doi.org/10.1007/3-540-36285-1_14)
+- **[SOTA]** A. Levy, I. Mumick, Y. Sagiv. *Query Optimization by Predicate Move-Around.* VLDB, 1994. — [PDF](https://www.vldb.org/conf/1994/P096.PDF)
+- **[SOTA]** U. S. Chakravarthy, J. Grant, J. Minker. *Logic-Based Approach to Semantic Query Optimization.* ACM TODS, 1990. — [ACM](https://dl.acm.org/doi/10.1145/78922.78924)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, dependencies, containment). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Schema: `Orders(oid PK, cid FK→Customers.cid NOT NULL)`, `Customers(cid PK, region)`. The FK is enforced and `cid` is `NOT NULL`. Query:
+
+```sql
+SELECT o.oid FROM Orders o JOIN Customers c ON o.cid = c.cid;
+```
+
+Each `Orders` row has exactly one matching `Customers` row (FK to a unique, non-null key), so the join neither drops nor duplicates any `Orders` tuple — it is a **lossless semijoin**. SQO rewrites it to just `SELECT oid FROM Orders;`, eliminating the join.
+
+Soundness proof via the chase: freeze the body, then chase the IND $\text{Orders}.cid \subseteq \text{Customers}.cid$ plus the key EGD on `Customers.cid`. The chase forces the existential `c` to be uniquely determined by `o.cid`, so the frozen body maps homomorphically onto `Orders` alone — confirming $Q \equiv_\Sigma Q'$. With 3 orders pointing at 2 customers, both queries return the same 3 `oid`s, but the rewrite reads one table instead of two. If the FK were *declared but unenforced* (a lakehouse hazard, §7), an orphan `cid` would make the rewrite unsound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

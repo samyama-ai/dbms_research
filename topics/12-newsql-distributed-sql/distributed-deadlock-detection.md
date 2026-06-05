@@ -44,12 +44,18 @@ Directions: hybrid prevention+detection (timeout as a fast path, edge-chasing as
 
 ## 9. Key References
 
-- **[Foundational]** Chandy, Misra, Haas. *Distributed Deadlock Detection.* ACM TODS, 1983.
-- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States.* ACM TOCS, 1985.
-- **[Foundational]** Obermarck. *Distributed Deadlock Detection Algorithm.* ACM TODS, 1982.
-- **[SOTA]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Yu, Xia, et al. *Sundial: Harmonizing Concurrency Control and Caching.* VLDB, 2018.
-- **[Survey]** Knapp. *Deadlock Detection in Distributed Databases.* ACM Computing Surveys, 1987.
+- **[Foundational]** Chandy, Misra, Haas. *Distributed Deadlock Detection.* ACM TODS, 1983. — [DOI](https://doi.org/10.1145/357360.357365)
+- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** Obermarck. *Distributed Deadlock Detection Algorithm.* ACM TODS, 1982. — [DOI](https://doi.org/10.1145/319702.319717)
+- **[SOTA]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Yu, Xia, et al. *Sundial: Harmonizing Concurrency Control and Caching.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3231751.3231763)
+- **[Survey]** Knapp. *Deadlock Detection in Distributed Databases.* ACM Computing Surveys, 1987. — [DOI](https://doi.org/10.1145/45075.46163)
+
+## 10. Worked Example
+
+Three transactions span three shards. Wait-for edges: $T_1 \xrightarrow{rw} T_2$ (recorded on shard $A$), $T_2 \xrightarrow{} T_3$ (shard $B$), $T_3 \xrightarrow{} T_1$ (shard $C$). No single shard sees the cycle. Run Chandy–Misra–Haas edge-chasing: $T_1$'s coordinator, blocked, sends probe $(1,1,2)$ along its out-edge. Shard $B$ receives it for $T_2$, which is also blocked, and forwards $(1,2,3)$. Shard $C$ forwards $(1,3,1)$. The probe arrives back at the *initiator* $T_1$ — initiator field $= $ recipient $=1$ — so a deadlock is declared. Messages used $=3 = \ell$ (cycle length), independent of total shard count.
+
+Phantom check: suppose meanwhile $T_3$ released its lock and the edge $T_3 \to T_1$ vanished before the probe traversed shard $C$. The probe would die at $C$ (no out-edge), correctly reporting *no* deadlock. The danger is the reverse: if $C$ still held a *stale* edge from a snapshot taken before release, the union of local views is not a consistent cut and a phantom cycle could be reported — illustrating why stable-edge confirmation is needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -48,11 +48,22 @@ The gap is between (a) *sufficient* static safety tests (robustness, $\mathcal{I
 - Online algorithms with provable regret against the best static safe assignment under shifting workloads.
 
 ## 9. Key References
-- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[Foundational]** A. Fekete, D. Liarokapis, E. O'Neil, P. O'Neil, D. Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[SOTA]** P. Bailis, A. Fekete, M. J. Franklin, A. Ghodsi, J. M. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015.
-- **[SOTA]** D. R. K. Ports, K. Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
-- **[Survey]** A. Cerone, A. Gotsman. *Analysing Snapshot Isolation.* JACM, 2018.
+- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DBLP](https://dblp.org/rec/conf/icde/AdyaLO00.html)
+- **[Foundational]** A. Fekete, D. Liarokapis, E. O'Neil, P. O'Neil, D. Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** P. Bailis, A. Fekete, M. J. Franklin, A. Ghodsi, J. M. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[SOTA]** D. R. K. Ports, K. Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2367502.2367523)
+- **[Survey]** A. Cerone, A. Gotsman. *Analysing Snapshot Isolation.* JACM, 2018. — [DOI](https://doi.org/10.1145/3152396)
+
+## 10. Worked Example
+
+The classic **write-skew** anomaly shows why "weakest safe level" is invariant-dependent. Two doctors are on call; invariant $\Phi$: at least one stays on call, i.e. `oncall(A) OR oncall(B)`. Initial state: both on call.
+
+$T_1$: `if (oncall(B)) set oncall(A)=false;`
+$T_2$: `if (oncall(A)) set oncall(B)=false;`
+
+Under **Snapshot Isolation**, both read the same snapshot (both colleagues on call), each independently decides it is safe to go off call, and both commit — final state violates $\Phi$ (nobody on call). The DSG has two $\xrightarrow{rw}$ anti-dependency edges $T_1\xrightarrow{rw}T_2\xrightarrow{rw}T_1$ forming the *dangerous structure* of Fekete et al.
+
+So for $\Phi$ = `oncall(A) OR oncall(B)`, SI is **not** safe — the selector must promote at least one of $T_1,T_2$ to Serializable. But if $\Phi$ were merely `oncall(A) OR true` (always satisfied), SI would be safe and the weakest level would suffice. Same transactions, different invariant, different answer — exactly the frontier section 6 describes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

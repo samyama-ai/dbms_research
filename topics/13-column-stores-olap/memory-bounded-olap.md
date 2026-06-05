@@ -44,12 +44,20 @@ Static, known-budget spilling is **well understood** (matching external-memory b
 - Global memory arbitration across concurrent OLAP queries with SLO guarantees.
 
 ## 9. Key References
-- **[Foundational]** Shapiro. *Join Processing in Database Systems with Large Main Memories.* ACM TODS, 1986.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs.* ICDE, 2013.
-- **[SOTA]** Manegold, Boncz, Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE, 2002.
-- **[SOTA]** Raasveldt, Mühleisen et al. *DuckDB: An Embeddable Analytical Database* (and out-of-core operator work). SIGMOD/CIDR, 2019–.
-- **[Survey]** Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993.
+- **[Foundational]** Shapiro. *Join Processing in Database Systems with Large Main Memories.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/6314.6315)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs.* ICDE, 2013. — [DBLP](https://dblp.org/rec/conf/icde/BalkesenTAO13.html)
+- **[SOTA]** Manegold, Boncz, Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE, 2002. — [DOI](https://doi.org/10.1109/TKDE.2002.1019210)
+- **[SOTA]** Raasveldt, Mühleisen et al. *DuckDB: An Embeddable Analytical Database* (and out-of-core operator work). SIGMOD/CIDR, 2019–. — [DOI](https://doi.org/10.1145/3299869.3320212)
+- **[Survey]** Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993. — [DOI](https://doi.org/10.1145/152610.152611)
+
+## 10. Worked Example
+
+Hash-join build side $R$ with $|R| = 8$ GB, memory budget $M = 2$ GB, block $B = 256$ KB.
+
+**Grace partitioning:** split $R$ into $p = \lceil |R|/M \rceil = 4$ partitions of $\approx 2$ GB each — but each still exceeds $M$, so one repartition pass is not enough. The external-memory cost is $\Theta(\tfrac{N}{B}\log_{M/B}\tfrac{N}{B})$. With $\tfrac{M}{B} = \tfrac{2\,\text{GB}}{256\,\text{KB}} = 8192$, the $\log_{M/B}$ factor is small: $\log_{8192}(8\,\text{GB}/256\,\text{KB}) = \log_{8192}(32768) \approx 1.15$, so essentially **two passes** — we are in the two-pass regime since $M = 2\,\text{GB} \ge \sqrt{N B} = \sqrt{8\,\text{GB}\cdot 256\,\text{KB}} \approx 45$ MB.
+
+**Skew floor:** suppose one join key appears in $f = 1.5$ GB of $R$. Hashing alone cannot split that key, so its partition is $\ge 1.5$ GB regardless of $p$ — the information-theoretic skew lower bound of section 5. The fix (section 7) is runtime heavy-hitter detection plus targeted broadcast/replication of just that key, not uniform repartitioning.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

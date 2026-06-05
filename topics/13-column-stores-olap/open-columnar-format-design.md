@@ -39,11 +39,28 @@ Active: BtrBlocks/FastLanes encoding cascades (Boncz/CWI, Neumann/TUM lineage); 
 - Co-design with table-format skipping indexes (Iceberg/Delta) to avoid redundant statistics.
 
 ## 9. Key References
-- **[Foundational]** Melnik, Gubarev, Long, Romer, et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB 2010.
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD 2023.
-- **[SOTA]** Afroozeh, Boncz. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB 2023.
-- **[SOTA]** Zeng, Hao, Lee, Madden, et al. *An Empirical Evaluation of Columnar Storage Formats.* VLDB 2023.
-- **[Foundational]** Abadi, Boncz, Harizopoulos, et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Melnik, Gubarev, Long, Romer, et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB 2010. — [DOI](https://doi.org/10.14778/1920841.1920886)
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** Afroozeh, Boncz. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+- **[SOTA]** Zeng, Hao, Lee, Madden, et al. *An Empirical Evaluation of Columnar Storage Formats.* VLDB 2023. — [arXiv](https://arxiv.org/abs/2304.05028)
+- **[Foundational]** Abadi, Boncz, Harizopoulos, et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+A file on S3 stores column `temp` in $G=4$ row-groups of $1000$ rows each, with min/max zone maps:
+
+| Row-group | min | max |
+|-----------|-----|-----|
+| RG0 | 10 | 25 |
+| RG1 | 22 | 40 |
+| RG2 | 5 | 60 |
+| RG3 | 70 | 90 |
+
+Query: `WHERE temp BETWEEN 30 AND 35`. Skipping logic keeps only row-groups whose $[\min,\max]$ intersects $[30,35]$: RG1 ($[22,40]$ ✓) and RG2 ($[5,60]$ ✓); RG0 and RG3 are pruned. So $2/4$ row-groups are read.
+
+Cost on object storage: each surviving group is one coalesced range-GET. With per-GET latency $\ell=20$ ms and bytes negligible, naive read $=4\ell=80$ ms; skipped read $=2\ell=40$ ms.
+
+Notice RG2's wide spread $[5,60]$ forces a read even though few of its rows likely match — this is the **overlap penalty** of poor clustering. Sorting `temp` globally would shrink per-group spread and prune more, but no single sort order helps every column at once (the min-skew multi-dimensional impossibility from §5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

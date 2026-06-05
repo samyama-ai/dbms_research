@@ -62,12 +62,22 @@ Young field; empirically driven.
 
 ## 9. Key References
 
-- **[Foundational]** Hardt, Price, Srebro. *Equality of Opportunity in Supervised Learning.* NeurIPS, 2016.
-- **[Foundational]** Kleinberg, Mullainathan, Raghavan. *Inherent Trade-Offs in the Fair Determination of Risk Scores.* ITCS, 2017.
-- **[Foundational]** Rubin. *Inference and Missing Data.* Biometrika, 1976.
-- **[SOTA]** Guha, Khan, Stoyanovich, Schelter. *Automated Data Cleaning Can Hurt Fairness in Machine Learning Pipelines.* (data-cleaning-and-fairness line), 2023–2024.
-- **[SOTA]** Salimi, Rodriguez, Howe, Suciu. *Interventional Fairness: Causal Database Repair for Algorithmic Fairness.* SIGMOD, 2019.
-- **[Survey]** Mehrabi, Morstatter, Saxena, Lerman, Galstyan. *A Survey on Bias and Fairness in Machine Learning.* ACM Computing Surveys, 2021.
+- **[Foundational]** Hardt, Price, Srebro. *Equality of Opportunity in Supervised Learning.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1610.02413)
+- **[Foundational]** Kleinberg, Mullainathan, Raghavan. *Inherent Trade-Offs in the Fair Determination of Risk Scores.* ITCS, 2017. — [arXiv](https://arxiv.org/abs/1609.05807)
+- **[Foundational]** Rubin. *Inference and Missing Data.* Biometrika, 1976. — [DOI](https://doi.org/10.1093/biomet/63.3.581)
+- **[SOTA]** Guha, Khan, Stoyanovich, Schelter. *Automated Data Cleaning Can Hurt Fairness in Machine Learning Pipelines.* (data-cleaning-and-fairness line), 2023–2024. — [DOI](https://doi.org/10.1109/TKDE.2023.3297006)
+- **[SOTA]** Salimi, Rodriguez, Howe, Suciu. *Interventional Fairness: Causal Database Repair for Algorithmic Fairness.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319901)
+- **[Survey]** Mehrabi, Morstatter, Saxena, Lerman, Galstyan. *A Survey on Bias and Fairness in Machine Learning.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3457607)
+
+## 10. Worked Example
+
+Consider a loan dataset with protected attribute $A\in\{a,b\}$ and a binary income feature used by a downstream classifier $\hat Y$. Group $a$ has 6 records, group $b$ has 4, but $b$ has 2 missing-income cells (missingness rate $0.50$ vs. $0$ for $a$).
+
+**Mean imputation.** Observed incomes in $b$ are $\{30k, 30k\}$, so both missing cells get $30k$. This collapses $b$'s income variance to near-zero and pins every imputed record below the classifier's $40k$ approval threshold, giving $\Pr(\hat Y{=}1\mid A{=}b)=0$.
+
+**Group-aware draws.** Instead, sample each missing cell from $b$'s posterior, which (with a wider prior) yields $\{30k, 55k\}$. Now one imputed record clears the threshold: $\Pr(\hat Y{=}1\mid A{=}b)=1/4=0.25$.
+
+If group $a$ has $\Pr(\hat Y{=}1\mid A{=}a)=0.33$, the demographic-parity gap moves from $|0.33-0|=0.33$ (mean imputation) to $|0.33-0.25|=0.08$. Same quality target, very different fairness — illustrating that the *cleaning choice*, not the model, drove the disparity.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

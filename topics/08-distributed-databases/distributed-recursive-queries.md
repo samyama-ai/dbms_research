@@ -49,11 +49,21 @@ For *linear* recursion the round bound is essentially tight ($\Theta(\log n)$ co
 
 ## 9. Key References
 - **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Datalog, fixpoint semantics, complexity.)
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013 / JACM 2017. (MPC model.)
-- **[SOTA]** A. Shkapsky, M. Yang, M. Interlandi, H. Mousavi, T. Condie, C. Zaniolo. *Big Data Analytics with Datalog Queries on Spark.* SIGMOD, 2016. (BigDatalog.)
-- **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR, 2013.
-- **[SOTA]** Z. Fan, J. Zhu, Z. Zhang, A. Albarghouthi, P. Koutris, J. Patel. *Scaling-Up In-Memory Datalog Processing: Observations and Techniques.* VLDB, 2019. (RecStep.)
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018.
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013 / JACM 2017. (MPC model.) — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** A. Shkapsky, M. Yang, M. Interlandi, H. Mousavi, T. Condie, C. Zaniolo. *Big Data Analytics with Datalog Queries on Spark.* SIGMOD, 2016. (BigDatalog.) — [DOI](https://doi.org/10.1145/2882903.2915229)
+- **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
+- **[SOTA]** Z. Fan, J. Zhu, Z. Zhang, A. Albarghouthi, P. Koutris, J. Patel. *Scaling-Up In-Memory Datalog Processing: Observations and Techniques.* VLDB, 2019. (RecStep.) — [arXiv](https://arxiv.org/abs/1812.03975)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+
+## 10. Worked Example
+
+Compute transitive closure of a directed path $1\to2\to3\to4\to5\to6\to7\to8$ ($n=8$, diameter $D=7$) over $p=2$ nodes.
+
+**Semi-naïve frontier:** start with $\Delta_0 = E$ (7 edges). Each round joins the frontier with $E$ to extend reachability by one hop: $\Delta_1$ adds 2-hop pairs ($1\to3,\dots,6\to8$), $\Delta_2$ adds 3-hop, and so on. The longest path needs $D=7$ rounds — one per hop — before the fixpoint stabilizes. Total derived facts $=\binom{8}{2}=28$.
+
+**Recursive doubling:** compute $R, R^2, R^4, R^8$ via $R^{2i}=R^i\bowtie R^i$. After $\lceil\log_2 7\rceil=3$ squarings every reachable pair appears: rounds drop from $7$ to $3$. The price is larger intermediate joins — $R^2$ already materializes all 2-hop pairs at once, inflating per-round communication.
+
+This is the round–communication tradeoff: frontier expansion ships $\tilde O(m/p)$ per round across $D$ rounds; doubling collapses to $O(\log D)$ rounds but each join touches up to $\Theta(|\mathrm{TC}|)=\Theta(28)$ tuples.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

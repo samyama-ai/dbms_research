@@ -50,11 +50,27 @@ Morsel-driven and vectorized window operators (Neumann's Umbra group, TU Munich)
 
 ## 9. Key References
 
-- **[Foundational]** M. T. Goodrich. *Communication-Efficient Parallel Sorting.* SIAM J. Computing, 1999 (BSP/MPC sorting bounds).
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979 (interesting orders).
-- **[SOTA]** V. Leis et al. *Morsel-Driven Parallelism.* SIGMOD 2014 (parallel window/operator execution).
-- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM 2017 (grouping/sorting in MPC).
-- **[Survey]** G. Moerkotte. *Building Query Compilers* (draft monograph), chapters on window functions and interesting orders.
+- **[Foundational]** M. T. Goodrich. *Communication-Efficient Parallel Sorting.* SIAM J. Computing, 1999 (BSP/MPC sorting bounds). — [ACM](https://dl.acm.org/doi/10.5555/333115.333120)
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979 (interesting orders). — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** V. Leis et al. *Morsel-Driven Parallelism.* SIGMOD 2014 (parallel window/operator execution). — [DBLP](https://dblp.org/rec/conf/sigmod/LeisBK014.html)
+- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM 2017 (grouping/sorting in MPC). — [DOI](https://doi.org/10.1145/3125644)
+- **[Survey]** G. Moerkotte. *Building Query Compilers* (draft monograph), chapters on window functions and interesting orders. — [PDF](https://pi3.informatik.uni-mannheim.de/~moer/querycompiler.pdf)
+
+## 10. Worked Example
+
+Query: `SELECT id, dept, SUM(sal) OVER (PARTITION BY dept ORDER BY id) FROM emp` on $p=2$ workers.
+
+Rows (id, dept, sal): (1,A,10), (2,B,20), (3,A,30), (4,A,40), (5,B,50).
+
+**Step 1 — shuffle by `dept`:** worker $w_A$ gets dept A = {(1,10),(3,30),(4,40)}; $w_B$ gets dept B = {(2,20),(5,50)}.
+
+**Step 2 — local sort by `id`** (already sorted here).
+
+**Step 3 — running SUM via prefix scan** (decomposable, $\oplus = +$):
+- A: 10, $10{+}30{=}40$, $40{+}40{=}80$ → rows 1,3,4 get 10, 40, 80.
+- B: 20, $20{+}50{=}70$ → rows 2,5 get 20, 70.
+
+One shuffle suffices. Skew note: dept A holds $N_A=3$ of $N=5$ rows; load is $\max(3,2)=3$, not $N/p=2.5$. Had we instead asked for `MEDIAN(sal) OVER (... RANGE ...)` (holistic), worker $w_A$ could not summarize its group with $O(1)$ state — illustrating why the heavy group funnels $\Omega(N_A)$ work.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

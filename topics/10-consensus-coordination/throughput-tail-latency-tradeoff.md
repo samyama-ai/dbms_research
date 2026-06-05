@@ -32,12 +32,26 @@ Active: **self-tuning** batch size and timeout via online learning/control theor
 - Co-design with storage (fsync batching) and NIC offload to flatten the tail.
 
 ## 9. Key References
-- **[Foundational]** Lamport, L. *The Part-Time Parliament (Paxos).* ACM TOCS, 1998.
-- **[Foundational]** Kingman, J.F.C. *The Single Server Queue in Heavy Traffic.* Proc. Cambridge Phil. Soc., 1961.
-- **[SOTA]** Moraru, I., Andersen, D., Kaminsky, M. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** Whittaker, M., et al. *Scaling Replicated State Machines with Compartmentalization.* VLDB, 2021.
-- **[SOTA]** Danezis, G., Kokoris-Kogias, L., Sonnino, A., Spiegelman, A. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022.
-- **[Foundational]** Dean, J., Barroso, L.A. *The Tail at Scale.* CACM, 2013.
+- **[Foundational]** Lamport, L. *The Part-Time Parliament (Paxos).* ACM TOCS, 1998. — [ACM](https://dl.acm.org/doi/10.1145/279227.279229)
+- **[Foundational]** Kingman, J.F.C. *The Single Server Queue in Heavy Traffic.* Proc. Cambridge Phil. Soc., 1961. — [DOI](https://doi.org/10.1017/S0305004100036094)
+- **[SOTA]** Moraru, I., Andersen, D., Kaminsky, M. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [ACM](https://dl.acm.org/doi/10.1145/2517349.2517350)
+- **[SOTA]** Whittaker, M., et al. *Scaling Replicated State Machines with Compartmentalization.* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.15762)
+- **[SOTA]** Danezis, G., Kokoris-Kogias, L., Sonnino, A., Spiegelman, A. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022. — [arXiv](https://arxiv.org/abs/2105.11827)
+- **[Foundational]** Dean, J., Barroso, L.A. *The Tail at Scale.* CACM, 2013. — [ACM](https://dl.acm.org/doi/10.1145/2408776.2408794)
+
+## 10. Worked Example
+
+Leader pipeline with per-instance overhead $c=2\,\text{ms}$ (round-trip + fsync) and per-command service $s=0.1\,\text{ms}$. With batch size $b$, throughput is $b/(c+bs)$.
+
+- $b=10$: $10/(2+1)=3.33$ Kcmd/s, batch-fill wait $\approx w/2$.
+- $b=100$: $100/(2+10)=8.33$ Kcmd/s.
+- $b\to\infty$: saturates at $1/s = 10$ Kcmd/s.
+
+Bigger batches buy throughput but each command waits longer to fill the batch. Now load the queue: at utilization $\rho = \lambda s = 0.9$ with $c_a^2=c_s^2=1$ (Poisson-ish), Kingman gives
+
+$$\mathbb{E}[T_{\text{queue}}] \approx \frac{\rho}{1-\rho}\cdot\frac{c_a^2+c_s^2}{2}\,s = \frac{0.9}{0.1}\cdot 1 \cdot 0.1 = 0.9\,\text{ms}.$$
+
+Push to $\rho=0.99$ and the same formula yields $9.9\,\text{ms}$ — a $10\times$ blow-up from a 10% load increase. This is the heavy-traffic divergence ($\rho\to1$) that makes high throughput and bounded tail intrinsically opposed near saturation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,30 @@ Active lines: Enea, Bouajjani (IRIF/Paris) on polynomial-time consistency checki
 - Quantitative runtime metrics (continuous "consistency SLO" gauges) with statistical guarantees.
 
 ## 9. Key References
-- **[Foundational]** Gibbons, Korach. *Testing Shared Memories.* SIAM J. Computing, 1997.
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in PL, 2014.
-- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
-- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
-- **[SOTA]** Tan, Zhao, et al. *COBRA: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
+- **[Foundational]** Gibbons, Korach. *Testing Shared Memories.* SIAM J. Computing, 1997. — [DOI](https://doi.org/10.1137/S0097539794279614)
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in PL, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+- **[SOTA]** Tan, Zhao, et al. *COBRA: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan)
+
+## 10. Worked Example
+
+Stream of three transactions on keys $x,y$ (versioned writes, so $\mathsf{WW}$ order is known):
+
+| Txn | ops | reads-from |
+|----|----|----|
+| $T_1$ | $W(x{=}1)$ | — |
+| $T_2$ | $R(x{=}1),\,W(y{=}1)$ | $x$ from $T_1$ |
+| $T_3$ | $R(y{=}0),\,W(x{=}2)$ | $y$ initial (v0), $x{:}\,1\!\to\!2$ |
+
+Build the dependency graph (Adya $\mathsf{WR}\cup\mathsf{WW}\cup\mathsf{RW}$):
+- $T_1 \xrightarrow{\mathsf{WR}} T_2$ ($T_2$ reads $T_1$'s $x$).
+- $T_1 \xrightarrow{\mathsf{WW}} T_3$ ($T_3$ overwrites $x{=}1$ with $x{=}2$).
+- $T_3 \xrightarrow{\mathsf{RW}} T_2$ ($T_3$ read $y$'s *initial* version, but $T_2$ later wrote $y{=}1$ — a read overwritten by $T_2$).
+- $T_2 \xrightarrow{\mathsf{RW}} T_3$ ($T_2$ read $x{=}1$, which $T_3$ overwrites to $x{=}2$).
+
+Edges $T_2 \to T_3$ and $T_3 \to T_2$ form a **2-cycle** $\Rightarrow$ no serial order exists $\Rightarrow$ the history is **not serializable**. The online monitor emits $\{T_2,T_3\}$ as the witness the instant both RW edges materialize — exactly Elle's cycle-detection strategy, running in $\tilde{O}(n+m)$ because versions are traceable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

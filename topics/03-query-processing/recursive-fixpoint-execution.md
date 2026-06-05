@@ -122,12 +122,27 @@ factorization.
 
 ## 9. Key References
 
-- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** B. Scholz, H. Jordan, P. Subotić, T. Westmann. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016.
-- **[SOTA]** Y. R. Wang, M. Willsey, D. Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023.
-- **[SOTA]** M. Budiu, T. Chajed, F. McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, R. Pichler, D. Suciu, et al. *Convergence of Datalog over (Pre-)Semirings (Datalog°).* PODS, 2022.
+- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986. — [DOI](https://doi.org/10.1145/6012.15399)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** B. Scholz, H. Jordan, P. Subotić, T. Westmann. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016. — [DOI](https://doi.org/10.1145/2892208.2892226)
+- **[SOTA]** Y. R. Wang, M. Willsey, D. Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2301.10841) — [DOI](https://doi.org/10.1145/3589295)
+- **[SOTA]** M. Budiu, T. Chajed, F. McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, R. Pichler, D. Suciu, et al. *Convergence of Datalog over (Pre-)Semirings (Datalog°).* PODS, 2022. — [arXiv](https://arxiv.org/abs/2105.14435) — [DOI](https://doi.org/10.1145/3517804.3524140)
+
+## 10. Worked Example
+
+**Semi-naive transitive closure.** Rules: $T(x,y) \leftarrow E(x,y)$ and $T(x,z) \leftarrow T(x,y), E(y,z)$. Edge relation: a path $E = \{(1,2),(2,3),(3,4)\}$.
+
+| iter | $\Delta T$ (new facts) |
+|------|------------------------|
+| 0    | $(1,2),(2,3),(3,4)$ |
+| 1    | $\Delta T \bowtie E$: $(1,3),(2,4)$ |
+| 2    | $(1,3),(2,4)\bowtie E$: $(1,4)$ |
+| 3    | $(1,4)\bowtie E$: $\varnothing$ — fixpoint |
+
+Each round the differential $\delta T = \Delta T \bowtie E$ joins **only the new** $T$ tuples against $E$, never re-deriving old pairs. Total derivations $= 3+2+1 = 6 = \binom{4}{2}$, exactly the reachable pairs — no fact derived twice.
+
+Naive evaluation would instead recompute the full $T \bowtie E$ each round, re-deriving $(1,3)$ and $(2,4)$ repeatedly. The number of iterations equals the longest path length ($\le n-1$), and each round's join cost is bounded per-rule by its AGM/$\rho^\ast$ bound — illustrating the "iterations $\times$ per-round-cost" product whose tightness remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

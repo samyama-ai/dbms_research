@@ -44,11 +44,25 @@ For the symmetric Dawid–Skene model the gap is essentially **closed** (spectra
 - Streaming/online truth discovery with regret bounds; differential-privacy-preserving fusion.
 
 ## 9. Key References
-- **[Foundational]** X. Yin, J. Han, P. S. Yu. *Truth Discovery with Multiple Conflicting Information Providers on the Web.* KDD, 2007.
-- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Integrating Conflicting Data: The Role of Source Dependence.* VLDB, 2009.
-- **[SOTA]** Q. Li, Y. Li, J. Gao, B. Zhao, W. Fan, J. Han. *Resolving Conflicts in Heterogeneous Data by Truth Discovery and Source Reliability Estimation (CRH).* SIGMOD, 2014.
-- **[SOTA]** Y. Zhang, X. Chen, D. Zhou, M. I. Jordan. *Spectral Methods Meet EM: A Provably Optimal Algorithm for Crowdsourcing.* NeurIPS, 2014.
-- **[Survey]** Y. Li, J. Gao, C. Meng, Q. Li, L. Su, B. Zhao, W. Fan, J. Han. *A Survey on Truth Discovery.* SIGKDD Explorations, 2016.
+- **[Foundational]** X. Yin, J. Han, P. S. Yu. *Truth Discovery with Multiple Conflicting Information Providers on the Web.* KDD, 2007. — [DOI](https://doi.org/10.1145/1281192.1281309)
+- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Integrating Conflicting Data: The Role of Source Dependence.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687690)
+- **[SOTA]** Q. Li, Y. Li, J. Gao, B. Zhao, W. Fan, J. Han. *Resolving Conflicts in Heterogeneous Data by Truth Discovery and Source Reliability Estimation (CRH).* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610509)
+- **[SOTA]** Y. Zhang, X. Chen, D. Zhou, M. I. Jordan. *Spectral Methods Meet EM: A Provably Optimal Algorithm for Crowdsourcing.* NeurIPS, 2014. — [arXiv](https://arxiv.org/abs/1406.3824)
+- **[Survey]** Y. Li, J. Gao, C. Meng, Q. Li, L. Su, B. Zhao, W. Fan, J. Han. *A Survey on Truth Discovery.* SIGKDD Explorations, 2016. — [DOI](https://doi.org/10.1145/2897350.2897352)
+
+## 10. Worked Example
+
+Three sources report the CEO of a company; the truth is unknown. Items $o_1, o_2, o_3$ have a known ground truth (omitted from the algorithm) of A, B, C respectively.
+
+| source | $o_1$ | $o_2$ | $o_3$ |
+|--------|-------|-------|-------|
+| $s_1$ | A | B | C |
+| $s_2$ | A | B | X |
+| $s_3$ | A | Y | Z |
+
+Plain majority: $o_1\to$A (3 votes), $o_2\to$B (2 votes), $o_3$ is a 3-way tie — unresolved.
+
+EM/Dawid–Skene alternation breaks the tie. **E-step** (start $r_k=0.5$ all): with current truths A,B,? estimate accuracies from agreement counts. $s_1$ agrees on $o_1,o_2$ and the consensus, $s_3$ disagrees on $o_2,o_3$, giving roughly $\hat r_1 \approx 1.0$, $\hat r_2 \approx 0.67$, $\hat r_3 \approx 0.33$. **M-step:** reweigh votes by $\log\frac{r_k(n_o-1)}{1-r_k}$. For $o_3$, $s_1$'s vote (C) now carries far more weight than $s_2$ (X) or $s_3$ (Z), so $o_3\to$C. The chicken-and-egg coupling (section 1) resolves the tie majority could not — converging to the correct A, B, C.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

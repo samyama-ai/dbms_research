@@ -58,12 +58,20 @@ The theory bounds (constant-factor clustering, $\tilde O(n^{1+\rho})$ blocking) 
 
 ## 9. Key References
 
-- **[SOTA]** Konda et al. *Magellan: Toward Building Entity Matching Management Systems.* PVLDB, 2016.
-- **[SOTA]** Li, Li, Suhara, Doan, Tan. *Deep Entity Matching with Pre-Trained Language Models (Ditto).* PVLDB, 2021.
-- **[Foundational]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Ranking and Clustering (Correlation Clustering).* JACM, 2008.
-- **[Foundational]** Fellegi, Sunter. *A Theory for Record Linkage.* JASA, 1969.
-- **[SOTA]** Kolb, Thor, Rahm. *Dedoop: Efficient Deduplication with Hadoop.* PVLDB, 2012.
-- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021.
+- **[SOTA]** Konda et al. *Magellan: Toward Building Entity Matching Management Systems.* PVLDB, 2016. — [DOI](https://doi.org/10.14778/2994509.2994535)
+- **[SOTA]** Li, Li, Suhara, Doan, Tan. *Deep Entity Matching with Pre-Trained Language Models (Ditto).* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3421424.3421431)
+- **[Foundational]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Ranking and Clustering (Correlation Clustering).* JACM, 2008. — [DOI](https://doi.org/10.1145/1411509.1411513)
+- **[Foundational]** Fellegi, Sunter. *A Theory for Record Linkage.* JASA, 1969. — [DOI](https://doi.org/10.1080/01621459.1969.10501049)
+- **[SOTA]** Kolb, Thor, Rahm. *Dedoop: Efficient Deduplication with Hadoop.* PVLDB, 2012. — [DOI](https://doi.org/10.14778/2367502.2367527)
+- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3418896)
+
+## 10. Worked Example
+
+Budget arithmetic for $n = 10^9$ records. Naive all-pairs needs $\binom{n}{2} \approx 5\times10^{17}$ matcher calls — infeasible. Apply LSH blocking with exponent $\rho = 0.5$: candidate pairs drop to $\tilde O(n^{1+\rho}) = (10^9)^{1.5} \approx 3.2\times10^{13}$.
+
+Now price the matcher. An LLM call at $\$2\times10^{-4}$ each over $3.2\times10^{13}$ pairs costs $\approx \$6.4$ billion — economically open. A distilled small-LM at $\$2\times10^{-7}$/call costs $\approx \$6.4$ million; a cheap embedding-cosine filter at $\$2\times10^{-9}$/call costs $\approx \$64{,}000$.
+
+Cascade strategy: run the cheap filter on all $3.2\times10^{13}$ pairs, keep the hardest $0.1\%$ ($3.2\times10^{10}$) for the LLM. Cost $\approx \$64{,}000 + 3.2\times10^{10}\times\$2{\times}10^{-4} \approx \$6.4$M — a $1000\times$ saving over all-LLM. Finally, consolidate the surviving match graph by correlation clustering (Ailon–Charikar–Newman pivot, expected $3$-approx) in $O(\log n)\approx 30$ MPC rounds. This is the budget–accuracy tension Section 6 calls empirically open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

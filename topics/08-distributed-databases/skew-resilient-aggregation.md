@@ -50,12 +50,22 @@ Exact makespan minimization for assigning *indivisible* groups (holistic case, w
 
 ## 9. Key References
 
-- **[Foundational]** Jim Gray, Surajit Chaudhuri, Adam Bosworth, et al. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic taxonomy).* Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** David DeWitt, Jim Gray. *Parallel Database Systems: The Future of High Performance Database Systems.* CACM, 1992.
-- **[Foundational]** Christopher B. Walton, Alfred G. Dale, Roy M. Jenevein. *A Taxonomy and Performance Model of Data Skew Effects in Parallel Joins.* VLDB, 1991.
-- **[SOTA]** Maryann Xue et al. (Databricks). *Adaptive Query Execution (skew handling) in Apache Spark 3.0.* Spark Summit, 2020.
-- **[Foundational]** Dorit S. Hochbaum, David B. Shmoys. *A Polynomial Approximation Scheme for Scheduling on Uniform Processors ($P||C_{max}$ PTAS).* SIAM J. Computing, 1988.
-- **[Survey]** Graham Cormode, Minos Garofalakis, Peter J. Haas, Chris Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Jim Gray, Surajit Chaudhuri, Adam Bosworth, et al. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic taxonomy).* Data Mining and Knowledge Discovery, 1997. — [arXiv](https://arxiv.org/abs/cs/0701155)
+- **[Foundational]** David DeWitt, Jim Gray. *Parallel Database Systems: The Future of High Performance Database Systems.* CACM, 1992. — [DOI](https://doi.org/10.1145/129888.129894)
+- **[Foundational]** Christopher B. Walton, Alfred G. Dale, Roy M. Jenevein. *A Taxonomy and Performance Model of Data Skew Effects in Parallel Joins.* VLDB, 1991. — [ACM](https://dl.acm.org/doi/10.5555/645917.672307)
+- **[SOTA]** Maryann Xue et al. (Databricks). *Adaptive Query Execution (skew handling) in Apache Spark 3.0.* Spark Summit, 2020. — [Databricks](https://www.databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)
+- **[Foundational]** Dorit S. Hochbaum, David B. Shmoys. *A Polynomial Approximation Scheme for Scheduling on Uniform Processors ($P||C_{max}$ PTAS).* SIAM J. Computing, 1988. — [DOI](https://doi.org/10.1137/0217033)
+- **[Survey]** Graham Cormode, Minos Garofalakis, Peter J. Haas, Chris Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [ACM](https://dl.acm.org/doi/book/10.5555/2222651)
+
+## 10. Worked Example
+
+Take $N = 1{,}000{,}000$ tuples, $p = 4$ reducers, and `SELECT key, SUM(v) GROUP BY key`. One heavy key $H$ holds $700{,}000$ tuples; the remaining $300{,}000$ spread over many light keys.
+
+**Naive hash partitioning:** $H$ maps to one reducer, giving it load $\ge 700{,}000$ while the others share $300{,}000$ — makespan $\approx 700{,}000$, far above the balanced share $N/p = 250{,}000$.
+
+**Two-phase + salting (SUM is algebraic):** Salt $H$ into 4 sub-keys $H{:}0..H{:}3$ by random suffix. Each mapper combiner pre-aggregates locally, so $H$'s $700{,}000$ tuples collapse to one partial $\texttt{SUM}$ per (mapper, salt) pair. With $\le 4$ partials per salt bucket, each reducer sees $\approx 175{,}000$ light-key tuples plus $O(p)$ partial states. Phase 2 re-sums the 4 salt partials: $\texttt{SUM}(H) = \sum_{s=0}^{3}\texttt{SUM}(H{:}s)$.
+
+Max load drops from $700{,}000$ to $\approx N/p + O(p) = 250{,}000 + O(4)$ — matching the $O(N/p + p)$ upper bound of Section 4. Had the aggregate been `MEDIAN` (holistic), salting could not collapse $H$, so $\Omega(700{,}000)$ would still flow to one reducer.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

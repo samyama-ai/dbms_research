@@ -39,12 +39,21 @@ Active threads: disaggregated/log-as-a-service durability (continuations of Auro
 (i) A converse theorem for the full $(L,\Delta,B)$ region under correlated failures. (ii) Workload-adaptive policies that provably track a moving Pareto point. (iii) Durability accounting for the device write-cache "lie" (flush vs. FUA) as a first-class model parameter. (iv) Bridging read-staleness (PBS) and write-durability into one staleness calculus.
 
 ## 9. Key References
-- **[Foundational]** Gray, J., Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002.
-- **[SOTA]** Bailis, P., Venkataraman, S., Franklin, M., Hellerstein, J., Stoica, I. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012.
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design: CAP is Only Part of the Story (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Gray, J., Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Bailis, P., Venkataraman, S., Franklin, M., Hellerstein, J., Stoica, I. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design: CAP is Only Part of the Story (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+Consider group commit on a single failure domain. Commits arrive at $\lambda = 5000/\text{s}$; one fsync costs $c_0 = 1\,\text{ms}$ and flushes a whole batch.
+
+- **Batch size $g = 50$:** a transaction waits on average half a batch to fill, $\tfrac{g}{2\lambda} = \tfrac{50}{10000} = 5\,\text{ms}$, plus the $1\,\text{ms}$ fsync, so $L \approx 6\,\text{ms}$. By Little's law the in-flight acknowledged-but-unpersisted count is $\mathbb{E}[\Delta] = \lambda\cdot\mathbb{E}[p-a] \approx 5000 \times 0.006 = 30$, so a crash loses up to $B = g = 50$ transactions.
+- **Batch size $g = 10$:** $L \approx \tfrac{10}{10000} + 1\,\text{ms} = 2\,\text{ms}$, but each fsync now amortizes over fewer commits, and $B \le 10$.
+
+Smaller $g$ cuts both latency and loss but raises fsync frequency (throughput tax). Now add $f=6$ replicas with write quorum $w=4$ and per-replica failure $q=0.01$: the loss probability of a quorum-acked commit is $\sum_{k>2}\binom{6}{k}q^k(1-q)^{6-k} \approx \binom{6}{3}q^3 = 20\times10^{-6} = 2\times10^{-5}$ — driving $B$ toward $0$ at the cost of $L = \mathbb{E}[X_{(4)}]$, the 4th-fastest replica's persist latency.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

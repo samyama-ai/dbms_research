@@ -43,12 +43,23 @@ The Hasselt/Antwerp group (Neven, Vandevoort, Ketsman) continues to push robustn
 
 ## 9. Key References
 
-- **[Foundational]** Berenson, H.; Bernstein, P.; Gray, J.; Melton, J.; O'Neil, E.; O'Neil, P. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
-- **[Foundational]** Fekete, A.; Liarokapis, D.; O'Neil, E.; O'Neil, P.; Shasha, D. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[SOTA]** Cahill, M.; Röhm, U.; Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[SOTA]** Cerone, A.; Bernardi, G.; Gotsman, A. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015.
-- **[SOTA]** Vandevoort, B.; Ketsman, B.; Koch, C.; Neven, F. *Robustness Against Read Committed for Transaction Templates.* PVLDB, 2021.
-- **[Survey]** Adya, A. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999.
+- **[Foundational]** Berenson, H.; Bernstein, P.; Gray, J.; Melton, J.; O'Neil, E.; O'Neil, P. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+- **[Foundational]** Fekete, A.; Liarokapis, D.; O'Neil, E.; O'Neil, P.; Shasha, D. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** Cahill, M.; Röhm, U.; Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+- **[SOTA]** Cerone, A.; Bernardi, G.; Gotsman, A. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2015.58)
+- **[SOTA]** Vandevoort, B.; Ketsman, B.; Koch, C.; Neven, F. *Robustness Against Read Committed for Transaction Templates.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2107.12239)
+- **[Survey]** Adya, A. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT](https://pmg.csail.mit.edu/papers/adya-phd.pdf)
+
+## 10. Worked Example
+
+Workload of two transaction templates over a table `Doctors(id, oncall)` with invariant *"at least one doctor on call."* Initially $d_1.\text{oncall}=d_2.\text{oncall}=\text{true}$.
+
+- $P_1$: read both rows (check $\ge 1$ on call), set $d_1.\text{oncall}=\text{false}$.
+- $P_2$: read both rows, set $d_2.\text{oncall}=\text{false}$.
+
+Build the static dependency graph. $P_1$ reads $d_2$, which $P_2$ writes: edge $P_1 \xrightarrow{rw} P_2$. Symmetrically $P_2$ reads $d_1$, which $P_1$ writes: $P_2 \xrightarrow{rw} P_1$. This is a 2-cycle with **two consecutive $rw$ edges** — a dangerous structure.
+
+By the Fekete characterization, the workload is **not robust against SI**: an SI execution where both run on the same snapshot commits both (first-committer-wins sees no $ww$ conflict, since writes are disjoint), violating the invariant. Minimal repair: promote one read to a write (e.g. `SELECT … FOR UPDATE`), materializing a $ww$ edge that breaks the dangerous double-$rw$ cycle, restoring robustness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

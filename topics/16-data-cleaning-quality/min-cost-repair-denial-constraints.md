@@ -61,12 +61,27 @@ For bounded-arity DCs the approximation gap is essentially closed up to the UGC-
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999.
-- **[Foundational]** Lopatenko, Bertossi. *Complexity of Consistent Query Answering in Databases under Cardinality-Based and Incremental Repair Semantics.* ICDT, 2007.
-- **[SOTA]** Chu, Ilyas, Papotti. *Holistic Data Cleaning: Putting Violations into Context.* ICDE, 2013.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019.
+- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[Foundational]** Lopatenko, Bertossi. *Complexity of Consistent Query Answering in Databases under Cardinality-Based and Incremental Repair Semantics.* ICDT, 2007. — [DOI](https://doi.org/10.1007/11965893_13)
+- **[SOTA]** Chu, Ilyas, Papotti. *Holistic Data Cleaning: Putting Violations into Context.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544847)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536360.2536363)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019. — [DOI](https://doi.org/10.1145/3310205)
+
+## 10. Worked Example
+
+Relation `Emp(Name, Salary, Mgr, MgrSalary)` with one DC: no employee earns more than their manager,
+$$\forall x\, \neg(\text{Emp}(x) \wedge x.\text{Salary} > x.\text{MgrSalary}).$$
+
+| t | Name | Salary | MgrSalary |
+|---|------|--------|-----------|
+| 1 | Ann  | 90 | 80 |
+| 2 | Bob  | 70 | 80 |
+| 3 | Cy   | 95 | 80 |
+
+Tuples $t_1$ and $t_3$ each violate the DC (90 > 80, 95 > 80); $t_2$ is fine. Each minimal violating witness is a single tuple, so the conflict hypergraph has two singleton hyperedges $\{t_1\}, \{t_3\}$. A **deletion** S-repair must hit every hyperedge: minimum hitting set $= \{t_1, t_3\}$, cost 2 deletions.
+
+A **cell-update** repair is cheaper: lower each offender's Salary to 80 (or raise MgrSalary). Two cell edits at cost 1 each — but note the propagation hazard: raising $t_1$'s MgrSalary to 95 to "fix" it would be a non-monotone choice if a second DC bounded total payroll. With singleton edges, LP rounding gives the factor-$k=1$ (exact) cover here, matching the poly-time single-DC regime in section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

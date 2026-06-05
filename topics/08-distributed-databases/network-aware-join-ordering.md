@@ -60,11 +60,21 @@ Cardinality estimation feeds output sizes; with worst-case bounds the **AGM/frac
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006.
-- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017.
-- **[SOTA]** Pu et al. *Low Latency Geo-distributed Data Analytics (Iridium).* SIGCOMM, 2015.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006. — [DOI](https://doi.org/10.5555/1182635.1164207)
+- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017. — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** Pu et al. *Low Latency Geo-distributed Data Analytics (Iridium).* SIGCOMM, 2015. — [DOI](https://doi.org/10.1145/2785956.2787505)
+
+## 10. Worked Example
+
+Join $R \bowtie S \bowtie T$. Sizes: $|R|=10$ GB on rack 1, $|S|=1$ GB on rack 1, $|T|=10$ GB on rack 2. Intra-rack bandwidth is free; cross-rack costs 1 unit/GB. $R$ and $S$ are already co-partitioned on the join key; $T$ is partitioned on a different key.
+
+**Uniform-cost optimal order** (textbook, ignores topology): join the two big tables first to shrink early — but $R\bowtie T$ forces moving 10 GB across the rack boundary. Cost $\approx 10$.
+
+**Topology-aware order:** do $R\bowtie S$ first — both on rack 1, co-partitioned, so $0$ cross-rack bytes. Suppose the result $RS$ is 2 GB. Then for $RS\bowtie T$, broadcast the smaller side: ship $RS$ (2 GB) to rack 2 rather than $T$ (10 GB). Cross-rack cost $=2$.
+
+So the topology-aware plan costs $2$ vs $10$ — a $5\times$ saving, and it picks a *different join order* (and a broadcast vs shuffle decision) than the uniform-cost optimizer. This coupling of order $\times$ redistribution $\times$ link weights is the joint problem of section 1, NP-hard already without the network term.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

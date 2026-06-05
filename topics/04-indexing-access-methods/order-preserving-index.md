@@ -1,6 +1,7 @@
 # Order-preserving encrypted indexes
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/order-preserving-index` · **Status:** open
+> **Verification note:** Grubbs et al. "Pump up the Volume" appeared at ACM CCS 2018, not IEEE S&P 2019 as stated in sections 2/5 (reference corrected accordingly).
 
 ## 1. Problem Statement
 Build an index over **encrypted keys** that supports **range queries** ($a \le x \le b$) on an untrusted server while bounding what the server learns. The classic primitive is **order-preserving / order-revealing encryption (OPE/ORE)**: a ciphertext encoding lets the server compare encrypted values to answer ranges, but every comparison **leaks** order (and often more). The research problem is to design range-queryable encrypted indexes that (i) **quantify and minimize leakage** (order, frequency, access pattern, search/result pattern, volume), (ii) bound the **access-pattern** information that enables reconstruction attacks, and (iii) keep query/update cost competitive with a plaintext B-tree. Variants: the **security-definition** variant (what leakage profile is achievable?), the **reconstruction-hardness** variant (can an adversary recover plaintext order/values from leakage?), and the **performance** variant (round/communication/storage overhead vs. plaintext). It is *open* whether efficient range queries are possible with leakage that provably resists database-reconstruction attacks.
@@ -34,13 +35,21 @@ Active: **leakage-abuse attack** refinement and defenses (Grubbs, Kamara, Kollio
 - TEE/crypto hybrids that turn the $\Omega(\log N)$ ORAM cost into practical throughput.
 
 ## 9. Key References
-- **[Foundational]** A. Boldyreva, N. Chenette, Y. Lee, A. O'Neill. *Order-Preserving Symmetric Encryption.* EUROCRYPT, 2009.
-- **[SOTA]** N. Chenette, K. Lewi, S. A. Weis, D. J. Wu. *Practical Order-Revealing Encryption with Limited Leakage.* FSE, 2016.
-- **[Foundational]** G. Kellaris, G. Kollios, K. Nissim, A. O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[Foundational]** O. Goldreich, R. Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** K. G. Larsen, J. B. Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** R. Poddar, T. Boelter, R. A. Popa. *Arx: An Encrypted Database Using Semantically Secure Encryption.* VLDB, 2019.
-- **[SOTA]** P. Grubbs, M.-S. Lacharité, B. Minaud, K. G. Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* IEEE S&P, 2019.
+- **[Foundational]** A. Boldyreva, N. Chenette, Y. Lee, A. O'Neill. *Order-Preserving Symmetric Encryption.* EUROCRYPT, 2009. — [DOI](https://doi.org/10.1007/978-3-642-01001-9_13)
+- **[SOTA]** N. Chenette, K. Lewi, S. A. Weis, D. J. Wu. *Practical Order-Revealing Encryption with Limited Leakage.* FSE, 2016. — [DOI](https://doi.org/10.1007/978-3-662-52993-5_24)
+- **[Foundational]** G. Kellaris, G. Kollios, K. Nissim, A. O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+- **[Foundational]** O. Goldreich, R. Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** K. G. Larsen, J. B. Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[SOTA]** R. Poddar, T. Boelter, R. A. Popa. *Arx: An Encrypted Database Using Semantically Secure Encryption.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342641)
+- **[SOTA]** P. Grubbs, M.-S. Lacharité, B. Minaud, K. G. Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* ACM CCS, 2018. — [DOI](https://doi.org/10.1145/3243734.3243864)
+
+## 10. Worked Example
+
+Suppose salaries $\{30\text{k},40\text{k},50\text{k},60\text{k}\}$ are stored under an OPE scheme as ciphertexts that preserve order, say $\{12, 27, 41, 88\}$. A client issues range query "salary $\in[40\text{k},60\text{k}]$"; the server compares encrypted bounds and returns the rows with ciphertexts in $[27,88]$ — i.e. 3 rows — without ever decrypting.
+
+What leaks: the server now knows the **order** of all four ciphertexts, and from the *result size* (volume) it learns the query spans 3 of 4 values. Repeating uniform range queries, the Kellaris–Kollios–Nissim–O'Neill attack reconstructs the exact plaintext multiset after $O(N^2\log N)$ queries, where $N$ is the value-domain size. For $N=4$ that is only a handful of observed volumes.
+
+To suppress this, an ORAM-backed index hides which ciphertexts are touched, but pays $\Omega(\log N)$ extra accesses per lookup (Larsen–Nielsen). The example shows the core tension: order/volume leakage is cheap but reconstructible; obliviousness is safe but provably not free.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

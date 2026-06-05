@@ -55,12 +55,27 @@ For *static, known* workloads in the EM model the bounds are closed (tight $\The
 
 ## 9. Key References
 
-- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Matteo Frigo, Charles E. Leiserson, Harald Prokop, Sridhar Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[SOTA]** Michael A. Bender, Erik D. Demaine, Martin Farach-Colton. *Cache-Oblivious B-Trees.* SIAM Journal on Computing, 2005.
-- **[SOTA]** Thomas Neumann, Michael Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR, 2020.
-- **[Foundational]** Jeffrey Scott Vitter. *Algorithms and Data Structures for External Memory.* Foundations and Trends in Theoretical Computer Science, 2008.
-- **[Survey]** Goetz Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Matteo Frigo, Charles E. Leiserson, Harald Prokop, Sridhar Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[SOTA]** Michael A. Bender, Erik D. Demaine, Martin Farach-Colton. *Cache-Oblivious B-Trees.* SIAM Journal on Computing, 2005. — [DOI](https://doi.org/10.1137/S0097539701389956)
+- **[SOTA]** Thomas Neumann, Michael Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR, 2020. — [DBLP](https://dblp.org/rec/conf/cidr/NeumannF20.html)
+- **[Foundational]** Jeffrey Scott Vitter. *Algorithms and Data Structures for External Memory.* Foundations and Trends in Theoretical Computer Science, 2008. — [DOI](https://doi.org/10.1561/0400000014)
+- **[Survey]** Goetz Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000028)
+
+## 10. Worked Example
+
+Object store: per-request latency $\alpha = 20\,000\,\mu s$ (20 ms round-trip), per-byte $\beta = 0.002\,\mu s$/byte (500 MB/s). A scan touches $S = 10^8$ bytes; workload is $\pi = 0.5$ random / sequential.
+
+The square-root rule gives the optimum block size
+
+$$b^\star = \sqrt{\frac{(1-\pi)\,\alpha S}{\pi\,\beta}} = \sqrt{\frac{0.5\cdot 20000\cdot 10^8}{0.5\cdot 0.002}} = \sqrt{10^{15}} \approx 3.16\times 10^7\ \text{bytes} \approx 32\ \text{MB}.$$
+
+Sanity-check two candidates via $\mathbb{E}[T(b)] = \pi(\alpha+\beta b) + (1-\pi)(\alpha S/b + \beta S)$ (drop the constant $\beta S$ term):
+
+- $b = 1\,\text{MB}$: random $= 20000 + 0.002\cdot10^6 = 22000$; scan-ops $= 20000\cdot10^8/10^6 = 2{,}000{,}000$. Half-weighted sum $\approx 1{,}011{,}000\,\mu s$.
+- $b = 32\,\text{MB}$: random $= 20000 + 0.002\cdot3.2\times10^7 = 84000$; scan-ops $= 20000\cdot10^8/3.2\times10^7 = 62{,}500$. Half-weighted sum $\approx 73{,}250\,\mu s$.
+
+The 32 MB block is $\sim$14$\times$ cheaper here: with a large fixed per-request fee, the EOQ optimum pushes blocks large — which is exactly why object-store range-GETs are sized in the tens of MB.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

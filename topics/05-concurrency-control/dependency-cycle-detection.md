@@ -39,12 +39,23 @@ Active: scalable certification (TicToc/Sundial lineage) and decentralized valida
 - Hardware-accelerated online serialization-graph maintenance at 1000+ cores.
 
 ## 9. Key References
-- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* TODS, 2005.
-- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
-- **[SOTA]** Revilak, O'Neil, O'Neil. *Precisely Serializable Snapshot Isolation (PSSI).* ICDE, 2011.
-- **[SOTA]** Bender, Fineman, Gilbert, Tarjan. *A New Approach to Incremental Cycle Detection and Related Problems.* ACM TALG, 2016.
-- **[SOTA]** Yu, Pavlo, Sanchez, Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016.
-- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC, 2015.
+- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.4179)
+- **[SOTA]** Revilak, O'Neil, O'Neil. *Precisely Serializable Snapshot Isolation (PSSI).* ICDE, 2011. — [DBLP](https://dblp.org/search?q=Precisely%20Serializable%20Snapshot%20Isolation)
+- **[SOTA]** Bender, Fineman, Gilbert, Tarjan. *A New Approach to Incremental Cycle Detection and Related Problems.* ACM TALG, 2016. — [arXiv](https://arxiv.org/abs/1105.2397)
+- **[SOTA]** Yu, Pavlo, Sanchez, Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
+- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1511.06773)
+
+## 10. Worked Example
+
+The classic SI write-skew anomaly. Two on-call doctors $x_1, x_2$ are "on duty"; the rule is at least one must stay on duty. Two concurrent transactions each read both rows and set their own doctor off duty:
+
+- $T_1$: reads $x_1, x_2$ (both on), writes $x_1 \leftarrow$ off.
+- $T_2$: reads $x_1, x_2$ (both on), writes $x_2 \leftarrow$ off.
+
+Under SI both commit (disjoint write sets, no ww-conflict), but the result violates the invariant — a non-serializable execution. The conflict graph has two **rw-antidependencies**: $T_1$'s read of $x_2$ precedes $T_2$'s write of $x_2$, giving $T_1 \xrightarrow{rw} T_2$; symmetrically $T_2 \xrightarrow{rw} T_1$. That is a cycle.
+
+**Fekete's pivot.** Every SI cycle has a vertex with two consecutive incoming+outgoing rw-edges. Here both $T_1$ and $T_2$ qualify. PostgreSQL SSI keeps one bit each for "has inEdge" and "has outEdge" ($O(1)$ state); when both fire on one transaction it aborts — sound, but it would also abort some safe schedules (false positives), the cost of avoiding full $\tilde{O}(\sqrt m)$ cycle search.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -107,11 +107,22 @@ CMU-DB (Pavlo), MIT (cracking lineage, Kraska on learned components).
 
 ## 9. Key References
 
-- **[Foundational]** M. Grund, J. Krüger, H. Plattner, et al. *Hyrise: A Main Memory Hybrid Storage Engine.* VLDB / CIDR, 2010.
-- **[SOTA]** J. Arulraj, A. Pavlo, P. Menon. *Bridging the Archipelago between Row-Stores and Column-Stores for Hybrid Workloads (Peloton tiles).* SIGMOD, 2016.
-- **[Foundational]** A. Ailamaki, D. DeWitt, M. Hill, M. Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001.
-- **[SOTA]** V. Sikka, F. Färber, et al. *Efficient Transaction Processing in SAP HANA.* SIGMOD, 2012.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** M. Grund, J. Krüger, H. Plattner, et al. *Hyrise: A Main Memory Hybrid Storage Engine.* VLDB / CIDR, 2010. — [PVLDB](https://www.vldb.org/pvldb/vol4/p105-grund.pdf)
+- **[SOTA]** J. Arulraj, A. Pavlo, P. Menon. *Bridging the Archipelago between Row-Stores and Column-Stores for Hybrid Workloads (Peloton tiles).* SIGMOD, 2016. — [DBLP](https://dblp.org/db/conf/sigmod/sigmod2016.html)
+- **[Foundational]** A. Ailamaki, D. DeWitt, M. Hill, M. Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001. — [DOI](https://doi.org/10.5555/645927.672367)
+- **[SOTA]** V. Sikka, F. Färber, et al. *Efficient Transaction Processing in SAP HANA.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213946)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [PDF](https://www.cidrdb.org/cidr2017/papers/p42-pavlo-cidr17.pdf)
+
+## 10. Worked Example
+
+Take a fragment of $n = 1{,}000{,}000$ rows, 10 columns each $w_a = 8$ B (tuple width $80$ B). Two competing queries:
+
+- **OLTP point read** of one full tuple: row layout fetches $80$ B (one cache line); column layout must touch 10 separate column arrays = 10 cache-line misses. Row wins by $\sim10\times$.
+- **Analytic scan** projecting $|A| = 2$ columns: column layout reads $2\times n\times 8 = 16$ MB; row layout reads all $80$ MB (whole tuples). Column wins by $5\times$ (= $|cols|/|A|$).
+
+**Crossover.** With workload fraction $r$ of OLTP ops, normalize per-op cost: row $\approx 1$ (OLTP) and $5$ (scan, in scan-units); column $\approx 10$ (OLTP) and $1$ (scan). Expected cost: row $= r\cdot1 + (1-r)\cdot5$; column $= r\cdot10 + (1-r)\cdot1$. Setting them equal: $1+4(1-r)... \Rightarrow r^\star \approx 0.31$. So below $31\%$ OLTP, column layout wins; above it, row wins.
+
+**Online twist.** If the workload drifts past $r^\star$, flipping layout costs migration $M$. The ski-rental rule: pay $M$ to switch only once the accumulated per-query mismatch penalty exceeds $M$ — a 2-competitive stay-or-migrate decision.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

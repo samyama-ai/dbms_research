@@ -39,13 +39,19 @@ Active threads: (i) **learned + classical hybrids** with worst-case guarantees (
 - Bridging learned-index average-case wins with worst-case adversarial guarantees.
 
 ## 9. Key References
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Frigo, M., Leiserson, C., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[Foundational]** Bender, M., Demaine, E., Farach-Colton, M. *Cache-Oblivious B-Trees.* FOCS, 2000.
-- **[SOTA]** Brodal, G., Fagerberg, R. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
-- **[SOTA]** Leis, V., Kemper, A., Neumann, T. *The Adaptive Radix Tree (ART).* ICDE, 2013.
-- **[SOTA]** Binna, R., et al. *HOT: A Height Optimized Trie Index.* SIGMOD, 2018.
-- **[Survey]** Pătraşcu, M., Thorup, M. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006.
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Frigo, M., Leiserson, C., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[Foundational]** Bender, M., Demaine, E., Farach-Colton, M. *Cache-Oblivious B-Trees.* FOCS, 2000. — [PDF](https://erikdemaine.org/papers/FOCS2000b/paper.pdf)
+- **[SOTA]** Brodal, G., Fagerberg, R. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+- **[SOTA]** Leis, V., Kemper, A., Neumann, T. *The Adaptive Radix Tree (ART).* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[SOTA]** Binna, R., et al. *HOT: A Height Optimized Trie Index.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196896)
+- **[Survey]** Pătraşcu, M., Thorup, M. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+
+## 10. Worked Example
+
+Index $N = 10^9$ keys with a 64-byte cache line. For 8-byte keys+pointers a B-tree node holds $B = 64/16 = 4$... but real nodes span a whole page; take $B = 256$ entries/block. Point search costs $\Theta(\log_B N) = \log_{256}10^9 = \ln(10^9)/\ln(256) \approx 20.7/5.55 \approx 3.7$, i.e. **4 block transfers** — versus a binary search tree's $\log_2 10^9 \approx 30$ cache misses. The high fanout buys an $\approx 8\times$ miss reduction.
+
+Now the trilemma via Brodal–Fagerberg: a $B^\varepsilon$-tree with $\varepsilon = 1/2$ buffers inserts at $O\!\big(\frac{\log_B N}{B^{1-\varepsilon}}\big) = \frac{3.7}{\sqrt{256}} = \frac{3.7}{16} \approx 0.23$ I/Os per insert — a $\sim 16\times$ speedup over the B-tree's $3.7$. But the frontier law $\Omega(\log_\lambda N)$ search at $O(\lambda/B)$ insert means that cheaper inserts (larger $\lambda$) provably raise search cost: you slide along the Pareto curve, you do not escape it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

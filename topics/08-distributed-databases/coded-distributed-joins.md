@@ -54,12 +54,18 @@ Genuinely **open**. The gap is qualitative: optimal coded schemes exist for *lin
 
 ## 9. Key References
 
-- **[Foundational]** Qian Yu, Mohammad Ali Maddah-Ali, A. Salman Avestimehr. *Polynomial Codes: An Optimal Design for High-Dimensional Coded Matrix Multiplication.* NeurIPS, 2017.
-- **[SOTA]** Songze Li, Mohammad Ali Maddah-Ali, Qian Yu, A. Salman Avestimehr. *A Fundamental Tradeoff Between Computation and Communication in Distributed Computing.* IEEE Trans. Information Theory, 2018.
-- **[Foundational]** Hung Q. Ngo, Ely Porat, Christopher Ré, Atri Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins (the AGM bound).* SIAM J. Computing, 2013 (FOCS 2008).
-- **[SOTA]** Kangwook Lee et al. *Speeding Up Distributed Machine Learning Using Codes.* IEEE Trans. Information Theory, 2018.
-- **[Survey]** A. Salman Avestimehr, Sanghamitra Dutta, et al. *Coded Computing.* Foundations and Trends in Communications and Information Theory, 2020.
+- **[Foundational]** Qian Yu, Mohammad Ali Maddah-Ali, A. Salman Avestimehr. *Polynomial Codes: An Optimal Design for High-Dimensional Coded Matrix Multiplication.* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1705.10464)
+- **[SOTA]** Songze Li, Mohammad Ali Maddah-Ali, Qian Yu, A. Salman Avestimehr. *A Fundamental Tradeoff Between Computation and Communication in Distributed Computing.* IEEE Trans. Information Theory, 2018. — [arXiv](https://arxiv.org/abs/1604.07086) · [DOI](https://doi.org/10.1109/TIT.2017.2756959)
+- **[Foundational]** Hung Q. Ngo, Ely Porat, Christopher Ré, Atri Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins (the AGM bound).* SIAM J. Computing, 2013 (FOCS 2008). — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Kangwook Lee et al. *Speeding Up Distributed Machine Learning Using Codes.* IEEE Trans. Information Theory, 2018. — [arXiv](https://arxiv.org/abs/1512.02673)
+- **[Survey]** A. Salman Avestimehr, Sanghamitra Dutta, et al. *Coded Computing.* Foundations and Trends in Communications and Information Theory, 2020. — [DBLP search](https://dblp.org/search?q=Coded+Computing+Mitigating+Fundamental+Bottlenecks)
+
+## 10. Worked Example
+
+Why coding is easy for matrix multiply but stuck for joins. Take $C = A^\top B$ split across workers. Encode $A$'s blocks as a polynomial $A(x) = A_0 + A_1 x$ and $B(x) = B_0 + B_1 x^2$, so $A(x)^\top B(x)$ is a degree-3 polynomial whose 4 coefficients are the 4 needed products. With $N = 5$ workers evaluating at distinct points $x_1,\dots,x_5$, **any $K = 4$** returned values interpolate all coefficients — tolerating $N-K = 1$ straggler. The recovery threshold $K = mn = 2\times 2 = 4$ is optimal.
+
+Now try $R(A,B) \bowtie S(B,C)$ as a "product." The output is a *selection* over the Cartesian product, not a fixed bilinear form, and its size is data-dependent: the AGM bound gives $|R \bowtie S| \le \sqrt{|R|\,|S|\,|R\bowtie_B|}$-style products via the fractional edge cover. If a single value of $B$ is shared by $\sqrt{|R|}$ tuples on each side, that one key alone yields $|R|$ output tuples — a skew spike no fixed-rate linear code over the *inputs* can encode, because the coded "answer" size isn't known until the data is seen. This is the crux of why polynomial-code thresholds don't lift to general joins.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

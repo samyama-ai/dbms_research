@@ -49,11 +49,17 @@ The gap is **empirically open and partly impossibility-bounded**: on-distributio
 - Joint cardinality+cost uncertainty propagated coherently through plan enumeration.
 
 ## 9. Key References
-- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022.
-- **[Survey]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021.
-- **[Foundational]** Vovk, Gammerman, Shafer. *Algorithmic Learning in a Random World* (conformal prediction). Springer, 2005.
+- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.00561)
+- **[Survey]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+- **[Foundational]** Vovk, Gammerman, Shafer. *Algorithmic Learning in a Random World* (conformal prediction). Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+
+## 10. Worked Example
+
+**Q-error and why plan choice survives miscalibration.** Two plans $A,B$ for one query have true costs $y_A=100$, $y_B=400$. A learned model predicts $\hat y_A=150$, $\hat y_B=300$. Per-plan Q-error is $\max(\hat y/y,\,y/\hat y)$: for $A$, $\max(1.5,0.67)=1.5$; for $B$, $\max(0.75,1.33)=1.33$. Both modest, and crucially the model preserves the *ranking* $\hat y_A<\hat y_B$, so it still picks the truly cheaper plan $A$ — illustrating why ratio metrics and ranking matter more than absolute MSE.
+
+**Conformal interval.** Suppose a calibration set of $n=99$ held-out plans yields absolute residuals; for target $\alpha=0.1$ we take the $\lceil(1-\alpha)(n+1)\rceil=90$-th smallest residual, say $q=120$. The interval for a new plan is $\hat y \pm 120$, with guaranteed marginal coverage $\Pr[y\in C]\ge 0.9$ — *only* if the new plan is exchangeable with calibration. Deploy on an unseen schema and exchangeability breaks: empirical coverage can collapse toward $1-\alpha-\text{TV}$, the crux of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -33,11 +33,19 @@ Directions: learning-augmented / predictor-based timeouts; bandit and online-lea
 - Heavy-tailed and correlated-failure–aware detectors for large geo-distributed clusters.
 
 ## 9. Key References
-- **[Foundational]** Tushar Deepak Chandra, Sam Toueg. *Unreliable Failure Detectors for Reliable Distributed Systems.* JACM, 1996.
-- **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996.
-- **[SOTA]** Wei Chen, Sam Toueg, Marcos K. Aguilera. *On the Quality of Service of Failure Detectors.* IEEE TC, 2002.
-- **[SOTA]** Naohiro Hayashibara, Xavier Défago, Rami Yared, Takuya Katayama. *The φ Accrual Failure Detector.* SRDS, 2004.
-- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002.
+- **[Foundational]** Tushar Deepak Chandra, Sam Toueg. *Unreliable Failure Detectors for Reliable Distributed Systems.* JACM, 1996. — [DOI](https://doi.org/10.1145/226643.226647)
+- **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [DOI](https://doi.org/10.1145/234533.234549)
+- **[SOTA]** Wei Chen, Sam Toueg, Marcos K. Aguilera. *On the Quality of Service of Failure Detectors.* IEEE TC, 2002. — [DOI](https://doi.org/10.1109/TC.2002.1004595)
+- **[SOTA]** Naohiro Hayashibara, Xavier Défago, Rami Yared, Takuya Katayama. *The φ Accrual Failure Detector.* SRDS, 2004. — [DOI](https://doi.org/10.5555/1032662.1034350)
+- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.5555/647883.738420)
+
+## 10. Worked Example
+
+Consider a φ-accrual detector monitoring one peer via heartbeats. Suppose the last inter-arrival samples (ms) are $\{95, 100, 105, 100, 100\}$, so sample mean $\mu = 100$ and standard deviation $\sigma \approx 3.5$. Model inter-arrivals as Normal. The current time is $t_{\text{last}} + 110$ ms (110 ms since the last heartbeat).
+
+Suspicion: $\varphi(t) = -\log_{10} P(\text{no heartbeat by } t)$. With $P(\text{arrival} > 110) = 1 - \Phi\!\left(\tfrac{110-100}{3.5}\right) = 1 - \Phi(2.86) \approx 0.0021$, we get $\varphi \approx -\log_{10}(0.0021) \approx 2.68$.
+
+If the action threshold is $\Phi_{\text{th}} = 8$ (i.e. suspect when miss probability $\le 10^{-8}$), the node is **not yet** suspected at 2.68. Raising the threshold trades latency for accuracy: a smaller $\Phi_{\text{th}}$ fires sooner (lower $T_D$) but more often falsely (lower $T_{MR}$). Under drift, if the true mean jumps to 150 ms, the stale $\mu=100$ inflates $\varphi$ and triggers a false positive — exactly the non-stationary gap this problem targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

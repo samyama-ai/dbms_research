@@ -52,12 +52,24 @@ Active directions: (i) *learned and contention-aware version-pointer selection* 
 
 ## 9. Key References
 
-- **[Foundational]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* Journal of the ACM, 1979.
-- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[SOTA]** H. Lim, M. Kaminsky, D. G. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017.
-- **[SOTA]** P.-Å. Larson et al. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases.* VLDB, 2011.
-- **[Survey]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017.
+- **[Foundational]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* Journal of the ACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+- **[SOTA]** H. Lim, M. Kaminsky, D. G. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064015)
+- **[SOTA]** P.-Å. Larson et al. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases.* VLDB, 2011. — [DOI](https://doi.org/10.14778/2095686.2095689)
+- **[Survey]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067427)
+
+## 10. Worked Example
+
+Three transactions over items $x,y$, with two existing versions $x_0,y_0$:
+
+$$H:\quad w_1(x_1)\; w_2(y_2)\; r_3(x_?)\; r_3(y_?)\; \text{(commits } T_1,T_2,T_3)$$
+
+In a *single-version* schedule, $T_3$ would be forced to read the last-written values, and if $T_1\to T_3$ and $T_3\to T_2$ both held while $T_2$'s write preceded $T_1$'s in some order, the conflict graph could cycle. Multiversion gives $T_3$ a choice via the version function.
+
+Pick $\mathsf{ver}(r_3(x)) = x_1$ and $\mathsf{ver}(r_3(y)) = y_0$ (the *old* $y$). Then reads-from edges are $T_1\to T_3$ (reads $x_1$) and $T_0\to T_3$. Because $T_3$ reads $y_0$ not $y_2$, we need version order $y_0 \ll y_2$ with $T_3 \to T_2$ (read precedes the overwrite). The MVSG is $T_0\to T_1\to T_3\to T_2$ — **acyclic**, so $H$ is MVSR with serial order $T_0,T_1,T_3,T_2$.
+
+Had we instead set $\mathsf{ver}(r_3(y))=y_2$, we would force $T_2\to T_3$ and $T_3\to T_2$ jointly only if other edges conflicted — illustrating that the *existential search over $\ll$* is exactly the NP-hard core: here a lucky choice works, but in general finding such a function is intractable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

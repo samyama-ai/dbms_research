@@ -59,11 +59,23 @@ For **general joins** and predicates that depend on cross-tuple value combinatio
 
 ## 9. Key References
 
-- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005.
-- **[SOTA]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006.
-- **[Survey]** Lohman, Lemire et al. on compressed integer decoding; Lemire, Boytsov. *Decoding Billions of Integers per Second through Vectorization.* Software: Practice and Experience, 2015.
-- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.uni-trier.de/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[SOTA]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006. — [DOI](https://doi.org/10.1109/ICDE.2006.150)
+- **[Survey]** Lohman, Lemire et al. on compressed integer decoding; Lemire, Boytsov. *Decoding Billions of Integers per Second through Vectorization.* Software: Practice and Experience, 2015. — [arXiv](https://arxiv.org/abs/1209.2137)
+- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Column of $n = 12$ values, RLE-encoded as runs $(v, \ell)$:
+$$[(3,5),\ (8,4),\ (3,3)]$$
+i.e., five 3's, four 8's, three 3's — so $r = 3$ runs while $n = 12$.
+
+**`SUM` directly on the encoding:** $\sum_i v_i \cdot \ell_i = 3\cdot5 + 8\cdot4 + 3\cdot3 = 15 + 32 + 9 = 56$, computed in $O(r) = O(3)$ multiply-adds instead of $O(n) = O(12)$ — the §4 bound.
+
+**Selection $\sigma_{v=3}$:** filters whole runs by value, yielding $[(3,5),(3,3)]$ (8 logical rows) still encoded — output stays compressed, so the operator is *closed* under RLE (§2).
+
+**Why a join can fail:** an equi-join whose output is the full incompressible cross-product has answer size $\Omega(n)$, so no $o(n)$ compressed algorithm exists regardless of input encoding — the information-theoretic lower bound of §5. This is the dichotomy gap (§6): aggregation/selection get $\tilde O(z)$, general joins do not.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

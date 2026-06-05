@@ -52,11 +52,18 @@ The boundary between abort-admitting and abort-free workloads is only partially 
 - Hybrid schedulers that prove abort-freedom for a workload subset and fall back gracefully otherwise.
 
 ## 9. Key References
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** R. Guerraoui, M. Kapałka. *Principles of Transactional Memory.* Morgan & Claypool, 2010.
-- **[SOTA]** A. Thomson, T. Diamond, S.-C. Weng, K. Ren, P. Shao, D. J. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** N. Narula, C. Cutler, E. Kohler, R. Morris. *Phase Reconciliation for Contended In-Memory Transactions (Doppel).* OSDI, 2014.
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** R. Guerraoui, M. Kapałka. *Principles of Transactional Memory.* Morgan & Claypool, 2010. — [ACM](https://dl.acm.org/doi/10.5555/3019225)
+- **[SOTA]** A. Thomson, T. Diamond, S.-C. Weng, K. Ren, P. Shao, D. J. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** N. Narula, C. Cutler, E. Kohler, R. Morris. *Phase Reconciliation for Contended In-Memory Transactions (Doppel).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/narula)
+
+## 10. Worked Example
+
+Consider three transactions on items $\{x,y\}$ with footprints declared up front:
+$T_1=\{r(x),w(y)\}$, $T_2=\{r(y),w(x)\}$, $T_3=\{r(x)\}$. Build the static conflict graph from non-commuting pairs: $T_1\xrightarrow{w(y)\,r(y)}T_2$ and $T_2\xrightarrow{w(x)\,r(x)}T_1$ — a 2-cycle. An *online* optimistic scheduler that lets $T_1,T_2$ read concurrently then validate is forced to abort one (the cycle is non-serializable as run).
+
+Now apply the deterministic (Calvin) recipe: pre-agree the global order $T_1<T_2<T_3$ before execution. Every node executes accesses respecting this order; $T_2$ waits for $T_1$'s $w(y)$, so the realized schedule is the serial $T_1;T_2;T_3$ — acyclic, **zero concurrency-induced aborts**. The cost is the up-front footprint declaration plus blocking $T_2$. This illustrates the section-4 upper bound (predeclared sets $\Rightarrow$ aborts $=0$) against the section-5 lower bound (the online adversary that created the cycle forced either an abort or blocking).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -43,11 +43,21 @@ Active groups: Suciu/Koutris (UW/Wisconsin), Yufei Hu and Ke Yi (HKUST) on outpu
 - Unify output-sensitive (instance-optimal) bounds with worst-case round complexity.
 
 ## 9. Key References
-- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013).
-- **[Foundational]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010.
-- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS, 2019.
-- **[SOTA]** Koutris, Suciu. *A Guide to Formal Analysis of Join Processing in Massively Parallel Systems.* SIGMOD Record, 2016.
-- **[Survey]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016.
+- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013). — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
+- **[Foundational]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010. — [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS, 2019. — [arXiv](https://arxiv.org/abs/1903.09717)
+- **[SOTA]** Koutris, Suciu. *A Guide to Formal Analysis of Join Processing in Massively Parallel Systems.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3092931.3092934)
+- **[Survey]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2016.8), [arXiv](https://arxiv.org/abs/1604.01848)
+
+## 10. Worked Example
+
+Take the triangle query $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$, total input $N$, on $p$ machines. Its hypergraph has 3 vertices $\{a,b,c\}$ and 3 edges. The fractional edge cover LP $\min\sum_e u_e$ with $\sum_{e\ni v}u_e\ge1$ is solved by $u_{RS}=u_{ST}=u_{TR}=\tfrac12$, so $\tau^*=\tfrac32$.
+
+HyperCube arranges the $p$ machines as a cube with shares $p_a\cdot p_b\cdot p_c=p$; by symmetry $p_a=p_b=p_c=p^{1/3}$. A tuple $R(a,b)$ is sent to every machine matching its $(a,b)$ coordinates, i.e. replicated $p^{1/3}$ times (over the free $c$ axis). One-round load is
+$$L = O\!\left(\frac{N}{p^{1/\tau^*}}\right) = O\!\left(\frac{N}{p^{2/3}}\right),$$
+matching the BKS $\Omega(N/p^{2/3})$ lower bound for skew-free triangle inputs.
+
+Concretely, $N=10^9$, $p=1000$: $p^{2/3}=100$, so each machine receives $\approx 10^7$ tuples in a single round — versus $N/p=10^6$ if free routing (more rounds) were allowed. That $100\times$ vs $1000\times$ gap is exactly the round-vs-load tension this problem studies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

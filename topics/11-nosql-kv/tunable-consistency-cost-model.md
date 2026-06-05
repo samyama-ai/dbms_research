@@ -51,11 +51,21 @@ Active directions: ML-based / telemetry-calibrated staleness predictors that rel
 
 ## 9. Key References
 
-- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002.
-- **[SOTA]** Peter Bailis, Shivaram Venkataraman, Michael J. Franklin, Joseph M. Hellerstein, Ion Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB 2012.
-- **[SOTA]** Wojciech Golab, Muntasir R. Rahman, Alvin AuYoung, Kimberly Keeton, Indranil Gupta. *Client-Centric Benchmarking of Eventual Consistency for Cloud Storage Systems (and PCAP).* ICDCS 2014.
-- **[SOTA]** Kyle Kingsbury, Peter Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB 2020.
-- **[Foundational]** Werner Vogels. *Eventually Consistent.* CACM, 2009.
+- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Peter Bailis, Shivaram Venkataraman, Michael J. Franklin, Joseph M. Hellerstein, Ion Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[SOTA]** Wojciech Golab, Muntasir R. Rahman, Alvin AuYoung, Kimberly Keeton, Indranil Gupta. *Client-Centric Benchmarking of Eventual Consistency for Cloud Storage Systems (and PCAP).* ICDCS 2014. — [DBLP](https://dblp.org/rec/conf/icdcs/GolabRAKG14.html)
+- **[SOTA]** Kyle Kingsbury, Peter Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB 2020. — [arXiv](https://arxiv.org/abs/2003.10554)
+- **[Foundational]** Werner Vogels. *Eventually Consistent.* CACM, 2009. — [DOI](https://doi.org/10.1145/1435417.1435432)
+
+## 10. Worked Example
+
+A Cassandra key with $N=3$ replicas. Compare two configs.
+
+**Config A (QUORUM/QUORUM):** $R=W=2$. Since $R+W=4>N=3$, every read quorum intersects every write quorum on at least one up-to-date replica — staleness probability $0$. Read latency tracks the $2$nd-fastest of $3$ replicas: $\text{latency} \sim X_{(2)}$. If replica latencies are i.i.d. with median $5$ ms and $p99$ $40$ ms, the order statistic $X_{(2)}$ has a *tighter* tail than $X_{(3)}$ (the ALL case), but worse than ONE.
+
+**Config B (ONE/ONE):** $R=W=1$, so $R+W=2 \le 3$ — partial quorum, reads may be stale. PBS t-visibility: a read just after a write sees it only if it hits the one replica that got the write. With one of three replicas written and one read at random, $\Pr[\text{hit}]=1/3$, so $\Pr[\text{stale at }t{=}0] \approx 2/3$, decaying as anti-entropy propagates (WARS window). Latency now $\sim X_{(1)}$ — fastest replica, best tail.
+
+So Config B trades a $\sim 67\%$ immediate-staleness risk for the lowest latency; Config A buys strong consistency at a higher tail. PBS quantifies exactly this curve.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

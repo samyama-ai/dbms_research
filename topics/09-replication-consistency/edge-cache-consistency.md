@@ -51,11 +51,24 @@ Theory gives sound mechanisms; what's missing is **quantitative**: (1) tight hit
 
 ## 9. Key References
 
-- **[Foundational]** Terry, D. B., Demers, A. J., Petersen, K., Spreitzer, M., Theimer, M., Welch, B. *Session guarantees for weakly consistent replicated data.* PDIS, 1994.
-- **[SOTA]** Zawirski, M., Preguiça, N., Duarte, S., Bieniusa, A., Balegas, V., Shapiro, M. *Write fast, read in the past: causal consistency for client-side applications (SwiftCloud).* Middleware, 2015.
-- **[SOTA]** Lloyd, W., Freedman, M. J., Kaminsky, M., Andersen, D. G. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011.
-- **[Survey]** Bermbach, D., Tai, S. *Eventual consistency: how soon is eventual?* / *Benchmarking edge consistency.* (consistency benchmarking line), 2011–2014.
-- **[SOTA]** Bronson, N. et al. *TAO: Facebook's distributed data store for the social graph.* USENIX ATC, 2013.
+- **[Foundational]** Terry, D. B., Demers, A. J., Petersen, K., Spreitzer, M., Theimer, M., Welch, B. *Session guarantees for weakly consistent replicated data.* PDIS, 1994. — [DOI](https://doi.org/10.5555/645792.668302)
+- **[SOTA]** Zawirski, M., Preguiça, N., Duarte, S., Bieniusa, A., Balegas, V., Shapiro, M. *Write fast, read in the past: causal consistency for client-side applications (SwiftCloud).* Middleware, 2015. — [DOI](https://doi.org/10.1145/2814576.2814733)
+- **[SOTA]** Lloyd, W., Freedman, M. J., Kaminsky, M., Andersen, D. G. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
+- **[Survey]** Bermbach, D., Tai, S. *Eventual consistency: how soon is eventual?* / *Benchmarking edge consistency.* (consistency benchmarking line), 2011–2014. — [DOI](https://doi.org/10.1145/2093185.2093186)
+- **[SOTA]** Bronson, N. et al. *TAO: Facebook's distributed data store for the social graph.* USENIX ATC, 2013. — [USENIX](https://www.usenix.org/conference/atc13/technical-sessions/presentation/bronson)
+
+## 10. Worked Example
+
+A user in London writes `avatar = v5` through PoP-London, which forwards to origin (now at version 5). Their phone, on cellular, reads through PoP-Paris, whose cached fill is `avatar = v3` (TTL not yet expired). Without a session guard the read returns `v3` — a **read-your-writes (RYW) violation**: the user sees their old avatar.
+
+Fix with a session write-set vector $W_s = \{\text{avatar}:5\}$ carried in the request. The serving rule: a tier may serve a cached entry only if its stored version $\ge W_s$. PoP-Paris holds version 3; $3 \not\ge 5$, so it **misses** and forwards to origin (or to a tier holding $\ge 5$), returning `v5`. RYW restored.
+
+Cost ledger:
+- Metadata: $O(|\text{write-set}|)$ per session — here one key.
+- On a hit ($\ge W_s$): zero extra round-trips.
+- On a guard failure: one miss to a higher tier (the PACELC Else-Latency tax).
+
+If London–Paris were partitioned and Paris could not reach origin, CAP forces the choice: serve possibly-stale `v3` (available, inconsistent) or stall (consistent, unavailable) — no edge config escapes this trade-off.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

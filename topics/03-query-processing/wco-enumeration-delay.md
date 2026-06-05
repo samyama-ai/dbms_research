@@ -1,6 +1,7 @@
 # Worst-case-optimal enumeration with delay guarantees
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/wco-enumeration-delay` · **Status:** partially-solved
+> **Verification note:** The fifth author of the any-$k$ VLDB 2020 paper is Xiaofeng Yang, not Yannakakis; corrected in the reference (Yannakakis-style refers to the algorithm, not authorship).
 
 ## 1. Problem Statement
 
@@ -42,12 +43,20 @@ Directions: (1) **ranked / any-$k$ enumeration** with tighter delay and dynamic 
 
 ## 9. Key References
 
-- **[Foundational]** Bagan, Durand, Grandjean. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL 2007.
-- **[Foundational]** Segoufin. *Enumerating with Constant Delay the Answers to a Query.* ICDT 2013 (survey of the model).
-- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017 ($q$-hierarchical / OMv lower bound).
-- **[SOTA]** Tziavelis, Ajwani, Gatterbauer, Riedewald, Yannakakis. *Optimal Algorithms for Ranked Enumeration of Answers to Full Conjunctive Queries (any-$k$).* VLDB 2020.
-- **[SOTA]** Carmeli, Zeevi, Berkholz, Kimelfeld, Schweikardt. *Answering (Unions of) Conjunctive Queries using Random Access and Random-Order Enumeration.* PODS 2020 / ACM TODS 2022 (direct access).
-- **[Survey]** Schweikardt, Segoufin, Vigny. *Enumeration for FO Queries over Nowhere Dense Graphs / enumeration surveys.* PODS, 2018.
+- **[Foundational]** Bagan, Durand, Grandjean. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL 2007. — [DOI](https://doi.org/10.1007/978-3-540-74915-8_18)
+- **[Foundational]** Segoufin. *Enumerating with Constant Delay the Answers to a Query.* ICDT 2013 (survey of the model). — [DOI](https://doi.org/10.1145/2448496.2448498)
+- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017 ($q$-hierarchical / OMv lower bound). — [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** Tziavelis, Ajwani, Gatterbauer, Riedewald, Yang. *Optimal Algorithms for Ranked Enumeration of Answers to Full Conjunctive Queries (any-$k$).* VLDB 2020. — [DOI](https://doi.org/10.14778/3397230.3397250)
+- **[SOTA]** Carmeli, Zeevi, Berkholz, Kimelfeld, Schweikardt. *Answering (Unions of) Conjunctive Queries using Random Access and Random-Order Enumeration.* PODS 2020 / ACM TODS 2022 (direct access). — [DOI](https://doi.org/10.1145/3375395.3387662)
+- **[Survey]** Schweikardt, Segoufin, Vigny. *Enumeration for FO Queries over Nowhere Dense Graphs / enumeration surveys.* PODS, 2018. — [DOI](https://doi.org/10.1145/3196959.3196971)
+
+## 10. Worked Example
+
+Contrast two acyclic queries on $R(a,b), S(b,c)$.
+
+**Free-connex** $Q_1(a,b,c)=R(a,b)\bowtie S(b,c)$ (no projection). It is free-connex, so $\mathrm{CD}\circ\mathrm{lin}$ applies: hash $S$ on $b$ in $O(N)$, then scan $R$ and for each $(a,b)$ emit $(a,b,c)$ for every matching $c$. Delay between answers is $O(1)$ — each output is produced by one bucket step.
+
+**Not free-connex** $Q_2(a,c)=\pi_{a,c}\big(R(a,b)\bowtie S(b,c)\big)$. Projecting away $b$ can create duplicates: with $R=\{(a_1,b_1),(a_1,b_2)\}$, $S=\{(b_1,c_1),(b_2,c_1)\}$, the pair $(a_1,c_1)$ arises twice and must be deduplicated. Achieving $O(1)$ delay after $O(N)$ preprocessing here would let one compute a Boolean matrix product $RS$ in $O(n^2)$ — refuting the combinatorial BMM conjecture. So $Q_2$ admits no $\mathrm{CD}\circ\mathrm{lin}$ under that hypothesis: a sharp free-connex boundary between two queries differing only by a projection.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

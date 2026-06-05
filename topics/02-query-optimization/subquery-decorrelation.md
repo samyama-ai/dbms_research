@@ -59,12 +59,30 @@ Active directions: (i) **extending general unnesting** to window functions, recu
 
 ## 9. Key References
 
-- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query.* ACM TODS, 1982.
-- **[Foundational]** R. A. Ganski, H. K. T. Wong. *Optimization of Nested SQL Queries Revisited.* SIGMOD, 1987.
-- **[Foundational]** C. A. Galindo-Legaria, M. M. Joshi. *Orthogonal Optimization of Subqueries and Aggregation.* SIGMOD, 2001.
-- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW (Datenbanksysteme für Business, Technologie und Web), 2015.
-- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986.
-- **[SOTA]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL / Cosette: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017–2018.
+- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query.* ACM TODS, 1982. — [ACM](https://dl.acm.org/doi/10.1145/319732.319745)
+- **[Foundational]** R. A. Ganski, H. K. T. Wong. *Optimization of Nested SQL Queries Revisited.* SIGMOD, 1987. — [ACM](https://dl.acm.org/doi/10.1145/38714.38723)
+- **[Foundational]** C. A. Galindo-Legaria, M. M. Joshi. *Orthogonal Optimization of Subqueries and Aggregation.* SIGMOD, 2001. — [ACM](https://dl.acm.org/doi/10.1145/375663.375748)
+- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW (Datenbanksysteme für Business, Technologie und Web), 2015. — [DBLP](https://dblp.org/rec/conf/btw/0001K15.html)
+- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986. — [ACM](https://dl.acm.org/doi/10.1145/6012.15399)
+- **[SOTA]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL / Cosette: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017–2018. — [ACM](https://dl.acm.org/doi/10.1145/3062341.3062348)
+
+## 10. Worked Example
+
+Correlated subquery: list orders larger than their customer's average.
+
+```sql
+SELECT o.oid FROM Orders o
+WHERE o.amt > (SELECT AVG(i.amt) FROM Orders i WHERE i.cid = o.cid);
+```
+
+Naive evaluation runs the inner `AVG` once per outer row: with $|Orders| = N$ and $k$ customers it costs $O(N^2)$ scans. Decorrelation pushes the dependent join (`Apply`) down past the aggregate. The correlation column set is $D = \Pi_{cid}(Orders)$; compute the aggregate **once per group**:
+
+```sql
+WITH g AS (SELECT cid, AVG(amt) AS a FROM Orders GROUP BY cid)
+SELECT o.oid FROM Orders o JOIN g ON g.cid = o.cid WHERE o.amt > g.a;
+```
+
+Now a single grouped scan plus a hash join: $O(N)$ instead of $O(N^2)$. Trace with `cid=1`: amounts $\{10, 30\}$, $a=20$; only the row with `amt=30` survives. The COUNT-bug caveat: had we used `COUNT(*)` with an outer (rather than inner) reference and a customer with no inner rows, the group must yield $0$ via an outer join, not vanish — the rule $R\,A^{\bowtie}(\Gamma_{g;f}E)=\Gamma_{R\text{-keys},g;f}(R\,A^{\bowtie}E)$ preserves this.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

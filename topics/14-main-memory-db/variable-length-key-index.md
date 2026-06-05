@@ -1,6 +1,7 @@
 # In-Memory Index for Variable-Length Keys
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/variable-length-key-index` · **Status:** open
+> **Verification note:** Wormhole's third author is Song Jiang (not "Jin"); corrected in the reference list.
 
 ## 1. Problem Statement
 Main-memory databases index keys that are often **variable-length strings** of arbitrary length (URLs, identifiers, composite keys). We want an *ordered* in-memory index supporting `lookup`, `insert`, `delete`, `range/scan`, and **prefix queries** (predecessor/successor, all keys with a given prefix), with **worst-case guarantees** that do not degrade with key length or adversarial key distributions, while being cache- and SIMD-friendly on modern CPUs.
@@ -49,12 +50,30 @@ Directions: succinct/compressed tries that approach the information-theoretic sp
 - Tight bounds for prefix-range counting (not just predecessor).
 
 ## 9. Key References
-- **[SOTA]** Leis, Kemper, Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013.
-- **[SOTA]** Binna, Zangerle, Pichl, Specht, Leis. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018.
-- **[SOTA]** Mao, Kohler, Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012.
-- **[Foundational]** Ferragina, Grossi. *The String B-tree: A New Data Structure for String Search in External Memory and Its Applications.* JACM, 1999.
-- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[SOTA]** Wu, Ni, Jin. *Wormhole: A Fast Ordered Index for In-Memory Data Management.* EuroSys, 2019.
+- **[SOTA]** Leis, Kemper, Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[SOTA]** Binna, Zangerle, Pichl, Specht, Leis. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196896)
+- **[SOTA]** Mao, Kohler, Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012. — [DOI](https://doi.org/10.1145/2168836.2168855)
+- **[Foundational]** Ferragina, Grossi. *The String B-tree: A New Data Structure for String Search in External Memory and Its Applications.* JACM, 1999. — [DOI](https://doi.org/10.1145/301970.301973)
+- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[SOTA]** Wu, Ni, Jiang. *Wormhole: A Fast Ordered Index for In-Memory Data Management.* EuroSys, 2019. — [arXiv](https://arxiv.org/abs/1805.02200)
+
+## 10. Worked Example
+
+Index the strings $S=\{$`"car"`, `"card"`, `"care"`, `"dog"`$\}$ over $\Sigma=\{a..z\}$. Build a Patricia (path-compressed) radix trie:
+
+```
+root
+ ├─ "ca" ─ "r" ─┬─ ""  → car
+ │              ├─ "d" → card
+ │              └─ "e" → care
+ └─ "dog"        → dog
+```
+
+Lookup `"care"` ($L=4$): descend `ca` $\to$ `r` $\to$ branch on `e` — $O(L)$ work, independent of $n$. Contrast a comparison B+-tree: $O(\log n)$ node visits, each a full string compare up to $L$ chars, i.e. $O(L\log n)$.
+
+Prefix query `"car*"`: navigate to the `"r"` node, then enumerate its subtree — returning `{car, card, care}` as a contiguous range scan, the trie's natural advantage.
+
+Lower-bound check: any index must read enough of the $L=4$ query to distinguish it, giving the unavoidable $\Omega(L/w)$ cell-probe term — here trivially small, but it dominates for long URL-style keys. ART realizes this $O(L)$ traversal with adaptive 4/16/48/256-child nodes to keep space at $O(N)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

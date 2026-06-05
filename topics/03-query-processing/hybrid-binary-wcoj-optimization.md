@@ -44,12 +44,22 @@ Directions: (1) **continuous-relaxation optimizers** built on Free Join trie sch
 
 ## 9. Key References
 
-- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS 2016 (InsideOut, decomposition-driven evaluation).
-- **[Foundational]** Marx. *Tractable Hypergraph Properties for CSP and Conjunctive Queries.* JACM, 2013 (submodular width).
-- **[SOTA]** Aberger, Tu, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS, 2017 (GHD optimizer + WCOJ).
-- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD 2023.
-- **[Foundational]** Fischl, Gottlob, Pichler. *General and Fractional Hypertree Decompositions: Hard and Easy Cases.* PODS 2018 / JACM 2021.
-- **[Survey]** Gottlob, Greco, Leone, Scarcello. *Hypertree Decompositions: Questions and Answers.* PODS 2016.
+- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS 2016 (InsideOut, decomposition-driven evaluation). — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[Foundational]** Marx. *Tractable Hypergraph Properties for CSP and Conjunctive Queries.* JACM, 2013 (submodular width). — [DOI](https://doi.org/10.1145/2535926)
+- **[SOTA]** Aberger, Tu, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS, 2017 (GHD optimizer + WCOJ). — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2301.10841)
+- **[Foundational]** Fischl, Gottlob, Pichler. *General and Fractional Hypertree Decompositions: Hard and Easy Cases.* PODS 2018 / JACM 2021. — [arXiv](https://arxiv.org/abs/1611.01090)
+- **[Survey]** Gottlob, Greco, Leone, Scarcello. *Hypertree Decompositions: Questions and Answers.* PODS 2016. — [DOI](https://doi.org/10.1145/2902251.2902309)
+
+## 10. Worked Example
+
+Take the "triangle-plus-tail" query
+$$Q = R(a,b)\bowtie S(b,c)\bowtie T(a,c)\bowtie U(c,d)$$
+with $|R|=|S|=|T|=N$ and $|U|=N$. The hypergraph has a **cyclic** core $\{R,S,T\}$ (a triangle) and an **acyclic tail** $U(c,d)$ hanging off attribute $c$.
+
+A pure binary plan can blow up: $R\bowtie S$ alone can produce $\Theta(N^2)$ tuples (e.g., a star-shaped instance), so any join order through the triangle risks an $N^2$ intermediate even though the final triangle count is only $\Theta(N^{3/2})$ (the AGM bound, edge cover $1.5$).
+
+The optimal **hybrid** plan decomposes $Q$ into two bags: bag $\{a,b,c\}$ holding the triangle, bag $\{c,d\}$ holding $U$. Inside the triangle bag, run a WCOJ (Generic Join) in $\tilde O(N^{3/2})$, never materializing the $N^2$ pair-join. Then **binary-join** the triangle result with $U$ along the shared attribute $c$ — an acyclic Yannakakis step. Total: $\tilde O(N^{3/2}+\mathrm{OUT})$ versus the binary plan's $\Theta(N^2)$. The open problem is getting a cost model to *predict* this crossover from statistics rather than hard-coding it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

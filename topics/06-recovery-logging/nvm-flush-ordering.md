@@ -50,11 +50,21 @@ Active: persistency-aware program logics and verified order-free structures (Vaf
 
 ## 9. Key References
 
-- **[Foundational]** Jeremy Condit, Edmund B. Nightingale, Christopher Frost, et al. *Better I/O Through Byte-Addressable, Persistent Memory (BPFS).* SOSP, 2009.
-- **[Foundational]** Steven Pelley, Peter M. Chen, Thomas F. Wenisch. *Memory Persistency.* ISCA, 2014.
-- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-Free Range Index for Non-Volatile Memory.* VLDB, 2018.
-- **[SOTA]** Deukyeon Hwang, Wook-Hee Kim, Youjip Won, Beomseok Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018.
-- **[SOTA]** Azalea Raad, John Wickerson, Gil Neiger, Viktor Vafeiadis. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020.
+- **[Foundational]** Jeremy Condit, Edmund B. Nightingale, Christopher Frost, et al. *Better I/O Through Byte-Addressable, Persistent Memory (BPFS).* SOSP, 2009. — [DOI](https://dl.acm.org/doi/10.1145/1629575.1629589)
+- **[Foundational]** Steven Pelley, Peter M. Chen, Thomas F. Wenisch. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1109/ISCA.2014.6853222)
+- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-Free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://dl.acm.org/doi/10.1145/3164135.3164147)
+- **[SOTA]** Deukyeon Hwang, Wook-Hee Kim, Youjip Won, Beomseok Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang)
+- **[SOTA]** Azalea Raad, John Wickerson, Gil Neiger, Viktor Vafeiadis. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020. — [DOI](https://dl.acm.org/doi/10.1145/3371079)
+
+## 10. Worked Example
+
+Append one WAL record to NVM: payload $48$ B plus a trailing $4$ B CRC and a $4$ B monotonic sequence number $s$. The cache lines holding it may persist in any order $\le_{pm}$ within an epoch.
+
+**Naive ordered scheme:** flush payload, `sfence`, flush header/CRC, `sfence` — $2$ flushes + $2$ fences per record to guarantee the CRC is durable only after the payload.
+
+**Order-free scheme:** issue `clwb` on all lines, then a *single* trailing `sfence`. Recovery scans records and accepts record $i$ iff (a) $\text{CRC}(payload_i)$ verifies and (b) $s_i = s_{i-1}+1$ forms an unbroken prefix. If the CRC line persisted but the payload did not, the check fails and the record is treated as absent — *atomically valid-or-absent* with no inter-record ordering. So fences drop from $2$ to effectively $1/\text{epoch}$.
+
+The lower bound still bites: the $4$ B CRC is the $\Omega(1)$ redundant-bits *atomicity floor* — you cannot detect a torn write for free. And if record $j$'s commit truly depends on record $i$'s across an epoch, at least one fence between them is unavoidable: an adversary persisting $j$ before $i$ yields an unrecoverable prefix.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,13 +42,30 @@ Directions: efficient **multi-distinct** execution (single-scan, shared hashing 
 
 ## 9. Key References
 
-- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, Reichart, Venkatrao, Pellow, Pirahesh. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic).* ICDE/Data Mining and Knowledge Discovery, 1996/1997.
-- **[Foundational]** Munro, Paterson. *Selection and Sorting with Limited Storage.* Theoretical Computer Science / FOCS, 1980.
-- **[Foundational]** Blum, Floyd, Pratt, Rivest, Tarjan. *Time Bounds for Selection.* JCSS, 1973.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* PODS / ACM TODS, 2012/2013.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, Reichart, Venkatrao, Pellow, Pirahesh. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic).* ICDE/Data Mining and Knowledge Discovery, 1996/1997. — [arXiv](https://arxiv.org/abs/cs/0701155)
+- **[Foundational]** Munro, Paterson. *Selection and Sorting with Limited Storage.* Theoretical Computer Science / FOCS, 1980. — [DBLP](https://dblp.org/rec/journals/tcs/MunroP80.html)
+- **[Foundational]** Blum, Floyd, Pratt, Rivest, Tarjan. *Time Bounds for Selection.* JCSS, 1973. — [DOI](https://doi.org/10.1016/S0022-0000(73)80033-9)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166v1)
+- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* PODS / ACM TODS, 2012/2013. — [DOI](https://doi.org/10.1145/2500128)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Consider `SELECT g, COUNT(DISTINCT x), MEDIAN(x) FROM R GROUP BY g` on a 6-row table:
+
+| g | x |
+|---|---|
+| A | 5 |
+| A | 5 |
+| A | 8 |
+| A | 1 |
+| B | 7 |
+| B | 7 |
+
+Group **A** has multiset $\{5,5,8,1\}$. `COUNT(DISTINCT x)` needs duplicate elimination: hashing the values gives the set $\{1,5,8\}$, so the answer is $3$. `MEDIAN` needs the full sorted group $1,5,5,8$; with $n=4$ the median is the average of positions 2–3, $(5+5)/2 = 5$. Group **B**: distinct $\{7\}$ so count $=1$, median $=7$.
+
+Why these are *holistic*: had we streamed A with $o(n)$ state, no $O(1)$-size partial summary could have told us whether the next tuple was a new distinct value or a duplicate — the $\Omega(\min(n,u))$ exact-$F_0$ lower bound. Contrast `SUM(x)` for A: the running scalar $5\to10\to18\to19$ is a bounded distributive state. Here exactness forces us to materialize the whole group (sort or hash-set), exactly the cost the engine pays.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

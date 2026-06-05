@@ -45,12 +45,22 @@ The fast path is essentially optimal (one round), but no protocol is simultaneou
 - Cost models that price wide-area messages by cloud egress dollars, not just count.
 
 ## 9. Key References
-- **[Foundational]** Jim Gray, Leslie Lamport. *Consensus on Transaction Commit.* ACM TODS, 2006.
-- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Irene Zhang et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015.
-- **[SOTA]** Shuai Mu et al. *Consolidating Concurrency Control and Consensus for Commits under Conflicts (Janus).* OSDI, 2016.
-- **[SOTA]** James Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Cuong Nguyen, Daniel Abadi et al. *Detock: High Performance Multi-region Transactions.* SIGMOD, 2023.
+- **[Foundational]** Jim Gray, Leslie Lamport. *Consensus on Transaction Commit.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Irene Zhang et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815404)
+- **[SOTA]** Shuai Mu et al. *Consolidating Concurrency Control and Consensus for Commits under Conflicts (Janus).* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/mu)
+- **[SOTA]** James Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Cuong Nguyen, Daniel Abadi et al. *Detock: High Performance Multi-region Transactions.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589293)
+
+## 10. Worked Example
+
+Two shards $A$ and $B$, each a 3-replica Paxos group ($f=1$, quorum RTT $C$). A transfer $T$: `debit A.x; credit B.y` spans both. Let wide-area RTT $W = 80$ ms and intra-shard consensus latency $C = 80$ ms (replicas are geo-spread, so $C\approx W$).
+
+**Naïve layering (Spanner-style 2PC over Paxos).** Prepare phase: coordinator asks $A$ and $B$ to vote; each vote must be durably logged via Paxos ($+C$). Commit phase: decision broadcast, again logged ($+C$). Latency $\approx 2W + 2C = 2(80) + 2(80) = 320$ ms.
+
+**Fused fast path (Tapir / Janus).** Concurrency control, replication, and commit collapse into one round when there is no conflict: the client reaches a quorum in each shard once. Latency $\approx 1\cdot \max_i(\text{quorum RTT}) \approx 80$ ms — a $4\times$ reduction.
+
+**Lower-bound check.** Non-blocking atomic commit needs $\Diamond\mathcal{S}$-strength failure detection (impossible in pure asynchrony, FLP), and preserving real-time order costs at least one quorum RTT — so $80$ ms is essentially the floor for the contended case; the fast path is already optimal, the $320$ ms is pure layering overhead.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

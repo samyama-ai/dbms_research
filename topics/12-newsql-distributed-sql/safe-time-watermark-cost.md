@@ -110,12 +110,22 @@ Groups: Cockroach Labs, PingCAP, Google, Microsoft, and the Timely/Materialize l
 
 ## 9. Key References
 
-- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** Jefferson, D. *Virtual Time (Time Warp / GVT).* ACM TOPLAS, 1985.
-- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Murray, D., McSherry, F., et al. *Naiad: A Timely Dataflow System.* SOSP, 2013.
-- **[SOTA]** Taft, R., et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020.
-- **[Foundational]** Akidau, T., et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* VLDB, 2013.
+- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** Jefferson, D. *Virtual Time (Time Warp / GVT).* ACM TOPLAS, 1985. — [DOI](https://doi.org/10.1145/3916.3988)
+- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Murray, D., McSherry, F., et al. *Naiad: A Timely Dataflow System.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522738)
+- **[SOTA]** Taft, R., et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+- **[Foundational]** Akidau, T., et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536229)
+
+## 10. Worked Example
+
+A table is split across four shards with resolved frontiers (all in ms on a common clock):
+$$\mathrm{rt}_1=105,\quad \mathrm{rt}_2=108,\quad \mathrm{rt}_3=101,\quad \mathrm{rt}_4=109.$$
+Global safe time $=\min_i \mathrm{rt}_i = 101$, pinned by shard 3. A follower-read at $\tau=100$ is servable from any replica; a read at $\tau=104$ must wait — shard 3 has not yet certified past $101$.
+
+Now shard 3 is **idle** (no writes) but emits a closed-timestamp heartbeat every $h=200$ ms. If $\mathrm{now}=300$ and shard 3 last heartbeat-ed at $101$, then despite shards 1,2,4 advancing to $\sim 300$, the global safe time is **stuck at 101** — the straggler/min-magnet effect. Only at the next heartbeat does shard 3 jump to, say, $295$, lifting $\mathrm{safe}$ to $\min(305,308,295,309)=295$.
+
+Lag bound: with clock uncertainty $\varepsilon=7$ ms and no open intents, $\mathrm{lag}\le h+\varepsilon = 207$ ms — showing why shrinking $h$ for idle ranges (adaptive heartbeats) directly buys freshness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

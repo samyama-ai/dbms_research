@@ -42,12 +42,20 @@ Genuinely open. The *idealized* integrated prefetch/caching problem is essential
 - Per-operator adaptive depth that re-tunes mid-execution as actual cardinalities are observed (adaptive query processing).
 
 ## 9. Key References
-- **[Foundational]** Cao, Felten, Karlin, Li. *A Study of Integrated Prefetching and Caching Strategies.* SIGMETRICS, 1995.
-- **[Foundational]** Kimbrel, Karlin. *Near-Optimal Parallel Prefetching and Caching.* SIAM J. Computing / FOCS, 1996/2000.
-- **[SOTA]** Leis, Haubenschild, Kemper, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018.
-- **[SOTA]** Kipf, Kemper, et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[Survey]** Albers. *On the Influence of Lookahead in Competitive Paging Algorithms.* Algorithmica, 1997.
-- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
+- **[Foundational]** Cao, Felten, Karlin, Li. *A Study of Integrated Prefetching and Caching Strategies.* SIGMETRICS, 1995. — [DOI](https://doi.org/10.1145/223586.223608)
+- **[Foundational]** Kimbrel, Karlin. *Near-Optimal Parallel Prefetching and Caching.* SIAM J. Computing / FOCS, 1996/2000. — [DOI](https://doi.org/10.1137/S0097539797326976)
+- **[SOTA]** Leis, Haubenschild, Kemper, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00026)
+- **[SOTA]** Kipf, Kemper, et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Survey]** Albers. *On the Influence of Lookahead in Competitive Paging Algorithms.* Algorithmica, 1997. — [DOI](https://doi.org/10.1007/PL00009158)
+- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)
+
+## 10. Worked Example
+
+A scan operator reads input pages with selectivity $\hat{s}=0.1$ and the optimizer estimates output cardinality $\hat{c}=20$ tuples. Useful input pages $\approx \hat{c}/\hat{s}/(\text{tuples/page})$; with 10 tuples/page that is $20/0.1/10 = 20$ input pages. Fetch latency $\ell=8$ ms, per-page compute $1$ ms, buffer budget $k=64$ pages.
+
+Choosing depth $d=8$ keeps the pipeline full: while page $i$ is processed (1 ms), 8 reads are in flight, so steady-state stall per page $\approx \max(0,\ell - d\cdot 1) = \max(0, 8-8) = 0$. Depth $d=8$ steals 8 frames from the cache — tolerable against $k=64$.
+
+Now the estimate is wrong: the operator actually stops after 2 pages (true $c=2$). With $d=8$ we prefetched 6 pages that are never read — **pure pollution**, evicting up to 6 reusable pages. The robustness lesson: pick $d=\min(d_{\text{latency-hiding}}, \text{confidence-scaled }\hat{c})$. If the estimator reports a wide interval $[2, 200]$, cap $d$ near the lower bound to bound pollution, paying a little extra stall — exactly the consistency/robustness tradeoff of section 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,30 @@ Active groups: **Wijsen (Mons)**, **Kolaitis (UCSC)**, **Koutris (Wisconsin)**, 
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS 1999.
-- **[SOTA]** Koutris, Wijsen. *Consistent Query Answering for Primary Keys and Conjunctive Queries* / *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries.* PODS/TODS, 2015–2021.
-- **[SOTA]** Maslowski, Wijsen. *A Dichotomy in the Complexity of Counting Database Repairs.* JCSS, 2013.
-- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SAT 2019.
-- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011.
-- **[Survey]** Wijsen. *Foundations of Query Answering on Inconsistent Databases.* SIGMOD Record, 2019.
+- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[SOTA]** Koutris, Wijsen. *Consistent Query Answering for Primary Keys and Conjunctive Queries* / *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries.* PODS/TODS, 2015–2021. — [ACM](https://dl.acm.org/doi/10.1145/3068334)
+- **[SOTA]** Maslowski, Wijsen. *A Dichotomy in the Complexity of Counting Database Repairs.* JCSS, 2013. — [DOI](https://doi.org/10.1016/j.jcss.2013.01.011)
+- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SAT 2019. — [arXiv](https://arxiv.org/abs/1905.02828)
+- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+- **[Survey]** Wijsen. *Foundations of Query Answering on Inconsistent Databases.* SIGMOD Record, 2019. — [PDF](https://sigmodrecord.org/publications/sigmodRecord/1909/pdfs/03_Principles_Wijsen.pdf)
+
+## 10. Worked Example
+
+Relation $\mathit{Emp}(\underline{\text{name}}, \text{dept})$ with primary key $\text{name}$. The instance violates the key (two tuples for *Ann*):
+
+| name | dept |
+|------|------|
+| Ann  | Sales |
+| Ann  | HR |
+| Bob  | Sales |
+
+The conflict is $\{(\text{Ann},\text{Sales}),(\text{Ann},\text{HR})\}$; *Bob* is conflict-free. A **subset repair** picks exactly one *Ann*-tuple, so there are 2 repairs: $R_1=\{(\text{Ann},\text{Sales}),(\text{Bob},\text{Sales})\}$ and $R_2=\{(\text{Ann},\text{HR}),(\text{Bob},\text{Sales})\}$.
+
+Query $Q_1$: "is some employee in Sales?" Both $R_1,R_2$ contain $(\text{Bob},\text{Sales})$, so $Q_1$ holds in **every** repair — it is a *certain* answer.
+
+Query $Q_2$: "is Ann in HR?" True in $R_2$, false in $R_1$, so $Q_2$ is **not** certain.
+
+For $\sharp\mathrm{CERTAINTY}$: of the 2 repairs, exactly 1 satisfies $Q_2$, so the count is $1/2$. This query's attack graph is acyclic, so $Q_1$ is FO-rewritable and runs in $\mathrm{AC}^0$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

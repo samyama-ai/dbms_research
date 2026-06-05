@@ -48,11 +48,21 @@ Active directions: speculation policies that adaptively throttle how far ahead t
 
 ## 9. Key References
 
-- **[Foundational]** Ramakrishna Kotla, Lorenzo Alvisi, Mike Dahlin, Allen Clement, Edmund Wong. *Zyzzyva: Speculative Byzantine Fault Tolerance.* SOSP, 2007.
-- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** Dan R. K. Ports, Jialin Li, Vincent Liu, Naveen Kr. Sharma, Arvind Krishnamurthy. *Designing Distributed Systems Using Approximate Synchrony in Data Center Networks (Speculative Paxos).* NSDI, 2015.
-- **[SOTA]** Jialin Li, Ellis Michael, Naveen Kr. Sharma, Adriana Szekeres, Dan R. K. Ports. *Just Say NO to Paxos Overhead (NOPaxos).* OSDI, 2016.
-- **[Foundational]** Leslie Lamport. *Generalized Consensus and Paxos.* Microsoft Research Technical Report MSR-TR-2005-33, 2005.
+- **[Foundational]** Ramakrishna Kotla, Lorenzo Alvisi, Mike Dahlin, Allen Clement, Edmund Wong. *Zyzzyva: Speculative Byzantine Fault Tolerance.* SOSP, 2007. — [ACM](https://dl.acm.org/doi/10.1145/1294261.1294267)
+- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [ACM](https://dl.acm.org/doi/10.1145/2517349.2517350)
+- **[SOTA]** Dan R. K. Ports, Jialin Li, Vincent Liu, Naveen Kr. Sharma, Arvind Krishnamurthy. *Designing Distributed Systems Using Approximate Synchrony in Data Center Networks (Speculative Paxos).* NSDI, 2015. — [USENIX](https://www.usenix.org/conference/nsdi15/technical-sessions/presentation/ports)
+- **[SOTA]** Jialin Li, Ellis Michael, Naveen Kr. Sharma, Adriana Szekeres, Dan R. K. Ports. *Just Say NO to Paxos Overhead (NOPaxos).* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/li)
+- **[Foundational]** Leslie Lamport. *Generalized Consensus and Paxos.* Microsoft Research Technical Report MSR-TR-2005-33, 2005. — [MSR](https://www.microsoft.com/en-us/research/publication/generalized-consensus-and-paxos/)
+
+## 10. Worked Example
+
+Take a dependency chain $c_0 \to c_1 \to \dots$ where each speculatively-executed command reads the previous one's output (branching factor $b=1$). Suppose per-command misspeculation probability is $p=0.2$. The expected rollback-set size on a misspeculation is
+
+$$\mathbb{E}[|R|] = \sum_{k\ge 0}(pb)^k = \frac{1}{1-pb} = \frac{1}{1-0.2} = 1.25,$$
+
+so each bad bet wastes on average 1.25 re-executions — finite because $pb=0.2<1$.
+
+Now contrast a *correlated* failure. A leader change arrives after the prefix $c_0,\dots,c_9$ (10 commands) has been speculatively executed but none committed, and it reorders $c_0$. Every later command transitively read $c_0$'s output, so the rollback set is the whole prefix: $|R| = 10$, not $1.25$. One correlated event produces $\Omega(L)$ wasted work ($L=10$), illustrating why the independent branching-process bound under-predicts real tails — the gap the problem targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -36,11 +36,21 @@ Learned/RL partition advisors and **LLM-assisted physical design** are active in
 - Tight inapproximability results for the combined problem; principled migration-cost-aware online schemes.
 
 ## 9. Key References
-- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning.* VLDB, 2016.
-- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM, 2009.
-- **[Foundational]** Andreev, Räcke. *Balanced Graph Partitioning.* SPAA, 2004.
-- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM, 2009. — [DOI](https://doi.org/10.1145/1502793.1502794)
+- **[Foundational]** Andreev, Räcke. *Balanced Graph Partitioning.* SPAA, 2004. — [DOI](https://doi.org/10.1145/1007912.1007931)
+- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Two tables on $k = 2$ nodes: `Orders(oid, cid)` and `Customers(cid)`. The workload is dominated by `Orders ⋈ Customers ON cid`. Take 4 customers $c_1..c_4$, each with one order $o_1..o_4$.
+
+**Layout X — hash both tables on `cid`:** co-partitioned. Node 1 holds $\{c_1,c_2,o_1,o_2\}$, node 2 holds $\{c_3,c_4,o_3,o_4\}$. The join runs locally on each node: **0 bytes shuffled**.
+
+**Layout Y — hash `Orders` on `oid`, `Customers` on `cid`:** join keys not aligned, so every order must be shipped to its customer's node. Expected $\approx |Orders|/2 = 2$ tuples cross the network per execution; over a workload with frequency $f = 1000$, that is $2000$ tuples of shuffle.
+
+**Graph view:** vertices = tuples, an edge $(o_i, c_i)$ for each co-accessed pair. Minimizing cross-node cut edges under the balance constraint (2 tuples-per-table per node) is exactly balanced min-cut. Here the cut of size 0 (Layout X) is optimal: partition $\{c_1,o_1,c_2,o_2\}\,|\,\{c_3,o_3,c_4,o_4\}$ severs no $(o,c)$ edge. Schism builds this very graph and feeds it to METIS; the NP-hardness of balanced min-cut is why no exact polynomial algorithm is known for the general schema.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

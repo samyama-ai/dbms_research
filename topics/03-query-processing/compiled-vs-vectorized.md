@@ -110,12 +110,30 @@ and never loses to either extreme remains undemonstrated.
 
 ## 9. Key References
 
-- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011.
-- **[SOTA]** Kersten, Leis, Kemper, Neumann, Pavlo, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB 2018.
-- **[SOTA]** Neumann, Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR 2020.
-- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005.
-- **[SOTA]** Xu, Kjolstad. *Copy-and-Patch Compilation.* OOPSLA 2021.
-- **[SOTA]** Menon, Mowry, Pavlo. *Relaxed Operator Fusion for In-Memory Databases.* VLDB 2017.
+- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011. — [DBLP](https://dblp.org/rec/journals/pvldb/Neumann11.html)
+- **[SOTA]** Kersten, Leis, Kemper, Neumann, Pavlo, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB 2018. — [DBLP](https://dblp.org/rec/journals/pvldb/KerstenLKNPB18.html)
+- **[SOTA]** Neumann, Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR 2020. — [DBLP](https://dblp.org/rec/conf/cidr/NeumannF20.html)
+- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[SOTA]** Xu, Kjolstad. *Copy-and-Patch Compilation.* OOPSLA 2021. — [DOI](https://doi.org/10.1145/3485513) · [arXiv](https://arxiv.org/abs/2011.13127)
+- **[SOTA]** Menon, Mowry, Pavlo. *Relaxed Operator Fusion for In-Memory Databases.* VLDB 2017. — [DBLP](https://dblp.org/rec/journals/pvldb/MenonPM17.html)
+
+## 10. Worked Example
+
+Consider a single filter-and-project pipeline over $n$ tuples. Suppose the vectorized
+per-tuple primitive cost is $c^{\text{prim}}_{\text{vec}} = 3$ ns and compilation removes
+dispatch and fuses, giving $c^{\text{prim}}_{\text{comp}} = 1$ ns, so the per-tuple saving is
+$\Delta c = 2$ ns. Take an LLVM compile cost $T_{\text{compile}} = 20$ ms $= 2\times10^7$ ns.
+
+The crossover is $n^\* \approx T_{\text{compile}}/\Delta c = 2\times10^7 / 2 = 10^7$ tuples.
+
+- For $n = 10^6$ (1 M): vectorized $= 3\times10^6$ ns $= 3$ ms; compiled $= 20 + 1$ ms
+  $= 21$ ms. **Vectorized wins** — compilation never amortizes.
+- For $n = 10^8$ (100 M): vectorized $= 300$ ms; compiled $= 20 + 100 = 120$ ms.
+  **Compiled wins.**
+
+A static choice loses badly on whichever side it guesses wrong. A copy-and-patch JIT cuts
+$T_{\text{compile}}$ to $\approx 20\,\mu$s, pushing $n^\* \approx 10^4$ — so compilation pays
+off for nearly all pipelines, illustrating why low-latency codegen narrows the unification gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

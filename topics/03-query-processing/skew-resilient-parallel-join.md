@@ -102,12 +102,32 @@ of detection without prior stats lacks tight bounds.
 
 ## 9. Key References
 
-- **[Foundational]** DeWitt, Naughton, Schneider, Seshadri. *Practical Skew Handling in Parallel Joins.* VLDB 1992.
-- **[Foundational]** Graham. *Bounds on Multiprocessing Timing Anomalies.* SIAM J. Applied Math, 1969.
-- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS 2013 (and JACM).
-- **[SOTA]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT 2010 (HyperCube/Shares).
-- **[SOTA]** Xu, Kostamaa, Zhou, Chen. *Handling Data Skew in Parallel Joins in Shared-Nothing Systems.* SIGMOD 2008 (PRPD).
-- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014.
+- **[Foundational]** DeWitt, Naughton, Schneider, Seshadri. *Practical Skew Handling in Parallel Joins.* VLDB 1992. — [DBLP](https://dblp.org/rec/conf/vldb/DeWittNSS92.html)
+- **[Foundational]** Graham. *Bounds on Multiprocessing Timing Anomalies.* SIAM J. Applied Math, 1969. — [DOI](https://doi.org/10.1137/0117039)
+- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS 2013 (and JACM). — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT 2010 (HyperCube/Shares). — [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[SOTA]** Xu, Kostamaa, Zhou, Chen. *Handling Data Skew in Parallel Joins in Shared-Nothing Systems.* SIGMOD 2008 (PRPD). — [DOI](https://doi.org/10.1145/1376616.1376720)
+- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+
+## 10. Worked Example
+
+Join $R\bowtie S$ on key, with $P=4$ workers. Key $j{=}1$ is a heavy hitter:
+$r_1=900, s_1=100$; the other $100$ keys each have $r_j=s_j=1$. Per-key work
+$w_j=r_j+s_j+r_j s_j$, so $w_1=900+100+90000=91000$ and each light key $w_j=3$.
+Total work $\approx 91000 + 300 = 91300$, ideal balance $=91300/4\approx 22825$.
+
+**Naive hash:** key $1$ maps to one worker, giving makespan $\ge w_1 = 91000$ — about
+$4\times$ the ideal, a textbook straggler. The other three workers handle $\approx 100$ work
+each and idle.
+
+**Heavy-hitter split (DeWitt):** detect key $1$, partition its $R$-side ($900$ rows) across
+all $4$ workers and broadcast its $S$-side ($100$ rows) to each. The $90000$ product tuples
+now split into $\approx 22500$ per worker, plus replication of $100$ probe rows $\times 4$.
+Makespan drops to $\approx \text{total}/P + \max_j w_j^{\text{split}} \approx 22825$ — near
+optimal.
+
+This is the indivisibility bound in action: because $r_1 s_1 = 90000 > \text{total}/P$, no
+pure key-partition can balance; only splitting/replication removes the straggler.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Plan diagram smoothness and selectivity geometry
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/plan-diagram-geometry` · **Status:** empirically-open
+> **Verification note:** The Plan Bouquet author is Anshuman **Dutt** (not "Dutta"); the SIGMOD 2014 paper guarantees worst-case cost within a factor of $4$ of an oracle.
 
 ## 1. Problem Statement
 Fix a parametric query template with $d$ varying selectivity (or parameter) dimensions, e.g. predicate selectivities $s_1,\dots,s_d \in [0,1]$. For each point in this **selectivity space**, the optimizer chooses an optimal plan. The **plan diagram** colors each point by the plan the optimizer picks; it partitions the space into **optimality regions**. Empirically these diagrams are often startlingly complex: dozens to hundreds of distinct plans, jagged non-convex boundaries, tiny "speckle" regions, and non-monotone transitions.
@@ -50,11 +51,21 @@ The gap is genuinely open and partly *empirical*: we lack a predictive theory li
 - Higher-dimensional anorexic reduction with approximation guarantees and tractable construction.
 
 ## 9. Key References
-- **[Foundational]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005.
-- **[SOTA]** Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007.
-- **[SOTA]** Dutta, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014.
-- **[Foundational]** Sharir, Agarwal. *Davenport–Schinzel Sequences and Their Geometric Applications.* Cambridge Univ. Press, 1995.
-- **[Survey]** Haritsa. *Robust Query Processing: Mission Possible* (tutorials/keynotes), VLDB/ICDE, 2010s.
+- **[Foundational]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[SOTA]** Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007. — [DBLP search](https://dblp.org/search?q=On%20the%20Production%20of%20Anorexic%20Plan%20Diagrams)
+- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588566)
+- **[Foundational]** Sharir, Agarwal. *Davenport–Schinzel Sequences and Their Geometric Applications.* Cambridge Univ. Press, 1995. — [Cambridge](https://www.cambridge.org/9780521470254)
+- **[Survey]** Haritsa. *Robust Query Processing: Mission Possible* (tutorials/keynotes), VLDB/ICDE, 2010s. — [DOI](https://doi.org/10.14778/3415478.3415561)
+
+## 10. Worked Example
+
+**Plan Bouquet on a 1-D selectivity axis.** The true selectivity $s$ is unknown in $[0,1]$; the oracle optimal cost $C^*(s)$ grows monotonically. Lay down cost *isosurfaces* at geometrically spaced budgets $1,2,4,8,16$. Each isosurface is crossed by one bouquet plan optimal there; say plans $p_1,\dots,p_5$ cover the cost bands.
+
+Execution discovery: run $p_1$ with budget $1$. If it finishes, done. Else run $p_2$ with budget $2$, then $p_3$ with budget $4$, and so on, *aborting* each partial run at its budget. Suppose the true optimum cost is $C^*=10$, so plan $p_4$ (budget $8$) fails but $p_5$ (budget $16$) succeeds.
+
+Total work paid: $1+2+4+8+16 = 31$. Oracle would pay $10$. Ratio $31/10 = 3.1 < 4$.
+
+In the worst case the geometric series $\sum_{i=0}^{k} 2^i = 2^{k+1}-1$ against an oracle just above $2^{k-1}$ gives the tight bound: $\frac{2^{k+1}-1}{2^{k-1}} \to 4$. This factor-$4$ regret holds with **no selectivity estimate at all** — a geometric guarantee, not a statistical one.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

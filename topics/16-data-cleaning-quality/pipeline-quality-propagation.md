@@ -64,12 +64,23 @@ This is **genuinely open**. We have compositional *exact* propagation only for t
 
 ## 9. Key References
 
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007.
-- **[Foundational]** Wang, Strong. *Beyond Accuracy: What Data Quality Means to Data Consumers.* J. of MIS, 1996.
-- **[SOTA]** Schelter et al. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018.
-- **[SOTA]** Grafberger, Groth, Stoyanovich, Schelter. *Data Distribution Debugging in Machine Learning Pipelines (mlinspect).* VLDB Journal, 2022.
-- **[SOTA]** Karlaš et al. *Nearest Neighbor Classifiers over Incomplete Information: From Certain Answers to Certain Predictions (CPClean).* VLDB, 2020.
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007. — [DOI](https://doi.org/10.1007/s00778-006-0004-3)
+- **[Foundational]** Wang, Strong. *Beyond Accuracy: What Data Quality Means to Data Consumers.* J. of MIS, 1996. — [DOI](https://doi.org/10.1080/07421222.1996.11518099)
+- **[SOTA]** Schelter et al. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3229867)
+- **[SOTA]** Grafberger, Groth, Stoyanovich, Schelter. *Data Distribution Debugging in Machine Learning Pipelines (mlinspect).* VLDB Journal, 2022. — [DOI](https://doi.org/10.1007/s00778-021-00726-w)
+- **[SOTA]** Karlaš et al. *Nearest Neighbor Classifiers over Incomplete Information: From Certain Answers to Certain Predictions (CPClean).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2005.05117)
+
+## 10. Worked Example
+
+A two-stage pipeline $P = s_2 \circ s_1$ over a table of 1000 rows.
+
+- $s_1$ = **dedup**: removes exact duplicates. Suppose 5% of rows are erroneous and dedup has accuracy $a_1=0.9$ (fixes 90% of the duplicate-induced errors it touches).
+- $s_2$ = **join** with a reference table whose key coverage is 0.8.
+
+Track *completeness* $q\in[0,1]$. Input completeness $q_0 = 0.95$ (5% missing/bad). Model each stage as a multiplicative transfer: $q_1 = q_0 \cdot (1 - (1-a_1)\cdot 0.05) = 0.95\cdot(1-0.005)=0.9453$. The inner join then *drops* rows lacking a key match, so completeness is multiplied by coverage: $q_2 = q_1 \cdot 0.8 = 0.7562$.
+
+So the SLA check "is output completeness $\ge \tau=0.85$?" **fails** — and attribution is immediate: the join ($\times 0.8$) caused the $0.945\to0.756$ drop, far more than dedup. Note the **data-processing inequality** at work: the join cannot recover completeness lost upstream, only erode it further. This illustrates why per-stage transfer functions, not a single end-to-end number, are needed for credit assignment.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

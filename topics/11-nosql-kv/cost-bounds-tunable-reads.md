@@ -1,6 +1,7 @@
 # Cost Bounds for Tunable Reads
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/cost-bounds-tunable-reads` · **Status:** open
+> **Verification note:** The fourth author of the PODC 2004 "fast atomic read" paper is A. Chakraborty, not Vukolić (corrected in §9); the technical claim is unaffected.
 
 ## 1. Problem Statement
 Tunable-consistency KV stores (Cassandra, DynamoDB, Riak) let a client pick a per-operation consistency level — e.g., quorum `R + W > N`, `ONE`, `LOCAL_QUORUM`, or a bounded-staleness target. Each level implies a **coordination cost**: messages sent, replicas contacted, round trips, and latency, especially under failures. The problem: establish **lower bounds on the coordination message/round complexity** required to guarantee a *target consistency or staleness* $\Delta$ for reads, as a function of replication factor $N$, failure model (crash $f$, message loss, partitions), and the consistency target (linearizable / sequential / causal / $k$-atomic / $\Delta$-staleness).
@@ -37,12 +38,20 @@ Directions: **consistency-cost frontiers** quantifying coordination across the f
 - Protocols provably matching frontier bounds for $\Delta$-staleness with probabilistic SLAs.
 
 ## 9. Key References
-- **[Foundational]** Attiya, Bar-Noy, Dolev. *Sharing Memory Robustly in Message-Passing Systems.* JACM, 1995.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[SOTA]** Dutta, Guerraoui, Levy, Vukolić. *How Fast Can a Distributed Atomic Read Be?* PODC, 2004.
-- **[Foundational]** Naor, Wool. *The Load, Capacity, and Availability of Quorum Systems.* SIAM J. Computing, 1998.
-- **[SOTA]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012.
-- **[Survey]** Viotti, Vukolić. *Consistency in Non-Transactional Distributed Storage Systems.* ACM Computing Surveys, 2016.
+- **[Foundational]** Attiya, Bar-Noy, Dolev. *Sharing Memory Robustly in Message-Passing Systems.* JACM, 1995. — [DOI](https://doi.org/10.1145/200836.200869)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Dutta, Guerraoui, Levy, Chakraborty. *How Fast Can a Distributed Atomic Read Be?* PODC, 2004. — [DOI](https://doi.org/10.1145/1011767.1011802)
+- **[Foundational]** Naor, Wool. *The Load, Capacity, and Availability of Quorum Systems.* SIAM J. Computing, 1998. — [DOI](https://doi.org/10.1137/S0097539795281232)
+- **[SOTA]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[Survey]** Viotti, Vukolić. *Consistency in Non-Transactional Distributed Storage Systems.* ACM Computing Surveys, 2016. — [arXiv](https://arxiv.org/abs/1512.00168)
+
+## 10. Worked Example
+
+Take $N=3$ replicas, write quorum $W=2$, read quorum $R=2$. Since $R+W = 4 > N = 3$, every read quorum intersects every write quorum, so a quorum read is **linearizable** and tolerates $f = \min(R,W)-1 = 1$ crash.
+
+Trace: a write of $v_2$ (versioning the old $v_1$) reaches replicas $\{A,B\}$ and acks; $C$ still holds $v_1$. A reader contacts any 2 replicas. Possible reads: $\{A,B\}\to v_2$, $\{A,C\}\to\{v_2,v_1\}$, $\{B,C\}\to\{v_2,v_1\}$. Every 2-subset includes at least one of $\{A,B\}$, so the reader always *sees* $v_2$ and returns the max version — never stale.
+
+Now relax to `ONE` ($R=1$): reading only $C$ returns the stale $v_1$ — $O(1)$ message, no recency. This is the cost gap the problem formalizes: strong read load $= N-W+1 = 2 = \Theta(N)$ contacts versus $1$ for eventual, with $f=1$ requiring $N\ge 2f+1=3$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

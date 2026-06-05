@@ -43,12 +43,20 @@ Active directions: deterministic concurrency for cloud-native and geo-distribute
 
 ## 9. Key References
 
-- **[SOTA]** Thomson, A.; Diamond, T.; Weng, S.-C.; Ren, K.; Shao, P.; Abadi, D. J. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Lu, Y.; Yu, X.; Suo, L.; Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* PVLDB, 2020.
-- **[SOTA]** Faleiro, J. M.; Abadi, D. J. *Rethinking Serializable Multiversion Concurrency Control.* PVLDB, 2015.
-- **[Foundational]** Abadi, D. J.; Faleiro, J. M. *An Overview of Deterministic Database Systems.* CACM, 2018.
-- **[Foundational]** Bailis, P.; Fekete, A.; Franklin, M.; Ghodsi, A.; Hellerstein, J.; Stoica, I. *Coordination Avoidance in Database Systems.* PVLDB, 2014.
-- **[Survey]** Hellerstein, J. M.; Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020.
+- **[SOTA]** Thomson, A.; Diamond, T.; Weng, S.-C.; Ren, K.; Shao, P.; Abadi, D. J. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Lu, Y.; Yu, X.; Cao, L.; Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** Faleiro, J. M.; Abadi, D. J. *Rethinking Serializable Multiversion Concurrency Control.* PVLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)
+- **[Foundational]** Abadi, D. J.; Faleiro, J. M. *An Overview of Deterministic Database Systems.* CACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+- **[Foundational]** Bailis, P.; Fekete, A.; Franklin, M.; Ghodsi, A.; Hellerstein, J.; Stoica, I. *Coordination Avoidance in Database Systems.* PVLDB, 2014. — [arXiv](https://arxiv.org/abs/1402.2237)
+- **[Survey]** Hellerstein, J. M.; Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+
+## 10. Worked Example
+
+A dependent transaction whose write set is not pre-declared: `T: UPDATE accounts SET bal=bal+10 WHERE id = (SELECT owner FROM keys WHERE k='alpha')`. The row it writes depends on a value read at runtime, so Calvin's sequencer cannot pre-acquire the right lock.
+
+**Reconnaissance (Calvin/OLLP).** Run $T$ at snapshot $s$: the subquery yields `owner = 42`, so predicted write set $A_{recon} = \{accounts[42]\}$. The batch then locks `accounts[42]` in order $\pi$ and re-executes. If a concurrent committed transaction changed `keys['alpha'].owner` to 99 before execution, then $A_{exec} = \{accounts[99]\} \ne A_{recon}$ — mismatch, so $T$ aborts and retries. Under churn on `keys`, this can loop.
+
+**Aria (no pre-declaration).** Batch $\{T, U\}$ executes against one snapshot; each records its discovered footprint in a reservation table keyed by the fixed order. Say $T$ and $U$ both write `accounts[42]` (a write-after-write conflict): Aria deterministically keeps the lower-ordered $T$ and sends $U$ to a fallback ordered pass — $O(1)$ extra rounds, no reconnaissance pre-run, but throughput dips when ww-conflict density is high.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

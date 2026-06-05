@@ -85,11 +85,32 @@ $\mathcal{U}$, approximation algorithms for minimax-regret ordering, and guarant
 
 ## 9. Key References
 
-- **[Foundational]** Chu, Halpern, Seshadri. *Least Expected Cost Query Optimization: An Exercise in Utility.* PODS, 1999.
-- **[Foundational]** Babcock, Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005.
-- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014.
-- **[SOTA]** Karthik, Haritsa, et al. *Platform-independent Robust Query Processing (SpillBound).* ICDE, 2016 / TKDE.
-- **[Survey]** Aissi, Bazgan, Vanderpooten. *Min-max and Min-max Regret Versions of Combinatorial Optimization Problems: A Survey.* EJOR, 2009.
+- **[Foundational]** Chu, Halpern, Seshadri. *Least Expected Cost Query Optimization: An Exercise in Utility.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303990)
+- **[Foundational]** Babcock, Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066172)
+- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588566)
+- **[SOTA]** Karthik, Haritsa, et al. *Platform-independent Robust Query Processing (SpillBound).* ICDE, 2016 / TKDE. — [DOI](https://doi.org/10.1109/ICDE.2016.7498251)
+- **[Survey]** Aissi, Bazgan, Vanderpooten. *Min-max and Min-max Regret Versions of Combinatorial Optimization Problems: A Survey.* EJOR, 2009. — [DOI](https://doi.org/10.1016/j.ejor.2008.09.012)
+
+## 10. Worked Example
+
+Two candidate join orders, $T_1$ and $T_2$, over an uncertainty set of two scenarios $\mathcal{U}=\{u_1,u_2\}$ (e.g. low vs. high selectivity of a filter). Costs:
+
+| | $u_1$ | $u_2$ | $\max_u C$ |
+|------|------:|------:|-----------:|
+| $T_1$ | 100 | 900 | 900 |
+| $T_2$ | 300 | 400 | 400 |
+| $\mathrm{OPT}(u)$ | 100 | 400 | — |
+
+**Minimax cost:** $\min(900, 400)=400 \Rightarrow$ pick $T_2$.
+
+**Minimax regret:** regret $=C_u(T)-\mathrm{OPT}(u)$.
+
+- $T_1$: $\max(100-100,\ 900-400)=\max(0,500)=500$.
+- $T_2$: $\max(300-100,\ 400-400)=\max(200,0)=200$.
+
+$\min(500,200)=200 \Rightarrow$ pick $T_2$.
+
+The *nominal* optimizer, betting on $u_1$ only, would choose $T_1$ (cost 100) — and pay 900 if $u_2$ materializes, a $9\times$ blow-up. Both robust objectives instead select $T_2$, capping the worst case at 400 (minimax) and the worst regret at 200. The point-scenario DP of Section 4 computes exactly this table in $O(3^n\cdot m)$ for $n$ relations, $m=2$ scenarios.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

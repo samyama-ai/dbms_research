@@ -42,12 +42,28 @@ An information-theoretic accuracy model that makes "guaranteed recall" meaningfu
 
 ## 9. Key References
 
-- **[Foundational]** He, Chang. *Statistical Schema Matching across Web Query Interfaces.* SIGMOD 2003.
-- **[Foundational]** Madhavan, Bernstein, Doan, Halevy. *Corpus-based Schema Matching.* ICDE 2005.
-- **[SOTA]** Koutras, Siachamis, Ionescu, et al. *Valentine: Evaluating Matching Techniques for Dataset Discovery.* ICDE 2021.
-- **[SOTA]** Cappuzzo, Papotti, Thirumuruganathan. *Creating Embeddings of Heterogeneous Relational Datasets (EmbDI).* SIGMOD 2020.
-- **[Foundational]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Correlation Clustering.* JACM 2008.
-- **[Survey]** Rahm, Bernstein. *A Survey of Approaches to Automatic Schema Matching.* VLDB Journal, 2001.
+- **[Foundational]** He, Chang. *Statistical Schema Matching across Web Query Interfaces.* SIGMOD 2003. — [Semantic Scholar](https://www.semanticscholar.org/paper/Statistical-schema-matching-across-web-query-He-Chang/3b76b68c44e4d9f875e2aaa95eae689bbc67396c)
+- **[Foundational]** Madhavan, Bernstein, Doan, Halevy. *Corpus-based Schema Matching.* ICDE 2005. — [DOI](https://dl.acm.org/doi/10.1109/ICDE.2005.39)
+- **[SOTA]** Koutras, Siachamis, Ionescu, et al. *Valentine: Evaluating Matching Techniques for Dataset Discovery.* ICDE 2021. — [arXiv](https://arxiv.org/abs/2010.07386)
+- **[SOTA]** Cappuzzo, Papotti, Thirumuruganathan. *Creating Embeddings of Heterogeneous Relational Datasets (EmbDI).* SIGMOD 2020. — [DBLP](https://dblp.org/rec/conf/sigmod/CappuzzoPT20.html)
+- **[Foundational]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Correlation Clustering.* JACM 2008. — [DOI](https://dl.acm.org/doi/10.1145/1411509.1411513)
+- **[Survey]** Rahm, Bernstein. *A Survey of Approaches to Automatic Schema Matching.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100057)
+
+## 10. Worked Example
+
+Consider 3 tiny schemas of book sources, attributes labeled by source:
+
+- $S_1$: {`author`, `title`, `price`}
+- $S_2$: {`writer`, `name`, `cost`}
+- $S_3$: {`author`, `booktitle`, `isbn`}
+
+Holistic signal: attributes **co-occurring in one schema are rarely synonyms**. Since `author` and `title` co-occur in $S_1$, they go to different concepts. Across the corpus, `author`/`writer` never co-occur and share values → high $w$. Build signed weights, e.g. $w(\text{author},\text{writer})=+0.9$, $w(\text{title},\text{name})=+0.8$, $w(\text{title},\text{author})=-0.7$.
+
+Run pivot correlation clustering (Ailon–Charikar–Newman, 3-approx): pick pivot `author`, pull in `writer` ($+0.9$) and `author`$_{S_3}$, reject `title` ($-0.7$). Resulting concept clusters:
+
+$$C_1=\{\text{author},\text{writer},\text{author}_{S_3}\},\ C_2=\{\text{title},\text{name},\text{booktitle}\},\ C_3=\{\text{price},\text{cost}\},\ C_4=\{\text{isbn}\}.$$
+
+The mediated schema has 4 concepts. A pairwise matcher would compare $\binom{8}{2}=28$ attribute pairs; holistic blocking on shared values cuts candidate pairs sub-quadratically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

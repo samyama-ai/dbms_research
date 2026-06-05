@@ -48,11 +48,21 @@ For single-node B-trees, upper and lower bounds nearly meet — restore work is 
 - Energy/SLO-bounded recovery (bounded p99 latency tax during restore).
 
 ## 9. Key References
-- **[SOTA / Survey]** Graefe, G., Guy, W. & Sauer, C. *Instant Recovery with Write-Ahead Logging: Page Repair, System Restart, Media Restore, and System Failover.* Synthesis Lectures on Data Management, Morgan & Claypool, 2nd ed., 2016.
-- **[SOTA]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS, 2017.
-- **[Foundational]** Lehman, P. & Yao, S. B. *Efficient Locking for Concurrent Operations on B-Trees (Blink-trees).* ACM TODS, 1981.
-- **[Foundational]** Mohan, C. et al. *ARIES.* ACM TODS, 1992.
-- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D. & O'Neil, E. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
+- **[SOTA / Survey]** Graefe, G., Guy, W. & Sauer, C. *Instant Recovery with Write-Ahead Logging: Page Repair, System Restart, Media Restore, and System Failover.* Synthesis Lectures on Data Management, Morgan & Claypool, 2nd ed., 2016. — [DOI](https://doi.org/10.1007/978-3-031-01857-2)
+- **[SOTA]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS, 2017. — [DOI](https://doi.org/10.1007/978-3-319-66917-5_21)
+- **[Foundational]** Lehman, P. & Yao, S. B. *Efficient Locking for Concurrent Operations on B-Trees (Blink-trees).* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319663)
+- **[Foundational]** Mohan, C. et al. *ARIES.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D. & O'Neil, E. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+
+## 10. Worked Example
+
+A B-tree leaf page $p$ has backup image at LSN 100. Since the backup, four updates touched $p$, logged as records with LSNs 140, 175, 175 (a duplicate replay), 220, plus an unrelated record at LSN 160 on another page. Crash strikes; a transaction now reads a key in $p$, triggering **single-page restore**.
+
+**Restore fold.** Load $\text{backup}(p)$ at LSN 100, then apply only $p$'s chain with $\text{LSN} > 100$: records 140, 175, 220 (record 160 belongs to a different page and is skipped). Idempotency: the page-LSN test-and-set means re-applying the duplicate 175 is a no-op once page-LSN $\ge 175$, so $\text{restore}(p) = \text{fold}(\oplus, \text{backup}(p), \{140,175,220\})$ yields page-LSN $= 220$. Cost is $O(|\text{log}_p|) = 3$ records, **independent of total log size**.
+
+**Availability.** Time-to-first-transaction is $\approx$ constant (load backup catalog), not $O(\text{whole log})$. Other pages restore lazily on first touch; total background work is $O(\text{changed bytes since backup})$ — the I/O lower bound.
+
+**Online-scheduling tax.** With cache size $k$, the deterministic competitive ratio for ordering background restores against adversarial access is $\Omega(k)$, so some on-access stalls are unavoidable under skewed, unknown future accesses.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -43,12 +43,20 @@ Open. The *single-page* rent-or-buy theory is tight, but the realistic problem �
 - Recompression integrated with buffer eviction: evict-by-recompress as a third option beside keep/drop.
 
 ## 9. Key References
-- **[Foundational]** Stonebraker et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005.
-- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[Foundational]** Karlin, Manasse, McGeoch, Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (Ski-Rental).* Algorithmica, 1994.
-- **[Foundational]** Borodin, Linial, Saks. *An Optimal Online Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[Survey]** Bubeck, Cohen, Lee, Lee, Madry. *k-server via Multiscale Entropic Regularization / MTS advances.* STOC, 2018.
+- **[Foundational]** Stonebraker et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005. — [ACM](https://dl.acm.org/doi/10.5555/1083592.1083658)
+- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[Foundational]** Karlin, Manasse, McGeoch, Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (Ski-Rental).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
+- **[Foundational]** Borodin, Linial, Saks. *An Optimal Online Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[Survey]** Bubeck, Cohen, Lee, Lee, Madry. *k-server via Multiscale Entropic Regularization / MTS advances.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1711.01085)
+
+## 10. Worked Example
+
+One page, two schemes. **Light** (LZ4): decode cost $\delta_L = 1$ per read, footprint penalty $\alpha/\rho_L = 4$. **Heavy** (Zstd-high): decode $\delta_H = 1$ (decompression is cheap), footprint $\alpha/\rho_H = 1$, but a one-time recompress cost $C = 10$ to switch L$\to$H.
+
+Per-read steady-state cost: light $= \delta_L + \text{footprint} = 1+4 = 5$; heavy $= 1+1 = 2$. Switching saves $3$ per read but costs $10$ up front. **Break-even** read count $n^*$: $10 = 3n^* \Rightarrow n^* \approx 3.3$ reads.
+
+This is exactly ski-rental with buy cost $10$ and rent savings $3$. The deterministic $2$-competitive rule "switch once accumulated rent savings reach the buy cost" recompresses after the page has been read $\lceil 10/3 \rceil = 4$ times. Worst case (section 5): an adversary lets the page go cold right after we pay the $10$ to compress it — we never recoup the encode work, and total cost is $2\times$ the offline optimum (which, knowing the future, would never have switched). Randomized rent-or-buy improves this to $e/(e-1)\approx 1.58$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

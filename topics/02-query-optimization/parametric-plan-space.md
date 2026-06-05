@@ -49,12 +49,25 @@ For **fixed low dimension and structured (linear / low-degree) cost models**, up
 
 ## 9. Key References
 
-- **[Foundational]** Ganguly. *Design and Analysis of Parametric Query Optimization Algorithms.* VLDB, 1998.
-- **[SOTA]** Hulgeri, Sudarshan. *AniPQO: Almost Non-intrusive Parametric Query Optimization for Nonlinear Cost Functions.* VLDB, 2003.
-- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005.
-- **[SOTA]** Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007.
-- **[Foundational]** Sharir, Agarwal. *Davenport–Schinzel Sequences and Their Geometric Applications.* Cambridge University Press, 1995.
-- **[Survey]** Dey, Bhaumik, Haritsa, et al. *Efficiently Approximating Query Optimizer Plan Diagrams.* PVLDB, 2008.
+- **[Foundational]** Ganguly. *Design and Analysis of Parametric Query Optimization Algorithms.* VLDB, 1998. — [DBLP](https://dblp.org/rec/conf/vldb/Ganguly98.html)
+- **[SOTA]** Hulgeri, Sudarshan. *AniPQO: Almost Non-intrusive Parametric Query Optimization for Nonlinear Cost Functions.* VLDB, 2003. — [DBLP](https://dblp.org/rec/conf/vldb/HulgeriS03.html)
+- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[SOTA]** Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007. — [DBLP search](https://dblp.org/search?q=On%20the%20Production%20of%20Anorexic%20Plan%20Diagrams)
+- **[Foundational]** Sharir, Agarwal. *Davenport–Schinzel Sequences and Their Geometric Applications.* Cambridge University Press, 1995. — [Cambridge](https://www.cambridge.org/9780521470254)
+- **[Survey]** Dey, Bhaumik, Haritsa, et al. *Efficiently Approximating Query Optimizer Plan Diagrams.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1454159.1454173)
+
+## 10. Worked Example
+
+Take one parameter $\theta \in [0,1]$ (a selectivity) and three candidate plans with **linear** costs:
+
+$$c_1(\theta)=10,\quad c_2(\theta)=2+20\theta,\quad c_3(\theta)=14-8\theta.$$
+
+The optimal-cost function is the lower envelope $C^*(\theta)=\min_i c_i(\theta)$. Find crossovers:
+- $c_2=c_1$ at $\theta=0.4$; $c_2=c_3$ at $\theta=0.43$; $c_1=c_3$ at $\theta=0.5$.
+
+For small $\theta$, $c_2$ is cheapest (at $\theta=0$, $c_2=2$). It stays optimal until $c_2$ meets $c_3$ at $\theta=0.43$ (both $=10.6$, below $c_1=10$? — check: $c_1=10<10.6$, so $c_1$ wins first). Re-tracing: $c_2$ optimal on $[0,0.4]$, then $c_1=10$ on $[0.4,0.5]$, then $c_3$ on $[0.5,1]$.
+
+So the POSP is $\{p_1,p_2,p_3\}$, partitioning $\Theta$ into **3 regions**. With $d=1$ and $m=3$ lines, the envelope has $\le m=3$ pieces, matching the $O(m^{\lfloor d/2\rfloor})=O(m^0)\cdot$linear bound. Anorexic reduction (penalty $\lambda=20\%$): the thin $[0.4,0.5]$ band where $c_1\le 1.2\cdot\min(c_2,c_3)$ lets us drop $p_1$, retaining just $\{p_2,p_3\}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

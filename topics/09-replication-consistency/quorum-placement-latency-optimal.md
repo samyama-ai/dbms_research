@@ -53,12 +53,22 @@ Active threads: learning-augmented online placement (predictions + worst-case ro
 
 ## 9. Key References
 
-- **[Foundational]** Garcia-Molina, H., Barbara, D. *How to Assign Votes in a Distributed System.* JACM, 1985.
-- **[Foundational]** Naor, M., Wool, A. *The Load, Capacity, and Availability of Quorum Systems.* SIAM J. Computing, 1998.
-- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Moraru, I., Andersen, D., Kaminsky, M. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** Howard, H., Malkhi, D., Spiegelman, A. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[Survey]** Agarwal, S. et al. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010.
+- **[Foundational]** Garcia-Molina, H., Barbara, D. *How to Assign Votes in a Distributed System.* JACM, 1985. — [DOI](https://doi.org/10.1145/4221.4223)
+- **[Foundational]** Naor, M., Wool, A. *The Load, Capacity, and Availability of Quorum Systems.* SIAM J. Computing, 1998. — [DOI](https://doi.org/10.1137/S0097539795281232)
+- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[SOTA]** Moraru, I., Andersen, D., Kaminsky, M. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2517350)
+- **[SOTA]** Howard, H., Malkhi, D., Spiegelman, A. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.OPODIS.2016.25)
+- **[Survey]** Agarwal, S. et al. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010. — [USENIX](https://www.usenix.org/conference/nsdi10-0/volley-automated-data-placement-geo-distributed-cloud-services)
+
+## 10. Worked Example
+
+Five regions $V=\{$us-e, us-w, eu, ap, sa$\}$; place $n=5$ replicas (one each) with a leader in **us-e** and a majority write quorum ($|W|=3$). Symmetric one-way latencies (ms) from us-e: us-e $0$, us-w $30$, eu $40$, ap $90$, sa $60$. Round-trip $=2\times$ one-way.
+
+A write commits when the leader plus the 2 nearest followers ack — i.e. the **3rd-smallest** round-trip among all 5 (leader counts as RTT $0$). Sorted RTTs: $0, 60$ (us-w), $80$ (eu), $120$ (sa), $180$ (ap). The 3rd-smallest is $\text{lat}=80$ ms (waiting for eu).
+
+Now move the leader to **eu** (central). New one-way from eu: eu $0$, us-e $40$, us-w $70$, sa $80$, ap $70$. RTTs sorted: $0, 80$ (us-e), $140$ (ap), $140$ (us-w), $160$ (sa); 3rd-smallest $=140$ ms — worse, because eu's two nearest neighbors are far.
+
+So us-e leadership wins here ($80$ vs $140$ ms). Note the objective is a **select-3rd**, not a nearest-neighbor sum, which is exactly why classic $k$-median rounding does not directly apply.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

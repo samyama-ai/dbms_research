@@ -54,11 +54,21 @@ The gap is genuinely open. Locally, the purge condition is tight; **distributive
 
 ## 9. Key References
 
-- **[Foundational]** O'Neil, P. et al. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[SOTA]** Baquero, C., Almeida, P.S., Shapiro, M. et al. *Making Operation-Based CRDTs Operation-Based / Causal Stability for CRDT GC.* (DAIS / related), 2014.
-- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011.
-- **[Survey]** Luo, C., Carey, M. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020.
+- **[Foundational]** O'Neil, P. et al. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[SOTA]** Baquero, C., Almeida, P.S., Shoker, A. *Making Operation-Based CRDTs Operation-Based / Causal Stability for CRDT GC.* (DAIS / related), 2014. — [DOI](https://doi.org/10.1007/978-3-662-43352-2_11)
+- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
+- **[Survey]** Luo, C., Carey, M. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+
+## 10. Worked Example
+
+A 3-replica Cassandra cluster ($N=3$), `gc_grace_seconds` $G=10$. Key $k$ holds value $v$ (timestamp $t_v=100$). A delete writes tombstone $\tau_k$ at $t_\tau=200$ on replicas R1, R2; R3 is partitioned and never receives it.
+
+**Premature purge (resurrection bug):** A compaction on R1 at local time $t=205$ purges $\tau_k$ *before* grace elapses and before repair. R3 still holds $v$. A later read-repair propagates R3's $v$ back to R1 — the deleted value *resurrects*. This violates correctness.
+
+**Safe purge:** wait until $t_\tau + G = 210$ *and* a successful anti-entropy repair confirms R3 applied $\tau_k$. Only then drop both $v$ and $\tau_k$ at the bottommost level.
+
+The FLP-flavored floor: while R3 is partitioned, no finite-time protocol can *certify* it has seen the delete, so safe purge needs either the real-time assumption $G \ge \Delta_{\text{repair}}$ (which fails if repair misses the window) or an explicit $\Omega(N)$ acknowledgment barrier. Here $G=10$ is unsafe if R3's partition lasts $>10$s.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

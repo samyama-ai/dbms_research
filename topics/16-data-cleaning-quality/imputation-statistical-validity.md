@@ -45,12 +45,20 @@ Under **MNAR**, the estimand is **non-identifiable** in general (Rubin 1976; Man
 - Principled MNAR handling with reported identification bounds; benchmark suites that score *inference* not just imputation RMSE.
 
 ## 9. Key References
-- **[Foundational]** D. B. Rubin. *Inference and Missing Data.* Biometrika, 1976. (and *Multiple Imputation for Nonresponse in Surveys*, 1987.)
-- **[Foundational]** J. M. Robins, A. Rotnitzky, L. P. Zhao. *Estimation of Regression Coefficients When Some Regressors Are Not Always Observed.* JASA, 1994.
-- **[Foundational]** X.-L. Meng. *Multiple-Imputation Inferences with Uncongenial Sources of Input.* Statistical Science, 1994.
-- **[SOTA]** S. van Buuren, K. Groothuis-Oudshoorn. *mice: Multivariate Imputation by Chained Equations in R.* JSS, 2011.
-- **[SOTA]** J. Yoon, J. Jordon, M. van der Schaar. *GAIN: Missing Data Imputation using Generative Adversarial Nets.* ICML, 2018.
-- **[SOTA]** B. Muzellec, J. Josse, C. Boyer, M. Cuturi. *Missing Data Imputation using Optimal Transport.* ICML, 2020.
+- **[Foundational]** D. B. Rubin. *Inference and Missing Data.* Biometrika, 1976. (and *Multiple Imputation for Nonresponse in Surveys*, 1987.) — [DOI](https://doi.org/10.1093/biomet/63.3.581)
+- **[Foundational]** J. M. Robins, A. Rotnitzky, L. P. Zhao. *Estimation of Regression Coefficients When Some Regressors Are Not Always Observed.* JASA, 1994. — [DOI](https://doi.org/10.1080/01621459.1994.10476818)
+- **[Foundational]** X.-L. Meng. *Multiple-Imputation Inferences with Uncongenial Sources of Input.* Statistical Science, 1994. — [DOI](https://doi.org/10.1214/ss/1177010269)
+- **[SOTA]** S. van Buuren, K. Groothuis-Oudshoorn. *mice: Multivariate Imputation by Chained Equations in R.* JSS, 2011. — [DOI](https://doi.org/10.18637/jss.v045.i03)
+- **[SOTA]** J. Yoon, J. Jordon, M. van der Schaar. *GAIN: Missing Data Imputation using Generative Adversarial Nets.* ICML, 2018. — [arXiv](https://arxiv.org/abs/1806.02920)
+- **[SOTA]** B. Muzellec, J. Josse, C. Boyer, M. Cuturi. *Missing Data Imputation using Optimal Transport.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2002.03860)
+
+## 10. Worked Example
+
+Suppose true incomes are $X=\{20, 40, 60, 80, 100\}$ (in $k) with mean $\theta=60$ and sample variance $s^2=1000$. The last two values are MCAR-missing, leaving observed $\{20, 40, 60\}$ with observed mean $40$.
+
+**Single conditional-mean imputation** fills both gaps with the observed mean $40$, giving the completed set $\{20,40,60,40,40\}$. The mean is $40$ (biased low here because missingness happened to drop high values), and the *estimated* variance shrinks to $\frac{1}{4}\sum(x_i-40)^2 = \frac{1}{4}(400+0+400+0+0)=200$ — a $5\times$ understatement of the true $1000$. Standard errors are correspondingly too small.
+
+**Multiple imputation** draws $m=2$ completions from the posterior predictive, e.g. $\{75,95\}$ and $\{85,70\}$. Per-draw means: $\hat\theta_1=58, \hat\theta_2=58$. Rubin's between-variance $B=\frac{1}{m-1}\sum(\hat\theta_j-\bar\theta)^2>0$ now feeds total variance $T=\bar W+(1+\tfrac1m)B$, restoring honest (wider) confidence intervals. The point estimate $\bar\theta=58$ is also far closer to the true $60$ than the single-imputation $40$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Load Balancing for Skewed Multi-way Joins
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/skew-optimal-mpc-load` · **Status:** partially-solved
+> **Verification note:** The PRPD reference's authors/title are imprecise — the actual paper is Xu, Kostamaa, Zhou, Chen, *Handling Data Skew in Parallel Joins in Shared-Nothing Systems*, SIGMOD 2008.
 
 ## 1. Problem Statement
 Evaluate a multi-way join $Q$ in a **single round** of the MPC model on $p$ machines such that the maximum per-machine load is provably minimized **even when join-attribute values are arbitrarily skewed** (a few "heavy" values appear in a constant fraction of tuples). The skew-free HyperCube guarantee degrades catastrophically under heavy hitters, so the goal is a partitioning that adapts share exponents per value.
@@ -37,11 +38,19 @@ Hu and Yi (HKUST) push instance-optimal skewed joins; Suciu/Koutris continue the
 - Extending guarantees to bag semantics and aggregate (GROUP BY) skew.
 
 ## 9. Key References
-- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017.
-- **[SOTA]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016.
-- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS, 2019.
-- **[Foundational]** Xu, Kostamaa, Gao. *Integrating Hash Joins... Skew Handling (PRPD).* SIGMOD, 2008.
-- **[Survey]** Koutris, Suciu. *A Guide to Formal Analysis of Join Processing in MPP Systems.* SIGMOD Record, 2016.
+- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017. — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2016.8)
+- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS, 2019. — [arXiv](https://arxiv.org/abs/1903.09717)
+- **[Foundational]** Xu, Kostamaa, Gao. *Integrating Hash Joins... Skew Handling (PRPD).* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376720)
+- **[Survey]** Koutris, Suciu. *A Guide to Formal Analysis of Join Processing in MPP Systems.* SIGMOD Record, 2016. — [DBLP](https://dblp.org/rec/journals/sigmod/KoutrisS16.html)
+
+## 10. Worked Example
+
+Triangle join $Q=R(A,B)\bowtie S(B,C)\bowtie T(C,A)$ with $N$ tuples on $p$ machines. The skew-free HyperCube arranges machines in a $p^{1/3}\times p^{1/3}\times p^{1/3}$ cube and replicates each tuple along one axis, giving load $\tilde O(N/p^{2/3})$ — here $\tau^*=3/2$, so $N/p^{1/\tau^*}=N/p^{2/3}$.
+
+Now inject skew: value $b^\*$ on attribute $B$ appears in $h = N/2$ tuples of $R$ and $S$ (a heavy hitter), with $p=64$ so $p^{2/3}=16$ and the skew-free target is $N/16$. Routing all $b^\*$ tuples to one machine gives load $N/2 \gg N/16$ — an $8\times$ overload.
+
+**SkewHC fix:** split the residual query for the fixed heavy value $B=b^\*$. With $B$ pinned, the residual is $S'(C)\bowtie T(C,A)\bowtie R'(A)$ — effectively a 2-attribute join with lower $\tau^*$. Spread its $h$ tuples over all $64$ machines using a sub-cube, restoring load $\tilde O(N/p^{2/3})=\tilde O(N/16)$. Light values use ordinary HyperCube. This per-value share adaptation is exactly the residual-query LP whose general tightness remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

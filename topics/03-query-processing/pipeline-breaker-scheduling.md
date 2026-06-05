@@ -42,12 +42,22 @@ For *trees / bounded-treewidth* plans the problem is essentially closed (polynom
 
 ## 9. Key References
 
-- **[Foundational]** Sethi. *Complete Register Allocation Problems.* SIAM J. Computing, 1975.
-- **[Foundational]** Hong, Kung. *I/O Complexity: The Red-Blue Pebble Game.* STOC 1981.
-- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011.
-- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014.
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: An Embeddable Analytical Database.* SIGMOD 2019 (and execution-engine papers).
+- **[Foundational]** Sethi. *Complete Register Allocation Problems.* SIAM J. Computing, 1975. — [DOI](https://doi.org/10.1137/0204020)
+- **[Foundational]** Hong, Kung. *I/O Complexity: The Red-Blue Pebble Game.* STOC 1981. — [DOI](https://doi.org/10.1145/800076.802486)
+- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011. — [DOI](https://doi.org/10.14778/2002938.2002940)
+- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: An Embeddable Analytical Database.* SIGMOD 2019 (and execution-engine papers). — [DOI](https://doi.org/10.1145/3299869.3320212)
+
+## 10. Worked Example
+
+Consider the left-deep plan for $A \bowtie B \bowtie C$ built as two hash joins, with breakers at each **build** side. Cardinalities: $|A| = 100$, $|B| = 10$, $|C| = 1000$; the two hash tables buffer their build inputs.
+
+**Schedule 1 — build on $A$, then on $(A\bowtie B)$:** breaker 1 materializes $A$ (100 rows); say $|A\bowtie B| = 50$, so breaker 2 materializes 50 rows. Peak resident materialization $= \max(100,\,50)$ but if breaker 1's table must persist while breaker 2 builds, peak $= 100 + 50 = 150$.
+
+**Schedule 2 — pick the smaller relation as each build side:** build on $B$ (10 rows), probe with $A$; then build on the 50-row intermediate, probe with $C$. Peak $= \max$ over live tables $= 10 + 50 = 60$.
+
+Choosing build sides by cardinality cut peak materialization from 150 to 60 — a $2.5\times$ saving with identical output. For a *tree* plan this minimization is polynomial (pebbling on a tree); for a general DAG with shared sub-plans it is NP-hard, which is the open gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,22 @@ Active directions: **factorized databases and FAQ for ML** (Olteanu's group, Oxf
 
 ## 9. Key References
 
-- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[Foundational]** Abo Khamis, Ngo, Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[Foundational]** Yan, Larson. *Eager Aggregation and Lazy Aggregation.* VLDB, 1995.
-- **[SOTA]** Olteanu, Schleich. *Factorized Databases.* SIGMOD Record, 2016.
-- **[SOTA]** Schleich, Olteanu, Abo Khamis, Ngo, Nguyen. *A Layered Aggregate Engine for Analytics Workloads (LMFAO).* SIGMOD, 2019.
-- **[Foundational]** Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries (submodular width).* JACM, 2013.
+- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[Foundational]** Abo Khamis, Ngo, Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[Foundational]** Yan, Larson. *Eager Aggregation and Lazy Aggregation.* VLDB, 1995. — [PDF](https://www.vldb.org/conf/1995/P345.PDF)
+- **[SOTA]** Olteanu, Schleich. *Factorized Databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+- **[SOTA]** Schleich, Olteanu, Abo Khamis, Ngo, Nguyen. *A Layered Aggregate Engine for Analytics Workloads (LMFAO).* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1906.08687)
+- **[Foundational]** Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries (submodular width).* JACM, 2013. — [DOI](https://doi.org/10.1145/2535926)
+
+## 10. Worked Example
+
+Query: `SELECT R.a, SUM(T.v) FROM R(a,b) JOIN S(b,c) JOIN T(c,v) GROUP BY R.a`. Tiny instance: $R=\{(a_1,b_1),(a_2,b_1)\}$, $S=\{(b_1,c_1),(b_1,c_2)\}$, $T=\{(c_1,10),(c_2,20)\}$.
+
+**Naive:** materialize the 3-way join. It has $2\times2\times1 = 4$ tuples, then group/sum. Here the join (4 rows) already exceeds the 3-row output.
+
+**InsideOut / eager aggregation:** eliminate bound variables inside-out. First aggregate $T$ over $c$ irrelevant to grouping — but $c$ joins through $S$, so eliminate $v$'s carrier by pushing SUM: precompute per-$c$ contribution $\sigma(c_1)=10,\sigma(c_2)=20$. Eliminate $c$ via $S$: per-$b$ total $\beta(b_1)=\sigma(c_1)+\sigma(c_2)=30$. Eliminate $b$ via $R$: each $(a_i,b_1)$ inherits $\beta(b_1)=30$. Result: $a_1\!\to\!30,\ a_2\!\to\!30$.
+
+No join tuple was ever materialized; cost is $\tilde O(N)$ here (the query is free-connex acyclic), versus $\Omega(\mathrm{AGM})$ for the naive plan.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

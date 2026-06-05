@@ -1,6 +1,7 @@
 # Streaming Error Detection and Repair
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/streaming-cleaning` · **Status:** open
+> **Verification note:** The DynFD reference is published at EDBT 2019 (Schirmer, Papenbrock, Kruse, Naumann et al.), not SIGMOD/ICDE, and "Koumarelas" is not an author of that paper.
 
 ## 1. Problem Statement
 
@@ -60,13 +61,21 @@ The gap is **wide and genuinely open**. Per-primitive streaming bounds (sketches
 
 ## 9. Key References
 
-- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* Journal of Algorithms, 2005.
-- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SODA / SIAM J. Comput., 2002.
-- **[SOTA]** Schelter, Lange, Schmidt, Celikel, Biessmann, Grafberger. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018.
-- **[SOTA]** Schirmer, Papenbrock, Koumarelas, Naumann. *Efficient Discovery of Matching Dependencies / DynFD: Incremental FD Discovery.* SIGMOD / ICDE, 2019.
-- **[SOTA]** Guha, Mishra, Roy, Schrijvers. *Robust Random Cut Forest Based Anomaly Detection on Streams.* ICML, 2016.
-- **[Survey]** Muthukrishnan. *Data Streams: Algorithms and Applications.* Foundations and Trends in TCS, 2005.
+- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* Journal of Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SODA / SIAM J. Comput., 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[SOTA]** Schelter, Lange, Schmidt, Celikel, Biessmann, Grafberger. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3229867)
+- **[SOTA]** Schirmer, Papenbrock, Koumarelas, Naumann. *Efficient Discovery of Matching Dependencies / DynFD: Incremental FD Discovery.* SIGMOD / ICDE, 2019. — [DynFD (EDBT 2019 PDF)](https://openproceedings.org/2019/conf/edbt/EDBT19_paper_32.pdf)
+- **[SOTA]** Guha, Mishra, Roy, Schrijvers. *Robust Random Cut Forest Based Anomaly Detection on Streams.* ICML, 2016. — [PMLR](https://proceedings.mlr.press/v48/guha16.html)
+- **[Survey]** Muthukrishnan. *Data Streams: Algorithms and Applications.* Foundations and Trends in TCS, 2005. — [DOI](https://doi.org/10.1561/0400000002)
+
+## 10. Worked Example
+
+Stream of tuples on attributes $(\text{SSN}, \text{Name})$ with FD $\text{SSN}\to\text{Name}$. We must flag any incoming tuple whose SSN was already seen with a *different* Name. Exact detection means remembering every (SSN, Name) pair — $\Omega(N)$ space (the section-5 INDEX/DISJOINTNESS bound).
+
+Approximate it with a Count-Min sketch of width $w = \lceil e/\epsilon\rceil$ and depth $d = \lceil \ln(1/\delta)\rceil$. For $\epsilon = 0.01$, $\delta = 0.01$: $w = \lceil 2.718/0.01\rceil = 272$, $d = \lceil\ln 100\rceil = 5$, so $w\cdot d = 1360$ counters — constant, independent of $N$.
+
+Hash each (SSN, Name) pair; on arrival of $(\text{SSN}_i, \text{Name}_i)$ query the sketch for the same SSN under a *different* stored Name. The sketch never under-counts, so a genuine prior conflict is always flagged (no false negatives), while the over-estimate is bounded: $\hat{f} \le f + \epsilon\lVert\cdot\rVert_1$ with probability $1-\delta$. We trade exactness for $O(\tfrac1\epsilon\log\tfrac1\delta)$ space and $O(d)=O(5)$ work per tuple.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

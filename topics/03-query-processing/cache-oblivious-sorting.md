@@ -44,12 +44,22 @@ Directions: **portable SIMD sorting** via libraries like Google **Highway** (`vq
 
 ## 9. Key References
 
-- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS 1999 / ACM TALG, 2012.
-- **[Foundational]** Brodal, Fagerberg. *Cache Oblivious Distribution Sweeping* and *On the Limits of Cache-Obliviousness.* ICALP 2002 / STOC, 2003.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Axtmann, Witt, Ferizovic, Sanders. *In-Place Parallel Super Scalar Samplesort (IPS⁴o).* ESA, 2017 / J. ACM-style journal version.
-- **[SOTA]** Edelkamp, Weiß. *BlockQuicksort: Avoiding Branch Mispredictions in Quicksort.* ESA 2016 / ACM JEA, 2019.
-- **[SOTA]** Bramas. *A Novel Hybrid Quicksort Algorithm Vectorized using AVX-512.* IJACSA, 2017; Intel *x86-simd-sort* (NumPy backend), 2023.
+- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS 1999 / ACM TALG, 2012. — [DOI](https://doi.org/10.1145/2071379.2071383)
+- **[Foundational]** Brodal, Fagerberg. *Cache Oblivious Distribution Sweeping* and *On the Limits of Cache-Obliviousness.* ICALP 2002 / STOC, 2003. — [DOI (ICALP)](https://doi.org/10.1007/3-540-45465-9_37), [DBLP (STOC)](https://dblp.org/rec/conf/stoc/BrodalF03.html)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Axtmann, Witt, Ferizovic, Sanders. *In-Place Parallel Super Scalar Samplesort (IPS⁴o).* ESA, 2017 / J. ACM-style journal version. — [arXiv](https://arxiv.org/abs/1705.02257)
+- **[SOTA]** Edelkamp, Weiß. *BlockQuicksort: Avoiding Branch Mispredictions in Quicksort.* ESA 2016 / ACM JEA, 2019. — [arXiv](https://arxiv.org/abs/1604.06697), [DOI (JEA)](https://doi.org/10.1145/3274660)
+- **[SOTA]** Bramas. *A Novel Hybrid Quicksort Algorithm Vectorized using AVX-512.* IJACSA, 2017; Intel *x86-simd-sort* (NumPy backend), 2023. — [arXiv](https://arxiv.org/abs/1704.08579)
+
+## 10. Worked Example
+
+Sort $N=2^{30}\approx 10^9$ 8-byte keys. Cache line $B=64$ B $=8$ keys; last-level cache $M=2^{23}$ keys (64 MB). Tall-cache holds since $M=2^{23}\gg B^2=64$.
+
+**Cache-oblivious bound.** Optimal misses $=\Theta\!\big(\tfrac{N}{B}\log_{M/B}\tfrac{N}{B}\big)$. Here $\tfrac{N}{B}=2^{27}$, and $\log_{M/B}\tfrac{N}{B}=\log_{2^{20}}2^{27}=\tfrac{27}{20}\approx 1.35$. So $\approx 2^{27}\times 1.35\approx 1.8{\times}10^8$ cache misses — essentially **two passes** over memory. Lazy funnelsort achieves this *without knowing* $M$ or $B$.
+
+**Contrast with naive merge sort** (oblivious to cache, leaf runs of size 1): merging at the line granularity costs $\Theta(\tfrac{N}{B}\log_2\tfrac{N}{B})=2^{27}\times 27\approx 3.6{\times}10^9$ misses — a $20\times$ penalty, because the merge fan-in of 2 ignores that $M/B=2^{20}$ runs could be merged per pass.
+
+**SIMD tension.** A Batcher bitonic base case for 16 keys uses $\tfrac{1}{4}\log^2 16=4$ comparator stages, fully branch-free and AVX-512-vectorizable — but its $O(N\log^2 N)$ work loses the $\log N$ factor that funnelsort keeps, illustrating why no single routine yet wins on all three axes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

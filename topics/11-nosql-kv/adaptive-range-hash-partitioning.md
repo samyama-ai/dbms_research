@@ -53,11 +53,21 @@ Active directions: learned and instance-optimized data layouts (Kraska/MIT DSAIL
 
 ## 9. Key References
 
-- **[Foundational]** Fay Chang, Jeffrey Dean, Sanjay Ghemawat, et al. *Bigtable: A Distributed Storage System for Structured Data.* OSDI 2006.
-- **[Foundational]** Giuseppe DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP 2007.
-- **[SOTA]** Vikram Nathan, Jialin Ding, Mohammad Alizadeh, Tim Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD 2020.
-- **[SOTA]** Jialin Ding, Vikram Nathan, Mohammad Alizadeh, Tim Kraska. *Tsunami: A Learned Multi-Dimensional Index for Correlated Data and Skewed Workloads.* VLDB 2020.
-- **[Survey]** Andrew Pavlo et al. *Self-Driving Database Management Systems.* CIDR 2017.
+- **[Foundational]** Fay Chang, Jeffrey Dean, Sanjay Ghemawat, et al. *Bigtable: A Distributed Storage System for Structured Data.* OSDI 2006. — [USENIX](https://www.usenix.org/conference/osdi-06/bigtable-distributed-storage-system-structured-data)
+- **[Foundational]** Giuseppe DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP 2007. — [DOI](https://doi.org/10.1145/1294261.1294281)
+- **[SOTA]** Vikram Nathan, Jialin Ding, Mohammad Alizadeh, Tim Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3380579)
+- **[SOTA]** Jialin Ding, Vikram Nathan, Mohammad Alizadeh, Tim Kraska. *Tsunami: A Learned Multi-Dimensional Index for Correlated Data and Skewed Workloads.* VLDB 2020. — [arXiv](https://arxiv.org/abs/2006.13282)
+- **[Survey]** Andrew Pavlo et al. *Self-Driving Database Management Systems.* CIDR 2017. — [PDF](https://db.cs.cmu.edu/papers/2017/p42-pavlo-cidr17.pdf)
+
+## 10. Worked Example
+
+Keys $1\dots 1000$ over $S = 4$ shards, workload = 60% point lookups + 40% range scans (each scan spans $\sim 100$ contiguous keys).
+
+**Range partitioning** ($[1,250],[251,500],\dots$): a point query touches 1 shard; a 100-key scan usually fits within one region, touching 1 shard. Average shards/query $\approx 1.0$. But if inserts are monotonic (keys arriving in order), every new key lands on the *last* shard → load imbalance $\max_j \ell_j/\bar\ell \to 4$ (one shard does all writes).
+
+**Hash partitioning**: point query still 1 shard; balls-into-bins keeps imbalance near $1 + \Theta(\sqrt{\log S / (\bar\ell)}) \approx 1.1$. But a 100-key range scan now fans out to all $\Theta(S)=4$ shards. Average shards/query $\approx 0.6(1) + 0.4(4) = 2.2$.
+
+The adaptive answer: keep the cold, scan-heavy ranges **range**-partitioned (cost 1.0, good locality) but **hash** the monotonic-insert hot tail to break the write hotspot. With cost weights $w_{\text{scan}}=w_{\text{bal}}=1$, the hybrid beats either pure scheme — the per-region decision the problem formalizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

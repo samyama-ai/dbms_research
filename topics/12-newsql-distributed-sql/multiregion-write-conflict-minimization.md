@@ -42,11 +42,30 @@ Directions: learned and ML-driven autopartitioning (reinforcement learning for p
 - Online placement with provable migration-aware regret bounds.
 
 ## 9. Key References
-- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems (I-confluence).* VLDB, 2015.
-- **[Foundational]** Garey, Johnson. *Computers and Intractability* (graph partitioning hardness). W. H. Freeman, 1979.
+- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems (I-confluence).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[Foundational]** Garey, Johnson. *Computers and Intractability* (graph partitioning hardness). W. H. Freeman, 1979. — [DBLP](https://dblp.org/rec/books/fm/GareyJ79.html)
+
+## 10. Worked Example
+
+Four items $\{a,b,c,d\}$ to place across two regions $\{\text{US},\text{EU}\}$. The workload has
+three transaction hyperedges with frequencies: $T_1=\{a,b\}$ (weight $10$),
+$T_2=\{b,c\}$ (weight $3$), $T_3=\{c,d\}$ (weight $8$). Cost of a placement $\pi$ is the
+weighted cut: sum of weights of edges whose items span both regions.
+
+**Placement P1** $\{a,b\}\to\text{US},\ \{c,d\}\to\text{EU}$: $T_1$ local, $T_3$ local, only
+$T_2$ is cut $\Rightarrow \text{cost}=3$.
+
+**Placement P2** $\{a\}\to\text{US},\ \{b,c,d\}\to\text{EU}$: $T_1$ cut ($a$ vs $b$),
+$T_2,T_3$ local $\Rightarrow \text{cost}=10$.
+
+P1 wins — it cuts the *cheapest* edge, the min-weight separator. With only $4$ items this is a
+trivial enumeration, but the objective is exactly **balanced minimum bisection** on the
+transaction hypergraph, which is NP-hard and APX-hard at scale (Section 5). Each surviving cut
+edge ($T_2$ here) is a forced cross-region round trip on every execution, so P1 also minimizes
+the $\Omega(d)$ latency tax of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

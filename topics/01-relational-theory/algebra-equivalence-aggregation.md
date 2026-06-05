@@ -59,12 +59,25 @@ This is **genuinely open**. While *equivalence* of the standard aggregate CQ cla
 
 ## 9. Key References
 
-- **[Foundational]** Chandra, A.K., Merlin, P.M. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** Chaudhuri, S., Vardi, M.Y. *Optimization of Real Conjunctive Queries (Bag Semantics).* PODS, 1993.
-- **[Foundational]** Cohen, S., Nutt, W., Sagiv, Y. *Deciding Equivalences Among Conjunctive Aggregate Queries.* JACM / PODS, 1999–2007.
-- **[SOTA]** Chu, S., Weitz, K., Cheung, A., Suciu, D. *HoTTSQL / Cosette: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017.
-- **[SOTA]** Wang, Z., Zhou, Z., Yang, Y., et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022.
-- **[Survey]** Sagiv, Y., Yannakakis, M. *Equivalences Among Relational Expressions with the Union and Difference Operators.* JACM, 1980.
+- **[Foundational]** Chandra, A.K., Merlin, P.M. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** Chaudhuri, S., Vardi, M.Y. *Optimization of Real Conjunctive Queries (Bag Semantics).* PODS, 1993. — [DOI](https://doi.org/10.1145/153850.153856)
+- **[Foundational]** Cohen, S., Nutt, W., Sagiv, Y. *Deciding Equivalences Among Conjunctive Aggregate Queries.* JACM / PODS, 1999–2007. — [DOI](https://doi.org/10.1145/1219092.1219093)
+- **[SOTA]** Chu, S., Weitz, K., Cheung, A., Suciu, D. *HoTTSQL / Cosette: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017. — [arXiv](https://arxiv.org/abs/1607.04822)
+- **[SOTA]** Wang, Z., Zhou, Z., Yang, Y., et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526125)
+- **[Survey]** Sagiv, Y., Yannakakis, M. *Equivalences Among Relational Expressions with the Union and Difference Operators.* JACM, 1980. — [DOI](https://doi.org/10.1145/322217.322221)
+
+## 10. Worked Example
+
+Consider relation $R(A)$ with bag $\{1,1,2\}$ and two queries returning $\mathrm{COUNT}(*)$ grouped by $A$:
+
+- $Q_1$: `SELECT A, COUNT(*) FROM R GROUP BY A` → $\{(1,2),(2,1)\}$.
+- $Q_2$: `SELECT A, COUNT(*) FROM R, S WHERE R.A=S.A GROUP BY A`, with $S(A)=\{1\}$ → $\{(1,2)\}$.
+
+**Set semantics would lose this distinction.** The *set* of $A$-values projected from each differs ($\{1,2\}$ vs $\{1\}$), so a homomorphism test could separate them — but the subtlety is the *count*. Now take
+
+- $Q_3$: `SELECT x FROM R(x),R(y)` and $Q_4$: `SELECT x FROM R(x)`.
+
+Set-equivalent (both have homomorphic-equivalent bodies), yet on $R=\{a,a\}$, $Q_3$ yields $x{=}a$ with multiplicity $|R|^2=4$ while $Q_4$ yields $2$. So $Q_3\not\equiv_{\mathrm{bag}}Q_4$: the count polynomials $|R|^2$ vs $|R|$ differ. This is exactly the Chaudhuri–Vardi insight — bag equivalence = body isomorphism, and *containment* ($|R|\le|R|^2$ here) is the open, Diophantine-flavored frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

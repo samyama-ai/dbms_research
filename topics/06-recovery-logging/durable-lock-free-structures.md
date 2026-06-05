@@ -56,11 +56,21 @@ Active directions: detectable recoverable objects and their inherent cost (Attiy
 
 ## 9. Key References
 
-- **[Foundational]** Maurice Herlihy, Jeannette Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[SOTA]** Michal Friedman, Naama Ben-David, Yuanhao Wei, Guy Blelloch, Erez Petrank. *NVTraverse: In NVRAM Data Structures, the Destination Is More Important than the Journey.* PLDI, 2020.
-- **[SOTA]** Se Kwon Lee, Jayashree Mohan, Sanidhya Kashyap, Taesoo Kim, Vijay Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019.
-- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018.
+- **[Foundational]** Maurice Herlihy, Jeannette Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
+- **[SOTA]** Michal Friedman, Naama Ben-David, Yuanhao Wei, Guy Blelloch, Erez Petrank. *NVTraverse: In NVRAM Data Structures, the Destination Is More Important than the Journey.* PLDI, 2020. — [arXiv](https://arxiv.org/abs/2004.02841)
+- **[SOTA]** Se Kwon Lee, Jayashree Mohan, Sanidhya Kashyap, Taesoo Kim, Vijay Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [arXiv](https://arxiv.org/abs/1909.13670)
+- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3164135.3164147)
+
+## 10. Worked Example
+
+Consider a lock-free Michael-Scott queue on persistent memory, enqueueing node $x$. The volatile linearization point is the CAS that swings `tail.next` from `NULL` to `&x`. A naive durable version flushes *every* shared write it touches during the traversal to find the tail.
+
+**Naive (Izraelevitz transform):** suppose finding the tail walks 3 nodes (`n1 → n2 → n3`) and re-reads `tail` once. The transform inserts a `clwb`+`sfence` after each shared read/write to keep persist order $\le_p$ consistent: roughly 4 flushes + 4 fences for one `enqueue`.
+
+**NVTraverse insight ("destination > journey"):** the traversal reads `n1,n2,n3` but does *not* mutate them, so on a crash an un-persisted traversal is simply re-done — those reads need no persistence. Only the *destination* writes must be durable: persist the new node $x$'s contents, then `sfence`, then CAS `tail.next`, then persist that one pointer + `sfence`.
+
+Cost drops from $\approx 4$ flushes / $4$ fences to **1 flush + 1 fence for the node payload and 1 flush + 1 fence for the link** — matching the lower bound of $\ge 1$ persist barrier on the critical path, illustrating the $O(1)$-per-*access* vs. $O(1)$-per-*operation* gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

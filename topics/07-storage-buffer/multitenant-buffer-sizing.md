@@ -60,12 +60,33 @@ This is **partially solved**: the concave case is closed (exact, optimal, fast) 
 
 ## 9. Key References
 
-- **[Foundational]** Mattson, Gecsei, Slutz, Traiger. *Evaluation Techniques for Storage Hierarchies (stack distance).* IBM Systems Journal, 1970.
-- **[SOTA]** Waldspurger, Park, Garthwaite, Ahmad. *Efficient MRC Construction with SHARDS.* FAST, 2015.
-- **[SOTA]** Cidon, Eisenman, Alizadeh, Katti. *Cliffhanger: Scaling Performance Cliffs in Web Memory Caches.* NSDI, 2016.
-- **[Foundational]** Ghodsi, Zaharia, Hindman, Konwinski, Shenker, Stoica. *Dominant Resource Fairness.* NSDI, 2011.
-- **[Foundational]** Fox. *Discrete Optimization via Marginal Analysis.* Management Science, 1966.
-- **[SOTA]** Wires, Ingram, Drudi, Harvey, Warfield. *Characterizing Storage Workloads with Counter Stacks.* OSDI, 2014.
+- **[Foundational]** Mattson, Gecsei, Slutz, Traiger. *Evaluation Techniques for Storage Hierarchies (stack distance).* IBM Systems Journal, 1970. — [DOI](https://doi.org/10.1147/sj.92.0078)
+- **[SOTA]** Waldspurger, Park, Garthwaite, Ahmad. *Efficient MRC Construction with SHARDS.* FAST, 2015. — [USENIX](https://www.usenix.org/conference/fast15/technical-sessions/presentation/waldspurger)
+- **[SOTA]** Cidon, Eisenman, Alizadeh, Katti. *Cliffhanger: Scaling Performance Cliffs in Web Memory Caches.* NSDI, 2016. — [USENIX](https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/cidon)
+- **[Foundational]** Ghodsi, Zaharia, Hindman, Konwinski, Shenker, Stoica. *Dominant Resource Fairness.* NSDI, 2011. — [USENIX](https://www.usenix.org/conference/nsdi11/dominant-resource-fairness-fair-allocation-multiple-resource-types)
+- **[Foundational]** Fox. *Discrete Optimization via Marginal Analysis.* Management Science, 1966. — [DOI](https://doi.org/10.1287/mnsc.13.3.210)
+- **[SOTA]** Wires, Ingram, Drudi, Harvey, Warfield. *Characterizing Storage Workloads with Counter Stacks.* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/wires)
+
+## 10. Worked Example
+
+Budget $M=4$ frames, $n=2$ tenants with concave hit-rate utilities $U_i(m)$ (cumulative hits):
+
+| frames $m$ | $U_1(m)$ | $U_2(m)$ |
+|---|---|---|
+| 0 | 0 | 0 |
+| 1 | 50 | 30 |
+| 2 | 70 | 55 |
+| 3 | 80 | 72 |
+| 4 | 85 | 85 |
+
+Marginal gains: $U_1$: $50,20,10,5$; $U_2$: $30,25,17,13$. **Greedy marginal allocation (Fox 1966)** hands each frame to the largest remaining marginal:
+
+1. give to $T_1$ (50) → $m=(1,0)$
+2. give to $T_1$ (20) → $(2,0)$
+3. give to $T_2$ (30) → $(2,1)$
+4. give to $T_2$ (25) → $(2,2)$
+
+Result $m^*=(2,2)$, total $U=70+55=125$. Check vs alternatives: $(3,1)=80+30=110$, $(1,3)=50+72=122$, $(4,0)=85$. The greedy $(2,2)$ is optimal — guaranteed because both $U_i$ are concave, so marginals are non-increasing and greedy never regrets an early choice.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

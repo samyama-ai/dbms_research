@@ -38,12 +38,24 @@ Directions: **learned cache admission/prefetch coupled to compaction scheduling*
 - Evaluation protocols/benchmarks isolating the post-compaction tail-latency cliff.
 
 ## 9. Key References
-- **[Foundational]** O'Neil, Cheng, Gawlick, O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[Foundational]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[SOTA]** Dayan, Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[SOTA]** Yang et al. *Leaper: A Learned Prefetcher for Cache Invalidation in LSM-tree based Storage Engines.* PVLDB, 2020.
-- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[Survey]** Luo, Carey. *LSM-based Storage Techniques: A Survey.* The VLDB Journal, 2020.
+- **[Foundational]** O'Neil, Cheng, Gawlick, O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[Foundational]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[SOTA]** Dayan, Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Yang et al. *Leaper: A Learned Prefetcher for Cache Invalidation in LSM-tree based Storage Engines.* PVLDB, 2020. — [DBLP](https://dblp.org/rec/journals/pvldb/YangWZCLZWCWH20.html)
+- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DBLP](https://dblp.org/rec/conf/sigmod/DayanAI17.html)
+- **[Survey]** Luo, Carey. *LSM-based Storage Techniques: A Survey.* The VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+
+## 10. Worked Example
+
+Suppose a block cache holds 4 SSTable blocks, keyed by `(file, offset)`:
+`(f7, 0)→[a,b]`, `(f7, 1)→[c,d]`, `(f9, 0)→[e,f]`, `(f9, 1)→[g,h]` (8 keys, all hot).
+
+A compaction merges `f7` and `f9` into `f12`, re-sorting and re-blocking into
+`(f12,0)→[a,b,c]`, `(f12,1)→[d,e,f]`, `(f12,2)→[g,h]`. Note: only key `c`'s value was actually updated during the merge.
+
+**Block-keyed invalidation (naive):** all 4 old entries reference dead file ids `f7,f9`, so the whole cache is evicted — $4/4 = 100\%$ miss storm even though 7 of 8 keys are unchanged.
+
+**Row-keyed invalidation (the upper-bound idea):** cache by logical key with a version stamp. Compaction reports only its merge frontier — here the single changed key $c$. Invalidation work is $O(|\text{changed keys}|) = O(1)$, and 7 cached values stay valid. With **output prepopulation**, the rewritten blocks of `f12` are inserted as they are produced, so post-compaction miss rate $\approx 1/8 = 12.5\%$ instead of $100\%$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

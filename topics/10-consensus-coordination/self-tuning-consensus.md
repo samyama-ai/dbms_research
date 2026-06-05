@@ -52,12 +52,20 @@ The empirical gap dominates. Single-knob, stationary tuning is essentially solve
 
 ## 9. Key References
 
-- **[Foundational]** H. Howard, D. Malkhi, A. Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[Foundational]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[Foundational]** P. Auer, N. Cesa-Bianchi, P. Fischer. *Finite-time Analysis of the Multiarmed Bandit Problem.* Machine Learning, 2002.
-- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015.
-- **[Survey]** C. Dwork, N. Lynch, L. Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. (Timeout/safety boundary.)
+- **[Foundational]** H. Howard, D. Malkhi, A. Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.OPODIS.2016.25)
+- **[Foundational]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[Foundational]** P. Auer, N. Cesa-Bianchi, P. Fischer. *Finite-time Analysis of the Multiarmed Bandit Problem.* Machine Learning, 2002. — [DOI](https://doi.org/10.1023/A:1013689704352)
+- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/sui15.html)
+- **[Survey]** C. Dwork, N. Lynch, L. Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. (Timeout/safety boundary.) — [DOI](https://doi.org/10.1145/42282.42283)
+
+## 10. Worked Example
+
+Tuning batch size $b$ for a Raft leader. Per-batch consensus overhead is a fixed $c=200\,\mu s$ (RTT + fsync), amortized over $b$ commands, so service time per command is $s(b)=c/b + \tau$ with marginal cost $\tau=5\,\mu s$. Arrival rate $\lambda=4000$ cmd/s.
+
+Throughput needs $1/s(b) \ge \lambda$. At $b=1$: $s=205\,\mu s \Rightarrow 4878$ cmd/s — barely keeps up, but latency per batch is small. At $b=20$: $s=200/20+5=15\,\mu s \Rightarrow 66{,}700$ cmd/s capacity, but a command waits up to $b/\lambda = 20/4000 = 5\,ms$ to fill the batch — a latency spike. The $p99$-optimal $b$ trades fill-delay against amortization; here roughly $b^\star\approx\sqrt{2\lambda c/\tau}$-style scaling lands near $b\approx 6$ ($\sim$1.5 ms fill, $\sim$38 $\mu s$ service).
+
+A bandit tuner explores $b\in\{2,4,8,16\}$, observing noisy $p99$; with $T$ rounds it incurs regret $O(\sqrt{T})$ vs the best fixed $b$. **Safety shield:** the election timeout must stay $\ge$ a few RTTs ($\gg 200\,\mu s$); if the tuner ever proposed a timeout below measured message delay, an adversarial scheduler could force endless spurious view changes (livelock) — so that region is fenced off, a hard constraint outside the regret budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

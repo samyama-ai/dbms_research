@@ -1,6 +1,7 @@
 # Deterministic recovery and replay determinism
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/deterministic-recovery-replay` · **Status:** partially-solved
+> **Verification note:** Aria's authors are Lu, Yu, Cao, Madden and it appeared at VLDB 2020 (not SIGMOD); the §9 author list and the "SIGMOD-class" tag in §3 have been corrected accordingly.
 
 ## 1. Problem Statement
 Guarantee that, after a crash, all replicas of a partition reconstruct **bit-identical state** by replaying the same committed log prefix — and that re-execution from a checkpoint plus log yields exactly the state that existed before the crash. This is the foundation of replicated state machines (RSM): if replay is non-deterministic, replicas diverge silently and consensus on the *log* no longer implies consensus on *state*.
@@ -19,7 +20,7 @@ The **deterministic-database** result (Calvin, Thomson–Abadi) reframes this: b
 State-equivalence checking uses Merkle trees: a root hash $h(s)$ collides only with negligible probability, giving an $O(\log |s|)$-comparison certificate of bit-identity.
 
 ## 3. State of the Art (SOTA)
-- **Systems-SOTA.** Calvin (Thomson et al., SIGMOD 2012) and successors (Aria, SIGMOD-class deterministic OLTP; FaunaDB) deliver deterministic execution and thus trivial replica recovery. ARIES (Mohan et al., TODS 1992) is the canonical *single-node* recovery algorithm (WAL + redo/undo) guaranteeing repeatable post-crash state. CockroachDB/Spanner replicate via Raft/Paxos over a logical log and rely on deterministic apply (RocksDB write batches). VoltDB requires deterministic stored procedures and crashes on detected non-determinism.
+- **Systems-SOTA.** Calvin (Thomson et al., SIGMOD 2012) and successors (Aria, VLDB-class deterministic OLTP; FaunaDB) deliver deterministic execution and thus trivial replica recovery. ARIES (Mohan et al., TODS 1992) is the canonical *single-node* recovery algorithm (WAL + redo/undo) guaranteeing repeatable post-crash state. CockroachDB/Spanner replicate via Raft/Paxos over a logical log and rely on deterministic apply (RocksDB write batches). VoltDB requires deterministic stored procedures and crashes on detected non-determinism.
 - **Theory-SOTA.** RSM theory (Schneider's 1990 survey) establishes that determinism is necessary and sufficient for replica consistency given consensus on order.
 
 ## 4. Upper Bound
@@ -40,11 +41,21 @@ Active: deterministic concurrency control beyond Calvin (Aria, Caracal, Lotus) i
 - End-to-end machine-checked proofs linking log consensus to bit-identical state.
 
 ## 9. Key References
-- **[Foundational]** Mohan, Haderle, Lindsay, Pirahesh, Schwarz. *ARIES: A Transaction Recovery Method...* ACM TODS, 1992.
-- **[Foundational]** Schneider. *Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial.* ACM Computing Surveys, 1990.
-- **[SOTA]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Lu, Yu, Suri, Stonebraker, et al. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** Hawblitzel, Howell, Kapritsos, Lorch, Parno, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015.
+- **[Foundational]** Mohan, Haderle, Lindsay, Pirahesh, Schwarz. *ARIES: A Transaction Recovery Method...* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Schneider. *Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial.* ACM Computing Surveys, 1990. — [DOI](https://doi.org/10.1145/98163.98167)
+- **[SOTA]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Lu, Yu, Cao, Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** Hawblitzel, Howell, Kapritsos, Lorch, Parno, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815428)
+
+## 10. Worked Example
+
+Two replicas of a partition apply the same committed log $c_1,c_2,c_3$ from checkpoint $s_0$. With a *deterministic* $\delta$, both compute $s_3=\delta(\delta(\delta(s_0,c_1),c_2),c_3)$ identically — consensus on the log order implies consensus on state.
+
+**Non-determinism breaks it.** Suppose $c_2$ is `UPDATE t SET tag = RANDOM()`. Replica $A$ draws $0.47$, replica $B$ draws $0.91$. Now $s_3^A \ne s_3^B$ despite identical logs — silent divergence. Fix: log the drawn value as effective input, so $c_2$ carries $\text{rand}=0.47$ and both replay it.
+
+**Verification.** After recovery, compare Merkle roots $h(s_3^A)$ and $h(s_3^B)$ rather than full state. If equal, bit-identity holds with collision probability $\le 2^{-256}$; if a single record differs, the mismatch is localized in $O(\log|s|)$ hash comparisons down the tree.
+
+**Recovery cost.** With checkpoint interval $\tau=1000$ records and a crash $300$ records past the last checkpoint, replay touches only the $O(\tau)=300$-record suffix — no result-level 2PC needed, only agreement on order.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

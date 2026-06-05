@@ -55,13 +55,28 @@ Status is **empirically-open**: there is no closed gap because the central quest
 
 ## 9. Key References
 
-- **[Foundational]** Fellegi, Sunter. *A Theory for Record Linkage.* JASA, 1969.
-- **[Foundational]** Bansal, Blum, Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004.
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[SOTA]** Mudgal et al. *Deep Learning for Entity Matching.* SIGMOD, 2018.
-- **[SOTA]** Li, Li, Suhara, Doan, Tan. *Ditto: Deep Entity Matching with Pre-Trained Language Models.* VLDB, 2021.
-- **[SOTA]** Narayan, Chami, Orr, Ré. *Can Foundation Models Wrangle Your Data?* VLDB, 2022.
-- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021.
+- **[Foundational]** Fellegi, Sunter. *A Theory for Record Linkage.* JASA, 1969. — [DOI](https://doi.org/10.1080/01621459.1969.10501049)
+- **[Foundational]** Bansal, Blum, Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004. — [DOI](https://doi.org/10.1023/B:MACH.0000033116.57574.95)
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[SOTA]** Mudgal et al. *Deep Learning for Entity Matching.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196926)
+- **[SOTA]** Li, Li, Suhara, Doan, Tan. *Ditto: Deep Entity Matching with Pre-Trained Language Models.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3421424.3421431)
+- **[SOTA]** Narayan, Chami, Orr, Ré. *Can Foundation Models Wrangle Your Data?* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2205.09911)
+- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3418896)
+
+## 10. Worked Example
+
+Four product records, with the matcher's pairwise scores (a $+$ edge means predicted match, weight $> 0.5$):
+
+| pair | text sim | decision |
+|------|----------|----------|
+| $(a,b)$ | 0.92 | $+$ |
+| $(b,c)$ | 0.88 | $+$ |
+| $(a,c)$ | 0.30 | $-$ |
+| $(c,d)$ | 0.10 | $-$ |
+
+The match graph has $+$ edges $a{-}b$, $b{-}c$ and a $-$ edge $a{-}c$. This triangle is **inconsistent**: $a{-}b{-}c$ says all three match, but $a{-}c$ says they do not. Correlation clustering must break exactly one edge. Putting $\{a,b,c\}$ in one cluster pays $1$ disagreement (the $-$ edge $a{-}c$ violated); splitting $c$ off pays $1$ (the $+$ edge $b{-}c$). Both cost $1$, so the min-disagreement optimum is $1$ and $d$ is a singleton.
+
+Transfer view: if this matcher were trained on publications (where token overlap of 0.30 often *is* a match), the threshold mis-fires here. The $d_{\mathcal H\Delta\mathcal H}$ divergence between the two domains is exactly what the $0.30$ edge exposes — the same feature value carries opposite labels across domains, so cross-domain transfer needs new target labels.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

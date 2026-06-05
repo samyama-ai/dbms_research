@@ -45,13 +45,21 @@ The gap is conceptual rather than a numeric ratio: under crash faults with event
 - Formal verification of replicated-coordinator commit (TLA+/Ivy proofs at scale).
 
 ## 9. Key References
-- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** D. Skeen. *Nonblocking Commit Protocols.* SIGMOD, 1981.
-- **[Foundational]** R. Guerraoui. *Revisiting the Relationship Between Non-Blocking Atomic Commitment and Consensus.* WDAG/DISC, 1995.
-- **[Foundational]** T. Chandra, S. Toueg. *Unreliable Failure Detectors for Reliable Distributed Systems.* JACM, 1996.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of CAP Services.* SIGACT News, 2002.
-- **[SOTA]** A. Thomson et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
+- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[Foundational]** D. Skeen. *Nonblocking Commit Protocols.* SIGMOD, 1981. — [DOI](https://doi.org/10.1145/582318.582339)
+- **[Foundational]** R. Guerraoui. *Revisiting the Relationship Between Non-Blocking Atomic Commitment and Consensus.* WDAG/DISC, 1995. — [DOI](https://doi.org/10.1007/BFb0022140)
+- **[Foundational]** T. Chandra, S. Toueg. *Unreliable Failure Detectors for Reliable Distributed Systems.* JACM, 1996. — [DOI](https://doi.org/10.1145/226643.226647)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of CAP Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** A. Thomson et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+
+## 10. Worked Example
+
+Consider a transfer transaction $T$ touching shards $A$ (debit) and $B$ (credit), coordinated by $C$. In classic 2PC: $C$ sends `PREPARE`; both vote `YES` and lock their rows. Now $C$ crashes *before* sending the decision, and a partition isolates $A$ from $B$. Both $A$ and $B$ hold locks and cannot decide — $A$ doesn't know whether $B$ voted yes, and the coordinator is gone. They **block** until $C$ recovers; rows stay locked indefinitely.
+
+Replicated-coordinator fix: make $C$ a 3-node Raft group $\{C_1,C_2,C_3\}$. The decision is committed to the Raft log once a majority (2 of 3) persist it. If $C_1$ (leader) crashes, $C_2$ or $C_3$ — having the prepared state — is elected and finishes the commit: termination needs only a reachable majority, $\lceil 3/2 \rceil = 2$ nodes.
+
+But CAP still bites: if a partition leaves $A$ alone with only $C_3$ (a minority of 1), that side cannot form a quorum and **must wait** — confirming that "non-blocking under partition" is impossible for the minority, only the blocking *window* shrinks.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

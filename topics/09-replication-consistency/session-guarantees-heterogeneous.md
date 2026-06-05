@@ -40,11 +40,21 @@ The single-shard, sticky case is **closed**. Genuinely open in practice: how to 
 - Cache-coherent session tokens standardized across CDN APIs.
 
 ## 9. Key References
-- **[Foundational]** Terry, Demers, Petersen, Spreitzer, Theimer, Welch. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994.
-- **[Foundational]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[SOTA]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions: Virtues and Limitations.* VLDB, 2014.
-- **[SOTA]** Bailis, Ghodsi, Hellerstein, Stoica. *Bolt-on Causal Consistency.* SIGMOD, 2013.
-- **[SOTA]** Lloyd, Freedman, Kaminsky, Andersen. *Don't Settle for Eventual* (COPS). SOSP, 2011.
+- **[Foundational]** Terry, Demers, Petersen, Spreitzer, Theimer, Welch. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994. — [DOI](https://doi.org/10.5555/645792.668302)
+- **[Foundational]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions: Virtues and Limitations.* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1302.0309)
+- **[SOTA]** Bailis, Ghodsi, Hellerstein, Stoica. *Bolt-on Causal Consistency.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465279)
+- **[SOTA]** Lloyd, Freedman, Kaminsky, Andersen. *Don't Settle for Eventual* (COPS). SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
+
+## 10. Worked Example
+
+A client writes its profile, then reads it back after a geo-failover. Shards: `A` (profile) and `B` (settings), each with applied-frontier clocks.
+
+1. Client (sticky to replica $R_1$) writes `profile=v2`. $R_1$ returns token $V=\{A:5\}$ (its 5th update on shard $A$). Session frontier $\sqcup = \{A:5\}$.
+2. Failover: next read routes to replica $R_2$, which has only applied $\{A:4\}$ on shard $A$ (lag $\Delta$).
+3. RYW requires $R_2$'s applied frontier to dominate the carried token: need $A \ge 5$, but $R_2$ has $A=4$. So $R_2$ **blocks** until it applies update 5, then serves `v2`. No stale read, no abort — latency cost bounded by $\Delta$.
+
+Now suppose the read also touches shard `B`. The token grows to $\{A:5, B:3\}$ — size $O(\#\text{shards touched})$, matching the $\Omega(k)$ metadata lower bound: each independently-lagging origin needs its own component, or RYW can silently break.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

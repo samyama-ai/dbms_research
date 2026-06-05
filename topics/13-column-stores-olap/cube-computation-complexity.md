@@ -41,12 +41,27 @@ Renewed interest comes from cloud OLAP engines computing approximate or just-in-
 - Sketch-based cubes for holistic aggregates (median, quantiles) with formal guarantees.
 
 ## 9. Key References
-- **[Foundational]** Gray, Chaudhuri, Bosworth, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[SOTA]** Beyer, Ramakrishnan. *Bottom-Up Computation of Sparse and Iceberg CUBEs.* SIGMOD, 1999.
-- **[SOTA]** Xin, Han, Li, Wah. *Star-Cubing: Computing Iceberg Cubes by Top-Down and Bottom-Up Integration.* VLDB, 2003.
-- **[SOTA]** Sismanis, Deligiannakis, Roussopoulos, Kotidis. *Dwarf: Shrinking the PetaCube.* SIGMOD, 2002.
-- **[SOTA]** Lakshmanan, Pei, Han. *Quotient Cube: How to Summarize the Semantics of a Data Cube.* VLDB, 2002.
+- **[Foundational]** Gray, Chaudhuri, Bosworth, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843)
+- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[SOTA]** Beyer, Ramakrishnan. *Bottom-Up Computation of Sparse and Iceberg CUBEs.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304214)
+- **[SOTA]** Xin, Han, Li, Wah. *Star-Cubing: Computing Iceberg Cubes by Top-Down and Bottom-Up Integration.* VLDB, 2003. — [VLDB PDF](https://mail.vldb.org/archives/website/2003/papers/S15P02.pdf)
+- **[SOTA]** Sismanis, Deligiannakis, Roussopoulos, Kotidis. *Dwarf: Shrinking the PetaCube.* SIGMOD, 2002. — [DOI](https://doi.org/10.1145/564691.564745)
+- **[SOTA]** Lakshmanan, Pei, Han. *Quotient Cube: How to Summarize the Semantics of a Data Cube.* VLDB, 2002. — [DBLP](https://dblp.org/rec/conf/vldb/LakshmananPH02.html)
+
+## 10. Worked Example
+
+Take a fact table with $d=3$ dimensions and $N=4$ rows:
+
+| Region | Product | Year | Sales |
+|---|---|---|---|
+| US | A | 2024 | 10 |
+| US | A | 2025 | 20 |
+| US | B | 2024 | 5 |
+| EU | A | 2024 | 8 |
+
+The full cube has $2^3=8$ cuboids: `{}` (grand total), `{R}`,`{P}`,`{Y}`, `{R,P}`,`{R,Y}`,`{P,Y}`, `{R,P,Y}`. The apex `{}` = $43$. The base `{R,P,Y}` has all $4$ rows (each distinct). Cuboid `{R}`: US=$35$, EU=$8$.
+
+Now run an **iceberg** cube with $\mathrm{COUNT}\ge 2$. Cell $(R{=}\text{EU})$ has count $1$, so it is pruned — and by antimonotonicity every descendant containing EU (e.g. $(\text{EU},A)$, $(\text{EU},A,2024)$) is also pruned without inspection. Only $(R{=}\text{US})$ with count $3$ survives at the `{R}` level. Worst-case dense output is $\prod(c_i{+}1)=(2{+}1)(2{+}1)(2{+}1)=27$ cells, but actual non-empty output here is far smaller, illustrating the $\le 2^d N = 32$ sparse bound dominating.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -33,11 +33,21 @@ Directions: DAG-based BFT (Narwhal/Bullshark, Mysticeti, Sailfish) to amortize a
 - Communication-optimal reconfiguration and view-change for chained/DAG protocols.
 
 ## 9. Key References
-- **[Foundational]** Danny Dolev, Rüdiger Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985.
-- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999.
-- **[SOTA]** Maofan Yin, Dahlia Malkhi, Michael K. Reiter, Guy Golan-Gueta, Ittai Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019.
-- **[SOTA]** George Danezis, Lefteris Kokoris-Kogias, Alberto Sonnino, Alexander Spiegelman. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022.
-- **[Foundational]** Cynthia Dwork, Nancy Lynch, Larry Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988.
+- **[Foundational]** Danny Dolev, Rüdiger Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985. — [DOI](https://doi.org/10.1145/2455.214112)
+- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999. — [ACM](https://dl.acm.org/doi/10.5555/296806.296824)
+- **[SOTA]** Maofan Yin, Dahlia Malkhi, Michael K. Reiter, Guy Golan-Gueta, Ittai Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019. — [arXiv](https://arxiv.org/abs/1803.05069)
+- **[SOTA]** George Danezis, Lefteris Kokoris-Kogias, Alberto Sonnino, Alexander Spiegelman. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022. — [arXiv](https://arxiv.org/abs/2105.11827)
+- **[Foundational]** Cynthia Dwork, Nancy Lynch, Larry Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. — [DOI](https://doi.org/10.1145/42282.42283)
+
+## 10. Worked Example
+
+Take $n=4$ replicas tolerating $f=1$ Byzantine fault ($n=3f+1$). A quorum certificate needs $2f+1=3$ matching votes.
+
+**PBFT normal case (one decision):** the all-to-all PREPARE and COMMIT phases each have every replica send to every other, $\approx n(n-1)=4\cdot3=12$ messages per phase. Total per decision is $\Theta(n^2)$ — here on the order of $24$ messages.
+
+**HotStuff normal case:** voting is leader-centric. In each phase the $n-1=3$ followers send one threshold-signature share to the leader ($3$ messages up), and the leader broadcasts one combined $O(1)$-size certificate back ($3$ messages down) — $\Theta(n)$, i.e. $\approx 6$ messages per phase, $O(1)$ bits each.
+
+**Lower bound check:** Dolev–Reischuk forces $\Omega(f^2)=\Omega(1)$ here (tiny because $f=1$); scaling to $n=100,\ f=33$ gives $\Omega(f^2)\approx 1089$ messages in the *worst case*. HotStuff's $O(n)\approx 100$ holds only on the fault-free happy path — a Byzantine leader triggering view changes can still force the quadratic floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

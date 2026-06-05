@@ -112,11 +112,30 @@ research on Spanner/TrueTime-style clocks in cloud-native engines.
 
 ## 9. Key References
 
-- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016.
-- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[Foundational]** B. Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991.
-- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database (TrueTime).* OSDI, 2012.
+- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
+- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[Foundational]** B. Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database (TrueTime).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+
+## 10. Worked Example
+
+Contrast a global counter with Silo's epoch scheme on a $4$-core run. **Global FAA:** each
+of $4$ cores issues `fetch_add(&ctr)` per transaction. The cache line holding `ctr` lives in
+one core's L1; every other core's FAA triggers a coherence miss (invalidate $\to$ transfer),
+costing $\Omega(p)$ interconnect messages. At $10^6$ txn/s/core the line ping-pongs millions
+of times per second — the wall.
+
+**Silo epochs:** a global epoch $E$ advances once every $\sim$40 ms; a transaction's commit
+order is $(E, \text{local-seq})$. Core $c_2$ commits three txns in epoch $E{=}7$, tagging
+them $(7,1),(7,2),(7,3)$ from a *thread-local* counter — zero shared writes. Only the rare
+epoch tick touches a shared line, so amortized shared-counter contention $\to 0$.
+
+Correctness cost: transactions within the same epoch are *not* totally ordered across cores,
+so visibility uses the coarser rule "commit-ts $< $ reader's begin-epoch." A read with
+snapshot epoch $7$ sees all commits from epochs $\le 6$ plus same-epoch ones only after the
+epoch boundary — trading strict monotonicity for scalability, exactly the documented
+tension.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

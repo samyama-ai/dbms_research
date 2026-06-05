@@ -62,12 +62,22 @@ The gap is now largely *characterized rather than open* at the extremes: we know
 
 ## 9. Key References
 
-- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Bailis, P., et al. *Scalable Atomic Visibility with RAMP Transactions.* SIGMOD, 2014.
-- **[SOTA]** Zhang, I., et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015.
-- **[SOTA]** Thomson, A., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Survey]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011 / JACM, 2013.
+- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Bailis, P., et al. *Scalable Atomic Visibility with RAMP Transactions.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588562)
+- **[SOTA]** Zhang, I., et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815404)
+- **[SOTA]** Thomson, A., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Survey]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011 / JACM, 2013. — [DOI](https://doi.org/10.1145/2450142.2450151)
+
+## 10. Worked Example
+
+A transfer transaction $T$ writes $x{=}\$0$ on shard 1 and $y{=}\$100$ on shard 2 (moving \$100 from $x$ to $y$); concurrently a reader $R$ does $\text{get}(x),\text{get}(y)$.
+
+**Fractured read (the bug RA forbids):** if $R$ reads $x$ *after* $T$'s shard-1 write but $y$ *before* $T$'s shard-2 write, it observes $x{=}\$0, y{=}\$0$ — \$100 vanished. Atomic visibility must rule this out.
+
+**RAMP trace.** $T$ tags both writes with txn-id $t$ and metadata listing the sibling keys $\{x,y\}$. Round 1: $R$ reads $x{=}\$0$ (tag $t$, "expects $y@t$") and $y{=}\$100_{\text{old}}$ (tag $t_0$). $R$ detects $y$ is *missing* $t$, so Round 2: it re-fetches $y@t = \$100$. Result: $x{=}\$0, y{=}\$100$ — read-atomic, **2 RTT worst case, lock-free**.
+
+Compare 2PC: prepare round + commit round, both holding locks on $x,y$ across the network ($\approx 2\,\text{RTT} +$ log forces), and blocking if the coordinator crashes after prepare. RA buys atomic visibility without either cost — but does *not* prevent the non-monotone invariant "$x+y$ unchanged" from being momentarily observed, which would still require coordination (CALM).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

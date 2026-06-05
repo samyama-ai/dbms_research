@@ -47,13 +47,27 @@ Active directions: **verifier-in-the-loop / generate-then-check** pipelines that
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005.
-- **[Foundational]** R. Fagin, P. Kolaitis, A. Nash, L. Popa. *Towards a theory of schema-mapping optimization.* PODS, 2008.
-- **[Foundational]** B. ten Cate, V. Dalmau, P. Kolaitis. *Learning schema mappings.* ICDT / ACM TODS, 2013.
-- **[SOTA]** A. Narayan, I. Chami, L. Orr, C. Ré. *Can foundation models wrangle your data?* PVLDB, 2022.
-- **[SOTA]** Y. Li, J. Li, Y. Suhara, A. Doan, W.-C. Tan. *Deep entity matching with pre-trained language models (Ditto).* PVLDB, 2021.
-- **[SOTA]** H. Zhang et al. *Jellyfish: A large language model for data preprocessing.* 2023.
-- **[Survey]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World* (conformal prediction). Springer, 2005.
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** R. Fagin, P. Kolaitis, A. Nash, L. Popa. *Towards a theory of schema-mapping optimization.* PODS, 2008. — [DOI](https://doi.org/10.1145/1376916.1376922)
+- **[Foundational]** B. ten Cate, V. Dalmau, P. Kolaitis. *Learning schema mappings.* ICDT / ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2539032.2539035)
+- **[SOTA]** A. Narayan, I. Chami, L. Orr, C. Ré. *Can foundation models wrangle your data?* PVLDB, 2022. — [arXiv](https://arxiv.org/abs/2205.09911)
+- **[SOTA]** Y. Li, J. Li, Y. Suhara, A. Doan, W.-C. Tan. *Deep entity matching with pre-trained language models (Ditto).* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2004.00584)
+- **[SOTA]** H. Zhang et al. *Jellyfish: A large language model for data preprocessing.* 2023. — [arXiv](https://arxiv.org/abs/2312.01678)
+- **[Survey]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World* (conformal prediction). Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+
+## 10. Worked Example
+
+Source $\mathbf{S}$: $\mathit{Emp}(\mathit{eid},\mathit{name},\mathit{dept})$. Target $\mathbf{T}$: $\mathit{Person}(\mathit{pid},\mathit{fullname})$, $\mathit{Works}(\mathit{pid},\mathit{deptname})$.
+
+An LLM proposes the st-tgd:
+
+$$\forall e,n,d\;\big(\mathit{Emp}(e,n,d) \rightarrow \exists p\;(\mathit{Person}(p,n) \wedge \mathit{Works}(p,d))\big)$$
+
+**Conservativity check** (linear): every symbol used — $\mathit{Person},\mathit{Works},\mathit{Emp}$, and variables — lies in $\mathrm{sig}(\mathbf{S})\cup\mathrm{sig}(\mathbf{T})$. Pass. The existential $p$ becomes a labeled null, not a fabricated constant. Pass.
+
+**Fitting check** against one data example: source $\{\mathit{Emp}(1,\text{Ada},\text{Sales})\}$, expected target containing $\mathit{Person}(p_0,\text{Ada})$, $\mathit{Works}(p_0,\text{Sales})$. Chase the source with $\mathcal{M}$: introduce null $N$, produce $\mathit{Person}(N,\text{Ada})$, $\mathit{Works}(N,\text{Sales})$. Homomorphism $N\mapsto p_0$ exists → **fits** (PTime).
+
+Now a *hallucinated* variant adds $\mathit{Works}(p,\text{"HR"})$ with constant "HR" absent from the source row. Conservativity still passes (HR is a constant, not a relation), but the fitting check **fails** — the chase yields an extra HR fact with no witness in the example. The verifier rejects it. This is exactly the generate-then-check loop: cheap conservativity catches symbol invention; the chase catches semantic over-production.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,12 +50,18 @@ Active directions: (i) **learned bounds with guarantees** — combining ML estim
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023.
-- **[Foundational]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017.
-- **[Survey]** Aissi, Bazgan, Vanderpooten. *Min–max and min–max regret versions of combinatorial optimization problems: A survey.* EJOR, 2009.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2211.09864)
+- **[Foundational]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[Survey]** Aissi, Bazgan, Vanderpooten. *Min–max and min–max regret versions of combinatorial optimization problems: A survey.* EJOR, 2009. — [DOI](https://doi.org/10.1016/j.ejor.2008.09.012)
+
+## 10. Worked Example
+
+Triangle query $R(a,b)\bowtie S(b,c)\bowtie T(c,a)$, each relation of size $N$. The **AGM bound** uses the fractional edge cover: assigning $x_e=\tfrac12$ to all three edges covers every vertex ($\tfrac12+\tfrac12=1$ at $a,b,c$), giving $\mathrm{AGM}=N^{1/2}\cdot N^{1/2}\cdot N^{1/2}=N^{3/2}$. So no plan's final output can exceed $N^{3/2}$ tuples — a guarantee that needs *only the relation sizes*, no statistics.
+
+Now compare the **pairwise** sub-join $R\bowtie S$: an oracle-free upper bound is the product $N\cdot N=N^2$, since the cover of the 2-edge sub-hypergraph puts $x=1$ on each. An optimizer choosing join order to minimize worst-case intermediates therefore prefers any plan whose largest guaranteed intermediate is $N^{3/2}$ over the binary plan with an $N^2$ blow-up — motivating worst-case-optimal multiway joins. If true data has only $N$ triangle results, the $N^{3/2}$ bound is loose by $\sqrt{N}$: the "tightness gap" of Section 6 made concrete.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

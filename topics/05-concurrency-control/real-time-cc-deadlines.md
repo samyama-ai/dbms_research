@@ -47,12 +47,30 @@ Directions: predictable-latency in-memory transactional engines with WCET-style 
 
 ## 9. Key References
 
-- **[Foundational]** Sha, L.; Rajkumar, R.; Lehoczky, J. *Priority Inheritance Protocols: An Approach to Real-Time Synchronization.* IEEE Trans. Computers, 1990.
-- **[Foundational]** Abbott, R.; Garcia-Molina, H. *Scheduling Real-Time Transactions: A Performance Evaluation.* ACM TODS, 1992.
-- **[Foundational]** Haritsa, J.; Carey, M.; Livny, M. *Data Access Scheduling in Firm Real-Time Database Systems.* Real-Time Systems, 1992.
-- **[Foundational]** Baruah, S.; Koren, G.; Mishra, B.; Raghunathan, A.; Rosier, L.; Shasha, D. *On-line Scheduling in the Presence of Overload.* FOCS, 1991.
-- **[SOTA]** Vestal, S. *Preemptive Scheduling of Multi-criticality Systems with Varying Degrees of Execution Time Assurance.* RTSS, 2007.
-- **[Survey]** Ramamritham, K.; Son, S.; DiPippo, L. *Real-Time Databases and Data Services.* Real-Time Systems, 2004.
+- **[Foundational]** Sha, L.; Rajkumar, R.; Lehoczky, J. *Priority Inheritance Protocols: An Approach to Real-Time Synchronization.* IEEE Trans. Computers, 1990. — [DOI](https://doi.org/10.1109/12.57058)
+- **[Foundational]** Abbott, R.; Garcia-Molina, H. *Scheduling Real-Time Transactions: A Performance Evaluation.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/132271.132276)
+- **[Foundational]** Haritsa, J.; Carey, M.; Livny, M. *Data Access Scheduling in Firm Real-Time Database Systems.* Real-Time Systems, 1992. — [DOI](https://doi.org/10.1007/BF00365312)
+- **[Foundational]** Baruah, S.; Koren, G.; Mishra, B.; Raghunathan, A.; Rosier, L.; Shasha, D. *On-line Scheduling in the Presence of Overload.* FOCS, 1991. — [DOI](https://doi.org/10.1109/SFCS.1991.185354)
+- **[SOTA]** Vestal, S. *Preemptive Scheduling of Multi-criticality Systems with Varying Degrees of Execution Time Assurance.* RTSS, 2007. — [DOI](https://doi.org/10.1109/RTSS.2007.35)
+- **[Survey]** Ramamritham, K.; Son, S.; DiPippo, L. *Real-Time Databases and Data Services.* Real-Time Systems, 2004. — [DOI](https://doi.org/10.1023/B:TIME.0000045317.37980.a5)
+
+## 10. Worked Example
+
+Three periodic transactions on one processor, each accessing a shared item via a critical section:
+
+| $T_i$ | $C_i$ | $P_i=d_i$ | critical section $\xi_i$ |
+|-------|-------|-----------|--------------------------|
+| $T_1$ (high) | 2 | 10 | 1 |
+| $T_2$ (mid)  | 2 | 15 | 0 |
+| $T_3$ (low)  | 3 | 30 | 2 |
+
+Utilization $U = \tfrac{2}{10}+\tfrac{2}{15}+\tfrac{3}{30} = 0.2+0.133+0.1 = 0.433 \le 1$, so without conflicts EDF schedules it.
+
+**Priority inversion risk:** if $T_3$ holds the lock and $T_1$ arrives, $T_1$ waits. Under the **Priority Ceiling Protocol**, $T_1$'s blocking is bounded by one lower-priority critical section: $B_1 = \max(\xi_3)=2$.
+
+**Schedulability test** for $T_1$: $\sum_{d_j\le d_1}\tfrac{C_j}{P_j} + \tfrac{B_1}{P_1} = \tfrac{2}{10} + \tfrac{2}{10} = 0.4 \le 1$ ✓ — $T_1$ provably meets its deadline.
+
+Drop PCP and allow chained inversion: $T_1$ could be blocked by *both* $\xi_3$ and an intervening $T_2$ run, pushing $B_1$ past the single-section bound and risking a miss. PCP's single-section cap is exactly what makes the bound provable on a uniprocessor; no comparable tight cap is known for MVCC commit pipelines.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

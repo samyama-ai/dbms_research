@@ -54,12 +54,24 @@ Steady-state movement is closed (matching $1/m$ bounds). The open gap is the **d
 
 ## 9. Key References
 
-- **[Foundational]** Karger, D. et al. *Consistent Hashing and Random Trees.* STOC, 1997.
-- **[Foundational]** DeCandia, G. et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007.
-- **[Foundational]** Das, A., Gupta, I., Motivala, A. *SWIM: Scalable Weakly-Consistent Infection-Style Process Group Membership Protocol.* DSN, 2002.
-- **[SOTA]** Adya, A. et al. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016.
-- **[SOTA]** Mirrokni, V., Thorup, M., Zadimoghaddam, M. *Consistent Hashing with Bounded Loads.* SODA, 2018.
-- **[Foundational]** Neamtiu, I. / Tarui & SWIM follow-ups; Lalith Suresh et al. *Stable and Consistent Membership at Scale with Rapid.* USENIX ATC, 2018.
+- **[Foundational]** Karger, D. et al. *Consistent Hashing and Random Trees.* STOC, 1997. — [DOI](https://doi.org/10.1145/258533.258660)
+- **[Foundational]** DeCandia, G. et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294281)
+- **[Foundational]** Das, A., Gupta, I., Motivala, A. *SWIM: Scalable Weakly-Consistent Infection-Style Process Group Membership Protocol.* DSN, 2002. — [DBLP](https://dblp.org/rec/conf/dsn/DasGM02.html)
+- **[SOTA]** Adya, A. et al. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/adya)
+- **[SOTA]** Mirrokni, V., Thorup, M., Zadimoghaddam, M. *Consistent Hashing with Bounded Loads.* SODA, 2018. — [arXiv](https://arxiv.org/abs/1608.01350)
+- **[Foundational]** Neamtiu, I. / Tarui & SWIM follow-ups; Lalith Suresh et al. *Stable and Consistent Membership at Scale with Rapid.* USENIX ATC, 2018. — [arXiv](https://arxiv.org/abs/1803.03620)
+
+## 10. Worked Example
+
+A cluster holds $1\,\text{TB}$ across $m=10$ nodes ($100\,\text{GB}$/node). Copy bandwidth per migration is $C=1\,\text{Gbit/s} \approx 125\,\text{MB/s}$.
+
+Adding one node forces the information-theoretic minimum move of $1/m = 1/10$ of the data into it: its fair share is $\approx 100\,\text{GB}$. Migration service time:
+$$\mu^{-1} = \frac{100\,\text{GB}}{125\,\text{MB/s}} = 800\,\text{s} \approx 13.3\ \text{min}.$$
+So the migration completion rate is $\mu = 1/800\ \text{s}^{-1}$.
+
+Now suppose membership events (joins/leaves) arrive at $\lambda = 1$ every $5\ \text{min} = 1/300\ \text{s}^{-1}$. Since $\lambda = 1/300 > \mu = 1/800$, utilization $\rho = \lambda/\mu = 800/300 \approx 2.7 > 1$: the migration queue is unstable ($M/G/1$ with $\rho>1$), so backlog grows without bound and the system thrashes.
+
+Fix by coalescing within a window $W=30\ \text{min}$: batch the $\approx 6$ events into one combined plan, dropping the *effective* arrival rate to $\lambda_{\text{eff}}=1/1800 < \mu$. Now $\rho<1$ and the backlog is bounded — the stability condition the controller must enforce.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -40,12 +40,22 @@ Active: (i) integrating wait-free snapshots with wait-free memory reclamation (i
 - Fully wait-free trees (updates + scans) with practical constants and SIMD/NUMA awareness.
 
 ## 9. Key References
-- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* TOPLAS, 1991.
-- **[Foundational]** Herlihy, M., Wing, J. *Linearizability.* TOPLAS, 1990.
-- **[SOTA]** Wei, Y., Ben-David, N., Blelloch, G., Fatourou, P., Ruppert, E., Sun, Y. *Constant-Time Snapshots with Applications to Concurrent Data Structures.* PPoPP, 2021.
-- **[SOTA]** Basin, D., Bortnikov, E., Braginsky, A., et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017.
-- **[SOTA]** Bronson, N., Casper, J., Chafi, H., Olukotun, K. *A Practical Concurrent Binary Search Tree.* PPoPP, 2010.
-- **[Foundational]** Attiya, H., et al. *Laws of Order.* POPL, 2011.
+- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** Herlihy, M., Wing, J. *Linearizability.* TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[SOTA]** Wei, Y., Ben-David, N., Blelloch, G., Fatourou, P., Ruppert, E., Sun, Y. *Constant-Time Snapshots with Applications to Concurrent Data Structures.* PPoPP, 2021. — [arXiv](https://arxiv.org/abs/2007.02372)
+- **[SOTA]** Basin, D., Bortnikov, E., Braginsky, A., et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017. — [DOI](https://doi.org/10.1145/3018743.3018761)
+- **[SOTA]** Bronson, N., Casper, J., Chafi, H., Olukotun, K. *A Practical Concurrent Binary Search Tree.* PPoPP, 2010. — [DOI](https://doi.org/10.1145/1693453.1693488)
+- **[Foundational]** Attiya, H., et al. *Laws of Order.* POPL, 2011. — [DOI](https://doi.org/10.1145/1926385.1926442)
+
+## 10. Worked Example
+
+A concurrent ordered tree holds keys $\{10,20,30,40\}$. Scanner $T_S$ wants the range $[15,35]$ — expecting $\{20,30\}$ — as a linearizable snapshot. Using vCAS, $T_S$ grabs a snapshot handle at timestamp $\tau_0=7$ in $O(1)$ (just reads the global counter).
+
+Meanwhile updater $U$ at $\tau=8$ deletes 20 and inserts 25, appending a new version node to each affected key's version list (an $O(1)$ amortized CAS, the update overhead $\rho$).
+
+When $T_S$ reads key 20, it walks that key's version list and takes the latest version with timestamp $\le \tau_0=7$ — i.e. the *pre-delete* value. So $T_S$ still returns $\{20,30\}$, ignoring $U$'s concurrent changes: linearizable at $\tau_0$.
+
+Wait-freedom: $T_S$ finishes in $O(\log N + k)$ of its *own* steps ($\log 4$ to locate $15$, then $k=2$ reports) no matter how often $U$ laps it — a naive retry-scan would instead restart forever. The version of 20 is reclaimable only once no live snapshot $\le \tau_0$ remains, linking version-space $\sigma$ to active scanners.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

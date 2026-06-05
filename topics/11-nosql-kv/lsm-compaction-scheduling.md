@@ -53,12 +53,22 @@ Active directions: RL/learned compaction policies that adapt to workload drift (
 
 ## 9. Key References
 
-- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD 2017.
-- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD 2018.
-- **[SOTA]** Andy Huynh, Harshal Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB 2022.
-- **[Foundational]** Manos Athanassoulis et al. *Designing Access Methods: The RUM Conjecture.* EDBT 2016.
-- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
+- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Andy Huynh, Harshal Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB 2022. — [DOI](https://doi.org/10.14778/3529337.3529345)
+- **[Foundational]** Manos Athanassoulis et al. *Designing Access Methods: The RUM Conjecture.* EDBT 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+
+## 10. Worked Example
+
+Take a leveled LSM with size ratio $T=10$, buffer $B=2$ MB, and $N/B = 1000$, so $L=\lceil\log_{10}1000\rceil = 3$ levels of sizes $\approx 20, 200, 2000$ MB.
+
+**Write amplification:** under leveling, each entry is rewritten once per level it passes through, so $WA \approx T\cdot L = 10\cdot 3 = 30$ — every user byte induces $\sim 30$ bytes of compaction I/O.
+
+**Monkey Bloom allocation:** with memory budget $M$ giving $5$ bits/key uniformly, each level's false-positive rate is $\approx e^{-5\ln 2}\approx 0.031$, so empty-key lookup probes $L\cdot 0.031 \approx 0.094$ levels — under 0.1 I/Os. Monkey instead shifts bits toward smaller levels (which have fewer keys per bit), minimizing $\sum_i N_i e^{-m_i}$ under $\sum_i N_i m_i = M$, cutting expected false positives by roughly half.
+
+**Switching to tiering** ($T$ runs/level) drops $WA$ to $\approx L=3$ but raises lookup cost to $\approx T\cdot L\cdot e^{-m}$ — a $10\times$ read penalty, illustrating the WA-vs-RA leg of the RUM trade-off in section 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

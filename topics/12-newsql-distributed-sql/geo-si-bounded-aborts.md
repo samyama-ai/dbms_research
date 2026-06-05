@@ -40,12 +40,23 @@ Active threads: commutativity- and CRDT-aware transaction systems that sidestep 
 - Adaptive home-region assignment with online regret bounds on aborts.
 
 ## 9. Key References
-- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
-- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Sovran, Power, Aguilera, Li. *Transactional Storage for Geo-replicated Systems (Walter).* SOSP, 2011.
-- **[SOTA]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Survey]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions: Virtues and Limitations.* VLDB, 2014.
+- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Sovran, Power, Aguilera, Li. *Transactional Storage for Geo-replicated Systems (Walter).* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043592)
+- **[SOTA]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Survey]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions: Virtues and Limitations.* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1302.0309)
+
+## 10. Worked Example
+
+Two regions, US and EU, each run SI locally and replicate. A "popular product" row $x$ is updated from both. Consider concurrent transactions over a validation window $w \approx d = 80\text{ ms}$ (one-way WAN delay):
+
+- $T_1$ (US): start $s_1 = 0$, writes $x$, commits at $c_1 = 5\text{ ms}$.
+- $T_2$ (EU): start $s_2 = 2\text{ ms}$ (snapshot before $T_1$'s commit propagates), writes $x$.
+
+Under **first-committer-wins**, $T_2$'s $[s_2,c_2]$ interval overlaps $T_1$'s and both write $x$, so $T_2$ must **abort**. EU only learns of $T_1$'s commit after $d = 80\text{ ms}$, so every EU write to $x$ launched within that window aborts.
+
+**Abort-rate estimate (Section 2):** with Poisson write arrivals to $x$ at $\lambda = 50\,\text{s}^{-1}$ and collision probability $p_{\text{collide}} = 1$ on a single key, expected aborts $\sim \lambda^2 w \cdot p_{\text{collide}} = 50^2 \times 0.08 = 200\,\text{s}^{-1}$ in the small-conflict regime — illustrating how the $\Omega(d)$ window, not CPU, drives the abort rate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

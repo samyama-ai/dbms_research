@@ -54,13 +54,21 @@ Directions: (i) **automatic commutativity/conflict-freedom synthesis** for appli
 
 ## 9. Key References
 
-- **[Foundational]** W. E. Weihl. *Commutativity-Based Concurrency Control for Abstract Data Types.* IEEE Transactions on Computers, 1988.
-- **[Foundational]** H. F. Korth. *Locking Primitives in a Database System.* Journal of the ACM, 1983.
-- **[Foundational]** P. E. O'Neil. *The Escrow Transactional Method.* ACM TODS, 1986.
-- **[SOTA]** A. T. Clements, M. F. Kaashoek, N. Zeldovich, R. T. Morris, E. Kohler. *The Scalable Commutativity Rule: Designing Scalable Software for Multicore Processors.* SOSP, 2013.
-- **[SOTA]** N. Narula, C. Cutler, E. Kohler, R. Morris. *Phase Reconciliation for Contended In-Memory Transactions (Doppel).* OSDI, 2014.
-- **[SOTA]** M. Herlihy, E. Koskinen. *Transactional Boosting: A Methodology for Highly-Concurrent Transactional Objects.* PPoPP, 2008.
-- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011.
+- **[Foundational]** W. E. Weihl. *Commutativity-Based Concurrency Control for Abstract Data Types.* IEEE Transactions on Computers, 1988. — [IEEE](https://ieeexplore.ieee.org/document/9728)
+- **[Foundational]** H. F. Korth. *Locking Primitives in a Database System.* Journal of the ACM, 1983. — [DOI](https://doi.org/10.1145/322358.322363)
+- **[Foundational]** P. E. O'Neil. *The Escrow Transactional Method.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7265)
+- **[SOTA]** A. T. Clements, M. F. Kaashoek, N. Zeldovich, R. T. Morris, E. Kohler. *The Scalable Commutativity Rule: Designing Scalable Software for Multicore Processors.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522712)
+- **[SOTA]** N. Narula, C. Cutler, E. Kohler, R. Morris. *Phase Reconciliation for Contended In-Memory Transactions (Doppel).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/narula)
+- **[SOTA]** M. Herlihy, E. Koskinen. *Transactional Boosting: A Methodology for Highly-Concurrent Transactional Objects.* PPoPP, 2008. — [DOI](https://doi.org/10.1145/1345206.1345237)
+- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+
+## 10. Worked Example
+
+Account balance starts at $b=100$. Two transactions: $T_1=\texttt{credit}(50)$, $T_2=\texttt{credit}(30)$. Under classic read/write CC both are *writes* to $b$, so they conflict and must serialize — throughput on a hot account is bounded by one transaction at a time.
+
+But credit is addition, which is commutative: $b{+}50{+}30 = b{+}30{+}50 = 180$ regardless of order, and neither returns a value that depends on order. So in the abstract model their conflict relation is *empty*. Doppel's split phase exploits this: with 4 cores, give each core a local delta $\delta_i$. Run $T_1$ on core 1 ($\delta_1{=}50$), $T_2$ on core 2 ($\delta_2{=}30$) fully in parallel, no locks. At reconciliation, $b \leftarrow 100 + \sum_i \delta_i = 180$.
+
+Contrast with `withdraw` under a non-negativity invariant: $\texttt{withdraw}(70)$ and $\texttt{withdraw}(60)$ from $b{=}100$ do **not** commute — one must see the other's effect to reject, so they stay serialized. This is the section-5 Amdahl bound: speedup is capped by the commutative fraction of the workload.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

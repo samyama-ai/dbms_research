@@ -53,12 +53,29 @@ For the **independent** case the problem is *closed* (exact, optimal, near-linea
 
 ## 9. Key References
 
-- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993.
-- **[Foundational]** R. Krishnamurthy, H. Boral, C. Zaniolo. *Optimization of Nonrecursive Queries.* VLDB, 1986.
-- **[SOTA]** K. Munagala, S. Babu, R. Motwani, J. Widom. *The Pipelined Set Cover Problem.* ICDT, 2005.
-- **[SOTA]** U. Feige, L. Lovász, P. Tetali. *Approximating Min Sum Set Cover.* Algorithmica, 2004.
-- **[SOTA]** D. Kang et al. *NoScope: Optimizing Neural Network Queries over Video at Scale.* VLDB, 2017.
-- **[Survey]** S. Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998.
+- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170036.170078)
+- **[Foundational]** R. Krishnamurthy, H. Boral, C. Zaniolo. *Optimization of Nonrecursive Queries.* VLDB, 1986. — [DBLP](https://dblp.org/rec/conf/vldb/KrishnamurthyBZ86.html)
+- **[SOTA]** K. Munagala, S. Babu, R. Motwani, J. Widom. *The Pipelined Set Cover Problem.* ICDT, 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_6)
+- **[SOTA]** U. Feige, L. Lovász, P. Tetali. *Approximating Min Sum Set Cover.* Algorithmica, 2004. — [DOI](https://doi.org/10.1007/s00453-004-1110-5)
+- **[SOTA]** D. Kang et al. *NoScope: Optimizing Neural Network Queries over Video at Scale.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1703.02529)
+- **[Survey]** S. Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275492)
+
+## 10. Worked Example
+
+A stream of $1000$ tuples passes through three independent filters:
+
+| predicate | cost $c_i$ | selectivity $s_i$ | rank $\frac{c_i}{1-s_i}$ |
+|-----------|-----------|-------------------|--------------------------|
+| $p_1$ (cheap regex) | $1$ | $0.9$ | $1/0.1=10$ |
+| $p_2$ (UDF) | $5$ | $0.2$ | $5/0.8=6.25$ |
+| $p_3$ (ML inference) | $20$ | $0.5$ | $20/0.5=40$ |
+
+The **rank rule** sorts by increasing rank: $p_2\;(6.25) < p_1\;(10) < p_3\;(40)$. Using $\text{Cost}(\pi)=\sum_j c_{\pi(j)}\prod_{l<j}s_{\pi(l)}$ per tuple, times $1000$:
+
+- Rank order $p_2,p_1,p_3$: $1000\,[\,5 + 0.2(1) + 0.2(0.9)(20)\,] = 1000(5.2+3.6)=8800$.
+- Naive "cheapest-first" $p_1,p_2,p_3$: $1000\,[\,1 + 0.9(5) + 0.9(0.2)(20)\,]=1000(5.5+3.6)=9100$.
+
+The rank order wins because $p_2$, despite costing more than $p_1$, is far more selective ($0.2$ vs $0.9$), so it discards tuples before the expensive $p_3$ ever runs. Note cheapest-first is *not* optimal — selectivity, not raw cost, drives the rank.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

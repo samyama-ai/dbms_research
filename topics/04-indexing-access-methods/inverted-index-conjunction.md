@@ -44,11 +44,28 @@ Directions: GPU/​AVX-512 intersection; clustering/​recursive-graph-bisection
 - Co-design with learned/​dense retrieval for hybrid conjunctive queries.
 
 ## 9. Key References
-- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000.
-- **[SOTA]** Ottaviano, Venturini. *Partitioned Elias-Fano Indexes.* SIGIR, 2014.
-- **[SOTA]** Ding, Suel. *Faster Top-k Document Retrieval Using Block-Max Indexes (BMW).* SIGIR, 2011.
-- **[SOTA]** Lemire, Boytsov, Kurz. *SIMD Compression and the Intersection of Sorted Integers.* Software: Practice & Experience, 2016.
-- **[Foundational]** Dhulipala, Kabiljo, Karrer, Ottaviano, Pandey, et al. *Compressing Graphs and Indexes with Recursive Graph Bisection.* KDD, 2016.
+- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000. — [ACM](https://dl.acm.org/doi/10.5555/338219.338634)
+- **[SOTA]** Ottaviano, Venturini. *Partitioned Elias-Fano Indexes.* SIGIR, 2014. — [DOI](https://doi.org/10.1145/2600428.2609615)
+- **[SOTA]** Ding, Suel. *Faster Top-k Document Retrieval Using Block-Max Indexes (BMW).* SIGIR, 2011. — [DOI](https://doi.org/10.1145/2009916.2010048)
+- **[SOTA]** Lemire, Boytsov, Kurz. *SIMD Compression and the Intersection of Sorted Integers.* Software: Practice & Experience, 2016. — [DOI](https://doi.org/10.1002/spe.2326)
+- **[Foundational]** Dhulipala, Kabiljo, Karrer, Ottaviano, Pupyrev, Shalita. *Compressing Graphs and Indexes with Recursive Graph Bisection.* KDD, 2016. — [DOI](https://doi.org/10.1145/2939672.2939862)
+
+## 10. Worked Example
+
+Intersect two posting lists for an AND query. Let the short list be
+$$S = [3, 50] \quad (m = 2)$$
+and the long list
+$$L = [1, 2, 3, 8, 20, 35, 50, 77, 90, 100] \quad (n = 10).$$
+
+**Naive merge** scans $L$ linearly: up to $m + n = 12$ comparisons.
+
+**Galloping** (instance-optimal): for each element of $S$, exponentially probe into $L$.
+- Find $3$: probe $L[0]{=}1$, $L[1]{=}2$, $L[2]{=}3$ — hit at index 2 ($\approx 3$ steps).
+- Find $50$: gallop from index 3 with jumps $1,2,4,\dots$ — probe indices $4{=}20$, $6{=}50$ — hit ($\approx 3$ steps).
+
+Total $\approx 6$ probes vs. 12, and the cost matches the bound $O(m\log(n/m)) = O(2\log 5) \approx 5$ comparisons. Output $= \{3, 50\}$.
+
+Galloping wins because the short list is sparse: it skips the long runs ($8,20,35$ and $77,90,100$) that a merge would touch. With Elias–Fano layout these skips need no decompression, which is exactly why the asymptotic two-list bound is "closed" (section 6) and remaining gains are constant-factor SIMD wins.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

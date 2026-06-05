@@ -40,12 +40,28 @@ The gap is the absence of a **general theory** linking (a) the guarantees a reco
 - Unifying instant recovery, in-memory single-pass redo, and classical ARIES under one model.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[SOTA]** Diaconu, C. et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[SOTA]** Graefe, G. *Instant Recovery for Data Center Savings.* ACM SIGMOD Record, 2015.
-- **[SOTA]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS 2017 / VLDB Journal, 2018.
-- **[Survey]** Härder, T. & Reuter, A. *Principles of Transaction-Oriented Database Recovery.* ACM Computing Surveys, 1983.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** Diaconu, C. et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+- **[SOTA]** Graefe, G. *Instant Recovery for Data Center Savings.* ACM SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814716)
+- **[SOTA]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS 2017 / VLDB Journal, 2018. — [arXiv](https://arxiv.org/abs/1702.08042)
+- **[Survey]** Härder, T. & Reuter, A. *Principles of Transaction-Oriented Database Recovery.* ACM Computing Surveys, 1983. — [DOI](https://doi.org/10.1145/289.291)
+
+## 10. Worked Example
+
+Tiny log after the last fuzzy checkpoint, LSNs $10$–$50$ on pages $A,B,C$:
+
+| LSN | record | page | note |
+|----|--------|------|------|
+| 10 | T1 update | A | |
+| 20 | T2 update | B | |
+| 30 | T1 update | C | |
+| 40 | T1 **commit** | — | T1 wins |
+| 50 | T2 update | A | crash after this; T2 never commits $\Rightarrow$ loser |
+
+The checkpoint's dirty-page table had $\text{recLSN}(A)=10,\ \text{recLSN}(B)=20$. **Analysis** (forward scan to LSN 50) is what tells us the loser set is $\{T2\}$ and that $C$ became dirty at 30 — but you cannot know T2 lost *until you reach the end of the log* and see no commit. That is the 2-scan dependency: redo must start from $\min\text{recLSN}=10$, yet whether to undo LSN 20/50 depends on end-of-log information.
+
+**Redo** replays 10,20,30,50 wherever $\text{LSN}_{\text{rec}} > \text{LSN}_{\text{page}}$ (repeating history). **Undo** then rolls back T2's 20 and 50 via CLRs. A single forward pass cannot both decide T2's fate and safely apply/skip its records without buffering the whole log ($\Omega(n)$ space) — illustrating section 5's lower bound. Hekaton-style engines sidestep this: with no page/disk-LSN mismatch, redo replays the checkpoint + tail in one pass with no separate analysis.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -56,11 +56,22 @@ The per-block constant-depth problem is **closed** (poly DP). The **global, shar
 
 ## 9. Key References
 
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[Foundational]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006.
-- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* PVLDB, 2020.
-- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[Foundational]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006. — [DOI](https://doi.org/10.1109/ICDE.2006.150)
+- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Take a block of 8 integer values: `[1000, 1001, 1002, 1002, 1003, 1003, 1003, 1004]` (raw: $8\times32=256$ bits).
+
+Cascade candidates (depth $\le 2$):
+- **FOR** (frame-of-reference, base $=1000$): residuals `[0,1,2,2,3,3,3,4]`, range $0..4$ needs $\lceil\log_2 5\rceil=3$ bits/value $\Rightarrow 8\times3=24$ bits + base.
+- **FOR → RLE** on residuals: runs $(0,1)(1,1)(2,2)(3,3)(4,1)$ = 5 (value,count) pairs. With 3-bit values + 2-bit counts, $\approx 5\times5=25$ bits — slightly worse here because runs are short.
+- **DELTA** then bit-pack: deltas `[+1,+1,+0,+1,+0,+0,+1]`, all in $\{0,1\}$, 1 bit each $\Rightarrow 7$ bits + seed.
+
+DELTA wins on size ($\approx39$ bits vs 24+ for FOR). But the objective is $\alpha\cdot\text{size}+\beta f\cdot\text{decode}$: DELTA decode is *sequential* (prefix-sum dependence), hurting SIMD scan, while FOR decode is branch-free and vectorizable. If the block is hot ($f$ large) and $\beta$ dominates, the DP over the cascade DAG picks **FOR** despite the larger footprint — exactly the storage-vs-decode tension §1 formalizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

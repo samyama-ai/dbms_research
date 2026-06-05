@@ -59,12 +59,23 @@ This is a rare **decidability gap that has stayed open for 30+ years**. Bag *equ
 
 ## 9. Key References
 
-- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993.
-- **[SOTA]** T. S. Jayram, P. G. Kolaitis, E. Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities.* PODS, 2006.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[SOTA]** M. A. Khamis, P. G. Kolaitis, H. Q. Ngo, D. Suciu. *Bag Query Containment and Information Theory.* PODS / TODS, 2020–2021.
-- **[Foundational]** Y. E. Ioannidis, R. Ramakrishnan. *Containment of Conjunctive Queries: Beyond Relations as Sets.* TODS, 1995.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993. — [DOI](https://doi.org/10.1145/153850.153856)
+- **[SOTA]** T. S. Jayram, P. G. Kolaitis, E. Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142363)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[SOTA]** M. A. Khamis, P. G. Kolaitis, H. Q. Ngo, D. Suciu. *Bag Query Containment and Information Theory.* PODS / TODS, 2020–2021. — [arXiv](https://arxiv.org/abs/1906.09727)
+- **[Foundational]** Y. E. Ioannidis, R. Ramakrishnan. *Containment of Conjunctive Queries: Beyond Relations as Sets.* TODS, 1995. — [DOI](https://doi.org/10.1145/211414.211419)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Let database $D$ have one binary relation $E$ (a graph). Compare two CQs:
+
+- $Q_1(\,)\;{:}\!-\;E(x,y)$ — "list each edge's head" with body of one atom.
+- $Q_2(\,)\;{:}\!-\;E(x,y),E(x,z)$ — head $x$ joined with two outgoing edges.
+
+For each value $a$, the bag multiplicity of $a$ as an answer is: $Q_1$ gives $\deg^{+}(a)$ (out-degree), while $Q_2$ gives $\deg^{+}(a)^2$ (pairs $(y,z)$). On the tiny graph $E=\{(a,b),(a,c)\}$: $Q_1$ outputs $a$ with multiplicity $2$; $Q_2$ outputs $a$ with multiplicity $4$.
+
+**Equivalence** asks if $\deg^{+}(a)=\deg^{+}(a)^2$ for all $D$ — false (take any node of degree 2), and indeed the bodies are non-isomorphic, so $Q_1\not\equiv_{\mathrm{bag}}Q_2$ (Chaudhuri–Vardi). **Containment** $Q_1\sqsubseteq_{\mathrm{bag}}Q_2$ asks $\deg^{+}\le(\deg^{+})^2$ everywhere — true here ($n\le n^2$ for $n\in\mathbb{N}$). Deciding such polynomial-domination relations for arbitrary CQs is precisely the 30-year-open problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

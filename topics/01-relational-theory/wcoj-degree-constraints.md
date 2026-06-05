@@ -60,12 +60,24 @@ For pure cardinalities, the gap is **closed** (AGM is tight; WCOJ algorithms mat
 
 ## 9. Key References
 
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SIAM J. Comput., 2013.
-- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[SOTA]** T. L. Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014.
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SIAM J. Comput., 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[SOTA]** T. L. Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [DOI](https://doi.org/10.5441/002/icdt.2014.13)
+
+## 10. Worked Example
+
+**Triangle query** $Q(a,b,c) = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ with $|R|=|S|=|T|=N$.
+
+*AGM bound.* The hypergraph has 3 vertices $\{a,b,c\}$ and 3 edges. A fractional edge cover needs $x_R+x_S \ge 1$ (cover $b$), $x_S+x_T\ge 1$ (cover $c$), $x_R+x_T\ge 1$ (cover $a$). The minimum is $x_R=x_S=x_T=\tfrac12$, so $\rho^\star=\tfrac32$ and
+$$|Q| \le N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2}.$$
+This is tight: a complete bipartite-style instance achieves $\Theta(N^{3/2})$ triangles.
+
+*Why binary joins lose.* Any pairwise plan first materializes e.g. $R\bowtie S$, which can be $\Theta(N^2)$ — already worse than the $N^{3/2}$ output. Generic Join / LFTJ instead intersects on a shared variable and runs in $\tilde O(N^{3/2})$, matching AGM.
+
+*Degree refinement.* If additionally $\deg(b\mid a)\le 1$ in $R$ (an FD $a\to b$), then $a$ pins $b$, the bound drops below $N^{3/2}$ toward $N$ — the section-4 case where degree constraints strictly beat the cardinality-only AGM bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -55,12 +55,24 @@ Active: completing **FO-rewritability dichotomies** for ontology-mediated/mappin
 
 ## 9. Key References
 
-- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS, 1998.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS, 2005.
-- **[Foundational]** M. Lenzerini. *Data Integration: A Theoretical Perspective.* PODS, 2002.
-- **[SOTA]** A. Calì, G. Gottlob, T. Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog±).* JWS / PODS, 2009–2012.
-- **[SOTA]** M. Bienvenu, C. Lutz, F. Wolter. *First-Order Rewritability of Atomic Queries in Horn Description Logics.* IJCAI, 2013.
-- **[Survey]** R. Kontchakov, M. Zakharyaschev. *An Introduction to Description Logics and Query Rewriting (OBDA).* Reasoning Web, 2014.
+- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275516)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** M. Lenzerini. *Data Integration: A Theoretical Perspective.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543644)
+- **[SOTA]** A. Calì, G. Gottlob, T. Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog±).* JWS / PODS, 2009–2012. — [DOI](https://doi.org/10.1016/j.websem.2012.03.001)
+- **[SOTA]** M. Bienvenu, C. Lutz, F. Wolter. *First-Order Rewritability of Atomic Queries in Horn Description Logics.* IJCAI, 2013. — [PDF](https://www.ijcai.org/Proceedings/13/Papers/118.pdf)
+- **[Survey]** R. Kontchakov, M. Zakharyaschev. *An Introduction to Description Logics and Query Rewriting (OBDA).* Reasoning Web, 2014. — [DOI](https://doi.org/10.1007/978-3-319-10587-1_5)
+
+## 10. Worked Example
+
+GLAV mapping (s-t TGD): source $\text{Emp}(name, dept)$ maps to target via
+$$\text{Emp}(n,d) \to \exists m\; \text{Works}(n,d) \wedge \text{Manages}(m,d).$$
+
+Source $I = \{\text{Emp}(\text{Ann},\text{Sales})\}$. Chase produces canonical universal solution with a null $N$:
+$$J = \{\text{Works}(\text{Ann},\text{Sales}),\ \text{Manages}(N,\text{Sales})\}.$$
+
+**CQ certain answers (PTime cell).** Query $q_1(d) \leftarrow \text{Works}(n,d)$: evaluate on $J$, keep null-free tuples → $\mathrm{certain}=\{\text{Sales}\}$. Correct: every solution contains a Sales-works fact.
+
+**Adding inequality (coNP cell).** Query $q_2() \leftarrow \text{Manages}(x,d),\text{Manages}(y,d),x\neq y$ — "does some dept have two distinct managers?". On $J$ the single fact $\text{Manages}(N,\text{Sales})$ cannot satisfy $x\neq y$ via the canonical instance, and indeed there is a solution where $N$ is the only manager, so $\mathrm{certain}(q_2)=\textbf{false}$. Deciding such $\neq$-queries in general becomes **coNP-complete in data**: the canonical-instance shortcut fails because $\neq$ is non-monotone, so one must reason over *all* solutions — the dividing line the census pins down.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

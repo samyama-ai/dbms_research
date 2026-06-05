@@ -66,12 +66,12 @@ For single-stream aggregates the gap is essentially **closed**: optimal variance
 
 ## 9. Key References
 
-- **[Foundational]** Tatbul, Çetintemel, Zdonik, Cherniack, Stonebraker. *Load Shedding in a Data Stream Manager.* VLDB, 2003.
-- **[Foundational]** Babcock, Datar, Motwani. *Load Shedding for Aggregation Queries over Data Streams.* ICDE, 2004.
-- **[SOTA]** Tatbul, Zdonik. *Window-aware Load Shedding for Aggregation Queries over Data Streams.* VLDB, 2006.
-- **[SOTA]** Zhao, Christensen, Li, Hu, Yi. *Random Sampling over Joins Revisited.* SIGMOD, 2018.
-- **[Foundational]** Atallah, Grama et al. / Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SODA / SIAM J. Comput., 2002.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Tatbul, Çetintemel, Zdonik, Cherniack, Stonebraker. *Load Shedding in a Data Stream Manager.* VLDB, 2003. — [DBLP](https://dblp.org/rec/conf/vldb/TatbulCZCS03.html)
+- **[Foundational]** Babcock, Datar, Motwani. *Load Shedding for Aggregation Queries over Data Streams.* ICDE, 2004. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/BabcockDM04.xml)
+- **[SOTA]** Tatbul, Zdonik. *Window-aware Load Shedding for Aggregation Queries over Data Streams.* VLDB, 2006. — [PDF](https://people.csail.mit.edu/tatbul/publications/vldb06.pdf)
+- **[SOTA]** Zhao, Christensen, Li, Hu, Yi. *Random Sampling over Joins Revisited.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183739)
+- **[Foundational]** Atallah, Grama et al. / Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SODA / SIAM J. Comput., 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

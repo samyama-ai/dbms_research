@@ -60,12 +60,26 @@ Status is **empirically-open**: systems demonstrate large real-world cost saving
 
 ## 9. Key References
 
-- **[Foundational]** Athanassoulis, M., et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** Yoon, H., et al. *Mutant: Balancing Storage Cost and Latency in LSM-Tree Data Stores.* SoCC, 2018.
-- **[SOTA]** Huang, H., Ghandeharizadeh, S. *Nova-LSM: A Distributed, Component-based LSM-Tree KV Store.* SIGMOD, 2021.
-- **[SOTA]** Lu, L., et al. *WiscKey: Separating Keys from Values in SSD-Conscious Storage.* FAST, 2016.
-- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[Foundational]** Fiat, A., et al. *Competitive Paging Algorithms.* Journal of Algorithms, 1991.
+- **[Foundational]** Athanassoulis, M., et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[SOTA]** Yoon, H., et al. *Mutant: Balancing Storage Cost and Latency in LSM-Tree Data Stores.* SoCC, 2018. — [DOI](https://doi.org/10.1145/3267809.3267846)
+- **[SOTA]** Huang, H., Ghandeharizadeh, S. *Nova-LSM: A Distributed, Component-based LSM-Tree KV Store.* SIGMOD, 2021. — [arXiv](https://arxiv.org/abs/2104.01305)
+- **[SOTA]** Lu, L., et al. *WiscKey: Separating Keys from Values in SSD-Conscious Storage.* FAST, 2016. — [USENIX](https://www.usenix.org/conference/fast16/technical-sessions/presentation/lu)
+- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DBLP](https://researchr.org/publication/DayanAI17)
+- **[Foundational]** Fiat, A., et al. *Competitive Paging Algorithms.* Journal of Algorithms, 1991. — [PDF](https://www.cs.cmu.edu/~sleator/papers/competitive-paging.pdf)
+
+## 10. Worked Example
+
+A 3-level LSM tree, fanout $T=10$, with two tiers: NVMe ($c_1=\$0.20$/GB-month, $\ell_1=0.1$ ms) and S3 ($c_2=\$0.02$/GB-month, $\ell_2=20$ ms per GET). Level sizes and access rates:
+
+| Level | Size $S_i$ | Reads/s $r_i$ |
+|-------|-----------|--------------|
+| L0 | 1 GB | 900 |
+| L1 | 10 GB | 90 |
+| L2 | 100 GB | 10 |
+
+Total 111 GB. **All-NVMe** storage cost: $111 \times 0.20 = \$22.2$/month. **All-S3**: $\$2.22$/month but L0 reads now pay $20$ ms each — $p99$ blows past a $\tau = 5$ ms SLO.
+
+Monotone tiering: keep hot L0+L1 (11 GB) on NVMe, demote cold L2 (100 GB) to S3. Storage cost $= 11\times0.20 + 100\times0.02 = \$2.2 + \$2.0 = \$4.2$/month — an $81\%$ saving versus all-NVMe. Only $10$ reads/s hit S3 latency, and a Bloom filter keeps most of those from a real GET, so $p99$ on the hot path stays NVMe-fast. This greedy access-rate-density assignment captures most of the cost win, but lacks an approximation guarantee versus the optimal IP.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

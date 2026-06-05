@@ -35,12 +35,23 @@ Active directions: practical **adaptive AMQs** that combine CQF-style space with
 - Robust filters against adaptive and adversarial query streams at near-optimal space.
 
 ## 9. Key References
-- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
-- **[Foundational]** L. Carter, R. Floyd, J. Gill, G. Markowsky, M. Wegman. *Exact and Approximate Membership Testers.* STOC, 1978.
-- **[SOTA]** P. Pandey, M. A. Bender, R. Johnson, R. Patro. *A General-Purpose Counting Filter: Making Every Bit Count.* SIGMOD, 2017.
-- **[SOTA]** B. Fan, D. G. Andersen, M. Kaminsky, M. Mitzenmacher. *Cuckoo Filter: Practically Better Than Bloom.* CoNEXT, 2014.
-- **[Foundational]** S. Lovett, E. Porat. *A Lower Bound for Dynamic Approximate Membership Data Structures.* FOCS, 2010.
-- **[SOTA]** M. A. Bender, M. Farach-Colton, M. Goswami, R. Johnson, S. McCauley, S. Singh. *Bloom Filters, Adaptivity, and the Dictionary Problem (Broom Filter).* FOCS, 2018.
+- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[Foundational]** L. Carter, R. Floyd, J. Gill, G. Markowsky, M. Wegman. *Exact and Approximate Membership Testers.* STOC, 1978. — [DOI](https://doi.org/10.1145/800133.804332)
+- **[SOTA]** P. Pandey, M. A. Bender, R. Johnson, R. Patro. *A General-Purpose Counting Filter: Making Every Bit Count.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3035963)
+- **[SOTA]** B. Fan, D. G. Andersen, M. Kaminsky, M. Mitzenmacher. *Cuckoo Filter: Practically Better Than Bloom.* CoNEXT, 2014. — [DOI](https://doi.org/10.1145/2674005.2674994)
+- **[Foundational]** S. Lovett, E. Porat. *A Lower Bound for Dynamic Approximate Membership Data Structures.* FOCS, 2010. — [DBLP](https://dblp.org/rec/conf/focs/LovettP10.html)
+- **[SOTA]** M. A. Bender, M. Farach-Colton, M. Goswami, R. Johnson, S. McCauley, S. Singh. *Bloom Filters, Adaptivity, and the Dictionary Problem (Broom Filter).* FOCS, 2018. — [arXiv](https://arxiv.org/abs/1711.01616)
+
+## 10. Worked Example
+
+Target FPR $\varepsilon=2^{-8}=1/256$, so the information-theoretic floor is $\log_2(1/\varepsilon)=8$ bits/element. Store $n=10^6$ keys.
+
+- **Floor:** $n\log_2(1/\varepsilon)=8\text{ Mbit}=1.0$ MB.
+- **Bloom filter:** $\approx 1.44\cdot 8=11.5$ bits/elt $\Rightarrow 1.44$ MB, but **no deletes**.
+- **Cuckoo filter:** fingerprint $8$ bits $+$ overhead $\approx 8+3=11$ bits/elt $\Rightarrow 1.31$ MB, **supports delete**.
+- **Counting Quotient Filter:** $\approx 8+2.125=10.1$ bits/elt $\Rightarrow 1.26$ MB, deletes + counts + resize.
+
+Now the **dynamic** twist. Delete key $x$ from the cuckoo filter: it removes *a* fingerprint matching $x$'s 8-bit tag from one of $x$'s two buckets. If a different key $y$ collided to the same tag+bucket, the delete may evict $y$'s slot — correctness holds only if $x$ was genuinely inserted. And under an **adaptive adversary** who, after each false positive, re-queries the offending element, a static fingerprint keeps failing; sustaining $\varepsilon$ forces re-randomizing that fingerprint, costing extra bits. The Lovett–Porat bound says no dynamic filter hits the $8$-bit floor at $O(1)$ time — the $\sim 2$–$3$ surplus bits above are provably not fully removable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

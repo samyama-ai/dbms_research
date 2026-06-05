@@ -41,12 +41,22 @@ Active: learned/automatic materialized-view and result-cache recommendation in c
 - Semantic (embedding-assisted) overlap detection with correctness safeguards.
 
 ## 9. Key References
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC 1977.
-- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* The VLDB Journal, 2001.
-- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD 1996.
-- **[SOTA]** Ivanova, Kersten, Nes, Goncalves. *An Architecture for Recycling Intermediates in a Column-Store.* SIGMOD 2009.
-- **[SOTA]** Jindal, Qiao, Patel, et al. *Computation Reuse in Analytics Job Service at Microsoft.* SIGMOD 2018.
-- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* The VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[SOTA]** Ivanova, Kersten, Nes, Goncalves. *An Architecture for Recycling Intermediates in a Column-Store.* SIGMOD 2009. — [DOI](https://doi.org/10.1145/1559845.1559879)
+- **[SOTA]** Jindal, Qiao, Patel, et al. *Computation Reuse in Analytics Job Service at Microsoft.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3190656)
+- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+
+## 10. Worked Example
+
+A dashboard first runs $Q_c$: `SELECT region, SUM(sales) FROM orders WHERE year=2025 GROUP BY region`, caching a 4-row result `{North:120, South:90, East:150, West:60}`. A drill-down then issues $Q$: `SELECT SUM(sales) FROM orders WHERE year=2025 AND region IN ('North','South')`.
+
+Subsumption test: $Q$'s predicate (`year=2025`, regions restricted) is *contained* in $Q_c$'s, and `SUM` is a distributive measure, so the optimizer rewrites $Q$ to run **on the cache**: $120+90=210$. No base-table scan.
+
+Now suppose `orders` has $n=10^8$ rows. A fresh scan costs $\sim10^8$ tuple reads; the reuse path touches **2 cached rows** — a $\sim5\times10^7$ reduction.
+
+Why aggregation rollup works: the cuboid `{year, region}` sits below `{year}` in the lattice $2^{[d]}$, so it can be rolled up via $\oplus$-merge. But a query grouping by `product` is *not* an ancestor of the cached cuboid — overlap detection correctly returns "no reuse," forcing a base scan. This is the line between cheap exact/subsumption hits and the open semantic-reuse problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

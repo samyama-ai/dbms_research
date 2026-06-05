@@ -40,12 +40,24 @@ Directions: (i) tight space lower bounds for versioned snapshots *(frontier — 
 - Bounds parameterized by interval width and contention.
 
 ## 9. Key References
-- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990.
-- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* TOPLAS, 1991.
-- **[SOTA]** Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M., Vechev, M. *Laws of Order: Expensive Synchronization in Concurrent Algorithms Cannot Be Eliminated.* POPL, 2011.
-- **[SOTA]** Basin, D., et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017.
-- **[SOTA]** Wei, Y., Ben-David, N., Blelloch, G., et al. *Constant-Time Snapshots with Applications to Concurrent Data Structures.* PPoPP, 2021.
-- **[SOTA]** Levandoski, J., Lomet, D., Sengupta, S. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
+- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[SOTA]** Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M., Vechev, M. *Laws of Order: Expensive Synchronization in Concurrent Algorithms Cannot Be Eliminated.* POPL, 2011. — [DOI](https://doi.org/10.1145/1925844.1926442)
+- **[SOTA]** Basin, D., et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017. — [DOI](https://doi.org/10.1145/3018743.3018761)
+- **[SOTA]** Wei, Y., Ben-David, N., Blelloch, G., et al. *Constant-Time Snapshots with Applications to Concurrent Data Structures.* PPoPP, 2021. — [arXiv](https://arxiv.org/abs/2007.02372)
+- **[SOTA]** Levandoski, J., Lomet, D., Sengupta, S. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+
+## 10. Worked Example
+
+**Why a consistent scan is strongly non-commutative.** Map holds $\{1{\to}a,\ 3{\to}c\}$. Two operations race: a scan $S=\texttt{range}[1,3]$ and an insert $I=\texttt{put}(2,b)$.
+
+Consider the two linearization orders:
+- $S$ before $I$: $S$ returns $\{1,3\}$, then state becomes $\{1,2,3\}$.
+- $I$ before $S$: state becomes $\{1,2,3\}$, then $S$ returns $\{1,2,3\}$.
+
+The results differ ($\{1,3\}$ vs. $\{1,2,3\}$) *and* the final states are reached differently, so $S$ and $I$ do not commute on key $2\in[1,3]$. By *Laws of Order* (§5), this strong non-commutativity forces at least one RAW/AWAR fence in any linearizable implementation — a fence-free scan is impossible.
+
+**Upper-bound side.** A vCAS-style snapshot tags each version with an epoch. $S$ grabs a snapshot handle in $O(1)$, then reads key $2$: since $I$ wrote it after the snapshot epoch, $S$ skips $b$ and returns $\{1,3\}$ — wait-free, cost $O(k+\log N)$ with $O(1)$ extra words per version. The gap of §6 is between this $\Omega(1)$ fence floor and the $O(\log N)$ achievable cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -62,12 +62,20 @@ It is meta-level: success is measured by how well the benchmark forecasts field 
 
 ## 9. Key References
 
-- **[Foundational]** Demšar. *Statistical Comparisons of Classifiers over Multiple Data Sets.* JMLR, 2006.
-- **[SOTA]** Arocena, Glavic, Mecca, Miller, Papotti, Santoro. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* VLDB, 2015.
-- **[SOTA]** Li, Rekatsinas, Chu, et al. *CleanML: A Study for Evaluating the Impact of Data Cleaning on ML Classification Tasks.* ICDE, 2021.
-- **[SOTA]** Abedjan, Chu, Deng, Fernandez, Ilyas, Ouzzani, Papotti, Stonebraker, Tang. *Detecting Data Errors: Where Are We and What Needs to Be Done?* VLDB, 2016.
-- **[SOTA]** Ghorbani, Zou. *Data Shapley: Equitable Valuation of Data for Machine Learning.* ICML, 2019.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019.
+- **[Foundational]** Demšar. *Statistical Comparisons of Classifiers over Multiple Data Sets.* JMLR, 2006. — [JMLR](https://jmlr.org/papers/v7/demsar06a.html)
+- **[SOTA]** Arocena, Glavic, Mecca, Miller, Papotti, Santoro. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850578.2850579)
+- **[SOTA]** Li, Rekatsinas, Chu, et al. *CleanML: A Study for Evaluating the Impact of Data Cleaning on ML Classification Tasks.* ICDE, 2021. — [DOI](https://doi.org/10.1109/ICDE51399.2021.00009)
+- **[SOTA]** Abedjan, Chu, Deng, Fernandez, Ilyas, Ouzzani, Papotti, Stonebraker, Tang. *Detecting Data Errors: Where Are We and What Needs to Be Done?* VLDB, 2016. — [DOI](https://doi.org/10.14778/2994509.2994518)
+- **[SOTA]** Ghorbani, Zou. *Data Shapley: Equitable Valuation of Data for Machine Learning.* ICML, 2019. — [arXiv](https://arxiv.org/abs/1904.02868)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019. — [DOI](https://doi.org/10.1145/3310205)
+
+## 10. Worked Example
+
+Two cleaning systems A and B are compared on $n = 9$ dirty datasets. Cell-repair F1 favors A on every dataset (mean $0.82$ vs $0.79$), yet what matters is downstream model accuracy $V$. Suppose paired downstream accuracies give B a win on 7 of 9 datasets.
+
+Apply the Wilcoxon signed-rank test (Demšar's recommendation) on the per-dataset accuracy differences $V_B - V_A$. With 7 positive and 2 negative ranks, the test rejects "A $\ge$ B" at $\alpha = 0.05$ — so cell-F1 **mis-ranks** the systems relative to deployment value.
+
+Now the predictive-validity check: Kendall's $\tau$ between metric $m$ (cell-F1) and value $V$ across systems is **negative** here, exposing $m$ as non-proper. To reliably detect a true accuracy gap of $\Delta = 0.02$ with per-dataset SD $\sigma = 0.03$, the sample-complexity bound $\Omega(\sigma^2/\Delta^2) = \Omega(0.0009/0.0004) \approx 2.3$ understates it; in practice $n \gtrsim 30$ datasets are needed for $1-\delta = 0.95$ power — far more than the 9 available, so any single published "win" is statistically underpowered.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

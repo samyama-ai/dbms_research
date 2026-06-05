@@ -42,11 +42,27 @@ Directions: **top-$k$ over joins integrated with worst-case-optimal joins** and 
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware (TA/NRA/CA).* PODS 2001 / JCSS, 2003.
-- **[Foundational]** Fagin. *Combining Fuzzy Information from Multiple Systems.* PODS, 1996.
-- **[SOTA]** Ilyas, Aref, Elmagarmid. *Supporting Top-k Join Queries in Relational Databases (HRJN).* VLDB, 2003 / VLDB Journal, 2004.
-- **[Survey]** Ilyas, Beskales, Soliman. *A Survey of Top-k Query Processing Techniques in Relational Database Systems.* ACM Computing Surveys, 2008.
-- **[SOTA]** Schnaitter, Polyzotis. *Evaluating Rank Joins with Optimal Cost.* PODS, 2008.
+- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware (TA/NRA/CA).* PODS 2001 / JCSS, 2003. — [arXiv](https://arxiv.org/abs/cs/0204046) — [DOI](https://doi.org/10.1016/S0022-0000(03)00026-6)
+- **[Foundational]** Fagin. *Combining Fuzzy Information from Multiple Systems.* PODS, 1996. — [DBLP](https://dblp.uni-trier.de/rec/conf/pods/Fagin96.html)
+- **[SOTA]** Ilyas, Aref, Elmagarmid. *Supporting Top-k Join Queries in Relational Databases (HRJN).* VLDB, 2003 / VLDB Journal, 2004. — [DOI](https://doi.org/10.1007/s00778-004-0128-2)
+- **[Survey]** Ilyas, Beskales, Soliman. *A Survey of Top-k Query Processing Techniques in Relational Database Systems.* ACM Computing Surveys, 2008. — [DOI](https://doi.org/10.1145/1391729.1391730)
+- **[SOTA]** Schnaitter, Polyzotis. *Evaluating Rank Joins with Optimal Cost.* PODS, 2008. — [DOI](https://doi.org/10.1145/1376916.1376924)
+
+## 10. Worked Example
+
+Run **TA** for $k=1$, $f(\mathbf{x})=x_1+x_2$ over two lists sorted descending:
+
+| pos | List 1 | List 2 |
+|----|--------|--------|
+| 1  | $a:0.9$ | $b:0.8$ |
+| 2  | $c:0.7$ | $a:0.6$ |
+| 3  | $b:0.4$ | $c:0.5$ |
+
+**Round 1 (depth 1):** SA gives $a$ from L1 (0.9) and $b$ from L2 (0.8). RA fetches missing scores: $a$ in L2 $=0.6$ so $f(a)=1.5$; $b$ in L1 $=0.4$ so $f(b)=1.2$. Threshold $\tau = 0.9+0.8 = 1.7$. Best seen $=1.5 < \tau$, so do not stop.
+
+**Round 2 (depth 2):** SA gives $c$ (0.7) and $a$ (0.6, already seen). RA: $c$ in L2 $=0.5$, $f(c)=1.2$. Now $\tau = 0.7+0.6 = 1.3$. Best object is $a$ with $1.5 \ge \tau = 1.3$: **stop**, output $a$.
+
+TA touched only depth 2 of 3 — no unseen object can exceed $\tau=1.3$, so the answer is provably correct without scanning the full lists, illustrating the threshold's early-stopping guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

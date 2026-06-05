@@ -121,12 +121,32 @@ compression-vs-computability frontier. Cross-dictionary joins are the other open
 
 ## 9. Key References
 
-- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[Foundational]** D. Abadi, S. Madden, N. Hachem. *Column-Stores vs. Row-Stores: How Different Are They Really?* SIGMOD, 2008.
-- **[SOTA]** P. Boncz, T. Neumann, V. Leis. *FSST: Fast Random Access String Compression.* PVLDB 13(11), 2020.
-- **[SOTA]** M. Kuschewski, D. Sauerwein, A. Alhomssi, V. Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[Survey]** P. Damme, A. Ungethüm, J. Hildebrandt, D. Habich, W. Lehner. *From a Comprehensive Experimental Survey to a Cost-based Selection Strategy for Lightweight Integer Compression Algorithms.* ACM TODS, 2019.
-- **[Foundational]** M. Zukowski, S. Héman, N. Nes, P. Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006.
+- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[Foundational]** D. Abadi, S. Madden, N. Hachem. *Column-Stores vs. Row-Stores: How Different Are They Really?* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376712)
+- **[SOTA]** P. Boncz, T. Neumann, V. Leis. *FSST: Fast Random Access String Compression.* PVLDB 13(11), 2020. — [DBLP](https://dblp.org/rec/journals/pvldb/Boncz0L20.html)
+- **[SOTA]** M. Kuschewski, D. Sauerwein, A. Alhomssi, V. Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[Survey]** P. Damme, A. Ungethüm, J. Hildebrandt, D. Habich, W. Lehner. *From a Comprehensive Experimental Survey to a Cost-based Selection Strategy for Lightweight Integer Compression Algorithms.* ACM TODS, 2019. — [DOI](https://doi.org/10.1145/3323991)
+- **[Foundational]** M. Zukowski, S. Héman, N. Nes, P. Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006. — [DOI](https://doi.org/10.1109/ICDE.2006.150)
+
+## 10. Worked Example
+
+Take a column of $n = 12$ status values, RLE-encoded as (value, run-length) pairs:
+
+$$[(\text{`A'},5),\ (\text{`B'},3),\ (\text{`A'},4)] .$$
+
+**Query:** `SELECT status, COUNT(*) GROUP BY status`.
+
+Naive plan: decode to 12 tuples, then count — $O(n) = 12$ units of work.
+
+Encoded plan: aggregate run lengths directly. `A` $\to 5 + 4 = 9$, `B` $\to 3$. This touches
+only $r = 3$ runs, so cost is $O(r) = 3$ — a $4\times$ reduction here, and arbitrarily large
+when runs are long ($O(r)$ vs. $O(n)$, with $r \ll n$).
+
+Now a **predicate** `WHERE status = 'B'` under a dictionary `{A:0, B:1}`: it rewrites to the
+code predicate `code = 1` (cost $O(|\Sigma|)=2$ to translate), then scans narrow 1-bit codes
+instead of full strings — more values per SIMD lane and no string materialization. Both
+illustrate the "homomorphism" $\theta_E(E(C)) = E(\theta(C))$: the operator runs in the
+compressed domain and never fully decodes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

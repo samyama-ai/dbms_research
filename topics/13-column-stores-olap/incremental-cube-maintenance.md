@@ -41,12 +41,24 @@ DBSP-based engines (Feldera/Materialize) are pushing incremental SQL to richer a
 - Concurrency/transaction-consistent cube maintenance under MVCC.
 
 ## 9. Key References
-- **[Foundational]** Gupta, Mumick (eds.). *Maintenance of Materialized Views: Problems, Techniques, and Applications.* IEEE Data Engineering Bulletin, 1995.
-- **[Foundational]** Gupta, Mumick, Subrahmanian. *Maintaining Views Incrementally.* SIGMOD, 1993.
-- **[SOTA]** Koch, Ahmad, Kennedy, Nikolic, et al. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014.
-- **[SOTA]** Budiu, McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023.
-- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS, 2017.
-- **[Survey]** Chirkova, Yang. *Materialized Views.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Gupta, Mumick (eds.). *Maintenance of Materialized Views: Problems, Techniques, and Applications.* IEEE Data Engineering Bulletin, 1995. — [DBLP](https://dblp.org/search?q=Maintenance+of+Materialized+Views+Problems+Techniques+and+Applications) [DBLP search]
+- **[Foundational]** Gupta, Mumick, Subrahmanian. *Maintaining Views Incrementally.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170066)
+- **[SOTA]** Koch, Ahmad, Kennedy, Nikolic, et al. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014. — [DOI](https://doi.org/10.1007/s00778-013-0348-4)
+- **[SOTA]** Budiu, McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [arXiv](https://arxiv.org/abs/2203.16684)
+- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1702.06370)
+- **[Survey]** Chirkova, Yang. *Materialized Views.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000020)
+
+## 10. Worked Example
+
+Fact table `sales(region, amount)` with a cuboid grouped by `region`, materializing two measures: $\mathrm{SUM}(amount)$ and $\mathrm{MAX}(amount)$.
+
+Current state for region `EU`: rows $\{40, 90, 50\}$, so $\mathrm{SUM}=180$, $\mathrm{MAX}=90$.
+
+**Insert** $\Delta = (\text{EU}, 70)$. Both measures self-maintain from the view alone: $\mathrm{SUM} \leftarrow 180+70=250$, $\mathrm{MAX} \leftarrow \max(90,70)=90$. Cost $O(1)$, no base scan.
+
+**Delete** the row $90$. $\mathrm{SUM}$ uses the group inverse: $250-90=160$ — still $O(1)$. But $\mathrm{MAX}$ has **no inverse**: removing the current max $90$ leaves no witness for the runner-up. The view stored only $90$, not $\{40,50,70\}$, so we must **rescan the EU partition** to recover $\mathrm{MAX}=70$.
+
+This is exactly the self-maintainability split of section 2: $\mathrm{SUM}/\mathrm{COUNT}$ form a commutative group ($O(1)$ deletes); $\mathrm{MAX}/\mathrm{MIN}$ do not, and holistic measures like $\mathrm{COUNT\ DISTINCT}$ need $\Omega(n)$ exact auxiliary space under deletions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

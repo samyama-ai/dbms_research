@@ -109,11 +109,30 @@ statically certify the coordination level per operation *(frontier — verify)*.
 
 ## 9. Key References
 
-- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015.
-- **[Foundational]** Ameloot, Neven, Van den Bussche. *Relational Transducers for Declarative Networking (CALM).* PODS, 2013 / J. ACM.
-- **[SOTA]** Li, Porto, Clement, Gehrke, Preguiça, Rodrigues. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012.
-- **[SOTA]** Sivaramakrishnan, Kaki, Jagannathan. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015.
-- **[Survey]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020.
+- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[Foundational]** Ameloot, Neven, Van den Bussche. *Relational Transducers for Declarative Networking (CALM).* PODS, 2013 / J. ACM. — [arXiv](https://arxiv.org/abs/1012.2858)
+- **[SOTA]** Li, Porto, Clement, Gehrke, Preguiça, Rodrigues. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/li)
+- **[SOTA]** Sivaramakrishnan, Kaki, Jagannathan. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015. — [DOI](https://doi.org/10.1145/2737924.2737981)
+- **[Survey]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+
+## 10. Worked Example
+
+Invariant $I:\ \texttt{stock} \ge 0$, replicated across two regions, starting at $\texttt{stock}=10$.
+
+**Decrements alone are not $I$-confluent.** Txn $T:\ \texttt{stock}\mathrel{-}=8$ runs at each
+region against the $I$-valid state $10$: region 1 yields $2$, region 2 yields $2$ — both valid.
+But merging the divergent replicas (each applied its own decrement) gives
+$10 - 8 - 8 = -6 < 0$, violating $I$. So $\{T\}$ is **not** $I$-confluent w.r.t. $I$, and the
+theorem says coordination is *necessary*.
+
+**Escrow makes it coordination-free.** Split the budget: region 1 holds $5$ units, region 2
+holds $5$. Each region serves decrements only against its local escrow; a sale of $3$ in region
+1 leaves local budget $2$, no cross-region message. Merging never goes negative because
+$5+5=10$ and neither side overspends its share. Coordination drops to **amortized $O(1)$** —
+paid only when a region's local budget is exhausted and must be refilled.
+
+Contrast: a global **uniqueness** check (insert-if-absent) is non-monotone — by CALM it
+*cannot* be made coordination-free, no escrow trick applies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

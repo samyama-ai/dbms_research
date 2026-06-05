@@ -38,11 +38,20 @@ Active: Abadi (UMD) and the Calvin/SLOG line on home-region designation; Alvaro/
 - Automatic detection of which items/operations are monotone (CALM-safe) to exempt them from conflict accounting.
 
 ## 9. Key References
-- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020.
-- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019.
-- **[Foundational]** Agarwal et al. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture (CAP).* SIGACT News, 2002.
+- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342647)
+- **[Foundational]** Agarwal et al. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010. — [USENIX](https://www.usenix.org/conference/nsdi10-0/volley-automated-data-placement-geo-distributed-cloud-services)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+Two regions, US and EU, both accept writes to a hot key $x$. Propagation delay $\Delta = 100$ ms. Poisson write rates: $\lambda_{US,x} = 20$/s, $\lambda_{EU,x} = 5$/s. Using the birthday-style pairwise estimate, expected conflict rate is
+$$\sum_{g\neq g'}\lambda_{g,x}\lambda_{g',x}\,\Delta = 2\cdot(20)(5)(0.1) = 20 \text{ conflicts/s}.$$
+
+Now apply **affinity placement**: home $x$ in US and route EU writes there. EU writes pay $+80$ ms latency, but cross-region *concurrent* writes vanish, so the conflict term $\lambda_{US}\lambda_{EU}\Delta \to 0$.
+
+Versus **single-master via consensus**: every write (including all 20/s US writes) pays a quorum round trip — far worse aggregate latency. Affinity captures most of the benefit because the workload is US-skewed (80%). The optimizer's job is exactly this trade: when EU's rate rises toward US's, the latency penalty of one-sided affinity stops being worth it, and CRDT merge or splitting $x$ becomes preferable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

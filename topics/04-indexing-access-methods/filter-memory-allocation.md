@@ -37,11 +37,19 @@ Active directions: workload-adaptive and learned allocation that observes live a
 - Allocation aware of key correlation and update/compaction amortization, not just steady-state FPR.
 
 ## 9. Key References
-- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[SOTA]** Niv Dayan, Moshe Twitto. *Chucky: A Succinct Cuckoo Filter for LSM-Tree.* SIGMOD, 2021.
-- **[Foundational]** Burton H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
-- **[Survey]** Chen Luo, Michael J. Carey. *LSM-based Storage Techniques: A Survey.* The VLDB Journal, 2020.
+- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Niv Dayan, Moshe Twitto. *Chucky: A Succinct Cuckoo Filter for LSM-Tree.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457273)
+- **[Foundational]** Burton H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[Survey]** Chen Luo, Michael J. Carey. *LSM-based Storage Techniques: A Survey.* The VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+
+## 10. Worked Example
+
+Two LSM levels, each $n=10^6$ keys, equal lookup weight $w_1=w_2=1$. Budget $M=24$ Mbit total, i.e. average $b=12$ bits/element. Recall $\ln p\approx -b\ln^2 2$, so $p(b)=e^{-b\ln^2 2}$ with $\ln^2 2\approx 0.4805$.
+
+**Uniform split** ($b_1=b_2=12$): $p=e^{-12\cdot0.4805}=e^{-5.77}\approx 3.1\times10^{-3}$ each. Expected FP I/Os per lookup $=p_1+p_2\approx 6.2\times10^{-3}$.
+
+**Monkey optimum:** KKT requires equalizing the marginal FP-reduction per bit. Since both levels have equal $n$ and $w$ here, the symmetric point $b_1=b_2=12$ is already optimal *for two equal levels* — the interesting case is unequal sizes. Make level 2 hold $4\times$ the keys ($n_2=4n_1$) under the same $24$ Mbit. Equalizing marginals (each term $\propto n_i e^{-b_i\ln^2 2}$) gives $b_1-b_2=\frac{\ln 4}{\ln^2 2}=\frac{1.386}{0.4805}\approx 2.9$ bits: the **deeper, larger level gets fewer bits/element**. Plugging the budget constraint $n_1 b_1+n_2 b_2=24\text{M}$ yields $b_1\approx 14.3$, $b_2\approx 11.4$, cutting total expected FP I/Os below the uniform allocation — the Monkey insight that optimal filter memory is non-uniform across levels.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

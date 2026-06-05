@@ -49,11 +49,21 @@ Active: extending CTR to disaggregated / log-as-storage cloud architectures (Aur
 
 ## 9. Key References
 
-- **[SOTA]** Panagiotis Antonopoulos, Peter Byrne, Wayne Chen, Cristian Diaconu, et al. *Constant Time Recovery in Azure SQL Database.* VLDB, 2019.
-- **[SOTA]** Caetano Sauer, Goetz Graefe, Theo Härder. *Instant Restart for the Lock Manager / Single-Page Recovery* (Instant Recovery line). ICDE/EDBT, 2015–2018.
-- **[Foundational]** Cristian Diaconu, Craig Freedman, Erik Ismert, Per-Åke Larson, et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[Foundational]** C. Mohan et al. *ARIES.* ACM TODS, 1992.
-- **[Survey]** Goetz Graefe, Wey Guy, Caetano Sauer. *Instant Recovery with Write-Ahead Logging.* Morgan & Claypool Synthesis Lectures, 2016.
+- **[SOTA]** Panagiotis Antonopoulos, Peter Byrne, Wayne Chen, Cristian Diaconu, et al. *Constant Time Recovery in Azure SQL Database.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3352063.3352131)
+- **[SOTA]** Caetano Sauer, Goetz Graefe, Theo Härder. *Instant Restart for the Lock Manager / Single-Page Recovery* (Instant Recovery line). ICDE/EDBT, 2015–2018. — [DOI](https://doi.org/10.1007/s13222-015-0204-3)
+- **[Foundational]** Cristian Diaconu, Craig Freedman, Erik Ismert, Per-Åke Larson, et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DBLP](https://dblp.org/rec/conf/sigmod/DiaconuFILMSVZ13.html)
+- **[Foundational]** C. Mohan et al. *ARIES.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Survey]** Goetz Graefe, Wey Guy, Caetano Sauer. *Instant Recovery with Write-Ahead Logging.* Morgan & Claypool Synthesis Lectures, 2016. — [DOI](https://doi.org/10.1007/978-3-031-01857-2)
+
+## 10. Worked Example
+
+A database of $|\text{DB}| = 10^6$ pages crashes with $|\text{log}| = 10^5$ redo records since the last checkpoint, and one loser transaction $T_{99}$ that dirtied $k = 50{,}000$ rows.
+
+**ARIES.** Redo scans all $10^5$ records; undo physically reverts $T_{99}$'s $50{,}000$ rows. With $\bar t = 5\,\mu s$/record, $T_{\text{avail}} \approx (10^5 + 5\!\times\!10^4)\cdot 5\,\mu s \approx 0.75\,s$ before any query is accepted.
+
+**CTR (MVCC + persistent version store).** Undo is logical: recovery loads only the loser set $\{99\}$ ($\Theta(1)$ bits), and $T_{99}$'s versions are simply marked invisible — no physical revert. Redo is lazy: a page is replayed only on first touch. A query reading 3 pages pays at most $3\times$ one-page redo ($\approx 15\,\mu s$). So $T_{\text{avail}} = O(1)$.
+
+**Conservation check.** Total deferred redo is still $10^5$ records; CTR only *reschedules* it off the critical path, matching the lower bound $\sum_p T_{\text{avail-of-}p} = \Omega(T_{\text{redo}})$. The savings are availability latency, not total work.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

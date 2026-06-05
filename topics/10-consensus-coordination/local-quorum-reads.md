@@ -38,11 +38,21 @@ Active: **closed-timestamp / follower-read** improvements in CockroachDB and Yug
 - Unified cost model across lease, read-index, and closed-timestamp reads.
 
 ## 9. Key References
-- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[Foundational]** Ongaro, D., Ousterhout, J. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Charapko, A., Ailijiang, A., Demirbas, M. *Linearizable Quorum Reads in Paxos (PQR).* HotStorage, 2019.
-- **[Foundational]** Attiya, H., Bar-Noy, A., Dolev, D. *Sharing Memory Robustly in Message-Passing Systems (ABD).* JACM, 1995.
+- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Ongaro, D., Ousterhout, J. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Charapko, A., Ailijiang, A., Demirbas, M. *Linearizable Quorum Reads in Paxos (PQR).* HotStorage, 2019. — [USENIX](https://www.usenix.org/conference/hotstorage19/presentation/charapko)
+- **[Foundational]** Attiya, H., Bar-Noy, A., Dolev, D. *Sharing Memory Robustly in Message-Passing Systems (ABD).* JACM, 1995. — [DOI](https://doi.org/10.1145/200836.200869)
+
+## 10. Worked Example
+
+Take $n=5$ replicas, so a quorum is $\lceil(5+1)/2\rceil = 3$. A client at the same datacenter as follower $R_4$ issues a linearizable read of key $x$. Compare three protocols:
+
+- **Naive quorum read:** contact 3 replicas, take the max-committed value — 1 wide-area RTT.
+- **Read-index (Raft, clock-free):** the leader pins its commit index $i^\*$, sends one heartbeat round to 3 replicas to confirm it is still leader, waits until $\text{applied} \ge i^\*$, then answers — still 1 coordination RTT, but no data fetch and no clock assumption.
+- **Lease read (clock-based):** the leader holds a lease valid to $t_{\text{exp}}$. If its clock reads $< t_{\text{exp}} - \epsilon$, it answers $x$ locally — **0 rounds**, latency $\approx$ local read.
+
+Suppose two concurrent writes set $x{=}7$ (committed at index 40) and $x{=}9$ (pending at index 41). A bare local read at $R_4$, which has applied only up to 40, would return $7$ — unsafe if $9$ later commits before the read's linearization point. PQR's "rinse" phase detects the pending slot 41 and re-reads, restoring linearizability without contacting the leader. This concretely shows the lower-bound dichotomy: **zero rounds demands a clock (lease); clock-free demands at least one quorum round.**
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -88,11 +88,24 @@ and a translation from cardinality-error distributions to plan-ranking-error pro
 
 ## 9. Key References
 
-- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
-- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors (q-error).* VLDB, 2009.
-- **[SOTA]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008.
+- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [ACM](https://dl.acm.org/doi/10.1145/115790.115835)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors (q-error).* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687738)
+- **[SOTA]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008. — [DOI](https://doi.org/10.1137/110859440)
+
+## 10. Worked Example
+
+Left-deep chain $R_1 \bowtie R_2 \bowtie R_3 \bowtie R_4$, all base tables $10^4$ rows. Suppose each join selectivity is *estimated* at $\hat s = 10^{-4}$, but the *true* selectivity is $s = 10^{-3}$ (each estimate has q-error $\theta = 10$, an underestimate).
+
+True intermediate sizes (multiplying $10^4 \times 10^4 \times s$ at each step):
+- $|R_1\bowtie R_2| = 10^8 \times 10^{-3} = 10^5$
+- $\bowtie R_3$: $10^5 \times 10^4 \times 10^{-3} = 10^6$
+- $\bowtie R_4$: $10^6 \times 10^4 \times 10^{-3} = 10^7$
+
+Estimated final size: $10^8 \cdot (10^{-4})^3 \cdot 10^8 = \dots = 10^4$. So the optimizer predicts $10^4$ while the truth is $10^7$ — a $1000\times = \theta^3$ blow-up over $k=3$ joins, matching the $\theta^{k}$ worst-case compounding.
+
+Cost impact: the q-error of the *final cardinality* is $\theta^3 = 10^3$, and by the Moerkotte–Neumann–Steidl bound the plan-*cost* q-error is at most $\theta^4 = 10^4$. This is exactly why an under-budgeted hash table built for $10^4$ rows spills catastrophically when $10^7$ arrive — the canonical failure mode the propagation theory predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

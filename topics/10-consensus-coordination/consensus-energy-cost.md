@@ -50,11 +50,23 @@ Active directions: carbon-aware and spot-price-aware replica placement and quoru
 
 ## 9. Key References
 
-- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999.
-- **[SOTA]** Maofan Yin, Dahlia Malkhi, Michael K. Reiter, Guy Golan-Gueta, Ittai Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019.
-- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019.
-- **[Foundational]** Leslie Lamport, Robert Shostak, Marshall Pease. *The Byzantine Generals Problem.* ACM TOPLAS, 1982.
-- **[SOTA]** Ana Radovanović, et al. *Carbon-Aware Computing for Datacenters.* IEEE Transactions on Power Systems, 2023.
+- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999. — [ACM](https://dl.acm.org/doi/10.5555/296806.296824)
+- **[SOTA]** Maofan Yin, Dahlia Malkhi, Michael K. Reiter, Guy Golan-Gueta, Ittai Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019. — [arXiv](https://arxiv.org/abs/1803.05069)
+- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019. — [DOI](https://doi.org/10.1109/TPDS.2019.2929793)
+- **[Foundational]** Leslie Lamport, Robert Shostak, Marshall Pease. *The Byzantine Generals Problem.* ACM TOPLAS, 1982. — [DOI](https://doi.org/10.1145/357172.357176)
+- **[SOTA]** Ana Radovanović, et al. *Carbon-Aware Computing for Datacenters.* IEEE Transactions on Power Systems, 2023. — [DOI](https://doi.org/10.1109/TPWRS.2022.3173250)
+
+## 10. Worked Example
+
+A 3-replica Paxos group commits one write. Two placements, same count of cross-node messages, very different bills.
+
+Assume egress pricing: intra-AZ $= \$0$/GB, inter-AZ $= \$0.01$/GB, inter-region $= \$0.09$/GB, and each round's quorum messages move $1$ GB total.
+
+**Placement A — all 3 in one region, spread across AZs.** A leader-to-quorum round crosses AZ boundaries only: network cost $\approx 1\text{ GB} \times \$0.01 = \$0.01$ per decision.
+
+**Placement B — one replica per region (geo-spread for survivability).** The same round now crosses region boundaries: $1\text{ GB} \times \$0.09 = \$0.09$ — a $9\times$ cost for an *identical* message count.
+
+**Energy term.** Switching from CFT to BFT adds signature work. With $\kappa_{\text{BFT}}=10\,\kappa_{\text{CFT}}$ and $\beta\sum_i e_i = \$0.002$ (CFT) vs $\$0.02$ (BFT) per decision, BFT's crypto alone can exceed Placement A's whole network bill — showing why $O(n)$ message-optimality (HotStuff) need not be dollar-optimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

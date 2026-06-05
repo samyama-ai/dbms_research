@@ -1,6 +1,7 @@
 # Zone Maps and Min/Max Skipping Bounds
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/zone-map-skipping-bounds` · **Status:** partially-solved
+> **Verification note:** The "Fine-grained Partitioning for Aggressive Data Skipping" (SIGMOD 2014) authors are Sun, Franklin, Krishnan, and Xin (not "Kandula"); §3's inline attribution misnames a co-author.
 
 ## 1. Problem Statement
 
@@ -50,11 +51,23 @@ For 1-D the gap is **closed** (additive-2 optimal). For multi-D the gap is **gen
 
 ## 9. Key References
 
-- **[Foundational]** G. Moerkotte. *Small Materialized Aggregates: A Light Weight Index Structure for Data Warehousing.* VLDB, 1998.
-- **[SOTA]** L. Sun, M. J. Franklin, S. Krishnan, R. S. Xin. *Fine-grained Partitioning for Aggressive Data Skipping.* SIGMOD, 2014.
-- **[SOTA]** Z. Yang et al. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020.
-- **[SOTA]** B. Hentschel, M. S. Kester, S. Idreos. *Column Sketches: A Scan Accelerator for Rapid and Robust Predicate Evaluation.* SIGMOD, 2018.
-- **[Survey]** D. Abadi, P. Boncz, S. Harizopoulos, S. Idreos, S. Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** G. Moerkotte. *Small Materialized Aggregates: A Light Weight Index Structure for Data Warehousing.* VLDB, 1998. — [PDF](https://www.vldb.org/conf/1998/p476.pdf)
+- **[SOTA]** L. Sun, M. J. Franklin, S. Krishnan, R. S. Xin. *Fine-grained Partitioning for Aggressive Data Skipping.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610515)
+- **[SOTA]** Z. Yang et al. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020. — [DBLP](https://dblp.org/rec/conf/sigmod/YangCWGLMLKA20.html)
+- **[SOTA]** B. Hentschel, M. S. Kester, S. Idreos. *Column Sketches: A Scan Accelerator for Rapid and Robust Predicate Evaluation.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196911)
+- **[Survey]** D. Abadi, P. Boncz, S. Harizopoulos, S. Idreos, S. Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Column of $n=12$ values stored **sorted**, block size $B=4$, so $m=3$ zones:
+
+- $Z_1=[2,5,7,9]\Rightarrow I_1=[2,9]$
+- $Z_2=[11,14,16,18]\Rightarrow I_2=[11,18]$
+- $Z_3=[20,22,25,30]\Rightarrow I_3=[20,30]$
+
+Query predicate $[13,21]$. Test each interval: $I_1=[2,9]$ disjoint → **skip**; $I_2=[11,18]$ overlaps → scan; $I_3=[20,30]$ overlaps → scan. So $S=2$ zones survive. True matches are $14,16,18$ (in $Z_2$) and $20$ (in $Z_3$), so $S^*=2$. Over-scan $=S-S^*=0$ here — the additive-2 bound ($S\le S^*+2$) holds comfortably, and binary search locates the surviving contiguous run $Z_2..Z_3$ in $O(\log m)$.
+
+**Why multi-D breaks:** add a second sorted attribute. With one physical order you can co-sort on attribute A *or* B but not both. For $d=2$ uniform dimensions and a constant-selectivity box, the single-order lower bound forces $\Omega(m^{1-1/d})=\Omega(\sqrt{m})$ surviving zones — here $\Omega(\sqrt{3})\approx 2$ even for a tiny box, versus the 1-D additive-2 optimum. This is the gap a Z-order/Hilbert clustering can only match up to constants.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

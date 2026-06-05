@@ -45,12 +45,20 @@ Tight characterization-size bounds for GLAV; polynomial-query learnability or it
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS 2005.
-- **[Foundational]** ten Cate, Dalmau, Kolaitis. *Learning Schema Mappings.* ICDT 2012 / TODS 2013.
-- **[SOTA]** ten Cate, Kolaitis, Qian, Tan. *Active Learning of GAV Schema Mappings.* PODS 2018 / LMCS.
-- **[SOTA]** Alexe, ten Cate, Kolaitis, Tan. *Designing and Refining Schema Mappings via Data Examples.* SIGMOD 2011.
-- **[Foundational]** Angluin. *Queries and Concept Learning.* Machine Learning, 1988.
-- **[Survey]** Kolaitis. *Schema Mappings, Data Exchange, and Metadata Management.* PODS 2005.
+- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** ten Cate, Dalmau, Kolaitis. *Learning Schema Mappings.* ICDT 2012 / TODS 2013. — [DOI](https://doi.org/10.1145/2539032.2539035)
+- **[SOTA]** ten Cate, Kolaitis, Qian, Tan. *Active Learning of GAV Schema Mappings.* PODS 2018 / LMCS. — [DOI](https://doi.org/10.1145/3196959.3196974)
+- **[SOTA]** Alexe, ten Cate, Kolaitis, Tan. *Designing and Refining Schema Mappings via Data Examples.* SIGMOD 2011. — [DOI](https://doi.org/10.1145/1989323.1989338)
+- **[Foundational]** Angluin. *Queries and Concept Learning.* Machine Learning, 1988. — [DOI](https://doi.org/10.1007/BF00116828)
+- **[Survey]** Kolaitis. *Schema Mappings, Data Exchange, and Metadata Management.* PODS 2005. — [DOI](https://doi.org/10.1145/1065167.1065176)
+
+## 10. Worked Example
+
+Source schema $\mathbf{S} = \{\mathsf{Teaches}(\text{prof}, \text{course})\}$; target $\mathbf{T} = \{\mathsf{Instructs}(\text{prof}, \text{course}, \text{dept})\}$. The designer gives one data example
+$$I_1 = \{\mathsf{Teaches}(\text{Lee}, \text{DB})\}, \quad J_1 = \{\mathsf{Instructs}(\text{Lee}, \text{DB}, N)\}$$
+where $N$ is a labeled null (dept unknown). A GAV-style candidate $\mathcal{M}_1: \mathsf{Teaches}(p,c) \rightarrow \exists d\,\, \mathsf{Instructs}(p,c,d)$ **fits**: chasing $I_1$ yields exactly $\mathsf{Instructs}(\text{Lee}, \text{DB}, N')$, which maps homomorphically onto $J_1$ (and vice versa), so $J_1$ is a universal solution.
+
+But $\mathcal{M}_2: \mathsf{Teaches}(p,c) \rightarrow \mathsf{Instructs}(p,c,p)$ (copy prof into dept) **also fits this example** under certain-answer semantics if we only check the projection $(\text{prof},\text{course})$ — illustrating **under-determination**: one example cannot separate $\mathcal{M}_1$ from $\mathcal{M}_2$. Adding a second example with a distinct prof/dept (e.g. forcing dept $\neq$ prof) is what a *unique characterization* $E_\mathcal{M}$ supplies. The information-theoretic lower bound says for GAV such separating sets can grow exponentially in schema arity.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -56,11 +56,21 @@ The general DAG version (shared intermediates, operators that permute positions)
 
 ## 9. Key References
 
-- **[Foundational]** Abadi, Myers, DeWitt, Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007.
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Behm et al. *Photon: A Fast Query Engine for Lakehouse Systems.* SIGMOD, 2022.
-- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005.
-- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Abadi, Myers, DeWitt, Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007. — [PDF](http://www.cs.umd.edu/~abadi/papers/abadiicde2007.pdf)
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Behm et al. *Photon: A Fast Query Engine for Lakehouse Systems.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526054)
+- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Query: `SELECT name WHERE age > 60` over a column-store with $n=10^6$ rows. The `age` column is $4$ B/value; `name` is $w=40$ B/value. Predicate selectivity $\sigma = 0.01$ (10,000 survivors).
+
+**Early materialization** stitches `(age, name)` tuples up front, then filters: it touches all $10^6$ name values $= 40$ MB of `name` access regardless of selectivity.
+
+**Late materialization** scans `age` only, producing a position list of the $10^4$ survivors, then fetches just those `name` values: $10^4 \times 40\,\text{B} = 0.4$ MB — a $100\times$ reduction in `name` bytes, matching $1/\sigma$.
+
+The catch is access pattern: the late fetch is **random** (positions scattered), cost $a_e$ per value. If random access is $\sim 50\times$ slower per byte than sequential, late still wins here ($0.4\,\text{MB}\times 50 = 20$ < $40$ MB sequential). But flip selectivity to $\sigma=0.8$: late fetches $0.8 n$ values randomly $= 32\,\text{MB}\times 50$, far worse than $40$ MB sequential early. This selectivity crossover is exactly why Abadi et al. show late "usually but not always" wins, and why a wrong $\sigma$ estimate flips the decision.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

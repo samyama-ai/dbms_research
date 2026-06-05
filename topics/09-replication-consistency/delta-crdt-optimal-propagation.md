@@ -40,12 +40,22 @@ Active: Baquero, Almeida, Shoker (Minho/INESC TEC, Portugal) on optimal delta-CR
 - Unified cost model trading payload, metadata, and round count for δ-CRDT sync.
 
 ## 9. Key References
-- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011.
-- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018.
-- **[SOTA]** Almeida, Baquero, et al. *Efficient Synchronization of State-based CRDTs (Join Decomposition).* (PaPoC / preprint), 2018.
-- **[Foundational]** Minsky, Trachtenberg, Zippel. *Set Reconciliation with Nearly Optimal Communication Complexity.* IEEE Trans. Information Theory, 2003.
-- **[SOTA]** Kleppmann. *Interleaving Anomalies in Collaborative Text Editors.* PaPoC, 2019.
-- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks.* IPL, 1991.
+- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018. — [DOI](https://doi.org/10.1016/j.jpdc.2017.08.003)
+- **[SOTA]** Almeida, Baquero, et al. *Efficient Synchronization of State-based CRDTs (Join Decomposition).* (PaPoC / preprint), 2018. — [arXiv](https://arxiv.org/abs/1803.02750)
+- **[Foundational]** Minsky, Trachtenberg, Zippel. *Set Reconciliation with Nearly Optimal Communication Complexity.* IEEE Trans. Information Theory, 2003. — [DOI](https://doi.org/10.1109/TIT.2003.815784)
+- **[SOTA]** Kleppmann. *Interleaving Anomalies in Collaborative Text Editors.* PaPoC, 2019. — [DOI](https://doi.org/10.1145/3301419.3323972)
+- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks.* IPL, 1991. — [DBLP](https://dblp.org/rec/journals/ipl/Charron-Bost91.html)
+
+## 10. Worked Example
+
+Two replicas sync a grow-only set CRDT. Replica A holds $\{1,2,3,4,5\}$; replica B holds $\{1,2,3\}$ but A does **not** know B's state.
+
+**Naive delta-interval shipping (no digest):** A buffered three deltas since its last sync with B but lost track of B's cursor, so it re-ships its whole state $\{1,2,3,4,5\}$ — 5 elements, of which $\{1,2,3\}$ are redundant. This is *delta amplification*.
+
+**Join-decomposition + digest:** B sends a compact digest of its join-irreducibles $\{1,2,3\}$. A computes the difference and ships only the irreducibles B lacks: $\{4,5\}$ — payload $O(\text{actual difference})=2$, optimal in state bits.
+
+**Lower-bound check:** with $d=2$ differing elements over universe $u$, the Minsky–Trachtenberg floor is $\Omega(d\log u)$ bits — here $\approx 2\log u$, matching the digest-driven cost up to the digest size. **Causal-stability GC:** A's deltas for $\{1,2,3\}$ may be dropped once A's version vector confirms every replica (here just B) has them; the dot for element 5, still unacknowledged, must be retained.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

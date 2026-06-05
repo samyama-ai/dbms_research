@@ -35,11 +35,19 @@ Active: coverage-guided crash fuzzing combined with sanitizers for storage engin
 (i) Verified, minimized counterexample reduction (delta-debugging crash schedules). (ii) Realistic device models that capture write-cache and FUA semantics faithfully. (iii) Provable coverage guarantees tying schedule selection to recovery code paths. (iv) Continuous-integration crash fuzzing as a default gate for OLTP engines. (v) Unifying distributed crash+partition fault models with single-node persistence models.
 
 ## 9. Key References
-- **[Foundational]** Pillai, T. et al. *All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-Consistent Applications (ALICE).* OSDI, 2014.
-- **[SOTA]** Mohan, J., Martinez, A., Ponnapalli, S., Raju, P., Chidambaram, V. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (CrashMonkey/B³).* OSDI, 2018.
-- **[SOTA]** Gao, H., Demsky, B. et al. *Jaaru: Efficient Model Checking of Persistent Memory Programs.* ASPLOS, 2021.
-- **[SOTA]** Kingsbury, K., Alvaro, P. *Elle: Inferring Isolation Anomalies from Experimental Observations.* PVLDB, 2020.
-- **[Survey]** Liu, S. et al. *Cross-Failure Bug Detection in Persistent Memory Programs (XFDetector) and the PM testing landscape.* ASPLOS, 2020.
+- **[Foundational]** Pillai, T. et al. *All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-Consistent Applications (ALICE).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/pillai)
+- **[SOTA]** Mohan, J., Martinez, A., Ponnapalli, S., Raju, P., Chidambaram, V. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (CrashMonkey/B³).* OSDI, 2018. — [arXiv](https://arxiv.org/abs/1810.02904)
+- **[SOTA]** Gorjiara, H., Xu, G. H., Demsky, B. *Jaaru: Efficient Model Checking of Persistent Memory Programs.* ASPLOS, 2021. — [DOI](https://doi.org/10.1145/3445814.3446735)
+- **[SOTA]** Kingsbury, K., Alvaro, P. *Elle: Inferring Isolation Anomalies from Experimental Observations.* PVLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554)
+- **[Survey]** Liu, S. et al. *Cross-Failure Bug Detection in Persistent Memory Programs (XFDetector) and the PM testing landscape.* ASPLOS, 2020. — [DOI](https://doi.org/10.1145/3373376.3378452)
+
+## 10. Worked Example
+
+A WAL append must atomically (1) write the log record, (2) `fsync` the log, (3) flip a commit flag. Suppose the engine omits the barrier between (1) and (3), so the device may persist them in either order. The persistence operations are $O=\langle w_{\text{rec}}, f_{\text{log}}, w_{\text{flag}}\rangle$ with the *intended* order $w_{\text{rec}}\prec_p w_{\text{flag}}$, but the missing fsync drops that edge — $w_{\text{rec}}$ and $w_{\text{flag}}$ become an antichain.
+
+The crash states are the down-sets of this weakened order. The dangerous one is $S=\{w_{\text{flag}}\}$: the commit flag persisted but the record did not. Recovery $R(S)$ reads "committed" yet finds no record — violating invariant $\Phi$ = "every committed txn has a durable record."
+
+Enumerate: $2^2 = 4$ ideals over the antichain $\{w_{\text{rec}}, w_{\text{flag}}\}$; a fuzzer with DPOR explores one representative per Mazurkiewicz class and hits the counterexample $S$ in one shot. Adding the barrier restores $w_{\text{rec}}\prec_p w_{\text{flag}}$, pruning $S$ from the lattice and removing the bug.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

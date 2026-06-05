@@ -56,11 +56,24 @@ This is **genuinely open**. Systems exploit only *exact-match* exchange reuse; *
 
 ## 9. Key References
 
-- **[Foundational]** Sellis. *Multiple-Query Optimization.* ACM TODS, 1988.
-- **[Foundational]** Roy, Seshadri, Sudarshan, Bhobe. *Efficient and Extensible Algorithms for Multi-Query Optimization.* SIGMOD, 2000.
-- **[SOTA]** Giannikis, Alonso, Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* VLDB, 2012.
-- **[SOTA]** Makreshanski, Giannikis, Alonso, Kossmann. *MQJoin: Efficient Shared Execution of Main-Memory Joins.* VLDB, 2016.
-- **[Survey]** Halim, Idreos, Karras, Yap. *Stochastic Database Cracking / shared-work directions* — see also Qiao et al. *Main-Memory Scan Sharing for Multi-Core CPUs.* VLDB, 2008.
+- **[Foundational]** Sellis. *Multiple-Query Optimization.* ACM TODS, 1988. — [DOI](https://doi.org/10.1145/42201.42203)
+- **[Foundational]** Roy, Seshadri, Sudarshan, Bhobe. *Efficient and Extensible Algorithms for Multi-Query Optimization.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335419), [arXiv](https://arxiv.org/abs/cs/9910021)
+- **[SOTA]** Giannikis, Alonso, Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2168651.2168654), [arXiv](https://arxiv.org/abs/1203.0056)
+- **[SOTA]** Makreshanski, Giannikis, Alonso, Kossmann. *MQJoin: Efficient Shared Execution of Main-Memory Joins.* VLDB, 2016. — [PDF](https://www.vldb.org/pvldb/vol9/p480-makreshanski.pdf)
+- **[Survey]** Halim, Idreos, Karras, Yap. *Stochastic Database Cracking / shared-work directions* — see also Qiao et al. *Main-Memory Scan Sharing for Multi-Core CPUs.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453924)
+
+## 10. Worked Example
+
+Three concurrent queries over `Orders(cust_id, ...)`, each needing it repartitioned by `cust_id`:
+- $q_1$: join with `Customers`, needs `Orders` hashed on `cust_id` into 8 partitions.
+- $q_2$: same join, also needs hash on `cust_id`, 8 partitions — *identical* exchange.
+- $q_3$: group-by `cust_id`, needs hash on `cust_id` into 4 partitions.
+
+Say shuffling `Orders` once costs 800 MB of network bytes. Without sharing: $q_1,q_2,q_3$ each shuffle independently $\Rightarrow 3\times 800 = 2400$ MB.
+
+Exact-match reuse (deployed today, e.g. Spark `ReuseExchange`): $q_1$ and $q_2$ share the 8-way shuffle $\Rightarrow$ one 800 MB shuffle serves both; $q_3$ still shuffles separately $\Rightarrow 800 + 800 = 1600$ MB.
+
+Partition-compatible sharing (the open part): since $4 \mid 8$, $q_3$'s 4 partitions can be obtained by *local* coalescing of the 8-way result — no second network shuffle. Total $= 800$ MB, a $3\times$ reduction. The 4-and-8 compatibility ($p'\mid p$ in the partitioning lattice of section 2) is exactly the reuse opportunity current systems leave on the table.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

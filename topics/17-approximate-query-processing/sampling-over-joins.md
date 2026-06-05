@@ -30,12 +30,22 @@ Active directions: variance-optimal measure-biased walks; join sampling under di
 Unify worst-case-optimal sampling with cost-model-aware optimization; dynamic samplers with $\tilde O(1)$ amortized update; tight variance theory for general CQs; sampling over join-aggregate-groupby pipelines with composable error; private and secure join sampling.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Comput., 2013 (FOCS 2008).
-- **[Foundational]** Olken. *Random Sampling from Databases.* PhD thesis, UC Berkeley, 1993.
-- **[SOTA]** Li, Wu, Yi, Zhang. *Wander Join: Online Aggregation via Random Walks.* SIGMOD 2016.
-- **[SOTA]** Chen, Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT 2020.
-- **[SOTA]** Zhao, Christensen, Li, Yi, Wu. *Random Sampling over Joins Revisited.* SIGMOD 2018.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Comput., 2013 (FOCS 2008). — [DOI](https://doi.org/10.1137/110859440) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Olken. *Random Sampling from Databases.* PhD thesis, UC Berkeley, 1993. — [Semantic Scholar](https://www.semanticscholar.org/paper/Random-Sampling-from-Databases-Olken/852d9568d089afd7e61ec736c9cbd16e2f4fbe06)
+- **[SOTA]** Li, Wu, Yi, Zhang. *Wander Join: Online Aggregation via Random Walks.* SIGMOD 2016. — [ACM](https://dl.acm.org/doi/10.1145/2882903.2915235)
+- **[SOTA]** Chen, Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT 2020. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2020.7)
+- **[SOTA]** Zhao, Christensen, Li, Yi, Wu. *Random Sampling over Joins Revisited.* SIGMOD 2018. — [ACM](https://dl.acm.org/doi/10.1145/3183713.3183739)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991) · [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Two-table join $R_1(\text{key},v)\bowtie R_2(\text{key})$. Let $R_1=\{(a,10),(b,20)\}$ and let $R_2$ have key multiplicities $d_2(a)=3,\ d_2(b)=1$. The join output then has $3+1=4$ tuples and the true sum-aggregate is $\theta=\sum_{\text{output}} v = 3\cdot10+1\cdot20=50$.
+
+**Naive uniform on $R_1$:** pick $a$ or $b$ each w.p. $1/2$. The single-draw estimate $\hat\theta=4\cdot v(t_1)$ gives $\mathbb{E}[\hat\theta]=\tfrac12(40)+\tfrac12(80)=60\neq50$ — biased, because $a$ generates 3 output tuples but is picked as often as $b$.
+
+**Olken/HT fix:** draw $t_1$ with probability $p(t_1)\propto d_2$, i.e. $p(a)=3/4,\ p(b)=1/4$, then a uniform match in $R_2$ — this makes every one of the 4 output tuples equally likely. The HT estimator over one output tuple $o$ is $\hat\theta=f(o)/p(o)$ with $p(o)=1/4$, so $\hat\theta=4\,v(o)$ and
+$$\mathbb{E}[\hat\theta]=\tfrac14\!\sum_{\text{output}} 4\,v = \sum_{\text{output}} v = 50 = \theta.$$
+Unbiased, as required.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

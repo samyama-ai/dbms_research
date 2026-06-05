@@ -1,6 +1,7 @@
 # Certain Answers for Aggregate Queries
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/certain-answers-aggregation` · **Status:** open
+> **Verification note:** The Guagliardo–Libkin "Making SQL Queries Correct on Incomplete Databases" reference was published at PODS 2016 (not 2017); the year has been corrected in section 9.
 
 ## 1. Problem Statement
 
@@ -48,13 +49,25 @@ Active work continues the **"certain answers with nulls / approximate certain an
 
 ## 9. Key References
 
-- **[Foundational]** T. Imieliński, W. Lipski. *Incomplete Information in Relational Databases.* JACM, 1984. (c-tables.)
-- **[Foundational]** F. Afrati, P. Kolaitis. *Answering Aggregate Queries in Data Exchange.* PODS, 2008.
-- **[Foundational]** M. Arenas, L. Bertossi, J. Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. (Related certainty semantics.)
-- **[SOTA]** P. Guagliardo, L. Libkin. *Making SQL Queries Correct on Incomplete Databases.* PODS, 2017.
-- **[SOTA]** M. Console, P. Guagliardo, L. Libkin. *Approximations and Refinements of Certain Answers via Many-Valued Logics.* KR, 2016.
-- **[Survey]** L. Libkin. *SQL's Three-Valued Logic and Certain Answers.* ACM TODS, 2016.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005.
+- **[Foundational]** T. Imieliński, W. Lipski. *Incomplete Information in Relational Databases.* JACM, 1984. (c-tables.) — [DOI](https://doi.org/10.1145/1634.1886)
+- **[Foundational]** F. Afrati, P. Kolaitis. *Answering Aggregate Queries in Data Exchange.* PODS, 2008. — [DBLP](https://dblp.org/rec/conf/pods/AfratiK08.html)
+- **[Foundational]** M. Arenas, L. Bertossi, J. Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. (Related certainty semantics.) — [DOI](https://doi.org/10.1145/303976.303983)
+- **[SOTA]** P. Guagliardo, L. Libkin. *Making SQL Queries Correct on Incomplete Databases.* PODS, 2016. — [DOI](https://doi.org/10.1145/2902251.2902297)
+- **[SOTA]** M. Console, P. Guagliardo, L. Libkin. *Approximations and Refinements of Certain Answers via Many-Valued Logics.* KR, 2016. — [AAAI](https://aaai.org/papers/36-12813-approximations-and-refinements-of-certain-answers-via-many-valued-logics/)
+- **[Survey]** L. Libkin. *SQL's Three-Valued Logic and Certain Answers.* ACM TODS, 2016. — [DOI](https://doi.org/10.1145/2877206)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+A table `Sales(region, amount)` with one labeled null. Two known rows: `(East, 100)`, `(East, 200)`; one incomplete row `(East, x)` where the null $x$ is only known to satisfy the constraint $50 \le x \le 150$.
+
+Query: `SELECT SUM(amount) FROM Sales WHERE region='East'`.
+
+Each possible world fixes $x$ to some value in $[50,150]$, giving total $300 + x$. The naïve **intersection** of answer sets is empty (every world yields a different number), so classic certain answers say nothing useful. The **certain-bounds** semantics instead reports:
+$$\mathsf{cert}^{\min} = 300 + 50 = 350,\qquad \mathsf{cert}^{\max} = 300 + 150 = 450,$$
+i.e. the certain interval $[350, 450]$. For `COUNT(*)` the answer is the exact certain value $3$ (no null deletes a row).
+
+Now `AVG`: $\frac{300+x}{3}$ ranges over $[116.67, 150]$ — and because `AVG` is a *ratio*, if another null appeared in a `WHERE`-filtered count the extremes need not occur at $x=50$ or $x=150$, illustrating why `AVG` certain bounds are harder (non-monotone) than `SUM`.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

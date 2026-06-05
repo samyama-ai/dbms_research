@@ -48,12 +48,20 @@ The gap is **structural and genuinely open**: (1) there is no clean combinatoria
 - Robust reducers under cardinality uncertainty and skew.
 
 ## 9. Key References
-- **[Foundational]** M. Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981.
-- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983.
-- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* (PANDA). PODS, 2017.
-- **[SOTA]** D. Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries.* JACM, 2013. (Submodular width.)
-- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016.
+- **[Foundational]** M. Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981. — [DBLP](https://dblp.org/rec/conf/vldb/Yannakakis81.html)
+- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322389)
+- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* (PANDA). PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503) · [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** D. Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries.* JACM, 2013. (Submodular width.) — [arXiv](https://arxiv.org/abs/0911.0801) · [DOI](https://doi.org/10.1145/2535926)
+- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+
+## 10. Worked Example
+
+The triangle query $Q = R(A,B) \bowtie S(B,C) \bowtie T(C,A)$ is **cyclic** — its hypergraph has no ear, so GYO fails and **no pure-semijoin full reducer exists**. Concretely, let
+$$R = \{(1,1),(2,1)\},\quad S = \{(1,1)\},\quad T = \{(1,2)\}.$$
+Try semijoins: $R \ltimes S$ keeps tuples of $R$ with $B \in \{1\}$, so both rows of $R$ survive; $S \ltimes T$ on $C$ keeps $S$; $T \ltimes R$ on $A$ keeps $T$. After a full round, **no dangling tuple is removed**, yet the actual triangle output is empty (no consistent $(A,B,C)$). Pure semijoins cannot certify emptiness for a cycle.
+
+The width route: a fractional edge cover assigns $x_e = \tfrac12$ to all three atoms, giving AGM bound $N^{3/2}$ on output. WCOJ algorithms meet it; PANDA runs in $\tilde O(N^{\mathrm{subw}})$ with $\mathrm{subw} = \tfrac32$ here. Materializing one bag (e.g. $R \bowtie S$, size $\le N^{3/2}$) makes the residual query acyclic, after which **Yannakakis** semijoin-reduces and evaluates in linear time. The open gap: no GYO-style combinatorial characterization of the *best* such generalized reducer, and no matching fine-grained lower bound proving $\mathrm{subw}$ is tight.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

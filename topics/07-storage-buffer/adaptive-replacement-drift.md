@@ -47,12 +47,25 @@ There is no matching pair. Upper bounds are either worst-case competitive (ignor
 Formalize the drift budget that real workloads satisfy (measure $V$ empirically). Prove a tuning-free policy with variation-optimal tracking regret. Extend to non-unit page costs and to write-back (dirty-page) asymmetry. Connect to learned eviction (see `learned-eviction-guarantees`) so predictions handle drift while a fallback preserves competitiveness.
 
 ## 9. Key References
-- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** N. Megiddo, D. Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* USENIX FAST, 2003.
-- **[Foundational]** S. Jiang, X. Zhang. *LIRS: An Efficient Low Inter-reference Recency Set Replacement Policy.* SIGMETRICS, 2002.
-- **[SOTA]** G. Vietri et al. *Driving Cache Replacement with ML-based LeCaR.* USENIX HotStorage, 2018.
-- **[SOTA]** L. Rodriguez et al. *Learning Cache Replacement with CACHEUS.* USENIX FAST, 2021.
-- **[Survey]** N. Cesa-Bianchi, G. Lugosi. *Prediction, Learning, and Games.* Cambridge Univ. Press, 2006. (tracking/shifting regret)
+- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** N. Megiddo, D. Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* USENIX FAST, 2003. — [USENIX](https://www.usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache)
+- **[Foundational]** S. Jiang, X. Zhang. *LIRS: An Efficient Low Inter-reference Recency Set Replacement Policy.* SIGMETRICS, 2002. — [DOI](https://doi.org/10.1145/511334.511340)
+- **[SOTA]** G. Vietri et al. *Driving Cache Replacement with ML-based LeCaR.* USENIX HotStorage, 2018. — [USENIX](https://www.usenix.org/conference/hotstorage18/presentation/vietri)
+- **[SOTA]** L. Rodriguez et al. *Learning Cache Replacement with CACHEUS.* USENIX FAST, 2021. — [USENIX](https://www.usenix.org/conference/fast21/presentation/rodriguez)
+- **[Survey]** N. Cesa-Bianchi, G. Lugosi. *Prediction, Learning, and Games.* Cambridge Univ. Press, 2006. (tracking/shifting regret) — [Cambridge](https://www.cambridge.org/core/books/prediction-learning-and-games/A05C9F6ABC752FAB8954C885D0065C8F)
+
+## 10. Worked Example
+
+Let cache size $k = 2$ over pages $\{A,B,C\}$. The reuse distribution drifts: **phase 1** the stream is hot on $\{A,B\}$ ($\sigma_1 = A\,B\,A\,B$), **phase 2** it shifts to $\{B,C\}$ ($\sigma_2 = C\,B\,C\,B$).
+
+Trace LRU (start with $A,B$ resident):
+
+- Phase 1: $A,B,A,B$ — all hits. Misses: 0.
+- Phase 2: $C$ miss (evict LRU $=A$, cache $\{B,C\}$); $B$ hit; $C$ hit; $B$ hit. Misses: 1.
+
+Total misses = 1. Belady (offline) would also keep $\{B,C\}$ across the boundary, also 1 miss — so on this *benign* drift LRU is near-optimal.
+
+Now contrast a frequency-only policy (LFU) that locked $A$ in (count 2 after phase 1): at $C$ it evicts $B$ (count 1) instead, then thrashes $B$ vs $C$ for two more misses. This shows the recency-vs-frequency tension a tuning-free policy must resolve: the drift budget here is $\|\mathcal{D}_2-\mathcal{D}_1\|_{TV} = 0.5$ (mass moved from $A$ to $C$), and tracking it well is exactly what ARC/LeCaR-style adaptivity targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

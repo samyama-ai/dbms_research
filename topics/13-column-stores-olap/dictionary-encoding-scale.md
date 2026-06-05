@@ -49,12 +49,22 @@ Maintaining **dense, order-preserving** codes under insertions has an amortized 
 
 ## 9. Key References
 
-- **[Foundational]** G. Antoshenkov, D. Lomet, J. Murray. *Order Preserving String Compression (ALM).* ICDE, 1996.
-- **[Foundational]** M. A. Bender et al. *Two Simplified Algorithms for Maintaining Order in a List.* ESA, 2002.
-- **[SOTA]** P. Boncz, T. Neumann, V. Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020.
-- **[SOTA]** V. Sikka et al. *Efficient Transaction Processing in SAP HANA Database.* SIGMOD, 2012.
-- **[Foundational]** J. Bulánek, M. Koucký, M. Saks. *Tight Lower Bounds for the Online Labeling Problem.* STOC, 2012.
-- **[Survey]** D. Abadi et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** G. Antoshenkov, D. Lomet, J. Murray. *Order Preserving String Compression (ALM).* ICDE, 1996. — [DBLP](https://dblp.org/rec/conf/icde/AntoshenkovLM96.html)
+- **[Foundational]** M. A. Bender et al. *Two Simplified Algorithms for Maintaining Order in a List.* ESA, 2002. — [DOI](https://doi.org/10.1007/3-540-45749-6_17)
+- **[SOTA]** P. Boncz, T. Neumann, V. Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+- **[SOTA]** V. Sikka et al. *Efficient Transaction Processing in SAP HANA Database.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213946)
+- **[Foundational]** J. Bulánek, M. Koucký, M. Saks. *Tight Lower Bounds for the Online Labeling Problem.* STOC, 2012. — [DOI](https://doi.org/10.1145/2213977.2214083)
+- **[Survey]** D. Abadi et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Take a column of $n=6$ rows with $d=4$ distinct values:
+`["apple","banana","apple","cherry","date","banana"]`.
+
+**Order-preserving dictionary:** sort the distinct values, assign monotone codes:
+`apple→0, banana→1, cherry→2, date→3`. Codes need $\lceil\log_2 4\rceil = 2$ bits, so the encoded column is $6\times 2 = 12$ bits, versus $\sum|v|=5+6+5+6+4+6=32$ bytes raw. The column becomes `[0,1,0,2,3,1]`. A range predicate `value BETWEEN "banana" AND "cherry"` pushes directly to `code BETWEEN 1 AND 2`, no decoding — matching rows $\{1,3,5\}$.
+
+**Maintenance tension:** now insert `"avocado"`, which sorts between `apple` and `banana`. To keep dense order-preserving codes we must relabel: `apple→0, avocado→1, banana→2, cherry→3, date→4` — every existing code $\ge 1$ shifts, forcing a full re-encode ($\Omega(d)$ work). This is exactly why list-labeling slack ($\Theta(\log^2 d)$ amortized relabels) or a HANA-style unordered delta is needed to avoid per-insert re-encoding.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -47,11 +47,21 @@ The Hydro project (Hellerstein, Alvaro, Cheung; UC Berkeley) pushes CALM into a 
 
 ## 9. Key References
 
-- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational transducers for declarative networking (CALM).* PODS 2013 / JACM, 2015.
-- **[Foundational]** J. M. Hellerstein. *The Declarative Imperative (CALM conjecture).* SIGMOD Record, 2010.
-- **[Survey]** J. M. Hellerstein, P. Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020.
-- **[SOTA]** P. Alvaro, N. Conway, J. M. Hellerstein, W. Marczak. *Consistency Analysis in Bloom: a CALM and Collected Approach.* CIDR, 2011.
-- **[SOTA]** C. Wu, J. M. Faleiro, Y. Lin, J. M. Hellerstein. *Anna: A KVS for Any Scale.* ICDE, 2018.
+- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational transducers for declarative networking (CALM).* PODS 2013 / JACM, 2015. — [DOI](https://doi.org/10.1145/2450142.2450151)
+- **[Foundational]** J. M. Hellerstein. *The Declarative Imperative (CALM conjecture).* SIGMOD Record, 2010. — [DOI](https://doi.org/10.1145/1860702.1860704)
+- **[Survey]** J. M. Hellerstein, P. Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[SOTA]** P. Alvaro, N. Conway, J. M. Hellerstein, W. Marczak. *Consistency Analysis in Bloom: a CALM and Collected Approach.* CIDR, 2011. — [DBLP](https://dblp.org/rec/conf/cidr/AlvaroCHM11.html)
+- **[SOTA]** C. Wu, J. M. Faleiro, Y. Lin, J. M. Hellerstein. *Anna: A KVS for Any Scale.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00044)
+
+## 10. Worked Example
+
+Two replicas process a "shopping cart" with adds and a checkout total. Inputs arrive in different orders at each replica.
+
+**Monotone query — reachability/union.** Replica state is a set; `add(x)` unions $\{x\}$ in. Replica 1 sees `add(a), add(b)`; replica 2 sees `add(b), add(a)`. Both converge to $\{a,b\}$ with **zero coordination** — the output set only grows, so any interleaving yields the same fixpoint. This is exactly CALM's positive direction: monotone $\Rightarrow$ coordination-free.
+
+**Non-monotone query — `COUNT`/"is the cart final?".** Suppose checkout computes `total = COUNT(cart)` and must emit it once. If replica 1 evaluates `COUNT` after seeing only `add(a)` it emits $1$; later `add(b)` arrives and the *previously emitted* answer $1$ must be **retracted** to $2$. The output is not monotone in the input set, so no coordination-free transducer network computes it: the replicas must first agree on a global "no more adds" event (a barrier/consensus) before `COUNT` is sound.
+
+This is the CALM dichotomy in miniature: union needs $0$ coordination rounds; the count needs a coordination point precisely at the non-monotone `COUNT`.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

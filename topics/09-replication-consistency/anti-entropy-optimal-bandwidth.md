@@ -47,11 +47,19 @@ Rateless IBLT (MIT — Yang, Balakrishnan; NSDI 2024) and its extensions to stru
 
 ## 9. Key References
 
-- **[Foundational]** Y. Minsky, A. Trachtenberg, R. Zippel. *Set Reconciliation with Nearly Optimal Communication Complexity.* IEEE Trans. Information Theory, 2003.
-- **[Foundational]** D. Eppstein, M. Goodrich, F. Uyeda, G. Varghese. *What's the Difference? Efficient Set Reconciliation without Prior Context (IBLT).* SIGCOMM, 2011.
-- **[SOTA]** L. Yang, Y. Gilad, M. Alizadeh, H. Balakrishnan. *Practical Rateless Set Reconciliation.* SIGCOMM/NSDI, 2024.
-- **[SOTA]** G. Naumenko, et al. *Erlay: Efficient Transaction Relay for Bitcoin.* ACM CCS, 2019.
-- **[Foundational]** A. Demers, et al. *Epidemic Algorithms for Replicated Database Maintenance.* PODC, 1987.
+- **[Foundational]** Y. Minsky, A. Trachtenberg, R. Zippel. *Set Reconciliation with Nearly Optimal Communication Complexity.* IEEE Trans. Information Theory, 2003. — [DOI](https://doi.org/10.1109/TIT.2003.815784)
+- **[Foundational]** D. Eppstein, M. Goodrich, F. Uyeda, G. Varghese. *What's the Difference? Efficient Set Reconciliation without Prior Context (IBLT).* SIGCOMM, 2011. — [DOI](https://doi.org/10.1145/2018436.2018462)
+- **[SOTA]** L. Yang, Y. Gilad, M. Alizadeh, H. Balakrishnan. *Practical Rateless Set Reconciliation.* SIGCOMM/NSDI, 2024. — [arXiv](https://arxiv.org/abs/2402.02668)
+- **[SOTA]** G. Naumenko, et al. *Erlay: Efficient Transaction Relay for Bitcoin.* ACM CCS, 2019. — [DOI](https://doi.org/10.1145/3319535.3354237)
+- **[Foundational]** A. Demers, et al. *Epidemic Algorithms for Replicated Database Maintenance.* PODC, 1987. — [DOI](https://doi.org/10.1145/41840.41841)
+
+## 10. Worked Example
+
+Two replicas hold near-identical sets over a universe of $u = 2^{32}$ ($32$-bit keys). Replica $A = \{1,2,3,\dots,10^6\}$; replica $B$ is identical except it is missing key $7$ and has an extra key $9{,}999{,}999$. So $A \triangle B = \{7,\ 9{,}999{,}999\}$ and $d = 2$.
+
+Naive full-set transfer ships $10^6 \times 32$ bits $\approx 4$ MB each way. A Merkle tree over the keys descends only the divergent branches: $O(d \log(u/d)) \approx 2 \times \log_2(2^{31}) \approx 62$ hash comparisons — kilobytes. CPISync transmits just $d = 2$ field evaluations of the characteristic-polynomial ratio, then interpolates to recover both differing keys: $\approx 2 \times 32 = 64$ bits of payload.
+
+Check against the information-theoretic floor $\Omega(d\log(u/d))$: $2 \cdot \log_2(2^{32}/2) = 2 \times 31 = 62$ bits. CPISync's $\sim 64$ bits sits right at this bound — order-optimal. The catch: CPISync needs $d$ (or a bound) in advance, which is exactly what rateless IBLTs remove by streaming coded symbols until the peel succeeds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

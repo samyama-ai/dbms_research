@@ -1,6 +1,7 @@
 # Distributed Deadlock Detection Optimality
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/distributed-deadlock-detection` · **Status:** open
+> **Verification note:** The Chandy–Misra–Haas (1983) paper appeared in ACM TOCS (Transactions on Computer Systems), not TODS; the reference venue has been corrected.
 
 ## 1. Problem Statement
 A set of transactions executes across $n$ sites, each holding and requesting locks held at remote sites. A *distributed deadlock* is a cycle in the global wait-for graph (WFG) $G = (V, E)$ that is partitioned across sites; no single site holds the whole graph. The problem is to design a protocol that **detects every genuine deadlock cycle** while guaranteeing **no false positives (phantom deadlocks)** and minimizing two cost measures jointly:
@@ -50,11 +51,23 @@ Upper bounds ($O(|E|)$ messages, $O(\text{cycle length})$ latency) are not prove
 - Energy/round trade-off curves for geo-distributed (cross-datacenter) WFGs where latency dominates message count.
 
 ## 9. Key References
-- **[Foundational]** K. M. Chandy, J. Misra, L. M. Haas. *Distributed Deadlock Detection.* ACM TODS, 1983.
-- **[Foundational]** D. P. Mitchell, M. J. Merritt. *A Distributed Algorithm for Deadlock Detection and Resolution.* PODC, 1984.
-- **[Survey]** E. Knapp. *Deadlock Detection in Distributed Databases.* ACM Computing Surveys, 1987.
-- **[Foundational]** M. J. Fischer, N. A. Lynch, M. S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
+- **[Foundational]** K. M. Chandy, J. Misra, L. M. Haas. *Distributed Deadlock Detection.* ACM TOCS, 1983. — [DOI](https://doi.org/10.1145/357360.357365)
+- **[Foundational]** D. P. Mitchell, M. J. Merritt. *A Distributed Algorithm for Deadlock Detection and Resolution.* PODC, 1984. — [DOI](https://doi.org/10.1145/800222.806755)
+- **[Survey]** E. Knapp. *Deadlock Detection in Distributed Databases.* ACM Computing Surveys, 1987. — [DOI](https://doi.org/10.1145/45075.46163)
+- **[Foundational]** M. J. Fischer, N. A. Lynch, M. S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+
+## 10. Worked Example
+
+Three sites, one transaction each, in a wait-for cycle (single-resource AND model):
+
+$$T_1 \xrightarrow{wait} T_2 \xrightarrow{wait} T_3 \xrightarrow{wait} T_1,$$
+
+where $T_1$ lives at site A, $T_2$ at B, $T_3$ at C. No site sees the whole graph.
+
+**Chandy–Misra–Haas probe.** Blocked $T_1$ initiates a probe $\langle 1, 1, 2\rangle$ (initiator, sender-tx, receiver-tx) along its outgoing edge to $T_2$. $T_2$, being blocked, forwards $\langle 1, 2, 3\rangle$ to $T_3$; $T_3$ forwards $\langle 1, 3, 1\rangle$ back toward $T_1$. The probe returns to its **initiator** $T_1$ — deadlock declared. Cost: one probe per WFG edge, here 3 messages = $O(|E|)$; latency = cycle length 3 hops.
+
+**Phantom risk.** Suppose $T_3$ releases its lock (edge $T_3 \to T_1$ vanishes) just as the probe is in flight. Over an inconsistent cut the probe still completes the loop and falsely declares deadlock. Avoiding this requires reasoning over a consistent cut (Chandy–Lamport), which is why naive edge-chasing variants were shown incorrect.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

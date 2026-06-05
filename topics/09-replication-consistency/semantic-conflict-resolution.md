@@ -41,12 +41,23 @@ For data types whose operations are **commutative or monotone** (counters, OR-se
 - Mixed-consistency runtimes that invoke coordination *only* on non-I-confluent operation pairs automatically.
 
 ## 9. Key References
-- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011.
-- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems* (I-confluence). VLDB, 2015.
-- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020.
-- **[SOTA]** Kaki, Priya, Sivaramakrishnan, Jagannathan. *Mergeable Replicated Data Types.* OOPSLA, 2019.
-- **[SOTA]** Laddad, Power, Milano, Cheung, Hellerstein. *Katara: Synthesizing CRDTs with Verified Lifting.* OOPSLA, 2022.
-- **[SOTA]** Houshmand, Lesani. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019.
+- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011. — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
+- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems* (I-confluence). VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[SOTA]** Kaki, Priya, Sivaramakrishnan, Jagannathan. *Mergeable Replicated Data Types.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360580)
+- **[SOTA]** Laddad, Power, Milano, Cheung, Hellerstein. *Katara: Synthesizing CRDTs with Verified Lifting.* OOPSLA, 2022. — [DOI](https://doi.org/10.1145/3563336)
+- **[SOTA]** Houshmand, Lesani. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019. — [DOI](https://doi.org/10.1145/3290387)
+
+## 10. Worked Example
+
+A bank balance starts at $S_{lca}=100$. Replicas $A$ and $B$ partition and accept concurrent ops:
+$$A:\ \text{deposit }50 \Rightarrow 150,\qquad B:\ \text{deposit }30 \Rightarrow 130.$$
+
+**LWW merge** (larger timestamp wins): if $B$'s write has the later clock, result $=130$ — the \$50 deposit is *silently lost*. Convergent (both replicas agree on $130$) but wrong.
+
+**Three-way semantic merge** for a counter: $\bowtie(S_A,S_B,S_{lca}) = S_A + S_B - S_{lca} = 150 + 130 - 100 = 180$. This is commutative, associative, idempotent — a join-semilattice op — so replicas converge to $180$, preserving *both* deposits. This is the PN-counter CRDT.
+
+**Where it breaks (I-confluence fails):** add the invariant $balance \ge 0$ and allow concurrent withdrawals. From $S_{lca}=100$, $A:\,\text{withdraw }80\Rightarrow20$ and $B:\,\text{withdraw }80\Rightarrow20$; merge $=20+20-100=-60 <0$. Each branch is individually $I$-valid, yet the merge violates $I$. By Bailis et al., **no** coordination-free merge can preserve $balance \ge 0$ under concurrent decrements — withdrawals must coordinate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

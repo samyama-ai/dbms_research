@@ -64,12 +64,24 @@ ER consolidation is **correlation clustering** (NP-hard, APX-hard; see *Transiti
 
 ## 9. Key References
 
-- **[Foundational]** Whang, Garcia-Molina. *Incremental Entity Resolution on Rules and Data.* VLDB Journal, 2014 (VLDB 2010).
-- **[Foundational]** Benjelloun, Garcia-Molina, Menestrina, Su, Whang, Widom. *Swoosh: A Generic Approach to Entity Resolution.* VLDB Journal, 2009.
-- **[SOTA]** Cohen-Addad, Lattanzi, Maggiori, Parotsidis. *Online and Consistent Correlation Clustering.* ICML, 2022.
-- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix–Vector Multiplication Conjecture.* STOC, 2015.
-- **[SOTA]** Gruenheid, Dong, Srivastava. *Incremental Record Linkage.* PVLDB, 2014.
-- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021.
+- **[Foundational]** Whang, Garcia-Molina. *Incremental Entity Resolution on Rules and Data.* VLDB Journal, 2014 (VLDB 2010). — [DOI](https://doi.org/10.1007/s00778-013-0315-0)
+- **[Foundational]** Benjelloun, Garcia-Molina, Menestrina, Su, Whang, Widom. *Swoosh: A Generic Approach to Entity Resolution.* VLDB Journal, 2009. — [DOI](https://doi.org/10.1007/s00778-008-0098-x)
+- **[SOTA]** Cohen-Addad, Lattanzi, Maggiori, Parotsidis. *Online and Consistent Correlation Clustering.* ICML, 2022. — [PMLR](https://proceedings.mlr.press/v162/cohen-addad22a.html)
+- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix–Vector Multiplication Conjecture.* STOC, 2015. — [DOI](https://doi.org/10.1145/2746539.2746609)
+- **[SOTA]** Gruenheid, Dong, Srivastava. *Incremental Record Linkage.* PVLDB, 2014. — [DOI](https://doi.org/10.14778/2732939.2732943)
+- **[Survey]** Christophides, Efthymiou, Palpanas, Papadakis, Stefanidis. *An Overview of End-to-End Entity Resolution for Big Data.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3418896)
+
+## 10. Worked Example
+
+Start with 4 records and a similarity graph where edge weight $+$ means "likely same", $-$ means "likely different". A batch correlation-clustering pass produces two clusters:
+
+$$\{r_1, r_2\} \quad\text{(entity A)},\qquad \{r_3, r_4\}\quad\text{(entity B)},$$
+
+with edges $r_1\!-\!r_2(+)$, $r_3\!-\!r_4(+)$, $r_2\!-\!r_3(-)$.
+
+**Insert** a new record $r_5$ with $r_5\!-\!r_2(+)$ and $r_5\!-\!r_4(+)$. An order-independent (confluent) merge attaches $r_5$ to whichever cluster maximizes agreement: it agrees with both $A$ and $B$. Recourse here is small — only $r_5$ moves, and at most one existing cluster grows: $\tilde O(|\Delta|\cdot b)$ work for block size $b$.
+
+**Rule edit** is harder: suppose the matcher is retrained so $r_2\!-\!r_3$ flips from $-$ to $+$. Now the batch-optimal clustering merges everything into one entity $\{r_1,r_2,r_3,r_4\}$ — a single edge re-weighting forced *every* record to change cluster. This illustrates the unbounded-recourse risk of rule/model updates versus the bounded recourse of pure data insertions, the crux of why the rule-update variant remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

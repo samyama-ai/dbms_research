@@ -37,12 +37,20 @@ RDMA- and CXL-fabric replication that shaves the commit RTT toward sub-microseco
 - Sub-second recovery proofs for multi-TB DRAM state with parallel scatter-gather.
 
 ## 9. Key References
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery (SiloR).* OSDI, 2014.
-- **[SOTA]** Dragojević, A., et al. *No Compromises: Distributed Transactions with Consistency, Availability, and Performance (FaRM).* SOSP, 2015.
-- **[SOTA]** Ongaro, D., Ousterhout, J. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://dl.acm.org/doi/10.1145/3149.214121)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://dl.acm.org/doi/10.1145/564585.564601)
+- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://dl.acm.org/doi/10.1145/2517349.2522713)
+- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery (SiloR).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/zheng_wenting)
+- **[SOTA]** Dragojević, A., et al. *No Compromises: Distributed Transactions with Consistency, Availability, and Performance (FaRM).* SOSP, 2015. — [DOI](https://dl.acm.org/doi/10.1145/2815400.2815425)
+- **[SOTA]** Ongaro, D., Ousterhout, J. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+
+## 10. Worked Example
+
+Cluster of $n=5$ replicas, tolerating $f=2$ crashes since $n = 2f+1 = 5$. A write quorum is any majority, $\lceil (n+1)/2 \rceil = 3$ replicas.
+
+**Synchronous ($W=0$).** Client submits $\text{commit}(x{=}7)$. The leader appends to its log and ships it to followers. Once $3$ of $5$ (itself + $2$) have acknowledged, the write is durable: any later majority of $3$ must intersect this set (since $3+3 = 6 > 5$), so at least one survivor holds $x{=}7$ even after $2$ crashes. Only then is the client acked. Cost: one network round-trip, latency $\Omega(\text{RTT})$ — the section-5 floor, since the acking node cannot know the write survived its own crash without a remote copy.
+
+**Bounded-async ($W>0$).** With epoch group commit and epoch length $10$ ms, the leader acks immediately and replicates in batches. A crash mid-epoch can lose up to one epoch of acked-but-unreplicated transactions, so the loss window is $W \le$ one epoch. Trade: throughput rises (batched RTTs) but durability weakens from $W=0$ to $W>0$, exactly the crux tradeoff of section 1.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

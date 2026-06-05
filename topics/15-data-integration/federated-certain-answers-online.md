@@ -65,12 +65,25 @@ Active directions: extending **PDQ** with cost/latency-aware and **anytime** pla
 
 ## 9. Key References
 
-- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995.
-- **[Foundational]** O. Duschka, M. Genesereth, A. Levy. *Recursive Query Plans for Data Integration.* J. Logic Programming, 2000.
-- **[Foundational]** M. Lenzerini. *Data Integration: A Theoretical Perspective.* PODS, 2002.
-- **[SOTA]** A. Deutsch, B. Ludäscher, A. Nash. *Rewriting Queries Using Views with Access Patterns under Integrity Constraints.* Theoretical Computer Science, 2007.
-- **[SOTA]** M. Benedikt, J. Leblay, B. ten Cate, E. Tsamoura. *Generating Plans from Proofs: The Interpolation-based Approach to Query Reformulation (PDQ).* Morgan & Claypool, 2016.
-- **[Survey]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool (Synthesis Lectures), 2011.
+- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995. — [DOI](https://doi.org/10.1145/212433.220198)
+- **[Foundational]** O. Duschka, M. Genesereth, A. Levy. *Recursive Query Plans for Data Integration.* J. Logic Programming, 2000. — [DOI](https://doi.org/10.1016/S0743-1066(99)00025-4)
+- **[Foundational]** M. Lenzerini. *Data Integration: A Theoretical Perspective.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543644)
+- **[SOTA]** A. Deutsch, B. Ludäscher, A. Nash. *Rewriting Queries Using Views with Access Patterns under Integrity Constraints.* Theoretical Computer Science, 2007. — [DOI](https://doi.org/10.1016/j.tcs.2006.11.008)
+- **[SOTA]** M. Benedikt, J. Leblay, B. ten Cate, E. Tsamoura. *Generating Plans from Proofs: The Interpolation-based Approach to Query Reformulation (PDQ).* Morgan & Claypool, 2016. — [DOI](https://doi.org/10.2200/S00703ED1V01Y201602DTM043)
+- **[Survey]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool (Synthesis Lectures), 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+
+## 10. Worked Example
+
+Two sources with binding patterns:
+- $\text{Store}^{\text{bf}}(\underline{zip}, name)$ — must bind $zip$, returns store names in that zip.
+- $\text{Nearby}^{\text{bf}}(\underline{zip}, zip')$ — must bind $zip$, returns adjacent zips.
+
+Query: *names of all stores reachable from zip 10001.* As a CQ:
+$$q(name) \leftarrow \text{Reach}(z),\ \text{Store}(z,name),\quad \text{Reach}(10001),\ \text{Reach}(z')\!\leftarrow\!\text{Reach}(z),\text{Nearby}(z,z').$$
+
+**Executability check.** Every bound position is fed by a constant or a prior atom: $10001$ seeds $\text{Reach}$; each $\text{Nearby}$ call binds its $zip$ from a known $\text{Reach}$ value; each $\text{Store}$ call binds $zip$ likewise. So the plan is executable — it is a **Datalog least-fixpoint** over the binding graph.
+
+**Online/reachability trace.** Call $\text{Nearby}(10001)\to\{10002\}$; call $\text{Nearby}(10002)\to\{10001,10003\}$ (10001 already seen); call $\text{Nearby}(10003)\to\{\}$. Fixpoint reached: $\text{Reach}=\{10001,10002,10003\}$. Emitting $\text{Store}$ results as each call returns gives a **monotone certified prefix**. But if the $\text{Nearby}(10002)$ API is rate-limited/partitioned, no algorithm can certify whether $10003$'s stores belong to the answer before the deadline — the FLP/CAP-style impossibility of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

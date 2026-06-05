@@ -70,12 +70,28 @@ Foundations are partly solved (soft FDs, the CI–MVD bridge, query-side dichoto
 
 ## 9. Key References
 
-- **[Foundational]** Studený, M. *Conditional Independence Relations Have No Finite Complete Characterization.* Trans. 11th Prague Conf., 1992.
-- **[Foundational]** Kivinen, J., Mannila, H. *Approximate Inference of Functional Dependencies from Relations.* Theoretical Computer Science, 1995.
-- **[Foundational]** Dalvi, N., Suciu, D. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012.
-- **[Survey]** Suciu, D., Olteanu, D., Ré, C., Koch, C. *Probabilistic Databases.* Morgan & Claypool, 2011.
-- **[SOTA]** Rekatsinas, T., Chu, X., Ilyas, I., Ré, C. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017.
-- **[SOTA]** Geiger, D., Pearl, J. *Logical and Algorithmic Properties of Conditional Independence and Graphical Models.* Annals of Statistics, 1993.
+- **[Foundational]** Studený, M. *Conditional Independence Relations Have No Finite Complete Characterization.* Trans. 11th Prague Conf., 1992. — [PDF](https://staff.utia.cas.cz/studeny/FTP/ci-no-axiom-92.pdf)
+- **[Foundational]** Kivinen, J., Mannila, H. *Approximate Inference of Functional Dependencies from Relations.* Theoretical Computer Science, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00028-U)
+- **[Foundational]** Dalvi, N., Suciu, D. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+- **[Survey]** Suciu, D., Olteanu, D., Ré, C., Koch, C. *Probabilistic Databases.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.1007/978-3-031-01879-4)
+- **[SOTA]** Rekatsinas, T., Chu, X., Ilyas, I., Ré, C. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631)
+- **[SOTA]** Geiger, D., Pearl, J. *Logical and Algorithmic Properties of Conditional Independence and Graphical Models.* Annals of Statistics, 1993. — [DOI](https://doi.org/10.1214/aos/1176349407)
+
+## 10. Worked Example
+
+Consider a TIDB over $R(\text{Zip}, \text{City})$ testing the FD $\text{Zip}\to\text{City}$. Three independent tuples:
+
+| tuple | Zip | City | $p_t$ |
+|---|---|---|---|
+| $t_1$ | 02139 | Cambridge | 0.9 |
+| $t_2$ | 02139 | Somerville | 0.4 |
+| $t_3$ | 90001 | LA | 1.0 |
+
+The FD is *violated* in a world iff both $t_1$ and $t_2$ are present (same Zip, different City); $t_3$ never conflicts. So
+$$P[\text{FD holds}] = 1 - P[t_1\wedge t_2] = 1 - (0.9)(0.4) = 0.64.$$
+Thus the FD holds with probability $0.64$ — it passes a threshold $\tau=0.6$ but fails $\tau=0.7$.
+
+Approximate ($g_3$) view on the most-likely world $\{t_1,t_3\}$ (drop $t_2$, $p<0.5$): the FD holds exactly, $g_3=0$. But in the world $\{t_1,t_2,t_3\}$ we must delete 1 of 3 tuples to satisfy it, so $g_3 = 1/3 \approx 0.33$. The single PDB yields *different* verdicts under "in-expectation" ($0.64$), "certain" (fails), and "approximate" ($g_3$) semantics — illustrating the section-6 gap that these notions lack a unifying calculus.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

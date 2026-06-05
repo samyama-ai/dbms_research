@@ -39,12 +39,28 @@ Directions: learned/range-summary predicate coarsenings (e.g. using learned inde
 - Tight lower bounds on tracking metadata for phantom-safety.
 
 ## 9. Key References
-- **[Foundational]** Eswaran, Gray, Lorie, Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[Foundational]** Mohan. *ARIES/KVL: A Key-Value Locking Method for Concurrency Control of Multiaction Transactions on B-Tree Indexes.* VLDB, 1990.
-- **[SOTA]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD/TODS, 2008/2009.
-- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
+- **[Foundational]** Eswaran, Gray, Lorie, Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[Foundational]** Mohan. *ARIES/KVL: A Key-Value Locking Method for Concurrency Control of Multiaction Transactions on B-Tree Indexes.* VLDB, 1990. — [ACM](https://dl.acm.org/doi/10.5555/645916.672135)
+- **[SOTA]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD/TODS, 2008/2009. — [ACM](https://dl.acm.org/doi/10.1145/1376616.1376690)
+- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.4179)
 - **[SOTA]** Tu, Zheng, Kohler, Liskov, Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
+- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+
+## 10. Worked Example
+
+Table `Emp(id, salary)` holds rows with salaries $\{90k, 110k, 130k\}$, indexed on `salary`.
+
+- $T_1$: `SELECT COUNT(*) FROM Emp WHERE salary > 100k` → reads 2 rows ($110k, 130k$).
+- $T_2$: concurrently `INSERT (id=9, salary=120k)`, then commits.
+
+If $T_1$ re-runs its predicate it now sees 3 rows — a **phantom**. No single existing row was write-conflicted, so item-level locks miss it.
+
+Compare cost of three phantom-safe responses:
+- **Predicate lock:** lock $\{salary>100k\}$; admitting $T_2$ requires deciding $120k>100k$ (predicate satisfiability) — sound but general-case NP-hard.
+- **Gap/next-key lock:** lock the index gap $(100k, +\infty)$; the insert at $120k$ falls in the locked gap → $T_2$ blocks. Cost $O(\log N)$, but it would also block a harmless insert at $200k$ (false conflict).
+- **Silo node-validation:** $T_1$ records the version of the scanned B-tree leaf; $T_2$'s insert bumps that version, so $T_1$ aborts at commit. Cost $O(\text{nodes scanned})$, no range lock — but co-located unrelated inserts also trigger aborts.
+
+Each prevents the phantom; they differ only in false-conflict footprint — the heart of the open optimality gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

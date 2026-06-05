@@ -65,13 +65,13 @@ The gap is **fundamental and open on two axes**. (1) *Definitional:* there is no
 
 ## 9. Key References
 
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach.* British J. Philosophy of Science, 2005.
-- **[Foundational]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010.
-- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB, 2013.
-- **[SOTA]** Roy, Suciu. *A Formal Approach to Finding Explanations for Database Queries.* SIGMOD, 2014.
-- **[SOTA]** Lundberg, Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS, 2017.
-- **[Survey]** Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021.
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach.* British J. Philosophy of Science, 2005. — [DOI](https://doi.org/10.1093/bjps/axi148)
+- **[Foundational]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1880172.1880176)
+- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536354.2536356)
+- **[SOTA]** Roy, Suciu. *A Formal Approach to Finding Explanations for Database Queries.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588578)
+- **[SOTA]** Lundberg, Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1705.07874)
+- **[Survey]** Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

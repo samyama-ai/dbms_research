@@ -44,12 +44,29 @@ Active directions: out-of-core query execution in DuckDB and Umbra emphasizing *
 
 ## 9. Key References
 
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** DeWitt, Katz, Olken, Shapiro, Stonebraker, Wood. *Implementation Techniques for Main Memory Database Systems* / Grace & hybrid hash join, SIGMOD, 1984.
-- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework.* SIGMOD, 2014.
-- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: an Embeddable Analytical Database.* SIGMOD (demo), 2019; with out-of-core operator work, 2022–2024.
-- **[Survey]** Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993.
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** DeWitt, Katz, Olken, Shapiro, Stonebraker, Wood. *Implementation Techniques for Main Memory Database Systems* / Grace & hybrid hash join, SIGMOD, 1984. — [DOI](https://doi.org/10.1145/971697.602261)
+- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: an Embeddable Analytical Database.* SIGMOD (demo), 2019; with out-of-core operator work, 2022–2024. — [DOI](https://doi.org/10.1145/3299869.3320212)
+- **[Survey]** Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993. — [DOI](https://doi.org/10.1145/152610.152611)
+
+## 10. Worked Example
+
+Grace hash join of $R \bowtie S$ on disk. Let total input $N = 10^9$ tuples, block size
+$B = 10^6$ tuples/block ($N/B = 10^3$ blocks), and memory $M = 32\times10^6$ tuples
+($M/B = 32$ partitions per pass).
+
+I/O cost is $\text{sort}(N) = \tfrac{N}{B}\log_{M/B}\tfrac{N}{B}
+= 10^3 \cdot \log_{32}(10^3) \approx 10^3 \cdot 1.99 \approx 1.99\times10^3$ block transfers
+(2 partitioning passes: $\lceil\log_{32}10^3\rceil = 2$), then a final scan to probe — total
+$\approx 3$ passes over the data.
+
+**Skew floor.** Now suppose one key has multiplicity $\Delta = 50\times10^6$ tuples. That
+single key cannot be split by hashing: its partition needs $\Delta/B = 50$ blocks resident,
+which exceeds $M/B = 32$. No partition scheme avoids this — the build side for that key alone
+forces $\Omega(\Delta/B)$ memory, illustrating the intrinsic adversarial-skew lower bound and
+why naive recursive repartitioning loops without progress on a dominant key.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -56,13 +56,28 @@ Active threads: (i) **restricted-chase termination** characterizations and the r
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005.
-- **[Foundational]** A. Deutsch, A. Nash, J. Remmel. *The chase revisited.* PODS, 2008.
-- **[SOTA]** B. Marnette. *Generalized schema-mappings: from termination to tractability.* PODS, 2009.
-- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-instances termination of chase is undecidable.* ICALP, 2014.
-- **[SOTA]** M. Benedikt et al. *Benchmarking the chase.* SIGMOD (PODS), 2017.
-- **[Foundational]** A. Calì, G. Gottlob, M. Kifer. *Taming the infinite chase: Query answering under expressive relational constraints (Datalog±).* Journal of Artificial Intelligence Research, 2013.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** A. Deutsch, A. Nash, J. Remmel. *The chase revisited.* PODS, 2008. — [ACM](https://dl.acm.org/doi/10.1145/1376916.1376938)
+- **[SOTA]** B. Marnette. *Generalized schema-mappings: from termination to tractability.* PODS, 2009. — [ACM](https://dl.acm.org/doi/10.1145/1559795.1559799)
+- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-instances termination of chase is undecidable.* ICALP, 2014. — [DOI](https://doi.org/10.1007/978-3-662-43951-7_25)
+- **[SOTA]** M. Benedikt et al. *Benchmarking the chase.* SIGMOD (PODS), 2017. — [ACM](https://dl.acm.org/doi/10.1145/3034786.3034796)
+- **[Foundational]** A. Calì, G. Gottlob, M. Kifer. *Taming the infinite chase: Query answering under expressive relational constraints (Datalog±).* Journal of Artificial Intelligence Research, 2013. — [arXiv](https://arxiv.org/abs/1212.3357)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+A weakly-acyclic TGD set whose position graph has a path of length 2, giving a quadratic blow-up. Schema $N(\text{x})$, edges $E(\text{x},\text{y})$. Dependencies:
+$$\tau_1:\ N(x)\to\exists y\,E(x,y),\qquad \tau_2:\ E(x,y)\to N(y).$$
+
+The position dependency graph has a *special* edge $N[1]\to E[2]$ (existential) and an ordinary edge $E[2]\to N[1]$; no cycle passes through two special edges, so $\Sigma$ is weakly acyclic and the chase terminates.
+
+Start with $D=\{N(a)\}$, $|D|=1$. Trace:
+1. $\tau_1$ fires on $N(a)$: add $E(a,n_1)$ (fresh null $n_1$).
+2. $\tau_2$ fires on $E(a,n_1)$: add $N(n_1)$.
+3. $\tau_1$ on $N(n_1)$: add $E(n_1,n_2)$.
+4. $\tau_2$: add $N(n_2)$ — and so on.
+
+With $k$ starting constants the chase produces $O(k)$ facts here (rank $1$). The polynomial degree $r$ equals the longest special-edge path: $|\mathrm{chase}_\Sigma(D)|=O(|D|^{r})$. A two-stage propagation (rank $2$) instead yields the matching $\Omega(|D|^2)$ lower bound, confirming tightness per dependency rank.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,22 @@ Active directions: **distributed/updatable learned partitioning** extending PGM 
 - Hybrid indexes that degrade gracefully from order-preserving to hash as detected skew increases.
 
 ## 9. Key References
-- **[Foundational]** Karger, Lehman, Leighton, Panigrahy, Levine, Lewin. *Consistent Hashing and Random Trees.* STOC, 1997.
-- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007.
-- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020.
-- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[Foundational]** Pătraşcu, Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006.
+- **[Foundational]** Karger, Lehman, Leighton, Panigrahy, Levine, Lewin. *Consistent Hashing and Random Trees.* STOC, 1997. — [DOI](https://doi.org/10.1145/258533.258660)
+- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294281)
+- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[Foundational]** Pătraşcu, Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+
+## 10. Worked Example
+
+Keys $\{10,11,\dots,21\}$ (monotonic time-series), $p=4$ partitions, query mix: 50% point, 50% range scans of width 3.
+
+**Pure range partitioning** ($[10,12],[13,15],[16,18],[19,21]$): a width-3 scan touches 1–2 partitions (good locality), but all *inserts* land in the last partition $[19,21]$ — a hotspot taking 100% of write load.
+
+**Pure hash partitioning** ($\pi(k)=k \bmod 4$): inserts spread evenly (25% each), but the scan $[14,16]$ must visit partitions $14\bmod4=2$, $15\bmod4=3$, $16\bmod4=0$ — fan-out 3 of 4, i.e. $\Omega(p)$.
+
+**Hash-sharded hybrid** with $b=2$ buckets, prefix $=k\bmod 2$, then range within bucket: writes split across 2 partitions (50% peak, no single hotspot), and a width-3 scan unions over $b=2$ buckets — fan-out capped at 2 regardless of range size. This trades a tunable $2\times$ scan amplification for halving the write hotspot, exactly the (balance, fan-out) Pareto knob of section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

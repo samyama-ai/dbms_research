@@ -52,12 +52,24 @@ Directions: (i) **HTAP version-store offloading** — migrating overwritten vers
 
 ## 9. Key References
 
-- **[SOTA]** T. Neumann, T. Mühlbauer, A. Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems.* VLDB, 2019.
-- **[SOTA]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011.
-- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[Survey]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017.
-- **[Foundational]** H. Berenson, P. Bernstein, J. Gray, J. Melton, E. O'Neil, P. O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
+- **[SOTA]** T. Neumann, T. Mühlbauer, A. Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[SOTA]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767867)
+- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+- **[Survey]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067427)
+- **[Foundational]** H. Berenson, P. Bernstein, J. Gray, J. Melton, E. O'Neil, P. O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+
+## 10. Worked Example
+
+A long analytical query $Q$ starts at snapshot timestamp $\tau_Q = 100$ and runs while OLTP writers commit at rate $W = 1000$ distinct-item updates per second. Each update appends a new version; $Q$ must still see the version valid as of $\tau_Q$, so every overwritten version stays pinned.
+
+Trace one hot item $x$:
+- $x_{90}$ (valid at $\tau_Q$ — $Q$ reads this one).
+- writer commits $x_{105}, x_{120}, x_{160}, \dots$
+
+The GC low-watermark is $\tau^\star = \min$ over active snapshots $= 100$. So $x_{90}$ cannot be reclaimed (it is the version $Q$ sees), and all newer versions are live for current writers. Across all items, after $Q$ has run $\Delta = 60$ s, retained version count $\approx W\cdot\Delta = 1000 \times 60 = 60{,}000$ — matching the bound $\Theta(W\,(t_{\text{now}}-\tau_Q))$.
+
+If instead $Q$ tolerates staleness budget $S = 5$ s and refreshes its snapshot every 5 s, peak retention drops to $\approx W\cdot S = 5000$ versions — a $12\times$ space saving, at the cost of no longer being a single consistent snapshot. This is the exact space-vs-consistency tradeoff the problem formalizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

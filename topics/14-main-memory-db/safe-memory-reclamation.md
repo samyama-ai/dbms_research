@@ -111,11 +111,31 @@ fast EBR variants.
 
 ## 9. Key References
 
-- **[Foundational]** M. Michael. *Hazard Pointers: Safe Memory Reclamation for Lock-Free Objects.* IEEE TPDS, 2004.
-- **[Foundational]** K. Fraser. *Practical Lock-Freedom.* PhD thesis / RCU lineage (McKenney), 2004.
-- **[SOTA]** R. Nikolaev, B. Ravindran. *Hyaline: Fast and Transparent Lock-Free Memory Reclamation.* PODC / DISC, 2019.
-- **[SOTA]** G. Sheffer, E. Petrank. *Wait-Free / Version-Based Reclamation (VBR, Crystalline).* PPoPP, 2021–2023.
-- **[Survey]** P. Singh, T. A. Brown, et al. *A Survey of Concurrent Memory Reclamation Techniques.* (comparative study), 2020s.
+- **[Foundational]** M. Michael. *Hazard Pointers: Safe Memory Reclamation for Lock-Free Objects.* IEEE TPDS, 2004. — [DOI](https://doi.org/10.1109/TPDS.2004.8)
+- **[Foundational]** K. Fraser. *Practical Lock-Freedom.* PhD thesis / RCU lineage (McKenney), 2004. — [Cambridge TR](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.html)
+- **[SOTA]** R. Nikolaev, B. Ravindran. *Hyaline: Fast and Transparent Lock-Free Memory Reclamation.* PODC / DISC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331575)
+- **[SOTA]** G. Sheffer, E. Petrank. *Wait-Free / Version-Based Reclamation (VBR, Crystalline).* PPoPP, 2021–2023. — [DOI](https://doi.org/10.1145/3409964.3461817)
+- **[Survey]** P. Singh, T. A. Brown, et al. *A Survey of Concurrent Memory Reclamation Techniques.* (comparative study), 2020s. *(unverified)*
+
+## 10. Worked Example
+
+A lock-free stack has top $\to A \to B$. Thread $T_1$ runs `pop()`: it reads `top = A`,
+reads `A.next = B`, and is about to CAS `top` from $A$ to $B$ — but stalls just after
+reading the pointer to $A$. Thread $T_2$ then pops $A$ (CAS succeeds), wants to free $A$.
+
+**Use-after-free risk:** if $T_2$ frees $A$ now, $T_1$ later dereferences a dangling $A$.
+
+**Hazard pointers (robust).** Before reading, $T_1$ publishes $\text{HP}[1] = A$ with a store
+$+$ fence. $T_2$, before freeing, scans all hazard slots, finds $A$ protected, and *defers*
+$A$ to a retire list. Garbage is bounded: with $T$ threads and $H{=}1$ hazard each, at most
+$T\cdot H = T$ objects sit unreclaimed per scan — $O(T)$.
+
+**EBR (fast, not robust).** $T_1$ enters epoch $e$; $T_2$ retires $A$ tagged epoch $e$ and
+can free it only once *all* threads advance past $e$. If $T_1$ stalls forever inside $e$,
+the epoch never advances and retired garbage grows **unboundedly** — the robustness failure.
+
+The contrast — one fence/read but unbounded garbage (EBR) versus bounded garbage but a
+per-access fence (HP) — is exactly the Pareto trade-off the open problem seeks to break.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

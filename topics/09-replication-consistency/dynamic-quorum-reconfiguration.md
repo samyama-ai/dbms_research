@@ -47,11 +47,21 @@ Matchmaker Paxos / reconfiguration-off-the-critical-path (Whittaker, Hellerstein
 
 ## 9. Key References
 
-- **[Foundational]** N. Lynch, A. Shvartsman. *RAMBO: A Reconfigurable Atomic Memory Service for Dynamic Networks.* DISC, 2002.
-- **[Foundational]** L. Lamport, D. Malkhi, L. Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009.
-- **[SOTA]** M. K. Aguilera, I. Keidar, D. Malkhi, A. Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011.
-- **[SOTA]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** M. Whittaker, et al. *Matchmaker Paxos: A Reconfigurable Consensus Protocol.* JSys / arXiv:2007.09468, 2021.
+- **[Foundational]** N. Lynch, A. Shvartsman. *RAMBO: A Reconfigurable Atomic Memory Service for Dynamic Networks.* DISC, 2002. — [DOI](https://doi.org/10.1007/3-540-36108-1_12)
+- **[Foundational]** L. Lamport, D. Malkhi, L. Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [DOI](https://doi.org/10.1145/1582716.1582783)
+- **[SOTA]** M. K. Aguilera, I. Keidar, D. Malkhi, A. Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011. — [DOI](https://doi.org/10.1145/1944345.1944348)
+- **[SOTA]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** M. Whittaker, et al. *Matchmaker Paxos: A Reconfigurable Consensus Protocol.* JSys / arXiv:2007.09468, 2021. — [arXiv](https://arxiv.org/abs/2007.09468)
+
+## 10. Worked Example
+
+Old config $C_0 = \{a,b,c\}$ with majority quorums (any 2 of 3). We reconfigure to $C_1 = \{a,b,c,d,e\}$ (any 3 of 5).
+
+A write $W$ completes in $C_0$ by reaching $\{a,b\}$ — value $v$, version 7. Now suppose we naively switched and a read in $C_1$ contacted $\{c,d,e\}$. None of those saw $W$: $\{c,d,e\}$ does **not** intersect $\{a,b\}$, so the read returns the stale version 6 — a **linearizability violation**.
+
+The fix is the cross-configuration intersection discipline: the first $C_1$ operation must first read a quorum of $C_0$ to learn completed old-config writes before $C_1$ becomes authoritative. A $C_0$-read of any 2 nodes intersects $\{a,b\}$ (e.g. $\{a,c\}$ sees $W$), so version 7 propagates into $C_1$. RAMBO/DynaStore keep $C_0$ live until a GC step proves no operation still needs it.
+
+Cost: this imposes exactly **one** cross-config round-trip on the first new-config operation — the unavoidable latency floor from the lower bound. Steady-state operations afterward pay nothing extra, which is what "stall-free in the common case" (Matchmaker Paxos) means.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

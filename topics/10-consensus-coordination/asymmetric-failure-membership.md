@@ -48,12 +48,23 @@ Active directions: partial-partition-tolerant membership and "directed reachabil
 
 ## 9. Key References
 
-- **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996.
-- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002.
-- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002.
-- **[SOTA]** Armon Dadgar, James Phillips, Jon Currey. *Lifeguard: Local Health Awareness for More Accurate Failure Detection.* DSN Workshops, 2018.
-- **[Survey]** Peng Huang, Chuanxiong Guo, Lidong Zhou, et al. *Gray Failure: The Achilles' Heel of Cloud-Scale Systems.* HotOS, 2017.
-- **[Foundational]** Kenneth Birman, Thomas Joseph. *Exploiting Virtual Synchrony in Distributed Systems.* SOSP, 1987.
+- **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [DOI](https://doi.org/10.1145/234533.234549)
+- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.5555/647883.738420)
+- **[SOTA]** Armon Dadgar, James Phillips, Jon Currey. *Lifeguard: Local Health Awareness for More Accurate Failure Detection.* DSN Workshops, 2018. — [arXiv](https://arxiv.org/abs/1707.00788)
+- **[Survey]** Peng Huang, Chuanxiong Guo, Lidong Zhou, et al. *Gray Failure: The Achilles' Heel of Cloud-Scale Systems.* HotOS, 2017. — [DOI](https://doi.org/10.1145/3102980.3103005)
+- **[Foundational]** Kenneth Birman, Thomas Joseph. *Exploiting Virtual Synchrony in Distributed Systems.* SOSP, 1987. — [DOI](https://doi.org/10.1145/37499.37515)
+
+## 10. Worked Example
+
+Four nodes $V=\{A,B,C,D\}$ with a fully-connected cluster, except one **asymmetric** link failure: $A$'s messages reach $B$, but $B$'s do not reach $A$. So $G_t$ has all directed edges except $B\!\to\!A$ is missing while $A\!\to\!B$ is present.
+
+Run SWIM-style probing. $A$ pings $B$ and gets no ack (the ack travels $B\!\to\!A$, the broken direction), so $A$ suspects $B$. Meanwhile $C$ and $D$ probe $B$ fine and consider it healthy. Now views diverge:
+
+- $A$'s view: $\{A, C, D\}$ (evicts $B$).
+- $B,C,D$'s view: $\{A, B, C, D\}$.
+
+The induced subgraph on $\{A,B,C,D\}$ is **not strongly connected** (no path $B\rightsquigarrow A$), so no coherent all-to-all view exists; yet $B$ is a *healthy node* losing only one directed link. SWIM's $k$-indirect ping fixes this: $A$ asks $C$ to ping $B$; $C$'s ack ($C\!\to\!A$ works) confirms $B$ alive, suppressing the false eviction. This is exactly why asymmetric reachability breaks the symmetric fail-stop assumption.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

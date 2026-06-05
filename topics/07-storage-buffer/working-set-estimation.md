@@ -1,6 +1,7 @@
 # Online Working-Set Estimation for Auto-Sizing
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/working-set-estimation` · **Status:** partially-solved
+> **Verification note:** The cited AET title "Fast Miss Ratio Curve Modeling..." is the ACM Trans. Storage 2018 journal version (the original AET appeared as Hu et al., "Kinetic Modeling of Data Eviction in Cache," USENIX ATC 2016), so the "USENIX ATC, 2018" venue label is inexact.
 
 ## 1. Problem Statement
 
@@ -61,12 +62,26 @@ For the **stationary, single-MRC** problem the gap is essentially **closed**: su
 
 ## 9. Key References
 
-- **[Foundational]** Denning. *The Working Set Model for Program Behavior.* CACM, 1968.
-- **[Foundational]** Mattson, Gecsei, Slutz, Traiger. *Evaluation Techniques for Storage Hierarchies.* IBM Systems Journal, 1970.
-- **[SOTA]** Waldspurger, Park, Garthwaite, Ahmad. *Efficient MRC Construction with SHARDS.* FAST, 2015.
-- **[SOTA]** Wires, Ingram, Drudi, Harvey, Warfield. *Characterizing Storage Workloads with Counter Stacks.* OSDI, 2014.
-- **[Foundational]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[SOTA]** Hu, Wang, Luo, et al. *Fast Miss Ratio Curve Modeling with Average Eviction Time (AET).* USENIX ATC, 2018.
+- **[Foundational]** Denning. *The Working Set Model for Program Behavior.* CACM, 1968. — [DOI](https://doi.org/10.1145/363095.363141)
+- **[Foundational]** Mattson, Gecsei, Slutz, Traiger. *Evaluation Techniques for Storage Hierarchies.* IBM Systems Journal, 1970. — [DOI](https://doi.org/10.1147/sj.92.0078)
+- **[SOTA]** Waldspurger, Park, Garthwaite, Ahmad. *Efficient MRC Construction with SHARDS.* FAST, 2015. — [USENIX](https://www.usenix.org/conference/fast15/technical-sessions/presentation/waldspurger)
+- **[SOTA]** Wires, Ingram, Drudi, Harvey, Warfield. *Characterizing Storage Workloads with Counter Stacks.* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/wires)
+- **[Foundational]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Hu, Wang, Luo, et al. *Fast Miss Ratio Curve Modeling with Average Eviction Time (AET).* USENIX ATC, 2018. — [DOI](https://doi.org/10.1145/3185751)
+
+## 10. Worked Example
+
+Access stream over $N$ pages: $A,B,C,A,B,D,A$. **Reuse distance** of a reference = number of *distinct* pages seen since that page's previous access (or $\infty$ on first touch).
+
+| ref | $A$ | $B$ | $C$ | $A$ | $B$ | $D$ | $A$ |
+|-----|-----|-----|-----|-----|-----|-----|-----|
+| rd  | $\infty$ | $\infty$ | $\infty$ | $2$ | $2$ | $\infty$ | $2$ |
+
+For the 2nd $A$: distinct pages since prior $A$ are $\{B,C\}$, so rd $=2$. For the final $A$: distinct since prior $A$ are $\{B,D\}$, rd $=2$.
+
+**MRC for LRU.** Miss ratio at cache size $c$ = fraction of refs with rd $> c$ (Mattson). Of 7 refs, 4 have rd $=\infty$, 3 have rd $=2$:
+$$f(1)=\tfrac{7}{7}=1.0,\quad f(2)=\tfrac{4}{7}\approx0.57,\quad f(3)=\tfrac{4}{7}\approx0.57.$$
+The MRC flattens past $c=2$ — the reuse working set fits in 2 frames. **SHARDS** would sample only pages whose hash $h(p)<T$ (e.g. keep $\tfrac14$ of keys), build the same histogram from $O(1)$ tracked keys, and rescale — recovering this curve in sublinear space.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

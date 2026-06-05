@@ -40,11 +40,25 @@ Active: SIMD/AVX-512 and GPU Roaring operations; bitmap indexes for high-cardina
 - Bitmap indexes co-designed with GPU/SIMD and with updates (compressed, mutable bitmaps).
 
 ## 9. Key References
-- **[SOTA]** Chambi, Lemire, Kaser, Godin. *Better Bitmap Performance with Roaring Bitmaps.* Software: Practice and Experience, 2016.
-- **[Foundational]** Wu, Otoo, Shoshani. *Optimizing Bitmap Indices with Efficient Compression.* ACM TODS, 2006 (WAH/FastBit).
-- **[SOTA]** Lemire, Kaser, Kurz, Deri, et al. *Roaring Bitmaps: Implementation of an Optimized Software Library.* Software: Practice and Experience, 2018.
-- **[Foundational]** Raman, Raman, Rao. *Succinct Indexable Dictionaries with Applications.* ACM TALG, 2007 (RRR).
-- **[Foundational]** Pătraşcu. *Succincter.* FOCS 2008.
+- **[SOTA]** Chambi, Lemire, Kaser, Godin. *Better Bitmap Performance with Roaring Bitmaps.* Software: Practice and Experience, 2016. — [DOI](https://doi.org/10.1002/spe.2325)
+- **[Foundational]** Wu, Otoo, Shoshani. *Optimizing Bitmap Indices with Efficient Compression.* ACM TODS, 2006 (WAH/FastBit). — [DOI](https://doi.org/10.1145/1132863.1132864)
+- **[SOTA]** Lemire, Kaser, Kurz, Deri, et al. *Roaring Bitmaps: Implementation of an Optimized Software Library.* Software: Practice and Experience, 2018. — [arXiv](https://arxiv.org/abs/1709.07821)
+- **[Foundational]** Raman, Raman, Rao. *Succinct Indexable Dictionaries with Applications.* ACM TALG, 2007 (RRR). — [DOI](https://doi.org/10.1145/1290672.1290680)
+- **[Foundational]** Pătraşcu. *Succincter.* FOCS 2008. — [PDF](https://people.csail.mit.edu/mip/papers/succinct/succinct.pdf)
+
+## 10. Worked Example
+
+Take the bitmap for value `region='US'` over $n=128$ rows where only rows $3$ and $70$ qualify: $k=2$ set bits.
+
+**Entropy bound:** $\log_2\binom{128}{2}=\log_2 8128 \approx 13$ bits — the floor for any exact encoding.
+
+**Uncompressed:** $128$ bits.
+
+**WAH ($w=32$):** the bitmap splits into four 31-bit literal words. Rows $3$ and $70$ fall in different words, so two words are all-zero (run-encoded as one fill word each) and two are literals — roughly $4\times32=128$ bits, *no* gain because the set bits break the runs. WAH wins only on long clustered runs.
+
+**Roaring:** one $2^{16}$ chunk holds all rows; with just $2$ set bits it picks the **array container**, storing two 16-bit values $=32$ bits plus small overhead — far below uncompressed and near the entropy floor.
+
+`COUNT` is then a $\texttt{popcount}$ (or array length $=2$); an AND with another sparse bitmap intersects two short sorted arrays in $O(k)$. This illustrates the central tradeoff: container choice adapts to density, so no single scheme dominates across all $k/n$ regimes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

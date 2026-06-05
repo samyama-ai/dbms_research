@@ -122,12 +122,30 @@ execution overhead, plus engines that compute provenance circuits at near-zero m
 
 ## 9. Key References
 
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM 59(6), 2012.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[SOTA]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB 11(12), 2018.
-- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016.
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [ACM](https://dl.acm.org/doi/10.1145/1265530.1265535)
+- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM 59(6), 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[SOTA]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1101.1110)
+- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB 11(12), 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+
+## 10. Worked Example
+
+Take $R(A,B)$ with tuples $r_1=(1,2)$ annotated $x$ and $r_2=(1,3)$ annotated $y$, and
+$S(B,C)$ with $s_1=(2,9)$ annotated $u$ and $s_2=(3,9)$ annotated $v$. Evaluate
+$Q = \pi_C(R \bowtie_B S)$ as a K-relation: join uses $\otimes$, projection uses $\oplus$.
+
+Two join tuples survive: $(1,2,9)$ with annotation $x\otimes u$, and $(1,3,9)$ with
+$y\otimes v$. Both project to $C=9$, so the output tuple $(9)$ carries
+$$(x\otimes u)\;\oplus\;(y\otimes v).$$
+
+Now *specialize the semiring*:
+- **Bag** $\mathbb{N}$ ($\oplus=+,\otimes=\times$) with $x{=}u{=}y{=}v{=}1$: multiplicity $1{\cdot}1+1{\cdot}1=2$.
+- **Probability** with $x{=}0.5,u{=}0.4,y{=}0.2,v{=}1$: $0.5{\cdot}0.4+0.2{\cdot}1=0.4$.
+- **Tropical** $(\min,+)$ with costs $x{=}3,u{=}5,y{=}1,v{=}2$: $\min(3{+}5,\,1{+}2)=3$.
+
+One symbolic evaluation $xu \oplus yv$, then a homomorphism per semiring — exactly the
+Green–Karvounarakis–Tannen guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,21 @@ Drivers: datacenter carbon/energy pressure and the rise of energy- and carbon-aw
 
 ## 9. Key References
 
-- **[Foundational]** Tsirogiannis, D.; Harizopoulos, S.; Shah, M. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010.
-- **[Foundational]** Barroso, L. A.; Hölzle, U. *The Case for Energy-Proportional Computing.* IEEE Computer, 2007.
-- **[SOTA]** Yu, X.; Bezerra, G.; Pavlo, A.; Devadas, S.; Stonebraker, M. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* PVLDB, 2014.
-- **[SOTA]** Lang, W.; Patel, J. *Towards Eco-friendly Database Management Systems.* CIDR, 2009.
-- **[Survey]** Harizopoulos, S.; Shah, M.; Meza, J.; Ranganathan, P. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009.
-- **[Foundational]** Weiser, M.; Welch, B.; Demers, A.; Shenker, S. *Scheduling for Reduced CPU Energy (DVFS).* OSDI, 1994.
+- **[Foundational]** Tsirogiannis, D.; Harizopoulos, S.; Shah, M. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807194)
+- **[Foundational]** Barroso, L. A.; Hölzle, U. *The Case for Energy-Proportional Computing.* IEEE Computer, 2007. — [DOI](https://doi.org/10.1109/MC.2007.443)
+- **[SOTA]** Yu, X.; Bezerra, G.; Pavlo, A.; Devadas, S.; Stonebraker, M. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* PVLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735511)
+- **[SOTA]** Lang, W.; Patel, J. *Towards Eco-friendly Database Management Systems.* CIDR, 2009. — [arXiv](https://arxiv.org/abs/0909.1767)
+- **[Survey]** Harizopoulos, S.; Shah, M.; Meza, J.; Ranganathan, P. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009. — [arXiv](https://arxiv.org/abs/0909.1784)
+- **[Foundational]** Weiser, M.; Welch, B.; Demers, A.; Shenker, S. *Scheduling for Reduced CPU Energy (DVFS).* OSDI, 1994. — [USENIX](https://www.usenix.org/conference/osdi-94/scheduling-reduced-cpu-energy)
+
+## 10. Worked Example
+
+Compare two CC policies on a contended workload, attempting $N_{\text{att}} = 10{,}000$ transactions. Each attempt does $E_{\text{work}} = 5$ J of compute; static/leakage adds $P_{\text{static}} = 50$ W over the run.
+
+- **OCC under skew:** commit efficiency $\gamma_1 = 0.5$ (half abort and retry). To get $N_c = 10{,}000$ commits we burn $20{,}000$ attempts $\times 5 = 100$ kJ of work. At $1000$ commits/s the run takes $20$ s, so static energy is $50 \times 20 = 1$ kJ. Total $\approx 101$ kJ, giving $\eta_1 = 101{,}000 / 10{,}000 = 10.1$ J/commit.
+- **Deterministic CC:** $\gamma_2 = 0.95$. Attempts $\approx 10{,}526$, work $= 52.6$ kJ; faster run ($\approx 10.5$ s) gives $0.53$ kJ static. Total $\approx 53.2$ kJ, so $\eta_2 \approx 5.3$ J/commit.
+
+The work-energy ratio matches the bound $\gamma_1/\gamma_2 = 0.5/0.95 \approx 0.53$: cutting aborts nearly halves J/commit, and here wasted CC work — not idle power — dominates the bill.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

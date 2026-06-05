@@ -35,12 +35,29 @@ Active directions: **learned/RL and bandit** index tuners with formal regret bou
 - Online/streaming index selection with provable regret under workload drift; safe automatic deployment.
 
 ## 9. Key References
-- **[Foundational]** Surajit Chaudhuri, Vivek Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[Foundational]** George L. Nemhauser, Laurence A. Wolsey, Marshall L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[Foundational]** Uriel Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** Maxim Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004.
-- **[Survey]** Surajit Chaudhuri, Vivek Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
-- **[SOTA]** Hai Lan, Zhifeng Bao, Yuwei Peng. *A Survey on Advancing the DBMS Query Optimizer / Learned Index Selection.* (learned index-selection survey), 2021.
+- **[Foundational]** Surajit Chaudhuri, Vivek Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [ACM](https://dl.acm.org/doi/10.5555/645923.673646)
+- **[Foundational]** George L. Nemhauser, Laurence A. Wolsey, Marshall L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** Uriel Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** Maxim Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Survey]** Surajit Chaudhuri, Vivek Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+- **[SOTA]** Hai Lan, Zhifeng Bao, Yuwei Peng. *A Survey on Advancing the DBMS Query Optimizer / Learned Index Selection.* (learned index-selection survey), 2021. — [arXiv](https://arxiv.org/abs/2101.01507)
+
+## 10. Worked Example
+
+**Index interactions break submodularity.** Workload of two queries, each frequency 1. Candidate indexes $I_a$ (on column $a$) and $I_b$ (on column $b$), budget allows both. Baseline cost with no index: $\mathrm{cost}(W,\emptyset)=100$.
+
+Query $q_1$ is a merge join on $(a,b)$ that only gets an index-only plan when **both** $I_a$ and $I_b$ exist. Measured optimizer costs:
+
+| $S$ | cost($W,S$) | benefit |
+|---|---|---|
+| $\emptyset$ | 100 | 0 |
+| $\{I_a\}$ | 95 | 5 |
+| $\{I_b\}$ | 95 | 5 |
+| $\{I_a,I_b\}$ | 40 | 60 |
+
+Marginal gain of $I_b$ given $\emptyset$ is $100-95=5$; given $\{I_a\}$ it is $95-40=55$. Since $55 > 5$, the marginal benefit **increases** with the larger set — the benefit function is *supermodular* here, violating the diminishing-returns property submodularity requires.
+
+Greedy adds the first index by best single gain (a tie at 5), but its $(1-1/e)$ guarantee assumes submodularity, which fails. This tiny instance shows why no constant-factor approximation is known for the true ISP (section 6).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

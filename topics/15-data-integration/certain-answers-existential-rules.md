@@ -50,12 +50,25 @@ Active work: **bounded-treewidth and "well-behaved" chase variants** (oblivious,
 
 ## 9. Key References
 
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Chase, dependencies, universal models.)
-- **[Foundational]** A. Calì, G. Gottlob, T. Lukasiewicz. *A general Datalog-based framework for tractable query answering over ontologies.* Journal of Web Semantics, 2012.
-- **[SOTA]** G. Gottlob, A. Pieris. *Beyond SPARQL under OWL 2 QL entailment regime: Rules to the rescue.* IJCAI, 2015. (Warded Datalog$^\pm$.)
-- **[SOTA]** L. Bellomarini, E. Sallinger, G. Gottlob. *The VADALOG System: Datalog-based Reasoning for Knowledge Graphs.* VLDB, 2018.
-- **[Survey]** A. Calì, G. Gottlob, A. Pieris. *Towards more expressive ontology languages: The query answering problem.* Artificial Intelligence, 2012.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005.
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Chase, dependencies, universal models.) — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** A. Calì, G. Gottlob, T. Lukasiewicz. *A general Datalog-based framework for tractable query answering over ontologies.* Journal of Web Semantics, 2012. — [DOI](https://doi.org/10.1016/j.websem.2012.03.001)
+- **[SOTA]** G. Gottlob, A. Pieris. *Beyond SPARQL under OWL 2 QL entailment regime: Rules to the rescue.* IJCAI, 2015. (Warded Datalog$^\pm$.) — [PDF](https://www.ijcai.org/Proceedings/15/Papers/424.pdf)
+- **[SOTA]** L. Bellomarini, E. Sallinger, G. Gottlob. *The VADALOG System: Datalog-based Reasoning for Knowledge Graphs.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3213880.3213888)
+- **[Survey]** A. Calì, G. Gottlob, A. Pieris. *Towards more expressive ontology languages: The query answering problem.* Artificial Intelligence, 2012. — [DOI](https://doi.org/10.1016/j.artint.2012.08.002)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+Source $D = \{\mathsf{Emp}(\mathrm{alice})\}$. One TGD (guarded, the body atom $\mathsf{Emp}(x)$ contains $x$):
+$$\Sigma:\quad \mathsf{Emp}(x) \rightarrow \exists z\; \mathsf{Manages}(z, x).$$
+
+**Chase.** The trigger $\mathsf{Emp}(\mathrm{alice})$ has no extension, so fire it, introducing a fresh labeled null $n_1$:
+$$U = \{\mathsf{Emp}(\mathrm{alice}),\ \mathsf{Manages}(n_1, \mathrm{alice})\}.$$
+No further trigger fires (no $\mathsf{Emp}$ fact about a null), so the chase terminates with universal model $U$.
+
+**Query 1:** $Q_1() \leftarrow \exists y\, \mathsf{Manages}(y, \mathrm{alice})$. Evaluating on $U$: $y \mapsto n_1$ satisfies it, so $Q_1$ is **certain** (true). By the homomorphism theorem, since $U \to I$ for every model $I$, every model also has *someone* managing alice.
+
+**Query 2:** $Q_2(y) \leftarrow \mathsf{Manages}(y, \mathrm{alice})$ asking *who*. The only witness is the null $n_1$, and certain answers are restricted to constants — so $\mathsf{cert}(Q_2) = \varnothing$. No specific manager is certain, because different models instantiate $z$ differently. This is exactly why existential nulls block constant-level certainty while preserving Boolean/UCQ certainty.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

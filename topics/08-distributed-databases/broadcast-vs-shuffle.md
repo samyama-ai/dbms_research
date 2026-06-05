@@ -49,12 +49,25 @@ The *static* decision is essentially closed: the crossover and one-round MPC bou
 - Memory- and topology-aware crossover models (disaggregated memory, RDMA, heterogeneous workers).
 
 ## 9. Key References
-- **[Foundational]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010. (Shares.)
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013 / JACM, 2017.
-- **[Foundational]** D. DeWitt, J. Gray. *Parallel Database Systems: The Future of High Performance Database Systems.* CACM, 1992. (Redistribution vs. broadcast foundations.)
-- **[SOTA]** M. Armbrust et al. *Spark SQL: Relational Data Processing in Spark.* SIGMOD, 2015; and Spark 3.0 *Adaptive Query Execution* (Apache Spark documentation / Databricks, 2020).
-- **[SOTA]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018.
-- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015.
+- **[Foundational]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010. (Shares.) — [PDF](http://infolab.stanford.edu/~ullman/pub/join-mr.pdf) · [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013 / JACM, 2017. — [arXiv](https://arxiv.org/abs/1306.5972) · [DOI](https://doi.org/10.1145/3125644)
+- **[Foundational]** D. DeWitt, J. Gray. *Parallel Database Systems: The Future of High Performance Database Systems.* CACM, 1992. (Redistribution vs. broadcast foundations.) — [DOI](https://doi.org/10.1145/129888.129894)
+- **[SOTA]** M. Armbrust et al. *Spark SQL: Relational Data Processing in Spark.* SIGMOD, 2015; and Spark 3.0 *Adaptive Query Execution* (Apache Spark documentation / Databricks, 2020). — [DOI](https://doi.org/10.1145/2723372.2742797) · [Databricks](https://www.databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)
+- **[SOTA]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+
+## 10. Worked Example
+
+Join $R \bowtie S$ on $p = 4$ workers, with $|R| = 9{,}000$ tuples and $|S| = 1{,}200$ tuples.
+
+- **Broadcast** $S$: every worker receives all of $S$, so $C_B = p\,|S| = 4 \times 1200 = 4800$.
+- **Shuffle** both on the join key: $C_H = |R| + |S| = 9000 + 1200 = 10{,}200$.
+
+Broadcast wins ($4800 < 10{,}200$). Check against the crossover rule:
+$$|S| \le \frac{|R|}{p-1} = \frac{9000}{3} = 3000,$$
+and indeed $1200 \le 3000$, confirming broadcast is optimal.
+
+Now suppose the optimizer's estimate $\hat S = 1200$ is wrong and the true $|S| = 3600$ (factor $\gamma$ error). Then true $C_B = 4 \times 3600 = 14{,}400$ while $C_H = 9000 + 3600 = 12{,}600$: shuffle is now cheaper, so the committed broadcast plan pays a $14400/12600 \approx 1.14\times$ penalty. Spark AQE sidesteps this by deferring the choice until exact shuffle-map sizes are materialized, picking the winner with hindsight — at the price of one materialization barrier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -54,12 +54,22 @@ Genuinely open. We know reconfiguration is *strictly weaker* than consensus (Dyn
 
 ## 9. Key References
 
-- **[Foundational]** N. Lynch, A. Shvartsman. *RAMBO: A Reconfigurable Atomic Memory Service for Dynamic Networks.* DISC, 2002.
-- **[SOTA]** M. K. Aguilera, I. Keidar, D. Malkhi, A. Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011.
-- **[Foundational]** L. Lamport, D. Malkhi, L. Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009.
-- **[SOTA]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft) — Joint Consensus Membership Change.* USENIX ATC, 2014.
-- **[Foundational]** D. Dolev, R. Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985.
-- **[SOTA]** J. M. Faleiro, S. Rajamani, K. Rajan, G. Ramalingam, K. Vaswani / V. K. Garg et al. *Generalized Lattice Agreement* and reconfiguration applications. PODC, 2012 and follow-ups.
+- **[Foundational]** N. Lynch, A. Shvartsman. *RAMBO: A Reconfigurable Atomic Memory Service for Dynamic Networks.* DISC, 2002. — [DOI](https://doi.org/10.1007/3-540-36108-1_12)
+- **[SOTA]** M. K. Aguilera, I. Keidar, D. Malkhi, A. Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011. — [DOI](https://doi.org/10.1145/1944345.1944348)
+- **[Foundational]** L. Lamport, D. Malkhi, L. Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [DOI](https://doi.org/10.1145/1582716.1582783)
+- **[SOTA]** D. Ongaro, J. Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft) — Joint Consensus Membership Change.* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[Foundational]** D. Dolev, R. Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985. — [DOI](https://doi.org/10.1145/2455.214112)
+- **[SOTA]** J. M. Faleiro, S. Rajamani, K. Rajan, G. Ramalingam, K. Vaswani / V. K. Garg et al. *Generalized Lattice Agreement* and reconfiguration applications. PODC, 2012 and follow-ups. — [DOI](https://doi.org/10.1145/2332432.2332458)
+
+## 10. Worked Example
+
+Why naive reconfiguration loses data (quorum-continuity violation). Start in $C=\{a,b,c\}$, majority quorums of size 2. Client writes $x{=}5$, acked by quorum $\{a,b\}$; $c$ has stale $x{=}0$.
+
+Now reconfigure to $C'=\{c,d,e\}$ **without bridging quorums**. A reader in $C'$ contacts majority $\{c,d\}$. Neither $c$ nor the fresh $d,e$ saw $x{=}5$, so the read returns $0$ — a committed value was *lost*. The failure: a $C$-quorum and a $C'$-quorum need not intersect ($\{a,b\}\cap\{c,d\}=\varnothing$).
+
+Safe reconfiguration enforces **quorum continuity**: the transition reads from a $C$-quorum and writes the surviving state into a $C'$-quorum, contacting $\ge$ a quorum of *each bridged config* — an $\Omega(|\text{quorum}|)$ message floor per change.
+
+DynaStore's insight: installing $C'$ does not require agreeing on a *single* successor (consensus); it only needs lattice agreement on an *upper bound* of proposed next-configs, so two concurrent proposals $C'$ and $C''$ both get merged into $C'\sqcup C''$ — wait-free, circumventing FLP. Byzantine variants still pay the Dolev–Reischuk $\Omega(f^2)$ message floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

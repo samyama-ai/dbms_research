@@ -55,12 +55,30 @@ Active directions: (i) LLMs as the statistical prior, with constraints as a veri
 
 ## 9. Key References
 
-- **[Foundational]** Bohannon, Fan, Flaster, Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005.
-- **[Foundational]** Richardson, Domingos. *Markov Logic Networks.* Machine Learning, 2006.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[SOTA]** Heidari, McGrath, Ilyas, Rekatsinas. *HoloDetect: Few-Shot Learning for Error Detection.* SIGMOD, 2019.
-- **[SOTA]** Mahdavi, Abedjan, et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019.
+- **[Foundational]** Bohannon, Fan, Flaster, Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005. — [DBLP](https://dblp.org/rec/conf/sigmod/BohannonFFR05.html)
+- **[Foundational]** Richardson, Domingos. *Markov Logic Networks.* Machine Learning, 2006. — [DOI](https://doi.org/10.1007/s10994-006-5833-1)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** Heidari, McGrath, Ilyas, Rekatsinas. *HoloDetect: Few-Shot Learning for Error Detection.* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1904.02285)
+- **[SOTA]** Mahdavi, Abedjan, et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3324956)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019. — [DOI](https://doi.org/10.1145/3310205)
+
+## 10. Worked Example
+
+Consider `Person(Name, Zip, City)` with FD `Zip → City` and three tuples:
+
+| t | Zip | City |
+|---|-----|------|
+| 1 | 10001 | New York |
+| 2 | 10001 | New York |
+| 3 | 10001 | Bostton |
+
+The FD is violated: $t_3$ disagrees on City. A purely rule-based repair could change either *all* three Cities or just $t_3$ — minimum cost (1 edit) picks $t_3$. But *which* value? The rule alone is indifferent between "New York" and "Bostton".
+
+Now add the statistical term: a learned per-cell density gives $p_\theta(\text{City}=\text{New York}\mid \text{Zip}=10001)=0.95$, while "Bostton" has near-zero likelihood (it is not even a dictionary city). The unified objective scores candidate $t_3.\text{City}$:
+
+$$\text{New York}: w_\phi\cdot 0 + (-\log 0.95)\approx 0.05,\qquad \text{Bostton}: w_\phi\cdot 1 + (-\log 10^{-6})\approx w_\phi + 13.8.$$
+
+MAP inference sets $t_3.\text{City}=\text{New York}$, simultaneously satisfying the FD and maximizing likelihood — exactly the joint optimum the framework targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

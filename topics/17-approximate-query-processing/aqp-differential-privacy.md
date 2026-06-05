@@ -52,13 +52,23 @@ Active: tight **subsampling amplification under f-DP / Gaussian DP** and its use
 
 ## 9. Key References
 
-- **[Foundational]** C. Dwork, F. McSherry, K. Nissim, A. Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
-- **[SOTA]** C. Ge, X. He, I. F. Ilyas, A. Machanavajjhala. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019.
-- **[SOTA]** B. Balle, G. Barthe, M. Gaboardi. *Privacy Amplification by Subsampling: Tight Analyses via Couplings and Divergences.* NeurIPS, 2018.
-- **[SOTA]** C. Li, M. Hay, V. Rastogi, G. Miklau, A. McGregor. *Optimizing Linear Counting Queries under Differential Privacy (The Matrix Mechanism).* PODS, 2010.
-- **[SOTA]** J. Dong, A. Roth, W. J. Su. *Gaussian Differential Privacy.* JRSS-B, 2022.
-- **[Foundational]** M. Bun, J. Ullman, S. Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014.
+- **[Foundational]** C. Dwork, F. McSherry, K. Nissim, A. Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+- **[SOTA]** C. Ge, X. He, I. F. Ilyas, A. Machanavajjhala. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1712.10266)
+- **[SOTA]** B. Balle, G. Barthe, M. Gaboardi. *Privacy Amplification by Subsampling: Tight Analyses via Couplings and Divergences.* NeurIPS, 2018. — [arXiv](https://arxiv.org/abs/1807.01647)
+- **[SOTA]** C. Li, M. Hay, V. Rastogi, G. Miklau, A. McGregor. *Optimizing Linear Counting Queries under Differential Privacy (The Matrix Mechanism).* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104)
+- **[SOTA]** J. Dong, A. Roth, W. J. Su. *Gaussian Differential Privacy.* JRSS-B, 2022. — [arXiv](https://arxiv.org/abs/1905.02383)
+- **[Foundational]** M. Bun, J. Ullman, S. Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014. — [DOI](https://doi.org/10.1145/2591796.2591877)
+
+## 10. Worked Example
+
+A table has $N=1{,}000{,}000$ rows; we want a private `COUNT(*) WHERE region='X'`, true count $A=200{,}000$. A counting query has sensitivity $\Delta_1=1$.
+
+**Pure DP, no sampling.** Laplace mechanism at $\varepsilon_{DP}=0.5$ adds $\mathrm{Lap}(1/0.5)=\mathrm{Lap}(2)$, variance $2\cdot 2^2=8$, so DP-RMSE $=\sqrt8\approx 2.83$. Tiny relative to $A$ — but assumes a full scan.
+
+**Sample + amplified DP.** Take a Poisson sample of rate $q=0.01$ ($n\approx10{,}000$). Sampling variance for the scaled estimate $\hat A=\tfrac{1}{q}\cdot(\text{sample count})$: with $p=0.2$, $\mathrm{Var}=\tfrac{1}{q^2}\,nq\,p(1-p)\approx\tfrac{1}{0.01}\cdot 10000\cdot0.16=1.6\times10^7$, sampling-RMSE $\approx 4000$.
+
+Amplification: running $\varepsilon=0.5$ on a $q=0.01$ sample yields effective $\varepsilon' \approx \ln(1+0.01(e^{0.5}-1))\approx \ln(1.0065)\approx 0.0065$ — a $\sim77\times$ privacy gain, so the *same* noise buys far more privacy. The lesson: here sampling error ($4000$) dwarfs DP noise ($2.83$), so the joint optimum spends the privacy budget cheaply and instead enlarges $n$ — exactly the coupling section 6 calls unsolved in closed form.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -59,12 +59,29 @@ For the **submodular** model the gap is essentially **closed**: greedy $(1-1/e)$
 
 ## 9. Key References
 
-- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997.
-- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[Foundational]** Feige, U. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** Sviridenko, M. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004.
-- **[SOTA]** Kossmann, J., Schlosser, R., et al. *SWIRL: Selection of Workload-aware Indexes using Reinforcement Learning.* EDBT, 2022.
-- **[Survey]** Chaudhuri, S., Narasayya, V. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997. — [DBLP](https://dblp.uni-trier.de/rec/conf/vldb/ChaudhuriN97.xml)
+- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** Feige, U. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** Sviridenko, M. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[SOTA]** Kossmann, J., Schlosser, R., et al. *SWIRL: Selection of Workload-aware Indexes using Reinforcement Learning.* EDBT, 2022. — [PDF](https://openproceedings.org/2022/conf/edbt/paper-37.pdf)
+- **[Survey]** Chaudhuri, S., Narasayya, V. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Three candidate indexes $\{A,B,C\}$ on a `users` table, write budget $W=2$ (each index costs 1 maintenance unit). Per-query benefit (cost saved $\times$ frequency):
+
+| Set | Benefit |
+|-----|---------|
+| $\{A\}$ | 10 |
+| $\{B\}$ | 8 |
+| $\{C\}$ | 7 |
+| $\{A,B\}$ | 15 |
+| $\{A,C\}$ | 14 |
+| $\{B,C\}$ | 12 |
+
+Note diminishing returns: $A{+}B$ gives 15, not $10{+}8=18$ (overlapping queries) — the function is submodular. Greedy under cardinality $K=2$: pick $A$ (best singleton, +10), then the best marginal addition — $B$ adds $15-10=5$, $C$ adds $14-10=4$ — so pick $B$, yielding $\{A,B\}=15$.
+
+Is greedy optimal here? The best pair is $\{A,B\}=15$, so yes. The $(1-1/e)$ guarantee bounds the worst case: greedy $\ge 0.632 \cdot \text{OPT}$. Here greedy hits OPT exactly. The third index $C$ is rejected: adding it would breach $W=2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

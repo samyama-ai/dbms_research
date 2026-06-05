@@ -40,12 +40,20 @@ Active: learned filters (Kraska et al.'s *learned Bloom filters* and *sandwiched
 - Extending optimal allocation to *range* filters (ties to *Range Query Filters for LSM*).
 
 ## 9. Key References
-- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
-- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** P. C. Dillinger, S. Walzer. *Ribbon Filter: Practically Smaller than Bloom and Xor.* arXiv:2103.02515 / SEA, 2021.
-- **[SOTA]** M. A. Bender, M. Farach-Colton, M. Goswami, R. Johnson, S. McCauley, S. Singh. *Bloom Filters, Adaptivity, and the Dictionary Problem.* FOCS, 2018.
-- **[SOTA]** Y. Li, C. Tian, F. Guo, C. Li, Y. Xu. *ElasticBF: Elastic Bloom Filter with Hotness Awareness for Boosting Read Performance.* USENIX ATC, 2019.
-- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
+- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** P. C. Dillinger, S. Walzer. *Ribbon Filter: Practically Smaller than Bloom and Xor.* arXiv:2103.02515 / SEA, 2021. — [arXiv](https://arxiv.org/abs/2103.02515)
+- **[SOTA]** M. A. Bender, M. Farach-Colton, M. Goswami, R. Johnson, S. McCauley, S. Singh. *Bloom Filters, Adaptivity, and the Dictionary Problem.* FOCS, 2018. — [arXiv](https://arxiv.org/abs/1711.01616)
+- **[SOTA]** Y. Li, C. Tian, F. Guo, C. Li, Y. Xu. *ElasticBF: Elastic Bloom Filter with Hotness Awareness for Boosting Read Performance.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/li-yongkun)
+- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+
+## 10. Worked Example
+
+Two SSTables share a budget $M = 20$ bits. Filter A holds $k_A = 10$ keys and is probed by $a_A = 900$ negative queries/s; filter B holds $k_B = 10$ keys but only $a_B = 100$. Using the Bloom FPR $p_i \approx 2^{-(\ln 2)\, m_i/k_i} = 0.6185^{m_i/k_i}$, a **uniform** split gives each $m=10$ bits, so $m/k = 1$, $p \approx 0.6185$, total cost $\approx (900+100)(0.6185) = 618$ probes/s.
+
+Now apply the Monkey KKT rule (equal marginal benefit $a_i\,|dp_i/dm_i| = \lambda$). Shifting bits toward the hot filter A — say $m_A = 13$, $m_B = 7$ — gives $p_A = 0.6185^{1.3} \approx 0.541$, $p_B = 0.6185^{0.7} \approx 0.707$. Total cost $\approx 900(0.541) + 100(0.707) = 487 + 71 = 558$ probes/s.
+
+That is a $\sim 10\%$ reduction at the *same* 20-bit budget, purely from skew-aware allocation — the qualitative win Monkey formalizes: spend bits where negative probes are frequent.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

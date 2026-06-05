@@ -39,12 +39,18 @@ Active threads: **responsiveness vs. synchrony** in BFT (optimistic responsivene
 - FLP-circumvention cost in energy/dollars, not just rounds.
 
 ## 9. Key References
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Dwork, C., Lynch, N., Stockmeyer, L. *Consensus in the Presence of Partial Synchrony.* JACM, 1988.
-- **[Foundational]** Chandra, T., Hadzilacos, V., Toueg, S. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996.
-- **[SOTA]** Aguilera, M., Delporte-Gallet, C., Fauconnier, H., Toueg, S. *Communication-Efficient Leader Election and Consensus with Limited Link Synchrony.* PODC, 2004.
-- **[Foundational]** Ben-Or, M. *Another Advantage of Free Choice: Completely Asynchronous Agreement Protocols.* PODC, 1983.
-- **[SOTA]** Miller, A., Xia, Y., Croman, K., Shi, E., Song, D. *The Honey Badger of BFT Protocols.* CCS, 2016.
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Dwork, C., Lynch, N., Stockmeyer, L. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. — [DOI](https://doi.org/10.1145/42282.42283)
+- **[Foundational]** Chandra, T., Hadzilacos, V., Toueg, S. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [DOI](https://doi.org/10.1145/234533.234549)
+- **[SOTA]** Aguilera, M., Delporte-Gallet, C., Fauconnier, H., Toueg, S. *Communication-Efficient Leader Election and Consensus with Limited Link Synchrony.* PODC, 2004. — [DOI](https://doi.org/10.1145/1011767.1011816)
+- **[Foundational]** Ben-Or, M. *Another Advantage of Free Choice: Completely Asynchronous Agreement Protocols.* PODC, 1983. — [DOI](https://doi.org/10.1145/800221.806707)
+- **[SOTA]** Miller, A., Xia, Y., Croman, K., Shi, E., Song, D. *The Honey Badger of BFT Protocols.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978399)
+
+## 10. Worked Example
+
+**Why FLP bites, and how $\Omega$ rescues it.** Take 3 processes $p_1,p_2,p_3$ deciding a single bit, $t=1$ crash, fully asynchronous. Consider the initial configurations indexed by inputs: $C_0=(0,0,0)$ is $0$-valent, $C_7=(1,1,1)$ is $1$-valent. Flipping one input at a time walks $C_0\to C_7$, so two *adjacent* configurations differ in one process's input yet have opposite valencies — between them sits a **bivalent** configuration $C^\*$. FLP shows the adversary, by delaying exactly one message at $C^\*$, can always reach another bivalent configuration, producing an infinite run that never decides.
+
+Now add an eventual leader oracle $\Omega$: after some unknown time it outputs the *same* correct process, say $p_1$, at all processes. From then on $p_1$ alone proposes; with $t<n/2$ (here $1<3/2$) a majority quorum $\{p_1,p_2\}$ adopts and decides in $2$ message delays. The minimal-synchrony result sharpens this: $\Omega$ needs only **one eventually-timely outgoing link** from one correct process — e.g. just $p_1\!\to\!p_2$ timely, with all other $\Theta(n^2)$ links asynchronous — to break the bivalence.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -52,13 +52,23 @@ Active directions: dependency-tracking that exploits causal-graph structure (bou
 
 ## 9. Key References
 
-- **[Foundational]** B. Charron-Bost. *Concerning the size of logical clocks in distributed systems.* Information Processing Letters, 1991.
-- **[Foundational]** W. Lloyd, M. Freedman, M. Kaminsky, D. Andersen. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011.
-- **[Foundational]** P. Mahajan, L. Alvisi, M. Dahlin. *Consistency, availability, and convergence.* Tech. report TR-11-22, UT Austin, 2011.
-- **[SOTA]** D. Akkoorath, A. Tomsic, M. Bravo, Z. Li, T. Crain, A. Bieniusa, N. Preguiça, M. Shapiro. *Cure: strong semantics meets high availability and low latency.* ICDCS, 2016.
-- **[SOTA]** K. Spirovska, D. Didona, W. Zwaenepoel. *Paris: causally consistent transactions with non-blocking reads and partial replication.* ICDCS, 2019.
-- **[SOTA]** M. Bravo, L. Rodrigues, P. Van Roy. *Saturn: a distributed metadata service for causal consistency.* EuroSys, 2017.
-- **[Foundational]** R. Guerraoui, A. Schiper. *Genuine atomic multicast in asynchronous distributed systems.* Theoretical Computer Science, 2001.
+- **[Foundational]** B. Charron-Bost. *Concerning the size of logical clocks in distributed systems.* Information Processing Letters, 1991. — [DBLP](https://dblp.org/rec/journals/ipl/Charron-Bost91.html)
+- **[Foundational]** W. Lloyd, M. Freedman, M. Kaminsky, D. Andersen. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
+- **[Foundational]** P. Mahajan, L. Alvisi, M. Dahlin. *Consistency, availability, and convergence.* Tech. report TR-11-22, UT Austin, 2011. — [PDF](https://www.cs.utexas.edu/~dahlin/papers/cac-tr.pdf)
+- **[SOTA]** D. Akkoorath, A. Tomsic, M. Bravo, Z. Li, T. Crain, A. Bieniusa, N. Preguiça, M. Shapiro. *Cure: strong semantics meets high availability and low latency.* ICDCS, 2016. — [DOI](https://doi.org/10.1109/ICDCS.2016.98)
+- **[SOTA]** K. Spirovska, D. Didona, W. Zwaenepoel. *Paris: causally consistent transactions with non-blocking reads and partial replication.* ICDCS, 2019. — [arXiv](https://arxiv.org/abs/1902.09327)
+- **[SOTA]** M. Bravo, L. Rodrigues, P. Van Roy. *Saturn: a distributed metadata service for causal consistency.* EuroSys, 2017. — [DOI](https://doi.org/10.1145/3064176.3064210)
+- **[Foundational]** R. Guerraoui, A. Schiper. *Genuine atomic multicast in asynchronous distributed systems.* Theoretical Computer Science, 2001. — [DOI](https://doi.org/10.1016/S0304-3975(99)00161-9)
+
+## 10. Worked Example
+
+Three keys $a,b,c$; replica $r$ hosts $K_r=\{a,c\}$ only. A client at another replica issues a causal chain:
+$$w_1{:}\;a{=}1 \;\to\; w_2{:}\;b{=}2 \;\to\; w_3{:}\;c{=}3,$$
+so $w_1 \to w_2 \to w_3$, giving the transitive dependency $w_1 \to w_3$ (via $b$, which $r$ never sees).
+
+Now $r$ receives $w_3$ ($c{=}3$) and $w_1$ ($a{=}1$), possibly out of order. **Genuineness** forbids $r$ from storing or tracking $b$. Yet a client reading $c{=}3$ at $r$ must not then read the *old* $a$: the hidden dependency demands $w_1$ be applied before $w_3$ is visible.
+
+A naive full vector clock $\langle a,b,c\rangle$ would carry a $b$-entry, violating genuineness (false work for $b$). PaRiS-style metadata instead carries one entry per datacenter ($O(\#DC)$) plus a Universal Stable Time scalar: $w_3$ becomes visible at $r$ only once the snapshot timestamp covering $w_1$ has stabilized — enforcing $w_1 \prec w_3$ without ever naming $b$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

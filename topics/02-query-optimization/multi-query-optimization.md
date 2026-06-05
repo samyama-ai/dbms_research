@@ -56,12 +56,23 @@ Active directions: (i) **workload-aware computation reuse** in cloud platforms �
 
 ## 9. Key References
 
-- **[Foundational]** T. K. Sellis. *Multiple-Query Optimization.* ACM TODS, 1988.
-- **[Foundational]** P. Roy, S. Seshadri, S. Sudarshan, S. Bhobe. *Efficient and Extensible Algorithms for Multi-Query Optimization.* SIGMOD, 2000.
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[SOTA]** A. Jindal, K. Karanasos, S. Rao, H. Patel. *Selecting Subexpressions to Materialize at Datacenter Scale (CloudViews).* PVLDB, 2018.
-- **[SOTA]** M. Charikar, C. Chekuri, et al. *Approximation Algorithms for Directed Steiner Problems.* Journal of Algorithms, 1999.
-- **[Survey]** G. Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995.
+- **[Foundational]** T. K. Sellis. *Multiple-Query Optimization.* ACM TODS, 1988. — [DOI](https://doi.org/10.1145/42201.42203)
+- **[Foundational]** P. Roy, S. Seshadri, S. Sudarshan, S. Bhobe. *Efficient and Extensible Algorithms for Multi-Query Optimization.* SIGMOD, 2000. — [arXiv](https://arxiv.org/abs/cs/9910021)
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[SOTA]** A. Jindal, K. Karanasos, S. Rao, H. Patel. *Selecting Subexpressions to Materialize at Datacenter Scale (CloudViews).* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3192965.3192971)
+- **[SOTA]** M. Charikar, C. Chekuri, et al. *Approximation Algorithms for Directed Steiner Problems.* Journal of Algorithms, 1999. — [DOI](https://doi.org/10.1006/jagm.1999.1042)
+- **[Survey]** G. Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [PDF](https://15721.courses.cs.cmu.edu/spring2016/papers/graefe-ieee1995.pdf)
+
+## 10. Worked Example
+
+Two queries share a subexpression $E = \sigma_{p}(R)\bowtie S$. Independently: $Q_1$ costs $100$, $Q_2$ costs $90$, and each computes $E$ at internal cost $40$. Materializing $E$ once costs $\text{matCost}(E)=45$ (compute + write), after which each query reuses it for $5$ instead of $40$.
+
+Objective $\sum_i \text{cost}(P_i) + \sum_{e\in M}\text{matCost}(e) - \text{savings}(M)$:
+
+- **No sharing** ($M=\varnothing$): $100 + 90 = 190$.
+- **Share $E$** ($M=\{E\}$): each query saves $40-5=35$, so $\text{savings}=2\cdot35=70$; total $=190 + 45 - 70 = 165$.
+
+Sharing wins by $25$. But the decision is non-local: had $\text{matCost}(E)=75$, the math flips to $190+75-70=195 > 190$ — *not* worth sharing. With many candidate subexpressions and interacting plan choices, picking the optimal $M$ is the **weighted set-cover** core that makes MQO NP-hard (section 5); greedy on the benefit-per-cost ratio gives the $(1-1/e)$ guarantee when plans are held fixed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

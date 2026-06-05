@@ -47,12 +47,24 @@ Active directions: **inverses for richer mappings** (existential rules, nested/R
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin. *Inverting Schema Mappings.* PODS 2006 / TODS, 2007.
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Quasi-Inverses of Schema Mappings.* PODS 2007 / TODS, 2008.
-- **[SOTA]** M. Arenas, J. Pérez, C. Riveros. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* PODS 2008 / TODS, 2009. (Maximum recovery.)
-- **[SOTA]** M. Arenas, J. Pérez, J. Reutter. *Inverting Schema Mappings: Bridging the Gap between Theory and Practice.* VLDB, 2009.
-- **[Survey]** P. Barceló. *Logical Foundations of Relational Data Exchange.* SIGMOD Record, 2009.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005.
+- **[Foundational]** R. Fagin. *Inverting Schema Mappings.* PODS 2006 / TODS, 2007. — [DOI](https://doi.org/10.1145/1292609.1292615)
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Quasi-Inverses of Schema Mappings.* PODS 2007 / TODS, 2008. — [DBLP](https://dblp.org/rec/journals/tods/FaginKPT08.html)
+- **[SOTA]** M. Arenas, J. Pérez, C. Riveros. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* PODS 2008 / TODS, 2009. (Maximum recovery.) — [PDF](https://www.cs.ox.ac.uk/people/cristian.riveros/papers/tods09.pdf)
+- **[SOTA]** M. Arenas, J. Pérez, J. Reutter. *Inverting Schema Mappings: Bridging the Gap between Theory and Practice.* VLDB, 2009. — [PDF](http://marceloarenas.cl/publications/vldb09.pdf)
+- **[Survey]** P. Barceló. *Logical Foundations of Relational Data Exchange.* SIGMOD Record, 2009. — [DBLP](https://dblp.uni-trier.de/db/journals/sigmod/sigmod38.html)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+Source $\mathrm{Emp}(\mathit{name}, \mathit{dept})$; mapping $M$ projects away the department:
+$$\mathrm{Emp}(n,d) \to \mathrm{Person}(n).$$
+On $I = \{\mathrm{Emp}(\text{Ann},\text{HR}),\ \mathrm{Emp}(\text{Bob},\text{IT})\}$ the target is $J = \{\mathrm{Person}(\text{Ann}),\ \mathrm{Person}(\text{Bob})\}$.
+
+**No exact inverse exists:** $J$ alone cannot tell whether Ann was in HR or IT — the column $d$ is information-theoretically lost, so $M \circ M^{-1} \neq \mathsf{Id}_{\mathbf{S}}$ for any $M^{-1}$.
+
+**Maximum recovery** $M'$ recovers all *sound* facts — exactly that each person was an employee in *some* department:
+$$\mathrm{Person}(n) \to \exists d\, \mathrm{Emp}(n,d).$$
+Check the recovery condition $(I,I)\in M\circ M'$: chasing $I$ through $M$ then $M'$ yields $\{\mathrm{Emp}(\text{Ann}, N_1), \mathrm{Emp}(\text{Bob}, N_2)\}$, which homomorphically maps back into $I$ (nulls $N_i \mapsto$ real depts). It is *maximum* because no GLAV inverse can pin down $d$ — recovering the existential is the most informative sound conclusion.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -47,13 +47,25 @@ For unit-cost paging the consistency–robustness Pareto frontier is essentially
 Guarantees under realistic (probabilistic, drifting) predictors; sample-complexity/learning-theoretic bounds for *learning* the predictor itself; integration with online drift tracking; weighted/variable-size tight bounds; hardware-cache vs. DB-buffer-pool transfer of these results.
 
 ## 9. Key References
-- **[Foundational]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM 2021.
-- **[SOTA]** D. Rohatgi. *Near-Optimal Bounds for Online Caching with Machine Learned Advice.* SODA 2020.
-- **[SOTA]** A. Wei. *Better and Simpler Learning-Augmented Online Caching.* APPROX 2020.
-- **[SOTA]** A. Antoniadis, C. Coester, M. Eberle, et al. *Online Metric Algorithms with Untrusted Predictions.* ICML 2020.
-- **[SOTA]** Z. Song, D. Berger, K. Li, et al. *Learning Relaxed Belady for Content Distribution Network Caching (LRB).* USENIX NSDI 2020.
-- **[Foundational]** A. Jain, C. Lin. *Back to the Future: Leveraging Belady's Algorithm for Improved Cache Replacement (Hawkeye).* ISCA 2016.
-- **[Survey]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM 2022.
+- **[Foundational]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM 2021. — [arXiv](https://arxiv.org/abs/1802.05399)
+- **[SOTA]** D. Rohatgi. *Near-Optimal Bounds for Online Caching with Machine Learned Advice.* SODA 2020. — [arXiv](https://arxiv.org/abs/1910.12172)
+- **[SOTA]** A. Wei. *Better and Simpler Learning-Augmented Online Caching.* APPROX 2020. — [arXiv](https://arxiv.org/abs/2005.13716)
+- **[SOTA]** A. Antoniadis, C. Coester, M. Eberle, et al. *Online Metric Algorithms with Untrusted Predictions.* ICML 2020. — [PMLR](https://proceedings.mlr.press/v119/antoniadis20a.html)
+- **[SOTA]** Z. Song, D. Berger, K. Li, et al. *Learning Relaxed Belady for Content Distribution Network Caching (LRB).* USENIX NSDI 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/song)
+- **[Foundational]** A. Jain, C. Lin. *Back to the Future: Leveraging Belady's Algorithm for Improved Cache Replacement (Hawkeye).* ISCA 2016. — [DOI](https://doi.org/10.1109/ISCA.2016.17)
+- **[Survey]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM 2022. — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+Cache size $k=2$, request sequence $\sigma = a,b,c,a,c,b,a$.
+
+**Belady (OPT, perfect predictions).** On the miss for $c$ (cache $\{a,b\}$), evict the page used farthest in future: $a$ next at position 4, $b$ next at position 6, so evict $b$. Resulting misses: $a,b,c$ (cold), then $b$ at position 6 — total **4 misses**.
+
+**Trusting a bad predictor.** Suppose the predictor wrongly claims $a$ is never reused. On the $c$-miss it evicts $a$; then $a$ at position 4 misses, must evict $c$ or $b$, cascading — **6 misses**, $1.5\times$ OPT.
+
+**Predictive Marking (robust).** The marking skeleton marks $a,b$ when hit; a phase evicts only unmarked pages. Even following the bad prediction inside a phase, the marking invariant caps the competitive ratio at $O(\log k)=O(\log 2)$, so it cannot blow past the prediction-free bound. With error $\eta = \sum_t|h_t-\tau_t|$, the guarantee is
+$$\text{ALG}\le O\!\big(\min\{1+\tfrac{\eta}{\text{OPT}},\ \log k\}\big)\cdot\text{OPT},$$
+interpolating between Belady (small $\eta$) and classical paging (large $\eta$).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

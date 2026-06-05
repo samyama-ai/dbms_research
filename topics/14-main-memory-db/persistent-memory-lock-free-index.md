@@ -111,11 +111,30 @@ results on emulated/CXL persistent memory.
 
 ## 9. Key References
 
-- **[Foundational]** J. Izraelevitz, H. Mendes, M. L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[SOTA]** J. Arulraj, J. Levandoski, U. F. Minhas, P.-A. Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018.
-- **[SOTA]** S. K. Lee, J. Mohan, S. Kashyap, T. Kim, V. Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019.
-- **[SOTA]** D. Hwang, W. Kim, Y. Won, B. Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018.
-- **[Foundational]** M. Friedman, M. Herlihy, V. Marathe, E. Petrank. *A Persistent Lock-Free Queue for Non-Volatile Memory.* PPoPP, 2018.
+- **[Foundational]** J. Izraelevitz, H. Mendes, M. L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
+- **[SOTA]** J. Arulraj, J. Levandoski, U. F. Minhas, P.-A. Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3164135.3164147)
+- **[SOTA]** S. K. Lee, J. Mohan, S. Kashyap, T. Kim, V. Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [arXiv](https://arxiv.org/abs/1909.13670)
+- **[SOTA]** D. Hwang, W. Kim, Y. Won, B. Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang)
+- **[Foundational]** M. Friedman, M. Herlihy, V. Marathe, E. Petrank. *A Persistent Lock-Free Queue for Non-Volatile Memory.* PPoPP, 2018. — [DOI](https://doi.org/10.1145/3178487.3178490)
+
+## 10. Worked Example
+
+Consider inserting key $42$ into a persistent linked list $H \to n_5 \to \text{NULL}$,
+where the new node $n_{42}$ must point to $n_5$ and $H$ must then point to $n_{42}$.
+Naively: (1) allocate $n_{42}$, set $n_{42}.\text{next} = n_5$; (2) CAS $H.\text{next}$ from
+$n_5$ to $n_{42}$. For *durability*, persistence-happens-before forces $n_{42}$'s contents
+to reach NVM **before** $H$'s updated pointer does. So the trace is:
+
+1. write $n_{42}.\text{key}=42$, $n_{42}.\text{next}=n_5$;
+2. `clwb(n_42)` + `sfence` — persist the node ($1$ barrier);
+3. CAS $H.\text{next} \to n_{42}$;
+4. `clwb(&H.next)` + `sfence` — persist the link ($1$ barrier).
+
+If a crash strikes between steps 3 and 4, recovery sees $H$ still pointing at $n_5$:
+$n_{42}$ is unreachable garbage but the list invariant holds — durably linearizable, with
+the insert simply not having taken effect. Total cost: $p=2$ persist barriers, matching
+the $\Omega(1)$ lower bound for a dependent durable update. Reordering steps 2 and 3 would
+risk persisting a dangling $H.\text{next}$ pointing to non-durable memory.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

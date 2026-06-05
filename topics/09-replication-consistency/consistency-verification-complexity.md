@@ -44,12 +44,26 @@ Active groups: Enea & Bouajjani (IRIF), Constantin Enea (École Polytechnique) o
 - Settle #P-hardness vs. tractability for counting linearizations under each model.
 
 ## 9. Key References
-- **[Foundational]** Bouajjani, Enea, Guerraoui, Hamza. *On Verifying Causal Consistency.* POPL, 2017.
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Gibbons, Korach. *Testing Shared Memories.* SIAM J. Computing, 1997.
-- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
-- **[SOTA]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999.
-- **[Survey]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in PL, 2014.
+- **[Foundational]** Bouajjani, Enea, Guerraoui, Hamza. *On Verifying Causal Consistency.* POPL, 2017. — [DOI](https://doi.org/10.1145/3009837.3009888)
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Gibbons, Korach. *Testing Shared Memories.* SIAM J. Computing, 1997. — [DOI](https://doi.org/10.1137/S0097539794279614)
+- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+- **[SOTA]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT DSpace](https://dspace.mit.edu/handle/1721.1/149899)
+- **[Survey]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in PL, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+
+## 10. Worked Example
+
+Take a history on one register $x$ with two writer sessions and one reader, all *unversioned* (reads return values, not versions):
+
+- $T_1$: `write(x,1)`
+- $T_2$: `write(x,2)`
+- $T_3$: `read(x)→1`, then `read(x)→2`
+
+Is this serializable? The reads-from edges are fixed ($T_1\to_{rf}$ first read, $T_2\to_{rf}$ second read), but the **WW** order between $T_1$ and $T_2$ is *not* given — the checker must choose it. Here the reader saw $1$ then $2$, forcing $T_1 \xrightarrow{ww} T_2$; the dependency graph $G_H$ is then $T_1\to T_2\to T_3$, acyclic, so **serializable**.
+
+Now add $T_3$: `read→2` then `read→1`. This forces *both* $T_1\to T_2$ (from one read pair) and $T_2\to T_1$ — a cycle — so **not serializable**.
+
+The lesson the complexity map captures: when WW is *determined* (versioned writes), acyclicity is checkable in $\tilde{O}(n+m)$ (in $\mathsf{P}$); when WW must be *chosen* over $k$ variables and unbounded sessions, the existential search for an acyclic orientation is NP-complete (Papadimitriou; Biswas–Enea), dropping to $n^{O(s)}$ for $s$ fixed sessions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -61,12 +61,28 @@ It is **partially solved**: holistic *frameworks* exist and dominate sequential 
 
 ## 9. Key References
 
-- **[Foundational]** Chu, Ilyas, Papotti. *Holistic Data Cleaning: Putting Violations into Context.* ICDE, 2013.
-- **[Foundational]** Fan, Geerts. *Foundations of Data Quality Management.* Morgan & Claypool, 2012.
-- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[SOTA]** Khayyat et al. *BigDansing: A System for Big Data Cleansing.* SIGMOD, 2015.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019.
+- **[Foundational]** Chu, Ilyas, Papotti. *Holistic Data Cleaning: Putting Violations into Context.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544847)
+- **[Foundational]** Fan, Geerts. *Foundations of Data Quality Management.* Morgan & Claypool, 2012. — [DOI](https://doi.org/10.2200/S00439ED1V01Y201207DTM030)
+- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536360.2536363)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** Khayyat et al. *BigDansing: A System for Big Data Cleansing.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2747646)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019. — [DOI](https://doi.org/10.1145/3310205)
+
+## 10. Worked Example
+
+Take a tiny relation $R(\text{Zip}, \text{City}, \text{State})$ with two constraints: $\text{FD}_1: \text{Zip}\to\text{City}$ and $\text{FD}_2: \text{Zip}\to\text{State}$.
+
+| id | Zip | City | State |
+|----|-----|------|-------|
+| t1 | 10001 | NYC | NY |
+| t2 | 10001 | NYC | **CA** |
+| t3 | 10001 | **LA** | NY |
+
+$\text{FD}_2$ is violated by $\{t1.\text{State}, t2.\text{State}\}$ and $\{t2.\text{State}, t3.\text{State}\}$; $\text{FD}_1$ is violated by $\{t1.\text{City}, t3.\text{City}\}$ and $\{t2.\text{City}, t3.\text{City}\}$.
+
+**Sequential repair** of $\text{FD}_1$ first might set $t3.\text{City}{=}\text{NYC}$, then repairing $\text{FD}_2$ touches State — order matters and can oscillate.
+
+**Holistic** approach builds one conflict hypergraph over cells. The cells $t2.\text{State}$ and $t3.\text{City}$ each appear in violations; flipping $t2.\text{State}\to\text{NY}$ and $t3.\text{City}\to\text{NYC}$ is a minimum hitting set of size 2 that satisfies *both* FDs jointly. With max hyperedge size $k=2$, LP-rounding gives a factor-$2$ approximation, matching the vertex-cover bound for this instance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

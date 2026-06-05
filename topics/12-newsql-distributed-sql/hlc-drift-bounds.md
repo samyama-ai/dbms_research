@@ -45,11 +45,22 @@ For *well-behaved* clocks the bounds are essentially tight (matching Lundelius�
 - Byzantine-tolerant hybrid clocks for permissioned/cross-org databases.
 
 ## 9. Key References
-- **[Foundational]** S. Kulkarni, M. Demirbas, D. Madappa, B. Avva, M. Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014.
-- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** J. Lundelius, N. Lynch. *An Upper and Lower Bound for Clock Synchronization.* Information and Control, 1984.
-- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database* (TrueTime context). OSDI, 2012.
-- **[SOTA]** CockroachDB Labs. *Living Without Atomic Clocks* (HLC + max-offset / uncertainty restarts design write-up). Cockroach Labs, 2016+.
+- **[Foundational]** S. Kulkarni, M. Demirbas, D. Madappa, B. Avva, M. Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** J. Lundelius, N. Lynch. *An Upper and Lower Bound for Clock Synchronization.* Information and Control, 1984. — [DOI](https://doi.org/10.1016/S0019-9958(84)80033-9)
+- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database* (TrueTime context). OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** CockroachDB Labs. *Living Without Atomic Clocks* (HLC + max-offset / uncertainty restarts design write-up). Cockroach Labs, 2016+. — [blog](https://www.cockroachlabs.com/blog/living-without-atomic-clocks/)
+
+## 10. Worked Example
+
+Two nodes, A and B, with clock-skew bound $\epsilon = 10$ ms. Each $hlc = (l, c)$ with $l$ in ms.
+
+1. **A**, physical $pt_A = 100$: local event. $l_A \leftarrow \max(0, 100) = 100$, $c_A = 0 \Rightarrow (100,0)$.
+2. **A**, $pt_A = 100$ again (granularity hasn't ticked): $l_A = \max(100,100)=100$, since $l$ unchanged $c_A \leftarrow 1 \Rightarrow (100,1)$.
+3. A sends a message stamped $(100,1)$ to **B**, whose clock lags: $pt_B = 94$.
+4. **B** receives: $l_B \leftarrow \max(l_B, l_m, pt_B) = \max(0,100,94) = 100$; since $l_B = l_m$, $c_B \leftarrow c_m + 1 = 2 \Rightarrow (100,2)$.
+
+Causality holds: $(100,1) < (100,2)$ lexicographically, so send $\to$ receive. Note B's HLC $l_B = 100$ leads its physical clock $pt_B = 94$ by $6$ ms $\le \epsilon = 10$ ms, confirming $|l_j - pt_j| \le \epsilon$ (Section 4). A bounded-staleness read at $T = (100,2)$ is thus stale by at most $2\epsilon = 20$ ms in real time.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,12 +50,21 @@ Worst-case-tight sketches exist for *single* operators, but **end-to-end multi-j
 - Unifying pessimistic (AGM-style) and learned estimators with calibrated confidence.
 
 ## 9. Key References
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. (AGM bound.)
-- **[Foundational]** N. Alon, P. Gibbons, Y. Matias, M. Szegedy. *Tracking Join and Self-Join Sizes in Limited Storage.* PODS, 1999.
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019.
-- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015. (Estimation error empirics.)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. (AGM bound.) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** N. Alon, P. Gibbons, Y. Matias, M. Szegedy. *Tracking Join and Self-Join Sizes in Limited Storage.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303978)
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [DMTCS](https://dmtcs.episciences.org/3545)
+- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015. (Estimation error empirics.) — [DOI](https://doi.org/10.14778/2850583.2850594)
+
+## 10. Worked Example
+
+Plan a join of $R(A,B)$ and $S(A,C)$ across $p = 4$ nodes. Suppose $|R| = 10^6$, $|S| = 2\times10^4$, and the optimizer must choose **broadcast $S$** vs **repartition both on $A$**.
+
+First estimate the join size. Distinct values of $A$: merge each node's HyperLogLog ($m = 1024$ registers, error $\approx 1.04/\sqrt{1024} \approx 3.3\%$) by register-wise max, yielding $\hat d_A \approx 5\times10^3$. The textbook formula gives
+$$|R\bowtie_A S| \approx \frac{|R|\,|S|}{\max(d_A(R), d_A(S))} = \frac{10^6 \cdot 2\times10^4}{5\times10^3} = 4\times10^6.$$
+
+**Decision:** broadcasting $S$ ships $|S|\cdot(p-1) = 2\times10^4 \cdot 3 = 6\times10^4$ tuples and avoids reshuffling $R$'s $10^6$ tuples — far cheaper than repartitioning both ($\approx 1.02\times10^6$ tuples moved). Since $|S| \ll |R|$ and the estimated output is moderate, broadcast wins. The AGM ceiling $|R|\cdot|S| = 2\times10^{10}$ is here $5000\times$ looser than the estimate — illustrating why statistics-free bounds alone misguide the planner.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

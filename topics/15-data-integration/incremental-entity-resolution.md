@@ -47,12 +47,22 @@ For ICAR/insert-only workloads the problem is essentially **solved** (cheap, ord
 
 ## 9. Key References
 
-- **[Foundational]** O. Benjelloun, H. Garcia-Molina, D. Menestrina, Q. Su, S. E. Whang, J. Widom. *Swoosh: a generic approach to entity resolution.* VLDB Journal, 2009.
-- **[SOTA]** A. Gruenheid, X. L. Dong, D. Srivastava. *Incremental Record Linkage.* VLDB, 2014.
-- **[SOTA]** S. E. Whang, H. Garcia-Molina. *Incremental Entity Resolution on Rules and Data.* VLDB Journal, 2014.
-- **[Foundational]** J. Holm, K. de Lichtenberg, M. Thorup. *Poly-logarithmic deterministic fully-dynamic algorithms for connectivity, minimum spanning tree, 2-edge, and biconnectivity.* JACM, 2001.
-- **[Foundational]** M. Henzinger, S. Krinninger, D. Nanongkai, T. Saranurak. *Unifying and strengthening hardness for dynamic problems via the online matrix-vector multiplication conjecture.* STOC, 2015.
-- **[Survey]** G. Papadakis, E. Ioannou, E. Thanos, T. Palpanas. *The Four Generations of Entity Resolution.* Morgan & Claypool, 2021.
+- **[Foundational]** O. Benjelloun, H. Garcia-Molina, D. Menestrina, Q. Su, S. E. Whang, J. Widom. *Swoosh: a generic approach to entity resolution.* VLDB Journal, 2009. — [DOI](https://doi.org/10.1007/s00778-008-0098-x)
+- **[SOTA]** A. Gruenheid, X. L. Dong, D. Srivastava. *Incremental Record Linkage.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732939.2732943)
+- **[SOTA]** S. E. Whang, H. Garcia-Molina. *Incremental Entity Resolution on Rules and Data.* VLDB Journal, 2014. — [DOI](https://doi.org/10.1007/s00778-013-0315-0)
+- **[Foundational]** J. Holm, K. de Lichtenberg, M. Thorup. *Poly-logarithmic deterministic fully-dynamic algorithms for connectivity, minimum spanning tree, 2-edge, and biconnectivity.* JACM, 2001. — [DOI](https://doi.org/10.1145/502090.502095)
+- **[Foundational]** M. Henzinger, S. Krinninger, D. Nanongkai, T. Saranurak. *Unifying and strengthening hardness for dynamic problems via the online matrix-vector multiplication conjecture.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1511.06773)
+- **[Survey]** G. Papadakis, E. Ioannou, E. Thanos, T. Palpanas. *The Four Generations of Entity Resolution.* Morgan & Claypool, 2021. — [Semantic Scholar](https://www.semanticscholar.org/paper/The-Four-Generations-of-Entity-Resolution-Papadakis-Ioannou/61c1dd89dd999eb6056a8b2bec595425d92d7b99)
+
+## 10. Worked Example
+
+Records $r_1,\dots,r_5$, threshold-ER on similarity edges $E=\{(r_1,r_2),(r_2,r_3),(r_4,r_5)\}$. Connected components give clusters $\{r_1,r_2,r_3\}$ and $\{r_4,r_5\}$.
+
+**Insert** $r_6$ matching $r_3$ and $r_4$: add edges $(r_3,r_6),(r_4,r_6)$. Union-find merges the two components into one cluster $\{r_1,\dots,r_6\}$ — $r_6$ is a *bridge*. Insert cost is near-$O(\alpha(n))$ amortized; order-independent under ICAR.
+
+**Delete** $r_6$: now remove its edges. Is the giant cluster still connected? We must recheck connectivity between $\{r_1,r_2,r_3\}$ and $\{r_4,r_5\}$. With no other path, the cluster **splits** back into two. This is decremental connectivity — Holm–de Lichtenberg–Thorup gives $O(\log^2 n)$ amortized, but adversarial deletes hit the OMv barrier $\Omega(n^{1-\epsilon})$.
+
+Lesson: the insert touched 1 union; the delete required a connectivity re-test across the whole component — the asymmetry that makes deletes the hard case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

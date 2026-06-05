@@ -41,11 +41,21 @@ Because the lower bound is "no guarantee" and the upper bound is "great when it 
 - Reassessing HTM viability on post-TSX hardware and persistent memory.
 
 ## 9. Key References
-- **[Foundational]** M. Herlihy, J. E. B. Moss. *Transactional Memory: Architectural Support for Lock-Free Data Structures.* ISCA, 1993.
-- **[SOTA]** D. Makreshanski, J. Levandoski, R. Stutsman. *To Lock, Swap, or Elide: On the Interplay of Hardware Transactional Memory and Lock-Free Indexing.* VLDB, 2015.
-- **[SOTA]** V. Leis, A. Kemper, T. Neumann. *Exploiting Hardware Transactional Memory in Main-Memory Databases.* ICDE, 2014.
-- **[SOTA]** Z. Wang, H. Qian, J. Li, H. Chen. *Using Restricted Transactional Memory to Build a Scalable In-Memory Database (DBX).* EuroSys, 2014.
-- **[Survey]** T. Harris, J. Larus, R. Rajwar. *Transactional Memory (2nd ed.).* Morgan & Claypool, 2010.
+- **[Foundational]** M. Herlihy, J. E. B. Moss. *Transactional Memory: Architectural Support for Lock-Free Data Structures.* ISCA, 1993. — [DOI](https://doi.org/10.1145/165123.165164)
+- **[SOTA]** D. Makreshanski, J. Levandoski, R. Stutsman. *To Lock, Swap, or Elide: On the Interplay of Hardware Transactional Memory and Lock-Free Indexing.* VLDB, 2015. — [PVLDB](http://www.vldb.org/pvldb/vol8/p1298-makreshanski.pdf)
+- **[SOTA]** V. Leis, A. Kemper, T. Neumann. *Exploiting Hardware Transactional Memory in Main-Memory Databases.* ICDE, 2014. — [DBLP](https://dblp.org/rec/conf/icde/LeisK014.html)
+- **[SOTA]** Z. Wang, H. Qian, J. Li, H. Chen. *Using Restricted Transactional Memory to Build a Scalable In-Memory Database (DBX).* EuroSys, 2014. — [DBLP](https://dblp.org/rec/conf/eurosys/WangQLC14.html)
+- **[Survey]** T. Harris, J. Larus, R. Rajwar. *Transactional Memory (2nd ed.).* Morgan & Claypool, 2010. — [DOI](https://doi.org/10.1007/978-3-031-01728-5)
+
+## 10. Worked Example
+
+Consider an HTM lock-elision update on a B+-tree leaf vs. a radix-trie node, with an L1 read/write-set capacity of $C = 512$ cache lines (a typical 32 KB L1 at 64 B/line).
+
+**B+-tree path:** an insert traverses 4 levels, touching one 256 B node per level (4 cache lines each) plus a single leaf write (4 lines): $|R\cup W| \approx 5\times 4 = 20$ lines $\ll C$. The region fits, so $p_{\text{cap}}\approx 0$; with low contention the transaction commits in one RTM region.
+
+**Wide-trie node:** a single 4096-entry trie node spans $4096\times 8\,\text{B} = 32\,\text{KB} = 512$ lines $= C$ exactly. Reading it for a scan *deterministically* overflows the read set (associativity evicts before completion), so $p_{\text{cap}}\to 1$ — the region **always aborts** to the fallback lock, regardless of contention.
+
+Plugging into $P_{\text{abort}} = 1-(1-p_{\text{cap}})(1-p_{\text{conf}})(1-p_{\text{other}})$: the B+-tree leaf gives $P_{\text{abort}}\approx p_{\text{other}}$ (near 0), while the wide trie gives $P_{\text{abort}}\approx 1$. This is the structural lower bound in action: footprint, not just contention, decides whether HTM helps.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,11 +50,24 @@ Active: the Perennial/Verus/Iris-based verified-storage community (MIT/CSAIL —
 
 ## 9. Key References
 
-- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES.* ACM TODS, 1992.
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[SOTA]** Haogang Chen, Daniel Ziegler, Tej Chajed, Adam Chlipala, M. Frans Kaashoek, Nickolai Zeldovich. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015.
-- **[SOTA]** Tej Chajed, Joseph Tassarotti, Mark Theng, M. Frans Kaashoek, Nickolai Zeldovich, et al. *GoJournal: A Verified, Concurrent, Crash-Safe Journaling System.* OSDI, 2021.
-- **[SOTA]** Ralf Jung et al. *Iris: Higher-Order Concurrent Separation Logic.* JFP / POPL, 2018 (foundation for Perennial).
+- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** Haogang Chen, Daniel Ziegler, Tej Chajed, Adam Chlipala, M. Frans Kaashoek, Nickolai Zeldovich. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815402)
+- **[SOTA]** Tej Chajed, Joseph Tassarotti, Mark Theng, M. Frans Kaashoek, Nickolai Zeldovich, et al. *GoJournal: A Verified, Concurrent, Crash-Safe Journaling System.* OSDI, 2021. — [USENIX](https://www.usenix.org/conference/osdi21/presentation/chajed)
+- **[SOTA]** Ralf Jung et al. *Iris: Higher-Order Concurrent Separation Logic.* JFP / POPL, 2018 (foundation for Perennial). — [DOI](https://doi.org/10.1017/S0956796818000151)
+
+## 10. Worked Example
+
+A re-crash during undo shows why CLRs are necessary. Transaction $T_1$ writes log records and then aborts; the volatile log is:
+
+| LSN | record | prevLSN | page | content |
+|-----|--------|---------|------|---------|
+| 10 | update | — | P1 | A: 5→9 |
+| 20 | update | 10 | P1 | A: 9→9 becomes... B: 0→7 |
+
+Rollback of LSN 20 writes a **CLR** at LSN 30 (undo of 20, sets `UndoNxtLSN=10`) and applies it to P1, bumping `pageLSN`. Suppose the system **crashes again** before undoing LSN 10.
+
+On restart, Analysis finds $T_1$ a loser; Redo re-applies committed/CLR records idempotently — including the CLR at LSN 30, whose effect on P1 is a no-op since $\mathit{page}.\mathit{pageLSN}=30 \ge 30$. Undo then resumes at $\mathit{UndoNxtLSN}=10$ (not 20 — the CLR records that 20 is already undone), undoes LSN 10, and writes a final CLR. Because CLRs are **redo-only and never undone**, the `UndoNxtLSN` chain strictly decreases $30\to10\to\bot$, so undo terminates and is idempotent across arbitrarily many re-crashes — the core invariant the proof must establish.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

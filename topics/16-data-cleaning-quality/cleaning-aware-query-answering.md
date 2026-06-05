@@ -65,12 +65,31 @@ For self-join-free CQs under single keys the decision problem is **closed** (exa
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999.
-- **[Foundational]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* ACM TODS / JACM, 2017.
-- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SIGMOD, 2019.
-- **[SOTA]** Calautti, Console, Pieris. *Counting Database Repairs under Primary Keys Revisited.* PODS, 2019.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[Survey]** Bertossi. *Database Repairs and Consistent Query Answering.* Morgan & Claypool, 2011.
+- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[Foundational]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* ACM TODS / JACM, 2017. — [DOI](https://doi.org/10.1145/3068334)
+- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1905.02828)
+- **[SOTA]** Calautti, Console, Pieris. *Counting Database Repairs under Primary Keys Revisited.* PODS, 2019. — [DOI](https://doi.org/10.1145/3294052.3319703)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631)
+- **[Survey]** Bertossi. *Database Repairs and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+
+## 10. Worked Example
+
+Relation $\text{Emp}(\underline{\text{eid}}, \text{dept})$ with primary key $\text{eid}$. The dirty instance has a key violation:
+
+| eid | dept |
+|-----|------|
+| 1   | Sales |
+| 1   | HR    |
+| 2   | Sales |
+
+Tuples $(1,\text{Sales})$ and $(1,\text{HR})$ conflict on key $\text{eid}{=}1$. Subset-minimal repairs delete one of the two, giving exactly **two repairs**:
+$R_1 = \{(1,\text{Sales}),(2,\text{Sales})\}$ and $R_2 = \{(1,\text{HR}),(2,\text{Sales})\}$.
+
+Query $Q_1$: "Does someone work in Sales?" $\;\exists e\,(e,\text{Sales})$. In $R_1$: yes (eid 1 and 2); in $R_2$: yes (eid 2). True in **every** repair $\Rightarrow$ **certain answer = yes**.
+
+Query $Q_2$: "Is eid 1 in Sales?" True in $R_1$, false in $R_2$ $\Rightarrow$ **not certain**.
+
+Counting: $Q_2$ holds in $1$ of $2$ repairs, relative frequency $1/2$. For self-join-free CQs under one key, $Q_1$ ("Sales exists") is FO-rewritable — it has an empty attack graph, so Koutris–Wijsen yields a plain SQL rewriting computable in $\mathsf{AC}^0$, no repair enumeration needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

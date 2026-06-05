@@ -50,12 +50,25 @@ Two gaps: (1) **theory gap** — a tight characterization of recognition/schedul
 - Extension to predicate operations involving **joins** and aggregates, where conflict semantics are largely unformalized.
 
 ## 9. Key References
-- **[Foundational]** K. P. Eswaran, J. N. Gray, R. A. Lorie, I. L. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[SOTA]** D. R. K. Ports, K. Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
-- **[Survey]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
+- **[Foundational]** K. P. Eswaran, J. N. Gray, R. A. Lorie, I. L. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/AdyaLO00.html)
+- **[SOTA]** M. J. Cahill, U. Röhm, A. D. Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [ACM](https://dl.acm.org/doi/10.1145/1376616.1376690)
+- **[SOTA]** D. R. K. Ports, K. Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.4179)
+- **[Survey]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+
+## 10. Worked Example
+
+Consider attribute domain $\text{age} \in \{1,\dots,100\}$ and two predicate operations:
+
+- $T_1$ reads predicate $P:\ 20 \le \text{age} \le 30$.
+- $T_2$ writes (inserts) a tuple $t$ with $\text{age}=25$.
+
+**Conflict test (conjunctive ranges).** Do they conflict? Decide $\exists t:\ P(t)\wedge (t.\text{age}=25)$, i.e. $20 \le 25 \le 30$ — true. So there is a predicate anti-dependency edge $T_1 \xrightarrow{rw} T_2$. This test is a single interval-membership check: $O(1)$, hence **polynomial** for the range fragment, and recognition reduces to cycle detection in $O(V+E)$.
+
+**Now make it arithmetic.** Let $P:\ (\text{age} \bmod 7 = 0)\wedge(\text{age} \text{ prime})$ and $T_2$ insert $\text{age}=x$. Deciding conflict means deciding satisfiability of a boolean-arithmetic predicate — no longer an interval lookup; in general it is **NP-hard** (guess a witnessing tuple, verify in P, so the test sits in NP).
+
+The two cases — same schedule shape, conflict-test cost flipping from $O(1)$ to NP-hard purely by predicate language — are exactly why a fragment-parameterized dichotomy theorem is the open target.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

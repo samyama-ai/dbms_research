@@ -51,12 +51,22 @@ There is no asymptotic complexity gap — DAG-BFT is provably near-optimal in me
 
 ## 9. Key References
 
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** D. Dolev, R. Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985.
-- **[SOTA]** I. Keidar, E. Kokoris-Kogias, O. Naor, A. Spiegelman. *All You Need is DAG (DAG-Rider).* PODC, 2021.
-- **[SOTA]** G. Danezis, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022.
-- **[SOTA]** A. Spiegelman, N. Giridharan, A. Sonnino, L. Kokoris-Kogias. *Bullshark: DAG BFT Protocols Made Practical.* ACM CCS, 2022.
-- **[SOTA]** K. Babel, A. Chursin, G. Danezis, A. Sonnino, et al. *Mysticeti: Reaching the Latency Limits with Uncertified DAGs.* 2024 (preprint).
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** D. Dolev, R. Reischuk. *Bounds on Information Exchange for Byzantine Agreement.* JACM, 1985. — [DOI](https://doi.org/10.1145/2455.214112)
+- **[SOTA]** I. Keidar, E. Kokoris-Kogias, O. Naor, A. Spiegelman. *All You Need is DAG (DAG-Rider).* PODC, 2021. — [arXiv](https://arxiv.org/abs/2102.08325)
+- **[SOTA]** G. Danezis, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022. — [arXiv](https://arxiv.org/abs/2105.11827)
+- **[SOTA]** A. Spiegelman, N. Giridharan, A. Sonnino, L. Kokoris-Kogias. *Bullshark: DAG BFT Protocols Made Practical.* ACM CCS, 2022. — [arXiv](https://arxiv.org/abs/2201.05677)
+- **[SOTA]** K. Babel, A. Chursin, G. Danezis, A. Sonnino, et al. *Mysticeti: Reaching the Latency Limits with Uncertified DAGs.* 2024 (preprint). — [arXiv](https://arxiv.org/abs/2310.14821)
+
+## 10. Worked Example
+
+Take $n = 3f+1 = 4$ validators, so $f=1$ and a quorum is $2f+1 = 3$. Plug numbers into the bandwidth ceiling $T_{\max} \approx \frac{n\,B}{\rho\,s}$.
+
+Let per-node payload bandwidth $B = 1\text{ Gb/s} = 10^9$ b/s, transaction size $s = 512$ bytes $= 4096$ bits, and durability replication $\rho = f+1 = 2$ (each tx stored at $\ge 2$ nodes). Then
+
+$$ T_{\max} \approx \frac{4 \cdot 10^9}{2 \cdot 4096} \approx 488{,}000 \text{ tx/s}. $$
+
+In the DAG, each round-$r$ vertex references $\ge 2f+1 = 3$ round-$(r{-}1)$ vertices; once a vertex is committed, every honest node derives the *same* total order from its local DAG with **zero** extra ordering messages, so the only network cost is the one-time dissemination plus $O(n)$ small certificates amortized over a full block. The gap: real systems hit perhaps $0.4\,T_{\max} \approx 195{,}000$ tx/s because BLS verification CPU and reliable-broadcast tail latency, not bandwidth, become the binding constraint — the empirical, constant-factor gap this problem isolates.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

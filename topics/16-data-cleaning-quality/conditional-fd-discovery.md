@@ -59,12 +59,32 @@ The CFD search space is the product of the **FD lattice** over attribute subsets
 
 ## 9. Key References
 
-- **[Foundational]** Fan, Geerts, Jia, Kementsietsidis. *Conditional Functional Dependencies for Capturing Data Inconsistencies.* ACM TODS, 2008.
-- **[Foundational]** Huhtala, Kärkkäinen, Porkka, Toivonen. *TANE: An Efficient Algorithm for Discovering Functional and Approximate Dependencies.* Computer Journal, 1999.
-- **[SOTA]** Fan, Geerts, Li, Xiong. *Discovering Conditional Functional Dependencies.* IEEE TKDE, 2011.
-- **[SOTA]** Papenbrock, Naumann. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016.
-- **[SOTA]** Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* VLDB, 2015 (and Metanome platform).
-- **[Survey]** Abedjan, Golab, Naumann. *Profiling Relational Data: A Survey.* VLDB Journal, 2015.
+- **[Foundational]** Fan, Geerts, Jia, Kementsietsidis. *Conditional Functional Dependencies for Capturing Data Inconsistencies.* ACM TODS, 2008. — [DOI](https://doi.org/10.1145/1366102.1366103)
+- **[Foundational]** Huhtala, Kärkkäinen, Porkka, Toivonen. *TANE: An Efficient Algorithm for Discovering Functional and Approximate Dependencies.* Computer Journal, 1999. — [DOI](https://doi.org/10.1093/comjnl/42.2.100)
+- **[SOTA]** Fan, Geerts, Li, Xiong. *Discovering Conditional Functional Dependencies.* IEEE TKDE, 2011. — [DOI](https://doi.org/10.1109/TKDE.2010.154)
+- **[SOTA]** Papenbrock, Naumann. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[SOTA]** Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* VLDB, 2015 (and Metanome platform). — [DOI](https://doi.org/10.14778/2794367.2794377)
+- **[Survey]** Abedjan, Golab, Naumann. *Profiling Relational Data: A Survey.* VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0389-y)
+
+## 10. Worked Example
+
+Relation $\text{Addr}(\text{country}, \text{ZIP}, \text{state})$:
+
+| country | ZIP   | state |
+|---------|-------|-------|
+| US      | 10001 | NY    |
+| US      | 10001 | NY    |
+| US      | 90001 | CA    |
+| UK      | EC1   | —     |
+| UK      | EC1   | —     |
+
+The plain FD $\text{ZIP} \rightarrow \text{state}$ holds here, but we want the *conditional* rule restricted to US. Consider the CFD $(\text{ZIP} \rightarrow \text{state},\ t_p = (\text{country}{=}\text{US}))$.
+
+Support: 3 of 5 tuples match $\text{country}{=}\text{US}$, so $\mathrm{supp} = 3/5 = 0.6$. Among those, ZIP determines state with zero violations (10001 $\to$ NY twice, 90001 $\to$ CA once), so $\mathrm{conf} = 3/3 = 1.0$.
+
+Partition check (TANE-style): on the US sub-relation, $\pi_{\text{ZIP}} = \{\{t_1,t_2\},\{t_3\}\}$ and $\pi_{\text{ZIP,state}}$ is identical, so $\pi_{\text{ZIP}}$ refines $\pi_{\text{ZIP,state}}$; error $e = 1 - |\pi_{\text{ZIP,state}}|/|\pi_{\text{ZIP}}| = 1 - 2/2 = 0$. The CFD is exact.
+
+Statistical caution: with only 3 supporting tuples, distinguishing this from a coincidence needs $\Omega(\varepsilon^{-2})$ samples per pattern — so at small support the rule should be flagged as not yet reliable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

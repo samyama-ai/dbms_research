@@ -114,13 +114,26 @@ fine-grained hardness result tying explanation to enumeration.
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bull., 1995.
-- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005.
-- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bull., 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588566)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995. — [DOI](https://doi.org/10.1007/3-540-58907-4_6)
+
+## 10. Worked Example
+
+**A single-parameter counterfactual.** A two-table join `A ⋈ B` has two competitive plans whose estimated cost is linear in the estimated selectivity $\hat s$ of a filter on $A$:
+
+- $P_{\text{NL}}$ (index nested-loop): $\widehat{C}=100 + 900\,\hat s$
+- $P_{\text{HJ}}$ (hash join): $\widehat{C}=400$ (build/probe dominate, nearly flat in $\hat s$).
+
+At the optimizer's estimate $\hat s = 0.1$: $\widehat{C}_{\text{NL}}=190 < 400$, so it picks $P_{\text{NL}}$. The user asks "why not the hash join, and what would flip it?"
+
+**Flip point:** solve $100 + 900\,s = 400 \Rightarrow s^\* = 1/3 \approx 0.333$. So the *minimum counterfactual perturbation* is $\delta = s^\* - 0.1 = 0.233$: if the true selectivity were $\ge 0.333$, $P_{\text{HJ}}$ wins.
+
+This is computed by the lower envelope of the two cost lines in $O(|\mathcal P'|\log|\mathcal P'|)$ over the small competitive set $\mathcal P'=\{P_{\text{NL}},P_{\text{HJ}}\}$ (Section 4) — cheap and faithful in 1-D. The hardness (Section 5) appears only when the inner $\arg\min$ ranges over the full exponential plan space and many parameters move at once.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

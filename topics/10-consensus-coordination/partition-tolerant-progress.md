@@ -44,11 +44,21 @@ The boundary is *characterized* (I-confluence is the exact line), which is why t
 - Heal-time conflict-resolution that minimizes user-visible compensation/rollback.
 
 ## 9. Key References
-- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[Foundational]** Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011.
-- **[SOTA]** Peter Bailis et al. *Coordination Avoidance in Database Systems (Invariant Confluence).* VLDB, 2015.
-- **[SOTA]** Cheng Li et al. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012.
-- **[Survey]** Daniel Abadi. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[SOTA]** Peter Bailis et al. *Coordination Avoidance in Database Systems (Invariant Confluence).* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1402.2237)
+- **[SOTA]** Cheng Li et al. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/li)
+- **[Survey]** Daniel Abadi. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+A bank account replicated across 5 nodes, invariant $I$: *balance $\ge 0$*. A network partition splits the replicas into a majority $\{A,B,C\}$ and a minority $\{D,E\}$. Start: balance $= 100$.
+
+**Deposit** `+50` is I-confluent: applied in any order it only raises the balance, never breaking $I\,(\ge 0)$. So $D$ can accept it locally during the partition; on heal, merging $+50$ from the minority with any majority history is safe. Minority availability for deposits: **100%, no coordination**.
+
+**Withdraw** `-80` is *not* I-confluent: suppose majority $\{A,B,C\}$ withdraws `-80` (balance $100 \to 20$) while minority $\{D,E\}$ independently withdraws `-80` ($100 \to 20$). On heal, both apply: $100 - 80 - 80 = -60 < 0$ — invariant violated. By Bailis et al., withdrawal therefore *provably requires coordination* and cannot run on the minority.
+
+**Pushing red→blue:** give each side an *escrow* reservation of $50$. Now each partition may withdraw up to its $50$ budget without coordination, and the merge can never overdraw — converting a red operation into a partition-available blue one, exactly the optimization frontier of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

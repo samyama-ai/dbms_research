@@ -49,5 +49,15 @@ Active directions: (1) **compaction-aware caching** that pins or pre-warms block
 - **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
 - **[Survey]** Chen Luo, Michael J. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020.
 
+## 10. Worked Example
+
+A 3-level LSM ($L=3$), size ratio $T=10$, $N=10^6$ keys, memory budget for filters $=10^6$ bits total. Point-lookup I/O on a negative query $\approx \sum_i \text{FPR}_i$, with per-level FPR $\approx e^{-b_i \ln^2 2}$ where $b_i$ is bits/key at level $i$ (which holds $\approx 10^{i}$ fraction of keys).
+
+**Uniform allocation** ($b_i = 1$ bit/key everywhere): each $\text{FPR}_i \approx e^{-0.48}\approx 0.62$, so expected probes $\approx 3\times0.62 = 1.86$ wasted I/Os per negative lookup.
+
+**Monkey allocation.** The Lagrangian optimum gives *more* bits to larger levels (they dominate FPR mass). Shifting bits so $b_3 > b_2 > b_1$ — e.g. $b_1{=}0.3, b_2{=}1, b_3{=}1.7$ at equal total budget — drives the larger levels' FPR down, cutting total expected probes to $\approx 0.6$, roughly an $O(L){=}3\times$ improvement, matching the closed-form result.
+
+**Compaction churn.** If writes trigger a level-2 compaction every $10^4$ ops, each event remaps a working set $W$ to fresh blocks; the block cache must re-read $W$ at least once — a forced-miss floor $\Omega(\text{write-rate}/\text{level-capacity})$ that *no* eviction policy (LRU, Clock) can avoid, independent of cache size $k$.
+
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

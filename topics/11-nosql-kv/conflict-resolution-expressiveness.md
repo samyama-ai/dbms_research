@@ -37,13 +37,25 @@ Active directions: **verified/synthesized CRDTs** — tools that take a sequenti
 - Synthesis tools producing provably metadata-optimal CRDTs from sequential specs.
 
 ## 9. Key References
-- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011 (and INRIA TR 7687).
-- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007.
-- **[SOTA]** Attiya, Burckhardt, Gotsman, Morrison, Yang, Zawirski. *Specification and Complexity of Collaborative Text Editing.* PODC, 2016 / related POPL 2016 metadata bounds.
-- **[Survey]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[SOTA]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020.
-- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018.
-- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991.
+- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011 (and INRIA TR 7687). — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
+- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294281)
+- **[SOTA]** Attiya, Burckhardt, Gotsman, Morrison, Yang, Zawirski. *Specification and Complexity of Collaborative Text Editing.* PODC, 2016 / related POPL 2016 metadata bounds. — [DOI](https://doi.org/10.1145/2933057.2933090)
+- **[Survey]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018. — [arXiv](https://arxiv.org/abs/1603.01529)
+- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+
+## 10. Worked Example
+
+Two replicas of a key holding a *set* receive concurrent writes (no causal order between them):
+- Replica A: `add(x)`
+- Replica B: `remove(x)` (where $x$ was already present)
+
+**LWW.** Tag each op with a timestamp; keep the later one. If B's clock is ahead, the result is $\{\}$; if A's is, $\{x\}$. One update is silently discarded — LWW cannot express "the concurrent add and remove must both be respected." This is the information-loss separation: any semantic retaining concurrent updates is *not* LWW-realizable.
+
+**CRDT (Add-Wins OR-Set).** Each add carries a unique tag, e.g. `add(x)` $\to (x, t_3)$; `remove` only deletes tags it has *observed*. B never saw tag $t_3$, so it cannot remove it. Merge = union of live tags $\Rightarrow$ result $\{x\}$ deterministically on both replicas (add wins). The merge is a join over the semilattice of (element, tag-set) states: commutative, associative, idempotent $\Rightarrow$ Strong Eventual Consistency.
+
+**Metadata cost.** Each element needs its tag(s) retained even after removal (tombstones), giving the $\Omega(n)$-style overhead that the Attiya et al. lower bounds show is unavoidable for observed-remove semantics.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

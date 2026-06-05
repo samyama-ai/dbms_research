@@ -56,13 +56,23 @@ For the canonical `access/rank/select` operations the gap is **essentially close
 
 ## 9. Key References
 
-- **[Foundational]** Claude E. Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948.
-- **[Foundational]** Rajeev Raman, Venkatesh Raman, S. Srinivasa Rao. *Succinct Indexable Dictionaries with Applications to Encoding k-ary Trees and Multisets.* SODA, 2002.
-- **[SOTA]** Mihai Pătrașcu. *Succincter.* FOCS, 2008.
-- **[Lower Bound]** Anna Gál, Peter Bro Miltersen. *The Cell Probe Complexity of Succinct Data Structures.* ICALP, 2003.
-- **[SOTA]** Peter Boncz, Thomas Neumann, Viktor Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020.
-- **[SOTA]** Maximilian Kuschewski, David Sauerwein, Adnan Alhomssi, Viktor Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[Survey]** Gonzalo Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016.
+- **[Foundational]** Claude E. Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948. — [DOI](https://doi.org/10.1002/j.1538-7305.1948.tb01338.x)
+- **[Foundational]** Rajeev Raman, Venkatesh Raman, S. Srinivasa Rao. *Succinct Indexable Dictionaries with Applications to Encoding k-ary Trees and Multisets.* SODA, 2002. — [DBLP](https://dblp.org/rec/conf/soda/RamanRR02.html)
+- **[SOTA]** Mihai Pătrașcu. *Succincter.* FOCS, 2008. — [PDF](https://people.csail.mit.edu/mip/papers/succinct/succinct.pdf)
+- **[Lower Bound]** Anna Gál, Peter Bro Miltersen. *The Cell Probe Complexity of Succinct Data Structures.* ICALP, 2003. — [DOI](https://doi.org/10.1007/3-540-45061-0_28)
+- **[SOTA]** Peter Boncz, Thomas Neumann, Viktor Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+- **[SOTA]** Maximilian Kuschewski, David Sauerwein, Adnan Alhomssi, Viktor Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[Survey]** Gonzalo Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [ACM](https://dl.acm.org/doi/book/10.5555/3092586)
+
+## 10. Worked Example
+
+Take a page holding $n = 8$ values from alphabet $\{A,B,C,D\}$: the column $A,A,A,A,B,B,C,D$. Empirical symbol frequencies are $A:\tfrac12, B:\tfrac14, C:\tfrac18, D:\tfrac18$, so the order-0 entropy is
+
+$$H_0 = \tfrac12\log_2 2 + \tfrac14\log_2 4 + 2\cdot\tfrac18\log_2 8 = 0.5 + 0.5 + 0.75 = 1.75 \text{ bits/symbol}.$$
+
+The entropy floor is $nH_0 = 8 \times 1.75 = 14$ bits. A fixed-width 2-bit dictionary code uses $16$ bits — it supports $O(1)$ random access (read symbol $i$ at bit offset $2i$) but pays $2$ bits of redundancy.
+
+Pure Huffman/arithmetic coding hits $14$ bits but makes codeword $i$'s position depend on all earlier symbols, destroying $O(1)$ access. To recover access you add a rank/select index. The cell-probe lower bound says with $t$ probes the index redundancy is $r = \Omega(n/(\log n)^{O(t)})$: you cannot reach exactly $14$ bits and keep $O(1)$ access simultaneously — the $2$-bit gap here is the random-access tax in miniature.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

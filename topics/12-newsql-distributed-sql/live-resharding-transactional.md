@@ -110,12 +110,33 @@ change the cost model by making "resharding" partly a metadata operation
 
 ## 9. Key References
 
-- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[Foundational]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Adya, Myers, Howell, Elson, Meek, Khemani, Fulger, Gu, Bhuvanagiri, Hunter, Peon, Kai, Shraer, Merchant, Lev-Ari. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016.
-- **[Systems]** The Vitess Project. *VReplication and Online Resharding.* (PlanetScale/CNCF documentation), 2019–.
-- **[Foundational]** Mirrokni, Thorup, Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA, 2018.
-- **[Foundational]** Lamport, Malkhi, Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009.
+- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[Foundational]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Adya, Myers, Howell, Elson, Meek, Khemani, Fulger, Gu, Bhuvanagiri, Hunter, Peon, Kai, Shraer, Merchant, Lev-Ari. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/adya)
+- **[Systems]** The Vitess Project. *VReplication and Online Resharding.* (PlanetScale/CNCF documentation), 2019–. — [Vitess docs](https://vitess.io/docs/user-guides/configuration-advanced/resharding/)
+- **[Foundational]** Mirrokni, Thorup, Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA, 2018. — [arXiv](https://arxiv.org/abs/1608.01350)
+- **[Foundational]** Lamport, Malkhi, Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [DOI](https://doi.org/10.1145/1582716.1582783)
+
+## 10. Worked Example
+
+A range $r=[1,100)$ owned by a Raft group on node $A$ holds keys with a hot subrange. The
+control loop decides to **split** at $b=40$, sending $[40,100)$ to node $B$. Pick a split
+timestamp $t_s = 1000$ (a logical/HLC instant).
+
+Trace of a concurrent txn $T$ that reads key $55$:
+1. $T$ gets commit timestamp $\tau$.
+2. If $\tau < t_s = 1000$: $T$ is routed to the **old** owner $A$ (still authoritative).
+3. If $\tau \ge 1000$: $T$ is routed to the **new** owner $B$.
+
+The atomic flip costs $O(1)$ consensus rounds plus $O(|[40,100)|)$ bytes of snapshot
+transfer; the leaseholder-handover stall is sub-millisecond, not full downtime (Section 4).
+
+**Why straddling breaks SS.** Suppose $T_1$ (ts $=999$) writes key $55$ on $A$ and $T_2$
+(ts $=1001$) reads key $55$ on $B$. If the split copied $A$'s state at the instant
+$t_s' = 998 \neq t_s$, $B$ misses $T_1$'s write and $T_2$ reads a stale value — a real-time
+ordering violation. Correctness demands a **single** logical instant $t_s$ for copy-cutoff and
+ownership flip; the open gap (Section 6) is a machine-checked proof that *function-changing*
+repartitions preserve this invariant.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

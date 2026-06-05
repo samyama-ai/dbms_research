@@ -44,12 +44,24 @@ Active work: **JSON/semi-structured integration with formal guarantees**, liftin
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005.
-- **[Foundational]** M. Arenas, L. Libkin. *XML data exchange: Consistency and query answering.* Journal of the ACM / ACM TODS, 2008.
-- **[Foundational]** L. Popa, Y. Velegrakis, R. Miller, M. Hernández, R. Fagin. *Translating web data (Clio).* VLDB, 2002.
-- **[SOTA]** A. Fuxman, M. Hernández, H. Ho, R. Miller, P. Papotti, L. Popa. *Nested mappings: Schema mapping reloaded.* VLDB, 2006.
-- **[Foundational]** P. Buneman, S. Naqvi, V. Tannen, L. Wadler. *Principles of programming with complex objects and collection types.* Theoretical Computer Science, 1995.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Complex values, nested model.)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** M. Arenas, L. Libkin. *XML data exchange: Consistency and query answering.* Journal of the ACM / ACM TODS, 2008. — [DOI](https://doi.org/10.1145/1346330.1346332)
+- **[Foundational]** L. Popa, Y. Velegrakis, R. Miller, M. Hernández, R. Fagin. *Translating web data (Clio).* VLDB, 2002. — [PDF](https://www.cs.uic.edu/~advis/readings/paperhtml/41.html)
+- **[SOTA]** A. Fuxman, M. Hernández, H. Ho, R. Miller, P. Papotti, L. Popa. *Nested mappings: Schema mapping reloaded.* VLDB, 2006. — [PDF](https://www.vldb.org/conf/2006/p67-fuxman.pdf)
+- **[Foundational]** P. Buneman, S. Naqvi, V. Tannen, L. Wong. *Principles of programming with complex objects and collection types.* Theoretical Computer Science, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00024-Q)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Complex values, nested model.) — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+Source (flat): `Enroll(student, course)` = $\{(\text{Ann}, \text{DB}), (\text{Ann}, \text{OS}), (\text{Bob}, \text{DB})\}$.
+
+Target is **nested**: `Student(name, {Course})` — each student holds a *set* of courses. The nested st-tgd groups by student:
+$$\text{Enroll}(s,c) \;\to\; \exists G\; \text{Student}(s, G) \wedge c \in G.$$
+
+The canonical (core) universal solution groups all of Ann's courses into one set rather than two singletons:
+$$\{\;\text{Student}(\text{Ann}, \{\text{DB}, \text{OS}\}),\; \text{Student}(\text{Bob}, \{\text{DB}\})\;\}.$$
+
+Why nesting matters: a *naive* per-tuple chase would emit `Student(Ann,{DB})` and `Student(Ann,{OS})` — two facts deep-homomorphic to neither each other nor the core. The query "students taking both DB and OS" is **certain** for Ann only under the grouped (core) solution, since certain answers quantify up to *deep/grouping* homomorphism. This is exactly the canonicity gap (Section 6): no PTIME core algorithm is known once grouping plus cross-level keyrefs interact.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

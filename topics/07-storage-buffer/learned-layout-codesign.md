@@ -1,6 +1,7 @@
 # End-to-End Learned Storage-Layout Co-Design
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/learned-layout-codesign` · **Status:** open
+> **Verification note:** The Qd-tree (SIGMOD 2020) author list was corrected — the actual authors are Yang, Chandramouli, Wang, Gehrke, Li, Minhas, Larson, Kossmann, Acharya (the prior list mixed in unrelated names).
 
 ## 1. Problem Statement
 
@@ -64,12 +65,26 @@ Variants:
 
 ## 9. Key References
 
-- **[SOTA]** Yang, Wu, Kandula, Narasayya, Chaudhuri. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020.
-- **[Foundational]** Chaudhuri, Narasayya. *AutoAdmin "What-If" Index Analysis and Automated Physical Design.* SIGMOD/VLDB, 1997–1998.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Learned Query Optimization with Steering.* SIGMOD, 2021.
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[SOTA]** Pavlo, Angulo, Arulraj, et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Foundational]** Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948.
+- **[SOTA]** Yang, Chandramouli, Wang, Gehrke, Li, Minhas, Larson, Kossmann, Acharya. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/2004.10898)
+- **[Foundational]** Chaudhuri, Narasayya. *AutoAdmin "What-If" Index Analysis and Automated Physical Design.* SIGMOD/VLDB, 1997–1998. — [DOI](https://doi.org/10.1145/276305.276337)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Learned Query Optimization with Steering.* SIGMOD, 2021. — [arXiv](https://arxiv.org/abs/2004.03814)
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** Pavlo, Angulo, Arulraj, et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Foundational]** Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948. — [DOI](https://doi.org/10.1002/j.1538-7305.1948.tb01338.x)
+
+## 10. Worked Example
+
+A column of 1M integers, workload = full scans (90%) + occasional point lookups (10%). Three coupled decisions, with a learned cost model giving per-query bytes:
+
+| Config $x$ | Compression | Layout | Tier | Scan cost | Storage |
+|---|---|---|---|---|---|
+| $x_1$ | none | column | DRAM | 4.0 MB | 4.0 MB |
+| $x_2$ | dict+RLE | column, sorted | DRAM | 0.5 MB | 0.6 MB |
+| $x_3$ | dict+RLE | column, sorted | SSD | 0.5 MB read + 5x SSD latency | 0.6 MB |
+
+The **cross-term** is visible: sorting (layout) is what makes RLE (compression) effective — choosing them independently misses the $8\times$ scan win of $x_2$. Objective $\mathbb{E}[\text{cost}] + \lambda\,\text{storage}$ with $\lambda=1$:
+$$x_1: 0.9(4.0)+0.1(4.0)+4.0 = 8.0,\quad x_2: 0.9(0.5)+0.1(0.5)+0.6 = 1.1.$$
+$x_2$ wins ($7\times$). But naively tiering to SSD ($x_3$) to save DRAM inflates the dominant scan latency — illustrating why placement cannot be optimized after layout. The joint space here is just $|\text{compr}|\times|\text{layout}|\times|\text{tier}|$, yet real schemas make $|\mathcal{X}|$ exponential, and no approximation captures these interactions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -57,13 +57,24 @@ Exactness is the barrier. **Communication complexity:** exact COUNT DISTINCT and
 
 ## 9. Key References
 
-- **[Foundational]** Jim Gray, Surajit Chaudhuri, Adam Bosworth, et al. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic taxonomy).* Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** Paul Beame, Paraschos Koutris, Dan Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013).
-- **[Foundational]** Howard Karloff, Siddharth Suri, Sergei Vassilvitskii. *A Model of Computation for MapReduce.* SODA, 2010.
-- **[SOTA]** Pankaj K. Agarwal, Graham Cormode, Zengfeng Huang, Jeff M. Phillips, Zhewei Wei, Ke Yi. *Mergeable Summaries.* ACM TODS, 2013 (PODS 2012).
-- **[Foundational]** J. Ian Munro, Mike S. Paterson. *Selection and Sorting with Limited Storage.* Theoretical Computer Science, 1980.
-- **[SOTA]** Zohar Karnin, Kevin Lang, Edo Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** Tim Roughgarden, Sergei Vassilvitskii, Joshua R. Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* JACM, 2018 (SPAA 2016).
+- **[Foundational]** Jim Gray, Surajit Chaudhuri, Adam Bosworth, et al. *Data Cube: A Relational Aggregation Operator (distributive/algebraic/holistic taxonomy).* Data Mining and Knowledge Discovery, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843)
+- **[Foundational]** Paul Beame, Paraschos Koutris, Dan Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013). — [DOI](https://doi.org/10.1145/3125644)
+- **[Foundational]** Howard Karloff, Siddharth Suri, Sergei Vassilvitskii. *A Model of Computation for MapReduce.* SODA, 2010. — [DOI](https://doi.org/10.1137/1.9781611973075.76)
+- **[SOTA]** Pankaj K. Agarwal, Graham Cormode, Zengfeng Huang, Jeff M. Phillips, Zhewei Wei, Ke Yi. *Mergeable Summaries.* ACM TODS, 2013 (PODS 2012). — [DBLP](https://dblp.org/rec/journals/tods/AgarwalCHPWY13.html)
+- **[Foundational]** J. Ian Munro, Mike S. Paterson. *Selection and Sorting with Limited Storage.* Theoretical Computer Science, 1980. — [DOI](https://doi.org/10.1016/0304-3975(80)90061-4)
+- **[SOTA]** Zohar Karnin, Kevin Lang, Edo Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** Tim Roughgarden, Sergei Vassilvitskii, Joshua R. Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* JACM, 2018 (SPAA 2016). — [DOI](https://doi.org/10.1145/3232536)
+
+## 10. Worked Example
+
+`SELECT MEDIAN(x) FROM T` with $N=9$ values on $p=3$ machines:
+- $M_1$: {7, 2, 9}, $M_2$: {4, 1, 8}, $M_3$: {3, 6, 5}.
+
+The median is the rank-5 element (sorted: 1,2,3,4,**5**,6,7,8,9 → median $= 5$). MEDIAN is **holistic**: $M_1$ cannot send a constant-size summary that lets a coordinator recover the global median — e.g., its local sorted run {2,7,9} gives no bound on the global rank without seeing the others.
+
+**Exact route (sort-then-rank):** globally sort all 9 values across machines ($O(1/\epsilon)$ MPC rounds), then pick rank 5. Total communication $\Theta(N)$.
+
+**Approximate route (mergeable summary):** each machine builds a KLL/GK $\epsilon$-quantile sketch of size $O(\tfrac1\epsilon \log \tfrac1\epsilon)$, ships it, and the coordinator merges all three in **one round**. For $\epsilon=0.2$ on $N=9$ it returns a value of rank in $[5-1.8,\,5+1.8]$, i.e., 3–7 — correct within tolerance, at far less than $\Theta(N)$ load. The exact-vs-approximate gap is exactly the open problem: exactness forces the $\Omega(N)$ funnel; approximation collapses it to a mergeable, decomposable computation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

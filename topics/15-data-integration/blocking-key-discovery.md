@@ -49,12 +49,23 @@ Active: **self-supervised and LLM/embedding blocking** with ANN backends, and **
 
 ## 9. Key References
 
-- **[Foundational]** M. Bilenko, B. Kamath, R. Mooney. *Adaptive Blocking: Learning to Scale Up Record Linkage.* ICDM, 2006.
-- **[Foundational]** M. Michelson, C. Knoblock. *Learning Blocking Schemes for Record Linkage.* AAAI, 2006.
-- **[SOTA]** S. Thirumuruganathan, et al. *Deep Learning for Blocking in Entity Matching: A Design Space Exploration (DeepBlocker).* PVLDB, 2021.
-- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020.
-- **[SOTA]** G. Papadakis, D. Skoutas, E. Thanos, T. Palpanas. *Blocking and Filtering Techniques for Entity Resolution: A Survey.* ACM Computing Surveys, 2020.
-- **[Survey]** P. Christen. *Data Matching: Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection.* Springer, 2012.
+- **[Foundational]** M. Bilenko, B. Kamath, R. Mooney. *Adaptive Blocking: Learning to Scale Up Record Linkage.* ICDM, 2006. — [PDF](https://www.cs.utexas.edu/~ml/papers/blocking-icdm-06.pdf)
+- **[Foundational]** M. Michelson, C. Knoblock. *Learning Blocking Schemes for Record Linkage.* AAAI, 2006. — [AAAI](https://aaai.org/papers/00440-aaai06-070-learning-blocking-schemes-for-record-linkage/)
+- **[SOTA]** S. Thirumuruganathan, et al. *Deep Learning for Blocking in Entity Matching: A Design Space Exploration (DeepBlocker).* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476294)
+- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[SOTA]** G. Papadakis, D. Skoutas, E. Thanos, T. Palpanas. *Blocking and Filtering Techniques for Entity Resolution: A Survey.* ACM Computing Surveys, 2020. — [DOI](https://doi.org/10.1145/3377455)
+- **[Survey]** P. Christen. *Data Matching: Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection.* Springer, 2012. — [DOI](https://doi.org/10.1007/978-3-642-31164-2)
+
+## 10. Worked Example
+
+Take $n=6$ records, so $\binom{6}{2}=15$ pairs. True matches $M=\{(1,2),(3,4),(5,6)\}$, $|M|=3$. Consider two candidate predicates:
+
+- $p_1$ = "same `Soundex(last_name)`": blocks $\{1,2,5\}$ and $\{3,4,6\}$, yielding pairs $\{(1,2),(1,5),(2,5),(3,4),(3,6),(4,6)\}$ — 6 candidates, retaining matches $(1,2),(3,4)$.
+- $p_2$ = "same first-3 of `zip`": blocks $\{1,2\}$ and $\{5,6\}$, yielding $\{(1,2),(5,6)\}$ — 2 candidates, retaining $(1,2),(5,6)$.
+
+Scheme $f = p_1$ alone: $\mathrm{PC}=2/3=0.67$, candidates $=6$, $\mathrm{RR}=1-6/15=0.60$.
+
+Disjunction $f = p_1 \vee p_2$: candidate set is the union $\{(1,2),(1,5),(2,5),(3,4),(3,6),(4,6),(5,6)\}$ = 7 pairs, retaining all three matches. Now $\mathrm{PC}=3/3=1.0$, $\mathrm{RR}=1-7/15=0.53$. Adding $p_2$ buys $+0.33$ recall for $-0.07$ reduction — exactly the set-cover trade-off the learner optimizes: cover all blue (match) pairs while admitting as few red (non-match) pairs as possible.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

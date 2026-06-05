@@ -47,12 +47,27 @@ The Hasselt/Antwerp group (Neven, Vandevoort, Ketsman) extends template robustne
 
 ## 9. Key References
 
-- **[Foundational]** Fekete, A.; Liarokapis, D.; O'Neil, E.; O'Neil, P.; Shasha, D. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[Foundational]** Berenson, H.; Bernstein, P.; Gray, J.; Melton, J.; O'Neil, E.; O'Neil, P. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
-- **[SOTA]** Jorwekar, S.; Fekete, A.; Ramamritham, K.; Sudarshan, S. *Automating the Detection of Snapshot Isolation Anomalies.* VLDB, 2007.
-- **[SOTA]** Cahill, M.; Röhm, U.; Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
-- **[SOTA]** Vandevoort, B.; Ketsman, B.; Koch, C.; Neven, F. *Robustness Against Read Committed for Transaction Templates.* PVLDB, 2021.
-- **[Survey]** Adya, A. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999.
+- **[Foundational]** Fekete, A.; Liarokapis, D.; O'Neil, E.; O'Neil, P.; Shasha, D. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[Foundational]** Berenson, H.; Bernstein, P.; Gray, J.; Melton, J.; O'Neil, E.; O'Neil, P. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+- **[SOTA]** Jorwekar, S.; Fekete, A.; Ramamritham, K.; Sudarshan, S. *Automating the Detection of Snapshot Isolation Anomalies.* VLDB, 2007. — [ACM](https://dl.acm.org/doi/10.5555/1325851.1325995)
+- **[SOTA]** Cahill, M.; Röhm, U.; Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+- **[SOTA]** Vandevoort, B.; Ketsman, B.; Koch, C.; Neven, F. *Robustness Against Read Committed for Transaction Templates.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2107.12239)
+- **[Survey]** Adya, A. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT](https://pmg.csail.mit.edu/papers/adya-phd.pdf)
+
+## 10. Worked Example
+
+**SSI dynamic detection on a write-skew.** Table `OnCall(doc, flag)` with rows $d_1, d_2$ both `true`; invariant "$\ge 1$ on call." Two concurrent SI transactions:
+
+| step | $T_1$ | $T_2$ |
+|---|---|---|
+| 1 | $r_1(d_1), r_1(d_2)$ (sees 2 on call) | |
+| 2 | | $r_2(d_1), r_2(d_2)$ (sees 2 on call) |
+| 3 | $w_1(d_1{=}\text{false})$ | |
+| 4 | | $w_2(d_2{=}\text{false})$ |
+
+Anti-dependencies: $T_2$ read $d_1$ that $T_1$ overwrites $\Rightarrow T_2 \xrightarrow{rw} T_1$; $T_1$ read $d_2$ that $T_2$ overwrites $\Rightarrow T_1 \xrightarrow{rw} T_2$. The MVSG cycle $T_1 \xrightarrow{rw} T_2 \xrightarrow{rw} T_1$ has **two consecutive $rw$ edges** — Fekete's non-serializability condition.
+
+SSI tracks per-transaction flags `inConflict`/`outConflict`. When $T_2$ commits, the engine sees $T_1$ already has both an incoming and outgoing rw-conflict (a pivot with both flags set), and **aborts** it. Cost: $O(1)$ per conflict edge, no full-graph materialization. SSI may also abort safe cases (false positives), which is the conservative price of online, lookahead-free detection.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

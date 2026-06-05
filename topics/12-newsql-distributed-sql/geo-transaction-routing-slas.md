@@ -107,11 +107,23 @@ uncertainty are an emerging academic thread.
 
 ## 9. Key References
 
-- **[Foundational]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Annamalai et al. *Sharding the Shards: Managing Datastore Locality at Scale with Akkio.* OSDI, 2018.
-- **[SOTA]** Agarwal, Dunagan, Jain, Saroiu, Wolman, Bhogan. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010.
-- **[Foundational]** Li. *A 1.488 Approximation Algorithm for the Uncapacitated Facility Location Problem.* Information and Computation, 2013.
-- **[Systems]** Ardekani, Terry. *A Self-Configurable Geo-Replicated Cloud Storage System (Tuba).* OSDI, 2014.
+- **[Foundational]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Annamalai et al. *Sharding the Shards: Managing Datastore Locality at Scale with Akkio.* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/annamalai)
+- **[SOTA]** Agarwal, Dunagan, Jain, Saroiu, Wolman, Bhogan. *Volley: Automated Data Placement for Geo-Distributed Cloud Services.* NSDI, 2010. — [USENIX](https://www.usenix.org/conference/nsdi10-0/volley-automated-data-placement-geo-distributed-cloud-services)
+- **[Foundational]** Li. *A 1.488 Approximation Algorithm for the Uncapacitated Facility Location Problem.* Information and Computation, 2013. — [PDF](https://cse.buffalo.edu/~shil/papers/UFL-IC2013.pdf)
+- **[Systems]** Ardekani, Terry. *A Self-Configurable Geo-Replicated Cloud Storage System (Tuba).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/ardekani)
+
+## 10. Worked Example
+
+Three regions with RTTs $\ell_{\text{US-EU}}=80$, $\ell_{\text{US-AP}}=140$, $\ell_{\text{EU-AP}}=160$ ms. A 3-replica quorum ($2f{+}1$, $f{=}1$) needs the **closest 2 of 3** acks; a leader-coordinated commit costs $\ell_{o,\lambda} + \text{quorum-RTT}$.
+
+Class A transactions originate 90% in the US, SLA p99 $\le 50$ ms. Compare two placements of the leader $\lambda$:
+
+- **Leader in EU:** US origin pays $\ell_{\text{US-EU}}=80$ ms just to reach $\lambda$ — already $> 50$ ms. **Infeasible** at any cost (Section 5 physical floor).
+- **Leader in US, replicas {US, EU, AP}:** US origin reaches local $\lambda$ ($\approx 1$ ms); quorum needs the nearer follower, EU at $80$ ms RTT $\Rightarrow$ commit $\approx 81$ ms. Still $> 50$ ms.
+- **Leader + a 2nd replica both US-region (US-east, US-west, RTT $20$ ms), 3rd in EU:** quorum = leader + nearest follower at $20$ ms $\Rightarrow$ commit $\approx 21$ ms. **Meets SLA.**
+
+So the strict-serializable p99 $\le 50$ ms SLA is feasible only if two replicas sit within $\le 50$ ms of the US origin — co-locating the quorum, at the cost of weaker geographic fault tolerance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

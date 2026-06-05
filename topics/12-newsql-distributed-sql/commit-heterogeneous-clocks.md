@@ -48,12 +48,22 @@ Aurora DSQL's clock architecture and the broader ClockBound ecosystem are pushin
 
 ## 9. Key References
 
-- **[Foundational]** Corbett, Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Kulkarni, Demirbas, et al. *Logical Physical Clocks (HLC).* OPODIS, 2014.
-- **[Foundational]** Srikanth, Toueg. *Optimal Clock Synchronization.* JACM, 1987.
-- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019.
-- **[SOTA]** Demirbas et al. *ClockBound and bounded-error time for distributed databases.* (AWS TimeSync ecosystem), 2021–.
-- **[Survey]** Lamport, Melliar-Smith. *Synchronizing Clocks in the Presence of Faults.* JACM, 1985.
+- **[Foundational]** Corbett, Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Kulkarni, Demirbas, et al. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[Foundational]** Srikanth, Toueg. *Optimal Clock Synchronization.* JACM, 1987. — [DOI](https://doi.org/10.1145/28869.28876)
+- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342647)
+- **[SOTA]** Demirbas et al. *ClockBound and bounded-error time for distributed databases.* (AWS TimeSync ecosystem), 2021–. — [GitHub](https://github.com/aws/clock-bound)
+- **[Survey]** Lamport, Melliar-Smith. *Synchronizing Clocks in the Presence of Faults.* JACM, 1985. — [DOI](https://doi.org/10.1145/2455.2457)
+
+## 10. Worked Example
+
+Three replicas with heterogeneous honest uncertainty: $\varepsilon_1 = 1$ ms (GPS), $\varepsilon_2 = 1$ ms (GPS), $\varepsilon_3 = 25$ ms (plain NTP). A transaction touches $r_1$ and $r_3$.
+
+Uniform-TrueTime Spanner must use the fleet worst case: commit-wait $\approx 2\varepsilon_{\max} = 50$ ms.
+
+Heterogeneous routing: choose the coordinator to be an *accurate* node, say $r_1$, and assign $\mathit{ts} = \mathit{TT}_{r_1}.\mathit{latest}$. External consistency needs only the coordinator's interval to be certified past, so commit-wait $= 2\varepsilon_{\mathrm{coord}} = 2\,\text{ms}$ — a $25\times$ latency reduction. The catch: $r_3$'s reads must still be dominated by $\mathit{ts}$; if $r_3$'s read interval reaches $\mathit{ts}+24$, safety requires the coordinator's timestamp to dominate it, partly clawing back the win.
+
+Probabilistic variant: with sub-Gaussian tail $\Pr[|C_3-t|>w]\le e^{-w^2/2\sigma^2}$, $\sigma=8$, a target $\delta=10^{-6}$ needs $w \approx \sigma\sqrt{2\ln(1/\delta)} \approx 8\times5.26 \approx 42$ ms — showing why a *hard* $\Omega(\varepsilon)$ bound, not the mean, drives the cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

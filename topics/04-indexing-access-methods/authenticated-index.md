@@ -34,12 +34,20 @@ Active work: transparent and post-quantum vector/polynomial commitments (lattice
 - Integration with oblivious/leakage-bounded indexes (see `order-preserving-index`).
 
 ## 9. Key References
-- **[Foundational]** R. C. Merkle. *A Certified Digital Signature.* CRYPTO, 1989.
-- **[Foundational]** R. Tamassia. *Authenticated Data Structures.* ESA, 2003.
-- **[SOTA]** F. Li, M. Hadjieleftheriou, G. Kollios, L. Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006.
-- **[SOTA]** A. Kate, G. Zaverucha, I. Goldberg. *Constant-Size Commitments to Polynomials and Their Applications (KZG).* ASIACRYPT, 2010.
-- **[Foundational]** C. Dwork, M. Naor, G. N. Rothblum, V. Vaikuntanathan. *How Efficient Can Memory Checking Be?* TCC, 2009.
-- **[SOTA]** Y. Zhang, J. Katz, C. Papamanthou. *IntegriDB: Verifiable SQL for Outsourced Databases.* CCS, 2015.
+- **[Foundational]** R. C. Merkle. *A Certified Digital Signature.* CRYPTO, 1989. — [DOI](https://doi.org/10.1007/0-387-34805-0_21)
+- **[Foundational]** R. Tamassia. *Authenticated Data Structures.* ESA, 2003. — [DOI](https://doi.org/10.1007/978-3-540-39658-1_2)
+- **[SOTA]** F. Li, M. Hadjieleftheriou, G. Kollios, L. Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142488)
+- **[SOTA]** A. Kate, G. Zaverucha, I. Goldberg. *Constant-Size Commitments to Polynomials and Their Applications (KZG).* ASIACRYPT, 2010. — [DOI](https://doi.org/10.1007/978-3-642-17373-8_11)
+- **[Foundational]** C. Dwork, M. Naor, G. N. Rothblum, V. Vaikuntanathan. *How Efficient Can Memory Checking Be?* TCC, 2009. — [DOI](https://doi.org/10.1007/978-3-642-00457-5_30)
+- **[SOTA]** Y. Zhang, J. Katz, C. Papamanthou. *IntegriDB: Verifiable SQL for Outsourced Databases.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813711)
+
+## 10. Worked Example
+
+Take a Merkle tree over the sorted set $S = \{3, 8, 14, 21\}$ (leaves $h_i = H(\text{key}_i)$). Internal nodes: $h_{12}=H(h_1\|h_2)$, $h_{34}=H(h_3\|h_4)$, root $r=H(h_{12}\|h_{34})$. The verifier holds only $r$.
+
+**Membership of 14** (leaf 3): the server returns the value plus the proof path $\pi = (h_4, h_{12})$ — just $\log_2 4 = 2$ sibling hashes. The verifier recomputes $h_3=H(14)$, then $h_{34}'=H(h_3\|h_4)$, then $r'=H(h_{12}\|h_{34}')$, and accepts iff $r' = r$.
+
+**Range query $[9,20]$** must return $\{14\}$ *and prove completeness* — nothing between 9 and 20 was omitted. The server returns the answer flanked by authenticated boundaries 8 and 21, proving 14's left/right neighbors in sorted order are exactly 8 and 21, so no key in $(8,21)$ was hidden. Proof size is $O((k+\log n)\lambda)$ bits with $k=1$ result. Soundness rests on collision resistance of $H$: forging an accepted wrong answer requires a hash collision, probability $\mathrm{negl}(\lambda)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

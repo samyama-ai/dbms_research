@@ -37,12 +37,22 @@ Active: worst-case-robust range filters (Grafite and successors) decoupling guar
 - Range filters for multi-dimensional / composite secondary-index keys.
 
 ## 9. Key References
-- **[SOTA]** H. Zhang, H. Lim, V. Leis, D. G. Andersen, M. Kaminsky, K. Keeton, A. Pavlo. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018.
-- **[SOTA]** S. Luo, S. Chatterjee, R. Ketsetsidis, N. Dayan, W. Qin, S. Idreos. *Rosetta: A Robust Space-Time Optimized Range Filter for Key-Value Stores.* SIGMOD, 2020.
-- **[SOTA]** E. Knorr, B. Spector, M. Kester, et al. *Proteus: A Self-Designing Range Filter.* SIGMOD, 2022.
-- **[SOTA]** M. Costa, P. Ferragina, G. Vinciguerra. *Grafite: Taming Adversarial Queries with Optimal Range Filters.* SIGMOD, 2024.
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006.
-- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
+- **[SOTA]** H. Zhang, H. Lim, V. Leis, D. G. Andersen, M. Kaminsky, K. Keeton, A. Pavlo. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018. — [DBLP](https://dblp.org/rec/conf/sigmod/ZhangLLAKKP18.html)
+- **[SOTA]** S. Luo, S. Chatterjee, R. Ketsetsidis, N. Dayan, W. Qin, S. Idreos. *Rosetta: A Robust Space-Time Optimized Range Filter for Key-Value Stores.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389731)
+- **[SOTA]** E. Knorr, B. Spector, M. Kester, et al. *Proteus: A Self-Designing Range Filter.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526167)
+- **[SOTA]** M. Costa, P. Ferragina, G. Vinciguerra. *Grafite: Taming Adversarial Queries with Optimal Range Filters.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3639258)
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Foundational]** B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+
+## 10. Worked Example
+
+An SSTable stores 4 keys over an 8-bit universe $U=256$: $\{12, 13, 80, 200\}$. A range query asks "any key in $[40,60]$?" — the true answer is **empty** (nothing between 13 and 80).
+
+*Point Bloom fails:* you would have to probe every one of the 21 candidate keys $40,41,\dots,60$, and a Bloom filter cannot rule out the gap.
+
+*Grafite-style bound:* with budget $B=8$ bits/key, the worst-case false-positive probability for a range of length $\ell$ is $\le \ell/2^{B-2}$. Here $\ell=21$, so $\text{FPR} \le 21/2^{6} = 21/64 \approx 0.33$ — and crucially this holds *regardless* of whether the query is adversarially correlated with the keys. Doubling the budget to $B=16$ drops it to $21/2^{14}\approx 0.0013$.
+
+*Mergeability:* during compaction this SSTable merges with one holding $\{50\}$. The union filter must now report $[40,60]$ as **maybe-nonempty** (50 is present) — a trie or dyadic-Bloom encoding combines the two filters directly, without re-reading the raw keys.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,11 +45,25 @@ Groups: **Libkin (Edinburgh/RelationalAI)**, **Kolaitis (UCSC)**, **Sallinger / 
 
 ## 9. Key References
 
-- **[Foundational]** Codd. *Further Normalization of the Data Base Relational Model.* IBM Research, 1971.
-- **[Foundational]** Arenas, Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003 / JACM 2005.
-- **[SOTA]** Kolaitis, Pichler, Sallinger, Savenkov. *Nested Dependencies / Well-Designed Schemas* (redundancy under general constraints), PODS/ICDT, 2010s.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on dependency theory).
+- **[Foundational]** Codd. *Further Normalization of the Data Base Relational Model.* IBM Research, 1971. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
+- **[Foundational]** Arenas, Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003 / JACM 2005. — [PDF](https://marceloarenas.cl/publications/jacm05.pdf)
+- **[SOTA]** Kolaitis, Pichler, Sallinger, Savenkov. *Nested Dependencies / Well-Designed Schemas* (redundancy under general constraints), PODS/ICDT, 2010s. — [DOI](https://doi.org/10.1145/2594538.2594544)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on dependency theory). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Take $R(\text{Course}, \text{Instructor}, \text{Dept})$ with the FD $\text{Instructor} \to \text{Dept}$ (each instructor sits in one department), and instance:
+
+| Course | Instructor | Dept |
+|--------|-----------|------|
+| CS101  | Lee       | CS   |
+| CS305  | Lee       | CS   |
+| EE201  | Roy       | EE   |
+
+This is **not** BCNF: $\text{Instructor}$ is not a key, yet it determines $\text{Dept}$. Pick the redundant cell $p$ = (row 2, Dept). Given everything else, the FD forces $\text{Dept}=\text{CS}$ from row 1's Lee, so $H(X_p \mid X_{-p}) = 0$ and $\mathrm{RIC}_n(p) = 0/\log n = 0$ — maximal redundancy.
+
+Decompose into $R_1(\text{Instructor},\text{Dept})$ and $R_2(\text{Course},\text{Instructor})$ (BCNF, lossless via $\bowtie$ on Instructor). Now in $R_1$ each $\text{Dept}$ cell is pinned only by its own key value with no duplicate constraint across rows, so for the analogous free cell $H(X_p\mid X_{-p}) \to \log n$ and $\mathrm{RIC}_n(p)\to 1$. The measure quantitatively confirms the BCNF design removed the redundancy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

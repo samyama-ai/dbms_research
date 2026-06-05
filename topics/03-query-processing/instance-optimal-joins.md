@@ -44,12 +44,20 @@ Directions: (1) **certificate-aware enumeration** combining instance optimality 
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS 2001 / JCSS 2003 (instance optimality, the TA algorithm).
-- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA 2000.
-- **[SOTA]** Ngo, Nguyen, Ré, Olteanu. *Beyond Worst-Case Analysis for Joins with Minesweeper.* PODS 2014.
-- **[SOTA]** Abo Khamis, Ngo, Ré, Rudra. *Joins via Geometric Resolutions: Worst-Case and Beyond (Tetris).* PODS 2016 / ACM TODS 2017.
-- **[Survey]** Roughgarden (ed.). *Beyond the Worst-Case Analysis of Algorithms.* Cambridge University Press, 2021.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS 2001 / JCSS 2003 (instance optimality, the TA algorithm). — [arXiv](https://arxiv.org/abs/cs/0204046)
+- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA 2000. — [DBLP](https://dblp.org/rec/conf/soda/DemaineLM00.html)
+- **[SOTA]** Ngo, Nguyen, Ré, Olteanu. *Beyond Worst-Case Analysis for Joins with Minesweeper.* PODS 2014. — [arXiv](https://arxiv.org/abs/1302.0914)
+- **[SOTA]** Abo Khamis, Ngo, Ré, Rudra. *Joins via Geometric Resolutions: Worst-Case and Beyond (Tetris).* PODS 2016 / ACM TODS 2017. — [arXiv](https://arxiv.org/abs/1404.0703)
+- **[Survey]** Roughgarden (ed.). *Beyond the Worst-Case Analysis of Algorithms.* Cambridge University Press, 2021. — [DOI](https://doi.org/10.1017/9781108637435)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Intersect two sorted sets $A=\{1,2,3,\dots,1000\}$ and $B=\{1000,1001,\dots,1999\}$; the answer is $\{1000\}$. Both have $|A|=|B|=1000$, so the worst-case (AGM-style) bound suggests up to $\sim 1000$ comparisons. But this *instance* is easy: one galloping (exponential) search for $\min(B)=1000$ in $A$ probes positions $1,2,4,8,\dots,512,1000$ — about $\log_2 1000 \approx 10$ comparisons — lands on the single overlap, and a symmetric step confirms nothing follows.
+
+The **certificate** here is tiny: the comparisons $A[512]=512 < 1000$ and $A[1000]=1000=B[1]$, plus $A[1000]<B[2]=1001$, witness that exactly one element matches. So $\mathcal C(D)=O(\log n)$, and an instance-optimal algorithm (adaptive/galloping intersection) runs in $O(\mathcal C)=O(\log n)$, not $O(n)$.
+
+Contrast a *hard* instance: $A,B$ perfectly interleaved ($A$ odd, $B$ even). Then every adjacent gap must be witnessed, forcing $\Omega(n)$ comparisons — here $\mathcal C(D)=\Theta(n)$ and no algorithm can do better. Instance optimality means matching $\mathcal C(D)$ on *both* instances with the same algorithm.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

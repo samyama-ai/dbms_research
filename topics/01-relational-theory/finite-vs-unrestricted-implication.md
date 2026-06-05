@@ -69,12 +69,20 @@ For **full dependencies, INDs, and guarded fragments**, the question is *closed*
 
 ## 9. Key References
 
-- **[Foundational]** M. A. Casanova, R. Fagin, C. H. Papadimitriou. *Inclusion dependencies and their interaction with functional dependencies.* JCSS, 1984.
-- **[Foundational]** A. K. Chandra, M. Y. Vardi. *The implication problem for functional and inclusion dependencies is undecidable.* SIAM J. Computing, 1985.
-- **[SOTA]** V. Bárány, G. Gottlob, M. Otto. *Querying the guarded fragment.* LICS, 2010 / Logical Methods in Computer Science, 2014.
-- **[SOTA]** R. Rosati. *On the finite controllability of conjunctive query answering in databases under open-world assumption.* JCSS, 2011.
-- **[Foundational]** A. Calì, G. Gottlob, M. Kifer. *Taming the infinite chase (Datalog±).* JAIR, 2013.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** M. A. Casanova, R. Fagin, C. H. Papadimitriou. *Inclusion dependencies and their interaction with functional dependencies.* JCSS, 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90075-8)
+- **[Foundational]** A. K. Chandra, M. Y. Vardi. *The implication problem for functional and inclusion dependencies is undecidable.* SIAM J. Computing, 1985. — [DOI](https://doi.org/10.1137/0214049)
+- **[SOTA]** V. Bárány, G. Gottlob, M. Otto. *Querying the guarded fragment.* LICS, 2010 / Logical Methods in Computer Science, 2014. — [arXiv](https://arxiv.org/abs/1309.5822)
+- **[SOTA]** R. Rosati. *On the finite controllability of conjunctive query answering in databases under open-world assumption.* JCSS, 2011. — [DOI](https://doi.org/10.1016/j.jcss.2010.04.011)
+- **[Foundational]** A. Calì, G. Gottlob, M. Kifer. *Taming the infinite chase (Datalog±).* JAIR, 2013. — [arXiv](https://arxiv.org/abs/1212.3357)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+A classic separation. Take one relation $R(A,B)$ with the FD $B \to A$ and the IND $R[A] \subseteq R[B]$. Claim: every *finite* model satisfies the extra IND $R[B] \subseteq R[A]$, but some *infinite* model does not.
+
+Reason finitely: the IND $R[A]\subseteq R[B]$ gives an injection $\pi_A R \hookrightarrow \pi_B R$ (injectivity from $B\to A$: distinct $B$-values map to distinct $A$-values, so $|\pi_B R| \le |\pi_A R|$, while the IND gives $|\pi_A R| \le |\pi_B R|$). Hence $|\pi_A R| = |\pi_B R|$, and on a *finite* set an injection that is "into" must be *onto*, forcing $R[B] \subseteq R[A]$.
+
+Infinite counterexample: let $A,B$ range over $\mathbb{N}$ with tuples $(n, n+1)$ for all $n \ge 0$. Then $\pi_A R = \mathbb{N}$, $\pi_B R = \{1,2,\dots\}$, so $R[A]\subseteq R[B]$ holds, $B\to A$ holds, yet $0 \in \pi_B$? No — $0 \notin \pi_B R$ while $0 \in \pi_A R$, so $R[B]\subseteq R[A]$ *fails*. Thus $\Sigma \models_{\mathrm{fin}} \sigma$ but $\Sigma \not\models \sigma$: the two notions genuinely diverge for FD+IND.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

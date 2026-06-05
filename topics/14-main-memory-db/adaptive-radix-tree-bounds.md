@@ -39,12 +39,18 @@ Directions: (i) worst-case-optimal trie hybrids (HOT-style guaranteed span) with
 - Succinct ART approaching information-theoretic space with bounded probe blow-up.
 
 ## 9. Key References
-- **[Foundational]** Fredkin, E. *Trie Memory.* CACM, 1960.
-- **[Foundational]** Knuth, D. *The Art of Computer Programming, Vol. 3: Sorting and Searching.* 1973.
-- **[SOTA]** Leis, V., Kemper, A., Neumann, T. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013.
-- **[SOTA]** Binna, R., Zangerle, E., Pichl, M., Specht, G., Leis, V. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018.
-- **[SOTA]** Pătraşcu, M., Thorup, M. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006.
-- **[Survey]** Leis, V., Scheibner, F., Kemper, A., Neumann, T. *The ART of Practical Synchronization (ROWEX/OLC).* DaMoN, 2016.
+- **[Foundational]** Fredkin, E. *Trie Memory.* CACM, 1960. — [DOI](https://doi.org/10.1145/367390.367400)
+- **[Foundational]** Knuth, D. *The Art of Computer Programming, Vol. 3: Sorting and Searching.* 1973. — [DBLP search](https://dblp.org/search?q=The+Art+of+Computer+Programming+Volume+3+Sorting+and+Searching)
+- **[SOTA]** Leis, V., Kemper, A., Neumann, T. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[SOTA]** Binna, R., Zangerle, E., Pichl, M., Specht, G., Leis, V. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196896)
+- **[SOTA]** Pătraşcu, M., Thorup, M. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Survey]** Leis, V., Scheibner, F., Kemper, A., Neumann, T. *The ART of Practical Synchronization (ROWEX/OLC).* DaMoN, 2016. — [DBLP](https://dblp.org/rec/conf/damon/LeisSK016.html)
+
+## 10. Worked Example
+
+Insert four 2-byte keys into ART: `0x0102`, `0x0103`, `0x01FF`, `0x0200`. The first byte distinguishes `0x02..` from `0x01..`, so the **root** is a Node4 with two children (bytes `0x01`, `0x02`). Under `0x01` the three keys `01 02 / 01 03 / 01 FF` share prefix `0x01` (already consumed) and branch on the second byte into values $\{02,03,FF\}$ — another Node4 (3 children $\le 4$). Under `0x02`, the single key `0x0200` triggers **lazy expansion**: no node is materialized, just a leaf.
+
+Lookup of `0x0103`: probe root Node4 (match `0x01`), probe child Node4 (match `0x03`), reach leaf — **2 branching-node probes**, i.e. $O(\log_\Sigma n)$ with $\Sigma=256,n=4$. Space: 2 Node4s vs a naive radix trie's $2\times 256$ child slots. Bytes/key stays bounded by the constant $\le 52$ from Leis et al.: adaptive node sizing plus path compression keep branching nodes $\le n-1 = 3$, independent of the 16-bit key length.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

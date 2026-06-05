@@ -56,12 +56,22 @@ Active threads: **interactive, example-and-feedback-driven** mapping refinement 
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* TODS, 2005.
-- **[Foundational]** G. Gottlob, P. Senellart. *Schema Mapping Discovery from Data Instances.* JACM, 2010.
-- **[SOTA]** B. ten Cate, V. Dalmau, P. Kolaitis. *Learning Schema Mappings.* ACM TODS, 2013.
-- **[SOTA]** B. Alexe, B. ten Cate, P. Kolaitis, W.-C. Tan. *Designing and Refining Schema Mappings via Data Examples (Muse / EIRENE).* SIGMOD, 2011.
-- **[SOTA]** B. Marnette, G. Mecca, P. Papotti, S. Raunich, D. Santoro. *++Spicy: an Open-Source Tool for Second-Generation Schema Mapping and Data Exchange.* PVLDB, 2011.
-- **[Survey]** P. Kolaitis. *Schema Mappings, Data Exchange, and Metadata Management.* PODS keynote/survey, 2005.
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* TODS, 2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[Foundational]** G. Gottlob, P. Senellart. *Schema Mapping Discovery from Data Instances.* JACM, 2010. — [DOI](https://doi.org/10.1145/1667053.1667055)
+- **[SOTA]** B. ten Cate, V. Dalmau, P. Kolaitis. *Learning Schema Mappings.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2539032.2539035)
+- **[SOTA]** B. Alexe, B. ten Cate, P. Kolaitis, W.-C. Tan. *Designing and Refining Schema Mappings via Data Examples (Muse / EIRENE).* SIGMOD, 2011. — [DOI](https://doi.org/10.1145/1989323.1989338)
+- **[SOTA]** B. Marnette, G. Mecca, P. Papotti, S. Raunich, D. Santoro. *++Spicy: an Open-Source Tool for Second-Generation Schema Mapping and Data Exchange.* PVLDB, 2011. — [DOI](https://doi.org/10.14778/3402755.3402790)
+- **[Survey]** P. Kolaitis. *Schema Mappings, Data Exchange, and Metadata Management.* PODS keynote/survey, 2005. — [DOI](https://doi.org/10.1145/1065167.1065176)
+
+## 10. Worked Example
+
+Source $\mathsf{Phone}(\text{person}, \text{number})$; target $\mathsf{Contact}(\text{person}, \text{number})$ with a **key EGD**: $\text{person} \to \text{number}$. The deployed mapping is the over-broad
+$$M:\;\; \mathsf{Phone}(p, n) \rightarrow \mathsf{Contact}(p, n).$$
+Source data: $\mathsf{Phone}(\text{Sam}, 111)$, $\mathsf{Phone}(\text{Sam}, 222)$ (Sam has a work and a home line). Chasing $M$ gives $\mathsf{Contact}(\text{Sam}, 111)$ and $\mathsf{Contact}(\text{Sam}, 222)$ — the target EGD fires and **fails** (it would force $111 = 222$).
+
+*Instance* repair would just drop one tuple. *Mapping* repair (this page) must fix the **generator** so the violation never recurs. A minimal edit adds a discriminating atom to the body, e.g. introduce a $\text{type}$ column and weaken to
+$$M':\;\; \mathsf{Phone}(p, n) \wedge \mathsf{Primary}(p, n) \rightarrow \mathsf{Contact}(p, n),$$
+selecting one number per person, so the chase of *every* future source satisfies the key. Edit cost $= 1$ added atom. Note $M'$ is harder to certify than any single instance repair: feasibility means the chase terminates EGD-free for all source instances, which couples to (undecidable) chase termination — exactly the gap in section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

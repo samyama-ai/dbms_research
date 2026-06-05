@@ -51,12 +51,24 @@ Wide open. We have (a) strong *execution-side* engineering (morsel-driven, cache
 - Optimization for disaggregated / CXL memory and heterogeneous accelerators.
 
 ## 9. Key References
-- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014.
-- **[Foundational]** Graefe. *Encapsulation of Parallelism in the Volcano Query Processing System.* SIGMOD, 1990.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Manegold, Boncz, Kersten. *Optimizing Database Architecture for the New Bottleneck: Memory Access.* VLDB Journal, 2000.
-- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[Survey]** Williams, Waterman, Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009.
+- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[Foundational]** Graefe. *Encapsulation of Parallelism in the Volcano Query Processing System.* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93597.98720)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Manegold, Boncz, Kersten. *Optimizing Database Architecture for the New Bottleneck: Memory Access.* VLDB Journal, 2000. — [DOI](https://doi.org/10.1007/s007780000031)
+- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[Survey]** Williams, Waterman, Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+
+## 10. Worked Example
+
+A hash join builds on relation $R$ ($16$ GB) and probes with $S$. Run on a 2-socket NUMA box: socket-local memory bandwidth $\approx 60$ GB/s, cross-socket $\approx 20$ GB/s.
+
+Plan A — DOP 16, all threads on socket 0, hash table on socket 0: every probe is NUMA-local, but 16 threads share one socket's $60$ GB/s, so per-thread bandwidth is $\approx 3.75$ GB/s.
+
+Plan B — DOP 32, 16 threads per socket, hash table partitioned NUMA-locally (morsel-driven): each socket serves its own partition at $60$ GB/s; aggregate $\approx 120$ GB/s, roughly $2\times$ Plan A.
+
+Plan C — DOP 32 but table all on socket 0: socket-1 threads pay cross-socket cost; their $16$ probes contend on the $20$ GB/s link ($\approx 1.25$ GB/s each), dragging the slowest thread and the makespan below Plan A.
+
+This shows non-separability: doubling DOP helps (B) or hurts (C) entirely depending on placement, so cost is not additive per operator — the core modeling barrier in Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

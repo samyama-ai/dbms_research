@@ -35,11 +35,22 @@ Work on **Yannakakis-style optimization inside modern engines** (e.g., "free joi
 - Robust ordering under uncertain statistics (online / adaptive reducers).
 
 ## 9. Key References
-- **[Foundational]** Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981.
-- **[Foundational]** Bernstein, Goodman. *Power of Natural Semijoins.* SIAM J. Computing, 1981.
-- **[Foundational]** Beeri, Fagin, Maier, Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983.
-- **[SOTA]** Gottlob, Greco, Scarcello. *Treewidth and Hypertree Width* (in *Tractability*, Cambridge), 2014.
-- **[SOTA]** Yang, Wang, Suciu et al. *Predicate Transfer / Robust Predicate Pushdown.* (CIDR/VLDB), 2024.
+- **[Foundational]** Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981. — [DBLP](https://dblp.org/rec/conf/vldb/Yannakakis81.html)
+- **[Foundational]** Bernstein, Goodman. *Power of Natural Semijoins.* SIAM J. Computing, 1981. — [DOI](https://doi.org/10.1137/0210059)
+- **[Foundational]** Beeri, Fagin, Maier, Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322389)
+- **[SOTA]** Gottlob, Greco, Scarcello. *Treewidth and Hypertree Width* (in *Tractability*, Cambridge), 2014. — [Cambridge](https://www.cambridge.org/core/books/abs/tractability/treewidth-and-hypertree-width/F8ECF2227A2453C619F535CCBCE26198)
+- **[SOTA]** Yang, Wang, Suciu et al. *Predicate Transfer / Robust Predicate Pushdown.* (CIDR/VLDB), 2024. — [arXiv](https://arxiv.org/abs/2307.15255)
+
+## 10. Worked Example
+
+Take the acyclic chain query $Q = R(A,B) \bowtie S(B,C) \bowtie T(C,D)$ with join tree $R - S - T$. Suppose $R=\{(1,b_1),(2,b_2)\}$, $S=\{(b_1,c_1)\}$, $T=\{(c_9,d_1)\}$. Tuple $(2,b_2)\in R$ and the lone $T$ tuple are *dangling* (contribute to no answer).
+
+Yannakakis' two semijoin sweeps:
+
+1. **Bottom-up** (toward root $R$): $S \ltimes T$ keeps only $S$-tuples whose $C$ matches $T$ — but $c_1 \ne c_9$, so $S\ltimes T = \emptyset$. Then $R \ltimes S = \emptyset$.
+2. The instance is now empty, correctly signaling $Q=\emptyset$ with **no full join** ever materialized.
+
+Each semijoin ships only projected join columns: $\pi_C(T)=\{c_9\}$ (1 value), not whole tuples. Total intermediate size stays $O(N)=O(4)$ rather than the $|R||S||T|$ Cartesian blow-up. For a cyclic query (e.g. a triangle $R(A,B),S(B,C),T(C,A)$) no such sweep order exists — no semijoin program is a full reducer, which is exactly the open hard case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

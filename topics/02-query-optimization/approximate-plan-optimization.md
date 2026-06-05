@@ -52,12 +52,23 @@ Per-operator the bounds are essentially *closed* (matching sketch bounds). The g
 
 ## 9. Key References
 
-- **[Foundational]** S. Acharya, P. Gibbons, V. Poosala, S. Ramaswamy. *Join Synopses for Approximate Query Answering.* SIGMOD, 1999.
-- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[SOTA]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** S. Acharya, P. Gibbons, V. Poosala, S. Ramaswamy. *Join Synopses for Approximate Query Answering.* SIGMOD, 1999. — [ACM](https://dl.acm.org/doi/10.1145/304182.304207)
+- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997. — [DBLP](https://dblp.org/rec/conf/sigmod/HellersteinHW97.html)
+- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [arXiv](https://arxiv.org/abs/1203.5485)
+- **[SOTA]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Query: `SELECT AVG(amount) FROM sales` over $N = 10^7$ rows. We want relative error $\varepsilon = 0.01$ at confidence $1-\delta = 0.95$. The data has mean $\mu = 50$ and standard deviation $\sigma = 80$ (so coefficient of variation $\sigma/\mu = 1.6$).
+
+Required sample size via the CLT half-width $z_{0.975}\,\sigma/\sqrt{n} \le \varepsilon\mu$:
+$$n \ge \left(\frac{z\,\sigma}{\varepsilon\mu}\right)^2 = \left(\frac{1.96 \times 80}{0.01 \times 50}\right)^2 = \left(\frac{156.8}{0.5}\right)^2 \approx 98{,}400.$$
+
+So scanning $\approx 0.98\%$ of the table meets the target — a $\sim 100\times$ cost reduction versus a full scan.
+
+Now add a join `sales ⋈ region`. A uniform sample of `sales` joined with `region` is fine, but a sample of *both* sides is biased: the probability a matching pair survives is $\propto$ (sample rate)$^2$, so heavy join keys are systematically undercounted. This is exactly why **join synopses** sample the join result (or one side fully), restoring the $\sigma/\sqrt{n}$ guarantee that naive sample-then-join loses.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

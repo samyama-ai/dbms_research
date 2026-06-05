@@ -42,12 +42,27 @@ Deciding existence of a constraint-satisfying completion is **NP-hard** in gener
 - Tractable certain-answer semantics under statistical priors; certified-repair guarantees.
 
 ## 9. Key References
-- **[Foundational]** T. Imielinski, W. Lipski. *Incomplete Information in Relational Databases.* JACM, 1984.
-- **[Foundational]** P. Bohannon, W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional Functional Dependencies for Data Cleaning.* (and minimal-repair complexity) ICDE/SIGMOD, 2005–2007.
-- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005.
-- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (incomplete information, chase).
+- **[Foundational]** T. Imielinski, W. Lipski. *Incomplete Information in Relational Databases.* JACM, 1984. — [DOI](https://doi.org/10.1145/1634.1886)
+- **[Foundational]** P. Bohannon, W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional Functional Dependencies for Data Cleaning.* (and minimal-repair complexity) ICDE/SIGMOD, 2005–2007. — [DBLP](https://dblp.org/rec/conf/icde/BohannonFGJK07.html)
+- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536360.2536363)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (incomplete information, chase). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Relation $\text{Emp}(\underline{\text{name}}, \text{dept}, \text{city})$ with FD $\text{dept}\to\text{city}$ (a department sits in one city). Domain of city is $\{\text{NYC},\text{LA}\}$.
+
+| name | dept | city |
+|------|------|------|
+| Ann  | D1   | NYC  |
+| Bob  | D1   | $x_1$ (NULL) |
+| Cara | D2   | $x_2$ (NULL) |
+| Dan  | D2   | LA   |
+
+The FD couples cells: Bob shares dept D1 with Ann, so $x_1$ is *forced* to NYC. Cara shares D2 with Dan, so $x_2$ is forced to LA. Independent per-cell imputation (e.g., "most frequent city = NYC") would wrongly set $x_2=\text{NYC}$, violating $\text{dept}\to\text{city}$.
+
+Here propagation yields a unique valid completion in linear time. But add a third NULL-dept row for "Eve, $x_3$, LA": now $x_3$ may be D1 (forcing nothing new) or D2 — branching. With $k$ such free cells over a domain of size $d$, the naive search is $d^k$; the optimization version (minimize edits subject to $\Sigma$) is the NP-hard MAP problem of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

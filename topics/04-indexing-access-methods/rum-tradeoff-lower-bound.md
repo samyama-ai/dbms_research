@@ -43,12 +43,24 @@ Genuinely **open**. The gap is the missing memory axis: existing dynamic lower b
 - Establish whether range queries (vs. point) strictly enlarge the unrealizable region.
 
 ## 9. Key References
-- **[Foundational]** M. Athanassoulis, M. S. Kester, L. M. Maas, R. Stoica, S. Idreos, A. Ailamaki, M. Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[Foundational]** M. Pătrașcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** S. Idreos et al. *The Periodic Table of Data Structures.* IEEE Data Eng. Bull., 2018.
-- **[SOTA]** G. Brodal, R. Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
-- **[Survey]** K. G. Larsen. *Lower Bounds for Data Structures (cell-probe).* Lecture notes/surveys, 2012–.
+- **[Foundational]** M. Athanassoulis, M. S. Kester, L. M. Maas, R. Stoica, S. Idreos, A. Ailamaki, M. Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.uni-trier.de/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Foundational]** M. Pătrașcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006. — [arXiv](https://arxiv.org/abs/cs/0502041)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** S. Idreos et al. *The Periodic Table of Data Structures.* IEEE Data Eng. Bull., 2018. — [PDF](https://stratos.seas.harvard.edu/publications/periodic-table-data-structures)
+- **[SOTA]** G. Brodal, R. Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+- **[Survey]** K. G. Larsen. *Lower Bounds for Data Structures (cell-probe).* Lecture notes/surveys, 2012–. — [DBLP search](https://dblp.org/search?q=Kasper+Green+Larsen+cell+probe+lower+bounds)
+
+## 10. Worked Example
+
+Take $N=10^9$ keys, block size $B=100$, so $\log_B N = \log_{100} 10^9 = 4.5$. Compare three points on the empirical RUM frontier, reading $R$ and $U$ in block-transfer units and $M$ as space-amplification:
+
+| Structure | $R$ (read I/Os) | $U$ (insert I/Os) | $M$ (space ampl.) |
+|---|---|---|---|
+| B-tree ($\varepsilon=1$) | $4.5$ | $4.5$ | $\approx 1$ |
+| B$^\varepsilon$-tree, $\varepsilon=\tfrac12$ | $\tfrac{4.5}{0.5}=9$ | $\tfrac{4.5}{0.5\cdot B^{1/2}}=0.9$ | $\approx 1$ |
+| Hash index | $1$ | $1$ | $>1$, no range |
+
+Moving from B-tree to B$^\varepsilon$-tree cuts insert cost $5\times$ (from $4.5$ to $0.9$) but doubles read cost — exactly the $R$–$U$ trade the conjecture predicts. The hash index pushes both $R$ and $U$ to $O(1)$ but pays on the $M$ axis (load-factor slack) and abandons range queries. The open RUM problem asks: is there a structure dominating all three columns at once, or does a provable surface $f(R,U,M)\ge c$ forbid it? No row here, nor any known structure, beats all three simultaneously.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -57,11 +57,17 @@ Active threads: fine-grained "persist cost" accounting for NVM data structures a
 
 ## 9. Key References
 
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[Foundational]** C. Mohan et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** Goetz Graefe, Mark Lillibridge, Harumi Kuno, et al. *Controlled Lock Violation.* SIGMOD, 2013.
-- **[SOTA]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[Survey]** Alexander van Renen, Viktor Leis, et al. *Persistent Memory I/O Primitives / managing NVM.* (survey-style treatments of persist cost), 2019.
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [WorldCat](https://search.worldcat.org/title/transaction-processing-concepts-and-techniques/oclc/26303792)
+- **[Foundational]** C. Mohan et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://dl.acm.org/doi/10.1145/128765.128770)
+- **[SOTA]** Goetz Graefe, Mark Lillibridge, Harumi Kuno, et al. *Controlled Lock Violation.* SIGMOD, 2013. — [DOI](https://dl.acm.org/doi/10.1145/2463676.2465325)
+- **[SOTA]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
+- **[Survey]** Alexander van Renen, Viktor Leis, et al. *Persistent Memory I/O Primitives / managing NVM.* (survey-style treatments of persist cost), 2019. — [arXiv](https://arxiv.org/abs/1904.01614)
+
+## 10. Worked Example
+
+Consider committing $n = 4$ independent transactions, each setting one of four distinct keys to one of two values. The number of distinguishable committed-prefix outcomes recovery must tell apart is $2^4 = 16$, so $P$ must store at least $\log_2 16 = 4$ bits — the counting lower bound $\Omega(n)$ in miniature. No encoding, however clever, recovers all 16 states from fewer than 4 bits.
+
+Now the fence bound. Suppose $c_2$ read-from $c_1$ and $c_4$ depends on $c_3$, but the two pairs are independent. The dependency DAG has two cross-boundary edges, so at least $2$ persist-ordering fences are required: a fence between $c_1\!\to\!c_2$ and between $c_3\!\to\!c_4$. With group commit batching all four into one flush, the *I/O round trips* drop to $1$ (amortized $1/4$ per commit), yet the $2$ ordering fences remain — they track dependency depth, not batch size. So bytes $=4$, fences $=2$, round trips $=1$: three separate floors, hit by three separate arguments, with no single tight law tying them together.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,11 +42,19 @@ Active directions: (i) exploiting **NVLink/NVSwitch and CXL-attached memory** to
 - GPU-accelerated updates/MVCC for HTAP, not just read-only OLAP.
 
 ## 9. Key References
-- **[SOTA]** Shanbhag, Madden, Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD 2020 (Crystal).
-- **[SOTA]** Sioulas, Chrysogelos, Karpathiotakis, Appuswamy, Ailamaki. *Hardware-Conscious Hash-Joins on GPUs.* ICDE 2019.
-- **[SOTA]** Lutz, Breß, Zeuch, Rabl, Markl. *Pump Up the Volume: Processing Large Data on GPUs with Fast Interconnects.* SIGMOD 2020.
-- **[SOTA]** Chrysogelos, Karpathiotakis, Appuswamy, Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB 2019.
-- **[Survey]** Breß, Heimel, Siegmund, Bellatreche, Saake. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014.
+- **[SOTA]** Shanbhag, Madden, Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD 2020 (Crystal). — [DOI](https://doi.org/10.1145/3318464.3380595)
+- **[SOTA]** Sioulas, Chrysogelos, Karpathiotakis, Appuswamy, Ailamaki. *Hardware-Conscious Hash-Joins on GPUs.* ICDE 2019. — [DBLP](https://dblp.org/rec/conf/icde/SioulasCKAA19.html)
+- **[SOTA]** Lutz, Breß, Zeuch, Rabl, Markl. *Pump Up the Volume: Processing Large Data on GPUs with Fast Interconnects.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3389705)
+- **[SOTA]** Chrysogelos, Karpathiotakis, Appuswamy, Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB 2019. — [VLDB PDF](http://www.vldb.org/pvldb/vol12/p544-chrysogelos.pdf)
+- **[Survey]** Breß, Heimel, Siegmund, Bellatreche, Saake. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-45761-0_1)
+
+## 10. Worked Example
+
+Scan-and-aggregate a column of $D = 4\text{ GB}$, one-shot (non-resident). Suppose $B_{\text{pcie}} = 16\text{ GB/s}$ (PCIe 4.0 x16), $B_{\text{dev}} = 1000\text{ GB/s}$ (HBM), CPU memory bandwidth $B_{\text{cpu}} = 50\text{ GB/s}$. The aggregation is bandwidth-bound (low intensity), so kernel time $\approx D/B_{\text{dev}} = 4/1000 = 4\text{ ms}$, but transfer time $\approx D/B_{\text{pcie}} = 4/16 = 250\text{ ms}$.
+
+GPU end-to-end: $250 + 4 = 254\text{ ms}$. CPU: $D/B_{\text{cpu}} = 4/50 = 80\text{ ms}$. So the **CPU wins** ($80 < 254$) — the PCIe transfer wall dominates, matching the inequality in section 2.
+
+Now amortize: if the column is **device-resident** (cached from a prior query), the transfer term vanishes and GPU time is $4\text{ ms}$ versus $80\text{ ms}$ — a $20\times$ win. Alternatively, $2{:}1$ compression halves transferred bytes to $2\text{ GB}$ ($125\text{ ms}$ transfer), still losing to the CPU, showing residency matters more than compression for low-intensity scans.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

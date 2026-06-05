@@ -60,12 +60,25 @@ Active directions: (i) **extending Froid** to richer control flow, recursion, an
 
 ## 9. Key References
 
-- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993.
-- **[Foundational]** J. M. Hellerstein. *Optimization Techniques for Queries with Expensive Methods.* ACM TODS, 1998.
-- **[SOTA]** K. Ramachandra, K. Park, K. V. Emani, A. Halverson, C. Galindo-Legaria, C. Cunningham. *Froid: Optimization of Imperative Programs in a Relational Database.* PVLDB, 2018.
-- **[SOTA]** S. Gupta, K. Ramachandra. *Procedural Extensions of SQL: Understanding their usage in the wild.* PVLDB, 2021.
-- **[SOTA]** L. F. Spiegelberg, R. Yesantharao, M. Schwarzkopf, T. Kraska. *Tuplex: Data Science in Python at Native Code Speed.* SIGMOD, 2021.
-- **[Foundational]** C. A. Galindo-Legaria, M. M. Joshi. *Orthogonal Optimization of Subqueries and Aggregation.* SIGMOD, 2001.
+- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993. — [ACM](https://dl.acm.org/doi/10.1145/170036.170078)
+- **[Foundational]** J. M. Hellerstein. *Optimization Techniques for Queries with Expensive Methods.* ACM TODS, 1998. — [DBLP](https://dblp.org/rec/journals/tods/Hellerstein98.html)
+- **[SOTA]** K. Ramachandra, K. Park, K. V. Emani, A. Halverson, C. Galindo-Legaria, C. Cunningham. *Froid: Optimization of Imperative Programs in a Relational Database.* PVLDB, 2018. — [arXiv](https://arxiv.org/abs/1712.00498)
+- **[SOTA]** S. Gupta, K. Ramachandra. *Procedural Extensions of SQL: Understanding their usage in the wild.* PVLDB, 2021. — [ACM](https://dl.acm.org/doi/abs/10.14778/3457390.3457402)
+- **[SOTA]** L. F. Spiegelberg, R. Yesantharao, M. Schwarzkopf, T. Kraska. *Tuplex: Data Science in Python at Native Code Speed.* SIGMOD, 2021. — [ACM](https://dl.acm.org/doi/10.1145/3448016.3457244)
+- **[Foundational]** C. A. Galindo-Legaria, M. M. Joshi. *Orthogonal Optimization of Subqueries and Aggregation.* SIGMOD, 2001. — [ACM](https://dl.acm.org/doi/10.1145/375663.375748)
+
+## 10. Worked Example
+
+**Expensive-predicate ordering by rank.** A query applies two independent conjunctive predicates per tuple: $p_1$ = cheap range check, $p_2$ = a costly UDF (e.g., image classifier). Costs and selectivities:
+
+| Predicate | cost $c_i$ | selectivity $s_i$ | $\text{rank}=\frac{s_i-1}{c_i}$ |
+|-----------|-----------|-------------------|----------------------------------|
+| $p_1$ | $1$ | $0.5$ | $-0.50$ |
+| $p_2$ | $100$ | $0.1$ | $-0.009$ |
+
+Order by **ascending rank** (most negative first): $p_1$ then $p_2$. On $N=1000$ tuples, evaluate $p_1$ on all 1000 (cost $1000$); only $500$ survive to $p_2$ (cost $500\times100=50{,}000$); total $\approx 51{,}000$. Reverse order $p_2$ then $p_1$: $1000\times100 = 100{,}000$ for $p_2$ alone, then $100$ survivors $\times1=100$; total $\approx100{,}100$ — nearly $2\times$ worse.
+
+The exchange argument confirms optimality: swapping two adjacent predicates improves cost iff they are out of rank order, so sorting on rank ($O(n\log n)$) is exact for **independent** predicates. Introduce correlation between $p_1,p_2$ and the rank rule breaks — that placement becomes NP-hard (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -85,12 +85,27 @@ the obstacle is observability rather than computational hardness, the problem st
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[Survey]** Lan, Bao, Peng. *A Survey on Advancing the DBMS Query Optimizer: Cardinality Estimation, Cost Model, and Plan Enumeration.* Data Science and Engineering, 2021.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342644)
+- **[Survey]** Lan, Bao, Peng. *A Survey on Advancing the DBMS Query Optimizer: Cardinality Estimation, Cost Model, and Plan Enumeration.* Data Science and Engineering, 2021. — [DOI](https://doi.org/10.1007/s41019-020-00149-7)
+
+## 10. Worked Example
+
+Three candidate plans for one query, with the analytic cost model $C$ (tuples + pages) and measured wall-clock $R$ (seconds):
+
+| Plan | $C$ (model) | $R$ (real) |
+|------|------------|-----------|
+| $P_1$ (nested-loop join) | 1.0 | 4.0 |
+| $P_2$ (hash join, cache-friendly) | 1.5 | 1.0 |
+| $P_3$ (sort-merge) | 1.2 | 2.5 |
+
+The model ranks $P_1 < P_3 < P_2$ and picks $P_1$. The true ranking is $P_2 < P_3 < P_1$ — so the model's argmin ($P_1$) is the *worst* plan. Regret:
+$$\text{regret}(C) = \frac{R(\arg\min_T C(T))}{\min_T R(T)} = \frac{R(P_1)}{R(P_2)} = \frac{4.0}{1.0} = 4.0.$$
+
+A $4\times$ slowdown despite "minimizing cost." The failure is **ordinal**: $C$ rewards $P_1$'s low tuple count but ignores that its nested-loop pattern thrashes cache, while $P_2$'s vectorized hash probe stays in L2. Note $C$ need not be calibrated in absolute terms — it only needs to invert *zero* pairs. Here it inverts all three, the canonical rank-infidelity that learned cost models target.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

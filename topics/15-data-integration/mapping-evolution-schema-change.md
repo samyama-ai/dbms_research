@@ -44,12 +44,21 @@ Active directions: **incremental/differential mapping maintenance** scaling with
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing schema mappings: Second-order dependencies to the rescue.* ACM TODS, 2005.
-- **[Foundational]** M. Arenas, J. Pérez, C. Riveros. *The recovery of a schema mapping: Bringing exchanged data back.* ACM TODS, 2009.
-- **[SOTA]** C. Curino, H. J. Moon, C. Zaniolo. *Graceful database schema evolution: The PRISM workbench.* VLDB, 2008.
-- **[SOTA]** C. Curino, H. J. Moon, A. Deutsch, C. Zaniolo. *Automating the database schema evolution process (PRISM++).* VLDB Journal, 2013.
-- **[Foundational]** P. Bernstein, S. Melnik. *Model management 2.0: Manipulating richer mappings.* SIGMOD, 2007.
-- **[Survey]** P. Kolaitis. *Schema mappings and data examples.* (Tutorial/survey lineage), EDBT/ICDT, 2014.
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing schema mappings: Second-order dependencies to the rescue.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[Foundational]** M. Arenas, J. Pérez, C. Riveros. *The recovery of a schema mapping: Bringing exchanged data back.* ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620589)
+- **[SOTA]** C. Curino, H. J. Moon, C. Zaniolo. *Graceful database schema evolution: The PRISM workbench.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453939)
+- **[SOTA]** C. Curino, H. J. Moon, A. Deutsch, C. Zaniolo. *Automating the database schema evolution process (PRISM++).* VLDB Journal, 2013. — [DOI](https://doi.org/10.1007/s00778-012-0302-x)
+- **[Foundational]** P. Bernstein, S. Melnik. *Model management 2.0: Manipulating richer mappings.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247482)
+- **[Survey]** P. Kolaitis. *Schema mappings and data examples.* (Tutorial/survey lineage), EDBT/ICDT, 2014. — [DOI](https://doi.org/10.1145/2452376.2452393)
+
+## 10. Worked Example
+
+A deployed mapping $\mathcal{M}: \mathsf{Emp}(\text{id}, \text{name}, \text{dept}) \rightarrow \mathsf{T}(\text{id}, \text{name}, \text{dept})$. The source is then **normalized** (split): $\mathsf{Emp}$ is replaced by $\mathsf{Person}(\text{id}, \text{name})$ and $\mathsf{Works}(\text{id}, \text{dept})$. The schema change $\mathcal{F}$ is itself a mapping:
+$$\mathsf{Emp}(i,n,d) \;\leftrightarrow\; \mathsf{Person}(i,n) \wedge \mathsf{Works}(i,d).$$
+To re-establish the integration we want $\mathcal{M}' = \mathcal{F}^{-1} \circ \mathcal{M}$. Composing the inverse of the split (a join) with $\mathcal{M}$ yields the adapted st-tgd
+$$\mathsf{Person}(i,n) \wedge \mathsf{Works}(i,d) \rightarrow \mathsf{T}(i,n,d).$$
+
+Trace on data: $\mathsf{Person}(7, \text{Bo})$, $\mathsf{Works}(7, \text{HR})$ chase to $\mathsf{T}(7, \text{Bo}, \text{HR})$ — identical to what old $\mathcal{M}$ produced from $\mathsf{Emp}(7, \text{Bo}, \text{HR})$, so semantics on unchanged data is preserved. Note: if $\mathsf{Works}$ allowed an employee with no dept row, the join drops that person — $\mathcal{F}$ is only a *maximum recovery*, not an exact inverse, exactly the subtlety section 2 flags. Here the composition stays a plain st-tgd, but in general it would require an SO-tgd.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

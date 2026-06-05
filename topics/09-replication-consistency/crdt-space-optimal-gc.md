@@ -47,11 +47,19 @@ Active work on *pure op-based* and *δ-state* CRDTs with explicit causal-stabili
 
 ## 9. Key References
 
-- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011 (INRIA RR-7506/RR-7687).
-- **[Foundational]** A. Bieniusa, M. Zawirski, N. Preguiça, M. Shapiro, C. Baquero, et al. *An optimized conflict-free replicated set.* INRIA RR-8083, 2012.
-- **[SOTA]** P. Almeida, A. Shapiro, C. Baquero. *Delta state replicated data types.* J. Parallel Distrib. Comput., 2018.
-- **[SOTA]** C. Baquero, P. Almeida, A. Shoker. *Pure operation-based replicated data types.* arXiv:1710.04469, 2017.
-- **[Survey]** N. Preguiça. *Conflict-free Replicated Data Types: An Overview.* arXiv:1806.10254, 2018.
+- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011 (INRIA RR-7506/RR-7687). — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[Foundational]** A. Bieniusa, M. Zawirski, N. Preguiça, M. Shapiro, C. Baquero, et al. *An optimized conflict-free replicated set.* INRIA RR-8083, 2012. — [arXiv](https://arxiv.org/abs/1210.3368)
+- **[SOTA]** P. Almeida, A. Shoker, C. Baquero. *Delta state replicated data types.* J. Parallel Distrib. Comput., 2018. — [DOI](https://doi.org/10.1016/j.jpdc.2017.08.003)
+- **[SOTA]** C. Baquero, P. Almeida, A. Shoker. *Pure operation-based replicated data types.* arXiv:1710.04469, 2017. — [arXiv](https://arxiv.org/abs/1710.04469)
+- **[Survey]** N. Preguiça. *Conflict-free Replicated Data Types: An Overview.* arXiv:1806.10254, 2018. — [arXiv](https://arxiv.org/abs/1806.10254)
+
+## 10. Worked Example
+
+Take an OR-Set replicated on $N=3$ replicas. Replica A adds element $x$ with unique dot $(A,1)$; the set is $\{x \mapsto \{(A,1)\}\}$. Later A removes $x$ by recording that $(A,1)$ is observed-removed. The naive design keeps the dot $(A,1)$ as a **tombstone** so a concurrent re-add at B (dot $(B,1)$) is not erased on merge.
+
+Causal-stability GC: track each replica's version vector. Once **every** replica's vector dominates $(A,1)$ — say all reach $A:1$ — the event is *stable*: no future concurrent operation referencing $(A,1)$ can arrive. Only then is the tombstone safe to drop. If we GC'd earlier and a delayed add carrying $(A,1)$ arrived, $x$ would be **resurrected**.
+
+Cost accounting: tracking the stability frontier costs $\Theta(N)=3$ entries. During quiescence (no concurrency) metadata collapses to the $O(n)$ live elements. The lower bound bites only under *sustained concurrency on the same key*: $k$ concurrently contended dots force $\Omega(k)$ retained metadata — concurrency, not live size $n$, is the floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

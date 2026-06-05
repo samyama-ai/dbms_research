@@ -44,10 +44,20 @@ Active threads: learned/adaptive partitioning that uses workload models to choos
 - Joint optimization of convergence vs. answer-latency under SLA/budget constraints.
 
 ## 9. Key References
-- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007.
-- **[SOTA]** Halim, Idreos, Karras, Yap. *Stochastic Database Cracking: Towards Robust Adaptive Indexing in Main-Memory Column-Stores.* VLDB, 2012.
-- **[Foundational]** Graefe, Kuno. *Self-selecting, self-tuning, incrementally optimized indexes (Adaptive Merging).* EDBT, 2010.
-- **[Survey]** Idreos et al. *The Data Calculator / Self-designing data structures.* SIGMOD, 2018.
+- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p07.pdf)
+- **[SOTA]** Halim, Idreos, Karras, Yap. *Stochastic Database Cracking: Towards Robust Adaptive Indexing in Main-Memory Column-Stores.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1203.0055)
+- **[Foundational]** Graefe, Kuno. *Self-selecting, self-tuning, incrementally optimized indexes (Adaptive Merging).* EDBT, 2010. — [PDF](https://openproceedings.org/2010/conf/edbt/GraefeK10.pdf)
+- **[Survey]** Idreos et al. *The Data Calculator / Self-designing data structures.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3199671)
+
+## 10. Worked Example
+
+Take a column $A=[7,2,9,4,1,8,5,3]$ ($n=8$). 
+
+**Query 1:** range $[4,8)$. Cracking partitions in place into $<4$, $[4,8)$, $\ge 8$: e.g. $[\underbrace{2,1,3}_{<4}\mid \underbrace{7,4,5}_{[4,8)}\mid \underbrace{9,8}_{\ge 8}]$. Work $=\Theta(n)=8$ touches; the cracker index now records boundaries at positions $3$ and $6$.
+
+**Query 2:** range $[1,3)$. Only the first piece $[2,1,3]$ is re-partitioned into $<3$ vs $\ge 3$: $[1,2\mid 3]$. Work touches just $3$ elements, not $8$ — work decays as pieces shrink.
+
+This is exactly **quicksort with query boundaries as pivots**. With uniform-random boundaries the pivots are balanced, so total work to reach all-singletons is the randomized-quicksort expectation $\Theta(n\log n)=8\cdot 3=24$ touches. An adversary instead always querying just past the current min ($[1,2),[2,3),\dots$) peels one element per query: $\Theta(n)$ work per query, $\Theta(n^2)=64$ total — the quicksort pathology. Stochastic cracking injects a random auxiliary pivot per query, restoring $O(n\log n)$ w.h.p. regardless of the adversary.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

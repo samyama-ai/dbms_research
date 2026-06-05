@@ -106,12 +106,24 @@ Groups: MIT (Madden/Yu), Yale (Abadi), CMU (Pavlo), Microsoft Research.
 
 ## 9. Key References
 
-- **[Foundational]** Papadimitriou, C. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Kung, H.T., Robinson, J. *On Optimistic Methods for Concurrency Control.* ACM TODS, 1981.
-- **[Foundational]** Eswaran, K., Gray, J., Lorie, R., Traiger, I. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Yu, X., Xia, Y., Pavlo, A., Sanchez, D., Rudolph, L., Devadas, S. *Sundial: Harmonizing Concurrency Control and Caching.* VLDB, 2018.
-- **[Foundational]** Kalyanasundaram, B., Schnitger, G. *The Probabilistic Communication Complexity of Set Intersection.* SIAM J. Discrete Math, 1992.
+- **[Foundational]** Papadimitriou, C. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Kung, H.T., Robinson, J. *On Optimistic Methods for Concurrency Control.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319566.319567)
+- **[Foundational]** Eswaran, K., Gray, J., Lorie, R., Traiger, I. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** Yu, X., Xia, Y., Pavlo, A., Sanchez, D., Rudolph, L., Devadas, S. *Sundial: Harmonizing Concurrency Control and Caching.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3231751.3231763)
+- **[Foundational]** Kalyanasundaram, B., Schnitger, G. *The Probabilistic Communication Complexity of Set Intersection.* SIAM J. Discrete Math, 1992. — [DOI](https://doi.org/10.1137/0405044)
+
+## 10. Worked Example
+
+OCC validation trace. Transaction $T$ reads $R(T)=\{a,b\}$ at versions $\langle a_3, b_1\rangle$ and writes $W(T)=\{b\}$. Between $T$'s start and commit, two transactions committed: $T'_1$ wrote $\{a\}$ (bumping $a$ to $a_4$), $T'_2$ wrote $\{c\}$.
+
+Backward validation checks each committed $T'_i$ overlapping $T$'s read set:
+- $T'_1$: $W(T'_1)\cap R(T)=\{a\}\neq\varnothing$, and $T$ read $a_3$ while $T'_1$ produced $a_4$ — a **stale read**. Conflict edge $T'_1 \to T$ would close a cycle; $T$ **aborts**.
+- $T'_2$: $W(T'_2)\cap R(T)=\varnothing$ — no conflict, skip.
+
+Cost: comparing against $C=2$ committed txns with footprint $f=2$ is $O(C\cdot f)=4$ naive comparisons; with sorted/indexed read sets it drops to $O(f\log f)$.
+
+Distributed twist: if $a$ lives on shard $X$ and $b$ on shard $Y$, deciding the $\{a\}$ overlap reduces to **set-disjointness** across $X,Y$, forcing $\Omega(f)$ bits of communication per peer — the lower-bound floor that no engineered OCC has been proven to beat tightly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

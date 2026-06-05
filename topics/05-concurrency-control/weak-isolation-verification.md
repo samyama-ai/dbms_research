@@ -51,11 +51,22 @@ It is **partially solved**: robustness against several concrete levels (CC, PC, 
 - Integration into developer toolchains (CI-time isolation safety checks for ORMs / SQL).
 
 ## 9. Key References
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** S. Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[SOTA]** A. Gotsman, H. Yang, C. Ferreira, M. Najafzadeh, M. Shapiro. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016.
-- **[SOTA]** G. Bernardi, A. Gotsman. *Robustness Against Consistency Models with Atomic Visibility.* CONCUR, 2016.
-- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** S. Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** A. Gotsman, H. Yang, C. Ferreira, M. Najafzadeh, M. Shapiro. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016. — [DOI](https://doi.org/10.1145/2837614.2837625)
+- **[SOTA]** G. Bernardi, A. Gotsman. *Robustness Against Consistency Models with Atomic Visibility.* CONCUR, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2016.7)
+- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan)
+
+## 10. Worked Example
+
+**Robustness-via-reachability, in miniature.** Program $P$ has two transaction bodies over balances $a, b$ with invariant $\varphi: a + b \ge 0$ and initial $a=b=100$:
+
+- $T_1$: if $a + b \ge 100$ then $a \mathrel{-}= 100$.
+- $T_2$: if $a + b \ge 100$ then $b \mathrel{-}= 100$.
+
+Under **serializability** one of the two guards fails on the second transaction, so at most one withdrawal happens and $\varphi$ holds. Under **snapshot isolation**, both read the same snapshot $(100,100)$, both guards pass, writes are disjoint ($a$ vs $b$) so first-committer-wins permits both: result $(0,0)$... then a third withdrawal would break $\varphi$ — a write-skew.
+
+The verification question "does every SI execution satisfy $\varphi$?" becomes **state reachability** in a transformed program: is state $(0,0)$-then-violate reachable? Here it is, so $P$ is *not robust*. With finite balances this is decidable (PSPACE via reachability); CISE's proof rule flags that the two decrements are not commutative under the guard and must be **coordinated** (e.g. one promoted to 2PL) to restore safety.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

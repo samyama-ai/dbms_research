@@ -43,12 +43,22 @@ Directions: (1) characterizing constraint classes (e.g., **acyclic** degree cons
 
 ## 9. Key References
 
-- **[Foundational]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012.
-- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS 2016.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017 (the PANDA paper).
-- **[Foundational]** Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries.* JACM, 2013 (submodular width).
-- **[Foundational]** Zhang, Yeung. *On Characterization of Entropy Function via Information Inequalities.* IEEE Trans. Information Theory, 1998 (non-Shannon inequalities).
-- **[Survey]** Ngo. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS 2018 (tutorial/survey).
+- **[Foundational]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012. — [DOI](https://doi.org/10.1145/2220357.2220363)
+- **[Foundational]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017 (the PANDA paper). — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[Foundational]** Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries.* JACM, 2013 (submodular width). — [DOI](https://doi.org/10.1145/2535926)
+- **[Foundational]** Zhang, Yeung. *On Characterization of Entropy Function via Information Inequalities.* IEEE Trans. Information Theory, 1998 (non-Shannon inequalities). — [DOI](https://doi.org/10.1109/18.681320)
+- **[Survey]** Ngo. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS 2018 (tutorial/survey). — [arXiv](https://arxiv.org/abs/1803.09930)
+
+## 10. Worked Example
+
+Take the triangle query $Q = R(A,B)\bowtie S(B,C)\bowtie T(A,C)$ with each relation of size $N$.
+
+**AGM (cardinalities only).** The fractional edge cover LP gives weights $x_R=x_S=x_T=\tfrac12$, so $\mathrm{AGM}(Q)=N^{1/2+1/2+1/2}=N^{3/2}$. With $N=10^6$ this caps output at $10^9$.
+
+**Add a degree constraint.** Suppose every $A$-value appears in at most $b=10$ tuples of $R$ (a degree bound: $h(B\mid A)\le\log_2 b$). Now bound the output entropically: pick attribute $A$, enumerate its $\le N/?$ values, and for each, $B$ ranges over $\le b$ choices while $C$ is pinned by $T(A,C)$. The polymatroid program returns $\max|Q(D)| \le N\cdot b = 10^6\times 10 = 10^7$ — two orders of magnitude below the AGM bound $10^9$.
+
+A degree-aware algorithm (PANDA / degree-aware Generic Join) exploits this: iterate $A$, then the bounded fan-out on $B$, achieving runtime $\tilde O(N\cdot b)$ rather than $\tilde O(N^{3/2})$. This shows how a single degree constraint collapses the worst-case bound far below AGM.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

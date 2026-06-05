@@ -47,12 +47,20 @@ The correctness lower bound on truncation ($\text{minLSN}$) is exact and matched
 - Reclamation policies that minimize write-amplification while honoring replication-slot and archive retention constraints.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C. et al. *ARIES (log truncation, dirty-page table, minLSN).* ACM TODS, 1992.
-- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D. & O'Neil, E. *The Log-Structured Merge-Tree.* Acta Informatica, 1996.
-- **[SOTA]** Athanassoulis, M. et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** Dayan, N. & Idreos, S. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[Foundational]** Cover, T. & Thomas, J. *Elements of Information Theory.* Wiley, 2006. (Source-coding / conditional-entropy bounds.)
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High-Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
+- **[Foundational]** Mohan, C. et al. *ARIES (log truncation, dirty-page table, minLSN).* ACM TODS, 1992. — [DOI](https://dl.acm.org/doi/10.1145/128765.128770)
+- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D. & O'Neil, E. *The Log-Structured Merge-Tree.* Acta Informatica, 1996. — [DBLP](https://dblp.org/rec/journals/acta/ONeilCGO96.html)
+- **[SOTA]** Athanassoulis, M. et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[SOTA]** Dayan, N. & Idreos, S. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://dl.acm.org/doi/10.1145/3183713.3196927)
+- **[Foundational]** Cover, T. & Thomas, J. *Elements of Information Theory.* Wiley, 2006. (Source-coding / conditional-entropy bounds.) — [DOI](https://doi.org/10.1002/047174882X)
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High-Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://dl.acm.org/doi/10.1145/3035918.3056101)
+
+## 10. Worked Example
+
+Consider a WAL with LSNs $100\ldots160$ and a checkpoint at LSN $150$. The dirty-page table holds two pages: $p_A$ with $\text{recLSN}=120$ and $p_B$ with $\text{recLSN}=145$. One transaction $T_7$ is still active, its first log record at LSN $135$. Then
+$$\text{minLSN} = \min(\underbrace{\min(120,145)}_{\text{recLSN}},\ \underbrace{135}_{T_7}) = 120.$$
+So records $100$–$119$ are reclaimable; everything from $120$ on must be retained — the checkpoint at $150$ does **not** license truncating past $120$, because $p_A$'s redo still depends on LSN $120$.
+
+Now the compression side. Suppose the $40$ retained records each name an "increment counter $c$ by 1" op. A physical encoding writes an 8 KB page image per record ($\approx 320$ KB). A logical encoding writes just $(\text{op-id}, \text{key})\approx 16$ B each ($640$ B). The conditional entropy given base state is near $H \approx 40\cdot\log_2(\text{ops})$ bits — a few hundred bits — so even the logical encoding sits above the floor, illustrating the compactness gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

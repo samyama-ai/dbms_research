@@ -45,12 +45,22 @@ There is no protocol that is *simultaneously* CFT-cheap in replica count, maskin
 - Hybrid quorums that mix crash and Byzantine replicas with optimal placement.
 
 ## 9. Key References
-- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999.
-- **[Foundational]** Cynthia Dwork, Nancy Lynch, Larry Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988.
-- **[SOTA]** Ramakrishna Kotla et al. *Zyzzyva: Speculative Byzantine Fault Tolerance.* SOSP, 2007.
-- **[SOTA]** Maofan Yin et al. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019.
-- **[SOTA]** Dahlia Malkhi, Kartik Nayak, Ling Ren. *Flexible Byzantine Fault Tolerance.* ACM CCS, 2019.
-- **[SOTA]** Giuliana Santos Veronese et al. *Efficient Byzantine Fault Tolerance (MinBFT).* IEEE TC, 2013.
+- **[Foundational]** Miguel Castro, Barbara Liskov. *Practical Byzantine Fault Tolerance.* OSDI, 1999. — [USENIX](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance)
+- **[Foundational]** Cynthia Dwork, Nancy Lynch, Larry Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. — [DOI](https://doi.org/10.1145/42282.42283)
+- **[SOTA]** Ramakrishna Kotla et al. *Zyzzyva: Speculative Byzantine Fault Tolerance.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294267)
+- **[SOTA]** Maofan Yin et al. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331591)
+- **[SOTA]** Dahlia Malkhi, Kartik Nayak, Ling Ren. *Flexible Byzantine Fault Tolerance.* ACM CCS, 2019. — [DOI](https://doi.org/10.1145/3319535.3354225)
+- **[SOTA]** Giuliana Santos Veronese et al. *Efficient Byzantine Fault Tolerance (MinBFT).* IEEE TC, 2013. — [DOI](https://doi.org/10.1109/TC.2011.221)
+
+## 10. Worked Example
+
+**The $2f+1$ vs $3f+1$ replica gap, with $f=1$.** Suppose we want to mask one fault.
+
+*CFT (crash only):* $n=2f+1=3$ replicas $\{R_1,R_2,R_3\}$, quorum $2$. If $R_3$ crashes, $\{R_1,R_2\}$ still form a quorum and agree. Cost: $O(n)$ messages, $\approx 2$ delays.
+
+*BFT (Byzantine, no trusted hardware):* $n=3f+1=4$. Why can't $3$ suffice? Let $R_3$ be Byzantine and **equivocate** — tell $\{R_1\}$ "value $a$" and $\{R_2\}$ "value $b$". With only quorums of size $2$ out of $3$, $R_1$ sees $\{R_1{=}a,R_3{=}a\}$ and commits $a$; $R_2$ sees $\{R_2{=}b,R_3{=}b\}$ and commits $b$ — a safety violation. Two size-$2$ quorums can fail to overlap in an honest node. With $n=4$, every two size-$3$ quorums intersect in $\ge 2$ nodes, $\ge 1$ honest, blocking equivocation.
+
+*Trusted counter (MinBFT):* an attested monotonic counter makes $R_3$ unable to assign the same sequence number to $a$ and $b$, so equivocation is detectable and $n=2f+1=3$ again suffices — recovering CFT's replica count while masking a Byzantine fault.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

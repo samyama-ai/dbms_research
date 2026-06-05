@@ -62,12 +62,32 @@ The **classical decision questions are essentially closed**: tight NP/coNP compl
 
 ## 9. Key References
 
-- **[Foundational]** W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional functional dependencies for capturing data inconsistencies.* ACM TODS, 2008.
-- **[SOTA]** W. Fan, F. Geerts, J. Li, M. Xiong. *Discovering conditional functional dependencies.* IEEE TKDE, 2011.
-- **[SOTA]** B. Kenig, D. Suciu. *Integrity constraints revisited: from exact to approximate implication.* ICDT / Logical Methods in Computer Science, 2020–2022.
-- **[Survey]** T. Papenbrock, F. Naumann, et al. *Functional dependency discovery: an experimental evaluation of seven algorithms.* PVLDB, 2015.
-- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: holistic data repairs with probabilistic inference.* PVLDB, 2017.
-- **[Foundational]** H. Mannila, K.-J. Räihä. *Algorithms for inferring functional dependencies from relations.* Data & Knowledge Engineering, 1994.
+- **[Foundational]** W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional functional dependencies for capturing data inconsistencies.* ACM TODS, 2008. — [DOI](https://doi.org/10.1145/1366102.1366103)
+- **[SOTA]** W. Fan, F. Geerts, J. Li, M. Xiong. *Discovering conditional functional dependencies.* IEEE TKDE, 2011. — [DOI](https://doi.org/10.1109/TKDE.2010.154)
+- **[SOTA]** B. Kenig, D. Suciu. *Integrity constraints revisited: from exact to approximate implication.* ICDT / Logical Methods in Computer Science, 2020–2022. — [arXiv](https://arxiv.org/abs/1812.09987)
+- **[Survey]** T. Papenbrock, F. Naumann, et al. *Functional dependency discovery: an experimental evaluation of seven algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: holistic data repairs with probabilistic inference.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631)
+- **[Foundational]** H. Mannila, K.-J. Räihä. *Algorithms for inferring functional dependencies from relations.* Data & Knowledge Engineering, 1994. — [DOI](https://doi.org/10.1016/0169-023X(94)90023-X)
+
+## 10. Worked Example
+
+Relation $\mathit{Cust}(\text{CC},\text{zip},\text{city})$ (CC = country code). CFD:
+$$\varphi=([\text{CC},\text{zip}]\to[\text{city}],\ T_p),\qquad T_p:\ (\text{CC}=\text{44},\ \text{zip}=\_\ \Vert\ \text{city}=\_).$$
+
+This says: *for UK tuples (CC = 44), zip determines city*; it imposes nothing on other countries. Instance:
+
+| | CC | zip | city |
+|--|----|-----|------|
+|$t_1$| 44 | EH1 | Edinburgh |
+|$t_2$| 44 | EH1 | Glasgow |
+|$t_3$| 01 | 10001 | New York |
+
+$t_1,t_2$ both match the pattern (CC = 44) and agree on zip but **disagree on city**, so $\varphi$ is violated — exactly the inconsistency CFDs catch that a plain FD $\text{CC},\text{zip}\to\text{city}$ would also catch, but here scoped to UK only.
+
+$g_3$ error: deleting one of $\{t_1,t_2\}$ restores satisfaction, and that is minimal, so
+$$g_3(\varphi)=1-\tfrac{2}{3}=\tfrac{1}{3}.$$
+
+Satisfiability subtlety: adding a constant CFD forcing $\text{city}=\text{London}$ for $\text{zip}=\text{EH1}$ would conflict with the Edinburgh constant — such constant-pattern conflicts are why CFD satisfiability is NP-complete, unlike for FDs.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -34,13 +34,21 @@ Active: **drift-aware, self-tuning learned indexes** that monitor error and trig
 - Unified evaluation tying into a general access-method cost model (see `access-method-cost-model`).
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** J. Ding, U. F. Minhas, J. Yu, C. Wang, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[SOTA]** C. Wongkham, B. Lu, C. Liu, Z. Zhong, E. Lo, T. Wang. *Are Updatable Learned Indexes Ready? (GRE benchmark).* VLDB, 2022.
-- **[Foundational]** S. Idreos, M. L. Kersten, S. Manegold. *Database Cracking.* CIDR, 2007.
-- **[Foundational]** M. Pătrașcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Survey]** J. Gama, I. Žliobaitė, A. Bifet, M. Pechenizkiy, A. Bouchachia. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014.
+- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** J. Ding, U. F. Minhas, J. Yu, C. Wang, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** C. Wongkham, B. Lu, C. Liu, Z. Zhong, E. Lo, T. Wang. *Are Updatable Learned Indexes Ready? (GRE benchmark).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551848)
+- **[Foundational]** S. Idreos, M. L. Kersten, S. Manegold. *Database Cracking.* CIDR, 2007. — [CIDR PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p07.pdf)
+- **[Foundational]** M. Pătrașcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Survey]** J. Gama, I. Žliobaitė, A. Bifet, M. Pechenizkiy, A. Bouchachia. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2523813)
+
+## 10. Worked Example
+
+Build a learned index over $N = 1000$ keys drawn from a uniform CDF on $[0,1000)$, so $F(x) = x/1000$ and the predicted position is $\hat p(x) = N\cdot\hat F(x) = x$. A single linear model fits this exactly: max error $\Delta = 0$, so a lookup goes straight to the slot — no last-mile search.
+
+Now apply **data drift**: 500 inserts all land in the dense range $[0,100)$, pushing the true CDF up there. The stale model still predicts $\hat p(700) = 700$, but the true rank of key $700$ is now $500 + 700\cdot(500/900) \approx 889$. The error is $\Delta \approx |889 - 700| = 189$, so the engine must binary-search a window of $\sim 189$ slots: $\log_2 189 \approx 8$ probes — worse than a B-tree's $\log_2 1500 \approx 11$ only marginally, and the gap grows with drift.
+
+Detection: distinguishing this shift of KS-distance $\delta \approx 0.21$ needs $\Omega(1/\delta^2) \approx 23$ sampled queries before a retrain is justified (section 5), illustrating the staleness-vs-retrain trade-off.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

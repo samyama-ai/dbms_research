@@ -49,12 +49,24 @@ The AGM bound is a **matching lower bound** on *output size*, so any join enumer
 
 ## 9. Key References
 
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013.
-- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** T. L. Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014.
-- **[SOTA]** D. Abadi, D. Myers, D. DeWitt, S. Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007; and *Column-Stores vs. Row-Stores (invisible join).* SIGMOD, 2008.
-- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs.* ICDE, 2013.
-- **[Survey]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** T. L. Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481)
+- **[SOTA]** D. Abadi, D. Myers, D. DeWitt, S. Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007; and *Column-Stores vs. Row-Stores (invisible join).* SIGMOD, 2008. — [PDF](http://www.cs.umd.edu/~abadi/papers/abadiicde2007.pdf)
+- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs.* ICDE, 2013. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/BalkesenTAO13.html)
+- **[Survey]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+
+## 10. Worked Example
+
+The **triangle query** $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$, each relation of size $N$.
+
+**AGM bound:** the hypergraph has 3 edges over 3 vertices; the fractional edge cover assigns $x_e=\tfrac12$ to each edge (every vertex is covered: $\tfrac12+\tfrac12=1$). So $|Q| \le N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2}$.
+
+**Binary plan:** compute $R\bowtie S$ first. Adversarial data (a "wheel" with one hub value) makes this intermediate result blow up to $\Theta(N^2)$ tuples — even though the final answer is only $O(N^{3/2})$. Any pairwise plan pays $\Theta(N^2)$.
+
+**WCOJ (Leapfrog Triejoin / Generic Join):** intersect all three relations variable-by-variable; for each binding of $a$, leapfrog-intersect the sorted $b$-lists. Total time $\tilde O(N^{3/2})$ — matching AGM, strictly better than $N^2$.
+
+Numerically, $N=10^6$: binary $\approx 10^{12}$ intermediate tuples vs. WCOJ $\approx 10^9$ — a $1000\times$ gap. In a column store, late materialization keeps these as position lists, fetching payload only for surviving triangles.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

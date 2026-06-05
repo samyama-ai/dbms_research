@@ -44,11 +44,20 @@ The endpoints (ARIES correctness; H-Store empirics) are well understood, but **n
 - Granularity choice integrated with parallel/instant recovery and with bandwidth-constrained replication.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992.
-- **[SOTA]** Malviya, N., Weisberg, A., Madden, S. & Stonebraker, M. *Rethinking Main Memory OLTP Recovery (command vs. ARIES logging).* ICDE, 2014.
-- **[SOTA]** Zheng, W., Tu, S., Kohler, E. & Liskov, B. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[SOTA]** Thomson, A. et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://dl.acm.org/doi/10.1145/128765.128770)
+- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [WorldCat](https://search.worldcat.org/title/transaction-processing-concepts-and-techniques/oclc/26303792)
+- **[SOTA]** Malviya, N., Weisberg, A., Madden, S. & Stonebraker, M. *Rethinking Main Memory OLTP Recovery (command vs. ARIES logging).* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816685)
+- **[SOTA]** Zheng, W., Tu, S., Kohler, E. & Liskov, B. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+- **[SOTA]** Thomson, A. et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://dl.acm.org/doi/10.1145/2213836.2213838)
+
+## 10. Worked Example
+
+A transaction runs `UPDATE accounts SET bal = bal + 1 WHERE id = 42`, touching $4$ bytes inside an $8$ KB page.
+
+- **Physical logging** writes a before/after image of the changed page region. Even byte-ranged, a record carries page id + offset + $4$+$4$ bytes of image $\approx 24$ B; a full-page-image scheme would log $8$ KB. Replay is idempotent: re-apply the after-image, cost $O(1)$ page write, no recompute.
+- **Logical logging** writes the operation: op-id `add`, key $42$, delta $+1$ $\approx \ell(u) = 12$ B. Amplification ratio here is modest, $\phi(u)/\ell(u) = 24/12 = 2$ (or $8192/12 \approx 680$ vs. full-page). But replay must re-execute the `add` against an *action-consistent* state and undo needs the inverse ($-1$).
+
+So with $10^6$ such updates, physiological logs $\approx 24$ MB and recovers in $O(\text{dirty pages})$; logical logs $\approx 12$ MB (half the bandwidth — decisive for replication) but recovery $\approx$ re-running $10^6$ ops. Neither hits both the volume floor and the $O(\text{dirty pages})$ replay bound — the open crossover the problem asks to characterize.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

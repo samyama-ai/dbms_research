@@ -49,11 +49,25 @@ Active work continues on HTAP engines (Umbra, CedarDB) refining interval/epoch G
 
 ## 9. Key References
 
-- **[SOTA]** Neumann, T.; Mühlbauer, T.; Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[SOTA]** Böttcher, J.; Leis, V.; Neumann, T.; Kemper, A. *Scalable Garbage Collection for In-Memory MVCC Systems.* PVLDB, 2019.
-- **[SOTA]** Diaconu, C.; Freedman, C.; Ismert, E.; Larson, P.-Å.; et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[Survey]** Wu, Y.; Arulraj, J.; Lin, J.; Xian, R.; Pavlo, A. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* PVLDB, 2017.
-- **[Foundational]** Bernstein, P. A.; Goodman, N. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983.
+- **[SOTA]** Neumann, T.; Mühlbauer, T.; Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[SOTA]** Böttcher, J.; Leis, V.; Neumann, T.; Kemper, A. *Scalable Garbage Collection for In-Memory MVCC Systems.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[SOTA]** Diaconu, C.; Freedman, C.; Ismert, E.; Larson, P.-Å.; et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+- **[Survey]** Wu, Y.; Arulraj, J.; Lin, J.; Xian, R.; Pavlo, A. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067427)
+- **[Foundational]** Bernstein, P. A.; Goodman, N. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983. — [DOI](https://doi.org/10.1145/319996.319998)
+
+## 10. Worked Example
+
+Key $k$ has a version chain with validity intervals (begin, end):
+
+$$v_1[0,5),\quad v_2[5,12),\quad v_3[12,20),\quad v_4[20,\infty)$$
+
+Active snapshots: $t_1=8$, $t_2=18$. Watermark $\tau = \min(8,18) = 8$.
+
+**Naive watermark GC** ($\text{Dead}_\tau=\{v:e_v\le\tau\}$): only $v_1$ qualifies ($e_{v_1}=5\le 8$). It reclaims 1 version, leaving chain length 3.
+
+**Interval-based GC** reclaims any version whose interval contains *no* active snapshot. Stab-test each: $v_1[0,5)$ — no snapshot, dead. $v_2[5,12)$ — contains $t_1=8$, **live**. $v_3[12,20)$ — contains $t_2=18$, **live**. $v_4$ — newest, live. So it also reclaims only $v_1$ here, but note it would reclaim a middle version if, say, $t_1$ moved to $15$: then $v_2[5,12)$ contains no active snapshot and becomes reclaimable even though $e_{v_2}=12>\tau$.
+
+**Adversarial pin:** if $t_1$ stays stuck at $8$ while writes continue, $\tau$ freezes at $8$ and every new version after timestamp $8$ is retained, giving worst-case space $\Omega(\Delta)$, $\Delta$ = updates since $8$ — the model-independent lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

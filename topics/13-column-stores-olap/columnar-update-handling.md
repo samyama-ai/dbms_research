@@ -45,12 +45,22 @@ This is **partially solved**: LSM/delta/PDT architectures give practical, tunabl
 - Tighter lower bounds matching practical merge-on-read costs.
 
 ## 9. Key References
-- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005.
-- **[Foundational]** Héman, Zukowski, Nes, Boncz et al. *Positional Update Handling in Column Stores.* SIGMOD, 2010.
-- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey / Dostoevsky: Optimal Navigable Key-Value Store / LSM Tuning.* SIGMOD, 2017 / 2018.
-- **[SOTA]** Lipcon et al. *Kudu: Storage for Fast Analytics on Fast Data.* 2015.
-- **[Foundational]** Athanassoulis, Idreos et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.uni-trier.de/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[Foundational]** Héman, Zukowski, Nes, Boncz et al. *Positional Update Handling in Column Stores.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807227)
+- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey / Dostoevsky: Optimal Navigable Key-Value Store / LSM Tuning.* SIGMOD, 2017 / 2018. — [DBLP search](https://dblp.org/search?q=Monkey%20Optimal%20Navigable%20Key-Value%20Store)
+- **[SOTA]** Lipcon et al. *Kudu: Storage for Fast Analytics on Fast Data.* 2015. — [DBLP search](https://dblp.org/search?q=Kudu%20Storage%20for%20Fast%20Analytics%20on%20Fast%20Data)
+- **[Foundational]** Athanassoulis, Idreos et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.uni-trier.de/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Let base $N = 10^6$ rows. Choose delta bound $d$ and amortize merge cost as in §2: merging $\Delta$ into the base costs $O(N+d)$ and is triggered once every $\Theta(d)$ writes, so per-write merge cost is $\approx N/d$.
+
+- $d = 10^3$: merge runs every 1000 writes, amortized merge $\approx 10^6/10^3 = 1000$ per write, but each scan re-reads only $|\Delta|/|S| = 10^{-3}$ extra — cheap reads, costly writes.
+- $d = 10^5$: amortized merge $\approx 10^6/10^5 = 10$ per write — but every scan now merges 10% extra rows.
+- Balanced $d = \sqrt N = 10^3$ gives amortized write $O(\sqrt N) = 1000$ and scan overhead $\sqrt N / N = 10^{-3}$, matching the §4 bound $O(\sqrt N/B)$ I/Os.
+
+A *positional* delete of base position 500 000 is recorded as a tombstone in $\Delta$, leaving the compressed base block untouched until the next merge — illustrating the read/update/memory tension of the RUM conjecture (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

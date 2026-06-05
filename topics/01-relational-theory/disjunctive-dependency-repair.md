@@ -61,12 +61,24 @@ For *unrestricted* disjunctive existential rules + DCs the problem is **open and
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, M., Bertossi, L., Chomicki, J. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999.
-- **[Foundational]** Eiter, T., Gottlob, G., Mannila, H. *Disjunctive Datalog.* ACM TODS, 1997.
-- **[SOTA]** Koutris, P., Wijsen, J. *Consistent Query Answering for Primary Keys.* ACM TODS, 2017–2021.
-- **[Survey]** Bertossi, L. *Database Repairing and Consistent Query Answering.* Morgan & Claypool Synthesis Lectures, 2011.
-- **[Survey]** Bienvenu, M., Bourgaux, C. *Inconsistency-Tolerant Querying of Description Logic Knowledge Bases.* Reasoning Web, 2016.
-- **[Foundational]** Calì, A., Gottlob, G., Pieris, A. *Towards More Expressive Ontology Languages: The Query Answering Problem (Datalog±).* Artificial Intelligence, 2012.
+- **[Foundational]** Arenas, M., Bertossi, L., Chomicki, J. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[Foundational]** Eiter, T., Gottlob, G., Mannila, H. *Disjunctive Datalog.* ACM TODS, 1997. — [DOI](https://doi.org/10.1145/261124.261126)
+- **[SOTA]** Koutris, P., Wijsen, J. *Consistent Query Answering for Primary Keys.* ACM TODS, 2017–2021. — [DOI](https://doi.org/10.1145/3068334)
+- **[Survey]** Bertossi, L. *Database Repairing and Consistent Query Answering.* Morgan & Claypool Synthesis Lectures, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+- **[Survey]** Bienvenu, M., Bourgaux, C. *Inconsistency-Tolerant Querying of Description Logic Knowledge Bases.* Reasoning Web, 2016. — [DOI](https://doi.org/10.1007/978-3-319-49493-7_5)
+- **[Foundational]** Calì, A., Gottlob, G., Pieris, A. *Towards More Expressive Ontology Languages: The Query Answering Problem (Datalog±).* Artificial Intelligence, 2012. — [DOI](https://doi.org/10.1016/j.artint.2012.08.002)
+
+## 10. Worked Example
+
+Instance $D=\{\text{Phone}(\text{alice})\}$. Constraints:
+- disjunctive TGD $\sigma$: $\text{Phone}(p)\to \text{Mobile}(p)\vee \text{Landline}(p)$ (every phone is mobile or landline);
+- denial constraint $\delta$: $\bot\leftarrow \text{Landline}(\text{alice})$ (alice cannot have a landline — say a known fact).
+
+The disjunctive chase on $\sigma$ branches:
+- **Branch A:** add $\text{Mobile}(\text{alice})$ — satisfies $\delta$.
+- **Branch B:** add $\text{Landline}(\text{alice})$ — violates $\delta$; to restore consistency the repair must *delete* $\text{Phone}(\text{alice})$ (or the landline fact), giving $D'_B=\emptyset$.
+
+Under subset/symmetric-difference minimality, the repairs are $D'_A=\{\text{Phone}(\text{alice}),\text{Mobile}(\text{alice})\}$ and $D'_B=\{\}$ (delete to dodge the denial). For CQA of $Q()\leftarrow\text{Phone}(x)$: it holds in $D'_A$ but not $D'_B$, so the **certain** answer is *false* — even though $D$ asserted Phone(alice). This interleaving of forced insertion (the disjunct) with forced deletion (the denial) is exactly what makes minimal-repair semantics under disjunctive rules + DCs open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

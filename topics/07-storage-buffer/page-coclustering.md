@@ -62,12 +62,22 @@ This is **genuinely open**. The static layout problem is NP-/APX-hard with only 
 
 ## 9. Key References
 
-- **[Foundational]** Garey, Johnson, Stockmeyer. *Some Simplified NP-Complete Graph Problems.* TCS, 1976.
-- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM, 2009.
-- **[SOTA]** Yang, Wu, Kandula, et al. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020.
-- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007.
-- **[SOTA]** Schlag, Heuer, Sanders, et al. *KaHyPar: Multilevel Hypergraph Partitioning.* ALENEX/JEA, 2016–2023.
-- **[Survey]** Charikar, Hajiaghayi, Karloff, Rao. *$\ell_2^2$ Spreading Metrics for Vertex Ordering Problems.* SODA/Algorithmica, 2006.
+- **[Foundational]** Garey, Johnson, Stockmeyer. *Some Simplified NP-Complete Graph Problems.* TCS, 1976. — [DOI](https://doi.org/10.1016/0304-3975(76)90059-1)
+- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM, 2009. — [DOI](https://doi.org/10.1145/1502793.1502794)
+- **[SOTA]** Yang, Wu, Kandula, et al. *Qd-tree: Learning Data Layouts for Big Data Analytics.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389770)
+- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p07.pdf)
+- **[SOTA]** Schlag, Heuer, Sanders, et al. *KaHyPar: Multilevel Hypergraph Partitioning.* ALENEX/JEA, 2016–2023. — [arXiv](https://arxiv.org/abs/1511.03137)
+- **[Survey]** Charikar, Hajiaghayi, Karloff, Rao. *$\ell_2^2$ Spreading Metrics for Vertex Ordering Problems.* SODA/Algorithmica, 2006. — [DOI](https://doi.org/10.1007/s00453-008-9191-1)
+
+## 10. Worked Example
+
+Tuples $T=\{1,2,3,4\}$, page capacity $B=2$ (two tuples per page). Workload: $q_a$ touches $\{1,2\}$, $q_b$ touches $\{3,4\}$, $q_c$ touches $\{1,3\}$, all weight $w=1$. Objective: minimize $\sum_q |\{\pi(t):t\in S_q\}|$.
+
+Layout A — pages $\{1,2\},\{3,4\}$: $q_a$ hits 1 page, $q_b$ 1 page, $q_c$ spans both = 2. Total $=1+1+2=4$.
+
+Layout B — pages $\{1,3\},\{2,4\}$: $q_a$ spans 2, $q_b$ spans 2, $q_c$ hits 1 = 2. Total $=2+2+1=5$.
+
+So Layout A wins. As a hypergraph each query is a hyperedge; we want a balanced 2-partition minimizing edges *cut*. Edge $\{1,2\}$ and $\{3,4\}$ are uncut by A (good); only $\{1,3\}$ is cut. Layout B cuts two edges. With $n=4$ tuples this is brute-forceable ($\binom{4}{2}/2 = 3$ balanced partitions), but at scale it is the NP-hard balanced min-cut of section 5 — hence the polylog-approximation upper bounds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

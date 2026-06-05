@@ -107,12 +107,28 @@ Groups: Yale (Abadi, Faleiro), MIT, CMU (Pavlo), and deterministic-DB startups (
 
 ## 9. Key References
 
-- **[Foundational]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Survey]** Abadi, D., Faleiro, J. *An Overview of Deterministic Database Systems.* CACM, 2018.
-- **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** Faleiro, J., Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* VLDB, 2015.
-- **[Foundational]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
+- **[Foundational]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Survey]** Abadi, D., Faleiro, J. *An Overview of Deterministic Database Systems.* CACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+- **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** Faleiro, J., Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)
+- **[Foundational]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+
+## 10. Worked Example
+
+Two replicas $R_1,R_2$ share key $x=10$. A **deterministic** txn batch fixes the order
+$\mathit{seq}(T_a)=1,\ \mathit{seq}(T_b)=2$, where $T_a:\ x\mathrel{+}=5$ and $T_b:\ x\mathrel{*}=2$.
+A **nondeterministic** OCC txn $T_n:\ x\mathrel{-}=3$ arrives mid-batch.
+
+If $T_n$ is left to pick its serialization point dynamically, $R_1$ may order
+$T_a<T_n<T_b$ giving $x=(10+5-3)\times2 = 24$, while $R_2$ orders $T_a<T_b<T_n$ giving
+$x=(10+5)\times2-3 = 27$. The replicas **diverge** — exactly the replica-equivalence
+violation of Section 2.
+
+The Section-4 *subordination* fix pins $T_n$ to a sequence slot **before** it is visible — say
+$\mathit{seq}(T_n)=1.5$ (between $T_a$ and $T_b$) — so every replica computes
+$(10+5-3)\times2 = 24$. Cost: $T_n$ touched the same key as undeclared deterministic work, so it
+paid $\ge 1$ coordination step to fix its slot (the Section-5 floor). No free lunch.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -35,11 +35,21 @@ Directions: memory-pressure-aware RocksDB state backends and incremental compact
 - Provable completeness guarantees for best-effort joins under bounded non-stationarity.
 
 ## 9. Key References
-- **[Foundational]** T. Urhan, M. Franklin. *XJoin: A Reactively-Scheduled Pipelined Join Operator.* IEEE Data Eng. Bulletin, 2000.
-- **[SOTA]** Y. Tao, M. L. Yiu, D. Papadias, M. Hadjieleftheriou, N. Mamoulis. *RPJ: Producing Fast Join Results on Streams using Rate-based Optimization.* SIGMOD, 2005.
-- **[Foundational]** M. A. Hammad, W. G. Aref, A. K. Elmagarmid. *Hash-Merge Join for Streaming.* (Stream join scheduling.) 2003.
-- **[SOTA]** A. Das, J. Gehrke, M. Riedewald. *Approximate Join Processing over Data Streams.* SIGMOD, 2003.
-- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998.
+- **[Foundational]** T. Urhan, M. Franklin. *XJoin: A Reactively-Scheduled Pipelined Join Operator.* IEEE Data Eng. Bulletin, 2000. — [DBLP](https://dblp.org/rec/journals/debu/UrhanF00.html)
+- **[SOTA]** Y. Tao, M. L. Yiu, D. Papadias, M. Hadjieleftheriou, N. Mamoulis. *RPJ: Producing Fast Join Results on Streams through Rate-based Optimization.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066200)
+- **[Foundational]** M. A. Hammad, W. G. Aref, A. K. Elmagarmid. *Hash-Merge Join for Streaming.* (Stream join scheduling.) 2003. *(unverified)*
+- **[SOTA]** A. Das, J. Gehrke, M. Riedewald. *Approximate Join Processing over Data Streams.* SIGMOD, 2003. — [DOI](https://doi.org/10.1145/872757.872765)
+- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
+
+## 10. Worked Example
+
+Join streams $R(k)$ and $S(k)$ on $k$, memory $M=4$ tuples total. Arrivals (time: stream/key): $t_1$:R/a, $t_2$:S/b, $t_3$:R/b, $t_4$:S/a, $t_5$:R/c, $t_6$:S/c.
+
+Symmetric hash join keeps $H_R$ and $H_S$. After $t_4$ both tables hold $\{a,b\}$, total residency $=4=M$ — full. Emitted so far: $\langle b,b\rangle$ (at $t_3$) and $\langle a,a\rangle$ (at $t_4$).
+
+Now $t_5$:R/c arrives, $M$ exceeded. Policy must spill one partition. With **RPJ**, flush the partition whose future probe rate is lowest. Suppose key $a$ has historic arrival rate $0.1$ and $b$ has $0.5$; RPJ spills partition $a$ (least likely to be probed again), freeing space for $c$.
+
+At $t_6$:S/c the resident $R/c$ produces $\langle c,c\rangle$ immediately. If a late $S/a$ later arrives, partition $a$ is read back from disk — one back-read, the I/O cost the policy minimized. A Belady-optimal offline policy would have spilled exactly the partition with the latest next-probe; RPJ approximates this using rate estimates, staying within the $k$-competitive paging bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

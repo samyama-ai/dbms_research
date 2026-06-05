@@ -54,12 +54,26 @@ The **max-load** bound is unconditional. Beyond it: scheduling a shuffle on a ge
 
 ## 9. Key References
 
-- **[Foundational]** Teofilo Gonzalez, Sartaj Sahni. *Open Shop Scheduling to Minimize Finish Time.* JACM, 1976.
-- **[Foundational]** Nicholas McKeown et al. *Achieving 100% Throughput in an Input-Queued Switch (Birkhoff–von Neumann scheduling).* IEEE Trans. Communications, 1999.
-- **[SOTA]** Mosharaf Chowdhury, Yuan Zhong, Ion Stoica. *Efficient Coflow Scheduling with Varys.* SIGCOMM, 2014.
-- **[SOTA]** Saksham Agarwal, Shijin Rajakrishnan, Akshay Narayan, Rachit Agarwal, David Shmoys, Amin Vahdat. *Sincronia: Near-Optimal Network Design for Coflows.* SIGCOMM, 2018.
-- **[Foundational]** Zhi-Li Zhang et al. / Sungjin Im, Maxim Sviridenko. *Concurrent Open Shop and its Approximability.* (concurrent open shop scheduling), ~2010s.
-- **[Survey]** Mosharaf Chowdhury, Ion Stoica. *Coflow: A Networking Abstraction for Cluster Applications.* HotNets, 2012.
+- **[Foundational]** Teofilo Gonzalez, Sartaj Sahni. *Open Shop Scheduling to Minimize Finish Time.* JACM, 1976. — [DOI](https://doi.org/10.1145/321978.321985)
+- **[Foundational]** Nicholas McKeown et al. *Achieving 100% Throughput in an Input-Queued Switch (Birkhoff–von Neumann scheduling).* IEEE Trans. Communications, 1999. — [DOI](https://doi.org/10.1109/26.780463)
+- **[SOTA]** Mosharaf Chowdhury, Yuan Zhong, Ion Stoica. *Efficient Coflow Scheduling with Varys.* SIGCOMM, 2014. — [DOI](https://doi.org/10.1145/2619239.2626315)
+- **[SOTA]** Saksham Agarwal, Shijin Rajakrishnan, Akshay Narayan, Rachit Agarwal, David Shmoys, Amin Vahdat. *Sincronia: Near-Optimal Network Design for Coflows.* SIGCOMM, 2018. — [DOI](https://doi.org/10.1145/3230543.3230569)
+- **[Foundational]** Zhi-Li Zhang et al. / Sungjin Im, Maxim Sviridenko. *Concurrent Open Shop and its Approximability.* (concurrent open shop scheduling), ~2010s. *(unverified)* — [DBLP search](https://dblp.org/search?q=concurrent%20open%20shop%20approximability)
+- **[Survey]** Mosharaf Chowdhury, Ion Stoica. *Coflow: A Networking Abstraction for Cluster Applications.* HotNets, 2012. — [DOI](https://doi.org/10.1145/2390231.2390237)
+
+## 10. Worked Example
+
+Shuffle on $n=2$ senders, $n=2$ receivers, demand matrix (in MB)
+$$D=\begin{pmatrix} 10 & 30\\ 40 & 20 \end{pmatrix},\quad D_{ij}=\text{bytes from }i\text{ to }j.$$
+Uniform ports: each out-link and in-link runs at $10$ MB/s.
+
+Max-load lower bound = max row/column sum over capacity:
+- Row sums (out): $40,\,60$ → $60/10 = 6$ s.
+- Column sums (in): $50,\,50$ → $50/10 = 5$ s.
+
+So $T^\* \ge \max(6,5)=6$ s. By Birkhoff–von Neumann, scale $D$ and decompose into permutation matrices (perfect matchings); preemptively time-sharing those matchings achieves makespan exactly $6$ s — the bound is **tight** in the uniform node model.
+
+Now oversubscribe the cross-rack link feeding receiver $2$ to $5$ MB/s. Its in-demand $30+20=50$ MB now needs $50/5=10$ s, so $T^\*\ge 10$ — and matching that under a shared capacitated topology is the open, APX-hard regime where max-load is no longer achievable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

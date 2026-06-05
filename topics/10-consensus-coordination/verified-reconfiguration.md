@@ -42,11 +42,19 @@ Safety of reconfiguration is largely *solved* for verified models and, in places
 - Compositional proofs combining reconfiguration, snapshotting, and crash recovery.
 
 ## 9. Key References
-- **[Foundational]** Leslie Lamport. *The Part-Time Parliament (Paxos)* / *Vertical Paxos.* ACM TOCS 1998 / PODC 2009.
-- **[SOTA]** James Wilcox et al. *Verdi: A Framework for Implementing and Formally Verifying Distributed Systems.* PLDI, 2015.
-- **[SOTA]** Chris Hawblitzel et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015.
-- **[SOTA]** Oded Padon et al. *Paxos Made EPR: Decidable Reasoning about Distributed Protocols.* OOPSLA, 2017.
-- **[SOTA]** William Schultz, Ian Dardik, Stavros Tripakis. *Formal Verification of a Distributed Dynamic Reconfiguration Protocol (MongoDB).* CPP, 2022.
+- **[Foundational]** Leslie Lamport. *The Part-Time Parliament (Paxos)* / *Vertical Paxos.* ACM TOCS 1998 / PODC 2009. — [ACM](https://dl.acm.org/doi/10.1145/279227.279229)
+- **[SOTA]** James Wilcox et al. *Verdi: A Framework for Implementing and Formally Verifying Distributed Systems.* PLDI, 2015. — [ACM](https://dl.acm.org/doi/10.1145/2737924.2737958)
+- **[SOTA]** Chris Hawblitzel et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015. — [ACM](https://dl.acm.org/doi/10.1145/2815400.2815428)
+- **[SOTA]** Oded Padon et al. *Paxos Made EPR: Decidable Reasoning about Distributed Protocols.* OOPSLA, 2017. — [ACM](https://dl.acm.org/doi/10.1145/3140568)
+- **[SOTA]** William Schultz, Ian Dardik, Stavros Tripakis. *Formal Verification of a Distributed Dynamic Reconfiguration Protocol (MongoDB).* CPP, 2022. — [ACM](https://dl.acm.org/doi/10.1145/3497775.3503688)
+
+## 10. Worked Example
+
+Why reconfiguration breaks single-config quorum intersection. Start in config $c_k$ with replicas $\{A,B,C\}$; majority quorums have size 2, and any two intersect (e.g. $\{A,B\}\cap\{B,C\}=\{B\}$). A value $v$ is committed at log index 7 via quorum $\{A,B\}$.
+
+Now reconfigure to $c_{k+1}=\{C,D,E\}$ (majority size 2). A new leader is elected with quorum $\{D,E\}$. Crucially $\{A,B\}\cap\{D,E\}=\varnothing$ — the old commit quorum and the new election quorum do **not** intersect. The new leader can be ignorant of $v$ and overwrite index 7, violating agreement.
+
+The cross-configuration invariant forbids this: the protocol must require that the transition out of $c_k$ first stops $c_k$ (Stoppable Paxos) or that $c_{k+1}$'s activation quorum intersects every committed-decision quorum of $c_k$ — e.g. by routing the config change itself through $c_k$'s consensus so $\{D,E\}$ learns $v$ before serving. This is exactly the lemma machine-checked proofs (Ivy, IronFleet) must establish.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -58,12 +58,25 @@ The **decision-theoretic gap is closed** for the standard fragments — chase ch
 
 ## 9. Key References
 
-- **[Foundational]** Deutsch, A., Popa, L., Tannen, V. *Physical Data Independence, Constraints, and Optimization with Universal Plans (Chase & Backchase).* VLDB, 1999.
-- **[Foundational]** Fagin, R., Kolaitis, P.G., Miller, R.J., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT / TCS, 2005.
-- **[SOTA]** Ileana, I., Cautis, B., Deutsch, A., Katsis, Y. *Complete Yet Practical Search for Minimal Query Reformulations under Constraints.* SIGMOD, 2014.
-- **[SOTA]** Benedikt, M., Leblay, J., Tsamoura, E. *Querying with Access Patterns and Integrity Constraints (PDQ).* PVLDB, 2015.
-- **[SOTA]** Benedikt, M., Konstantinidis, G., Mecca, G., et al. *Benchmarking the Chase (ChaseBench).* SIGMOD, 2017.
-- **[Survey]** Onet, A. *The Chase Procedure and Its Applications in Data Exchange.* Data Exchange, Integration, and Streams, 2013.
+- **[Foundational]** Deutsch, A., Popa, L., Tannen, V. *Physical Data Independence, Constraints, and Optimization with Universal Plans (Chase & Backchase).* VLDB, 1999. — [DBLP](https://dblp.org/rec/conf/vldb/DeutschPT99.html)
+- **[Foundational]** Fagin, R., Kolaitis, P.G., Miller, R.J., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT / TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[SOTA]** Ileana, I., Cautis, B., Deutsch, A., Katsis, Y. *Complete Yet Practical Search for Minimal Query Reformulations under Constraints.* SIGMOD, 2014. — [ACM](https://dl.acm.org/doi/10.1145/2588555.2593683)
+- **[SOTA]** Benedikt, M., Leblay, J., Tsamoura, E. *Querying with Access Patterns and Integrity Constraints (PDQ).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2735703.2735708)
+- **[SOTA]** Benedikt, M., Konstantinidis, G., Mecca, G., et al. *Benchmarking the Chase (ChaseBench).* SIGMOD, 2017. — [ACM](https://dl.acm.org/doi/10.1145/3034786.3034796)
+- **[Survey]** Onet, A. *The Chase Procedure and Its Applications in Data Exchange.* Data Exchange, Integration, and Streams, 2013. — [DOI](https://doi.org/10.4230/DFU.Vol5.10452.1)
+
+## 10. Worked Example
+
+Schema $\mathit{Emp}(\text{eid},\text{did})$, $\mathit{Dept}(\text{did},\text{loc})$, with the inclusion-style TGD
+$$\Sigma:\ \mathit{Emp}(e,d)\to\exists l\,\mathit{Dept}(d,l).$$
+
+Consider
+$$Q_1(e):\ \exists d\,\mathit{Emp}(e,d),\qquad Q_2(e):\ \exists d,l\,(\mathit{Emp}(e,d)\wedge \mathit{Dept}(d,l)).$$
+
+Is $Q_1\sqsubseteq_\Sigma Q_2$? Freeze $Q_1$'s body: $\mathit{Emp}(e_0,d_0)$. Chase with $\Sigma$: the trigger fires (no matching $\mathit{Dept}$ atom yet), adding $\mathit{Dept}(d_0,\ell_0)$ with fresh null $\ell_0$. Now
+$$\mathrm{chase}_\Sigma(Q_1)=\{\mathit{Emp}(e_0,d_0),\ \mathit{Dept}(d_0,\ell_0)\}.$$
+
+We seek a homomorphism $Q_2\to\mathrm{chase}_\Sigma(Q_1)$ fixing $e\mapsto e_0$: map $d\mapsto d_0,\ l\mapsto \ell_0$. Both atoms map in, so the homomorphism exists and $Q_1\sqsubseteq_\Sigma Q_2$ holds. Without $\Sigma$ there is no such homomorphism (no $\mathit{Dept}$ atom), so containment is genuinely constraint-dependent. Backchase would then note $Q_2$'s second atom is redundant given $\Sigma$, recovering $Q_1$ as the minimal reformulation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

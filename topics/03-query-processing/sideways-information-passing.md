@@ -1,6 +1,7 @@
 # Sideways information passing at execution
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/sideways-information-passing` · **Status:** partially-solved
+> **Verification note:** The LIP paper (PVLDB 2017) is by Zhu, Potti, Saurabh, and Patel (Wisconsin), not "Zhu/Ghosh/Krishnamurthy/Ross (Columbia)" as written in §3/§7 — the reference has been corrected accordingly.
 
 ## 1. Problem Statement
 
@@ -42,12 +43,32 @@ For **acyclic** SIP the picture is **closed** (Yannakakis optimal; LIP near-opti
 
 ## 9. Key References
 
-- **[Foundational]** Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB 1981.
-- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS 1986.
-- **[Foundational]** Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
-- **[SOTA]** Zhu, Ghosh, Krishnamurthy, Ross. *Looking Ahead Makes Query Plans Robust (Look-ahead Information Passing).* PVLDB / SIGMOD 2017.
-- **[SOTA]** Ives, Taylor. *Sideways Information Passing for Push-Style Query Processing.* ICDE 2008.
-- **[Survey]** Pagh, Pagh, Rao. *An Optimal Bloom Filter Replacement.* SODA 2005.
+- **[Foundational]** Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB 1981. — [DBLP](https://dblp.org/rec/conf/vldb/Yannakakis81.html)
+- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS 1986. — [DOI](https://doi.org/10.1145/6012.15399)
+- **[Foundational]** Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[SOTA]** Zhu, Potti, Saurabh, Patel. *Looking Ahead Makes Query Plans Robust (Look-ahead Information Passing).* PVLDB 10(8), 2017. — [DBLP](https://dblp.org/rec/journals/pvldb/ZhuPSP17.html)
+- **[SOTA]** Ives, Taylor. *Sideways Information Passing for Push-Style Query Processing.* ICDE 2008. — [DOI](https://doi.org/10.1109/ICDE.2008.4497486)
+- **[Survey]** Pagh, Pagh, Rao. *An Optimal Bloom Filter Replacement.* SODA 2005. — [DBLP](https://dblp.org/rec/conf/soda/PaghPR05.html)
+
+## 10. Worked Example
+
+Star-schema join: fact $F$ has $10^6$ rows; two dimension filters keep
+$|D_1|=10$ keys (selectivity $10^{-4}$ on $F.k_1$) and $|D_2|=10^4$ keys (selectivity
+$10^{-1}$ on $F.k_2$). Build a Bloom filter from each dimension's surviving keys and probe
+$F$ with both before the joins.
+
+**Pruning power.** Filter $f_1$ passes a fraction $\approx 10^{-4}$ of $F$; $f_2$ passes
+$\approx 10^{-1}$. Apply the most selective first: after $f_1$, only $\approx 100$ rows
+remain; $f_2$ then probes just those $100$, not $10^6$.
+
+**Why order matters (LIP).** Wrong order ($f_2$ then $f_1$) probes $f_2$ on all $10^6$ rows
+and leaves $\approx 10^5$ for $f_1$ — about $10^6$ wasted $f_2$ probes. LIP's adaptive
+reordering tracks observed pass-rates and converges to the $f_1$-first order, staying
+competitive with the best fixed order.
+
+**Cost check.** Each Bloom probe is $O(1)$; at $\epsilon=0.01$ a filter costs
+$\approx 1.44\log_2(1/\epsilon)\approx 9.6$ bits/key, so $f_1$ needs $\approx 12$ bytes
+total — pruning $\sim10^6$ rows for a few bytes of filter.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

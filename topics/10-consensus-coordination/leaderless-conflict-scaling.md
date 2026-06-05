@@ -33,11 +33,15 @@ Directions: timestamp/logical-clock ordering to bound dependency sets (Tempo, Ac
 - Execution-engine designs that parallelize SCC linearization to lift the diameter bottleneck.
 
 ## 9. Key References
-- **[Foundational]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** Vitor Enes et al. *State-Machine Replication for Planet-Scale Systems (Atlas).* EuroSys, 2020.
-- **[SOTA]** Vitor Enes et al. *Efficient Replication via Timestamp Stability (Tempo).* EuroSys, 2021.
-- **[SOTA]** Balaji Arun et al. *Speeding up Consensus by Chasing Fast Decisions (Caesar).* DSN, 2017.
-- **[Foundational]** Leslie Lamport. *Generalized Consensus and Paxos.* MSR-TR, 2005.
+- **[Foundational]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [ACM](https://dl.acm.org/doi/10.1145/2517349.2517350)
+- **[SOTA]** Vitor Enes et al. *State-Machine Replication for Planet-Scale Systems (Atlas).* EuroSys, 2020. — [arXiv](https://arxiv.org/abs/2003.11789)
+- **[SOTA]** Vitor Enes et al. *Efficient Replication via Timestamp Stability (Tempo).* EuroSys, 2021. — [arXiv](https://arxiv.org/abs/2104.01142)
+- **[SOTA]** Balaji Arun et al. *Speeding up Consensus by Chasing Fast Decisions (Caesar).* DSN, 2017. — [arXiv](https://arxiv.org/abs/1704.03319)
+- **[Foundational]** Leslie Lamport. *Generalized Consensus and Paxos.* MSR-TR, 2005. — [MSR](https://www.microsoft.com/en-us/research/publication/generalized-consensus-and-paxos/)
+
+## 10. Worked Example
+
+Take $n=5$ replicas, $f=2$, and $k=4$ concurrent commands $\{a,b,c,d\}$ where each pair conflicts independently with probability $\gamma=0.5$ (e.g. all touch a hot key set). Suppose the realized conflict graph has edges $a\!-\!b$, $b\!-\!c$, $c\!-\!a$, with $d$ isolated. Then $d$ commits and executes immediately (1 RTT, empty deps). But $a,b,c$ form a 3-cycle: each carries the other two in its dependency set, so they create one strongly connected component. The execution engine must wait until all three are committed, run Tarjan SCC detection, and linearize the cycle deterministically by sequence number — say $a<b<c$. Phase-transition check: the giant-component threshold is $\gamma k = 0.5\times4 = 2 > 1$, so a large SCC is expected, matching what we see. Had $\gamma=0.2$, then $\gamma k=0.8<1$ and chains stay short ($O(\log k)\approx 2$), keeping execution latency near the floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,25 @@ Decidability and tight complexity of CQ/CQ determinacy; syntactic characterizati
 
 ## 9. Key References
 
-- **[Foundational]** Levy, Rajaraman, Ordille. *Querying Heterogeneous Information Sources Using Source Descriptions.* VLDB 1996.
-- **[Foundational]** Pottinger, Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB 2000 / VLDBJ 2001.
-- **[SOTA]** Nash, Segoufin, Vianu. *Views and Queries: Determinacy and Rewriting.* PODS 2007 / TODS 2010.
-- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001.
-- **[Foundational]** Abiteboul, Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS 1998.
-- **[Survey]** Calvanese, De Giacomo, Lembo, Lenzerini, Rosati. *Ontology-Based Data Access.* (DL-Lite / OBDA), 2007–2018.
+- **[Foundational]** Levy, Rajaraman, Ordille. *Querying Heterogeneous Information Sources Using Source Descriptions.* VLDB 1996. — [ACM](https://dl.acm.org/doi/10.5555/645922.673469)
+- **[Foundational]** Pottinger, Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB 2000 / VLDBJ 2001. — [DOI](https://doi.org/10.1007/s007780100048)
+- **[SOTA]** Nash, Segoufin, Vianu. *Views and Queries: Determinacy and Rewriting.* PODS 2007 / TODS 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[Foundational]** Abiteboul, Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS 1998. — [DBLP search](https://dblp.org/search?q=Complexity+of+Answering+Queries+Using+Materialized+Views)
+- **[Survey]** Calvanese, De Giacomo, Lembo, Lenzerini, Rosati. *Ontology-Based Data Access.* (DL-Lite / OBDA), 2007–2018. — [DOI](https://doi.org/10.1007/s10817-007-9078-x)
+
+## 10. Worked Example
+
+Global schema: $\mathit{Flight}(\mathit{from},\mathit{to})$. Two LAV sources:
+
+- $V_1(x,y) \leftarrow \mathit{Flight}(x,y)$  (flights departing some hub set)
+- $V_2(x,y) \leftarrow \mathit{Flight}(x,y)$
+
+Query $Q(x,z) \leftarrow \mathit{Flight}(x,y), \mathit{Flight}(y,z)$ asks for **2-hop** connections.
+
+**Determinacy check.** Do the views determine $Q$? If $V_1=V_2=\mathit{Flight}$, then yes — both views expose the full $\mathit{Flight}$ relation, so $\mathit{Flight}(D)$ is recoverable and $Q$ is computable. An exact CQ rewriting exists: $R(x,z)\leftarrow V_1(x,y),V_1(y,z)$.
+
+**The losslessness $\neq$ rewritability twist.** Now suppose only the *projection* views are available: $V_1(x)\leftarrow\mathit{Flight}(x,y)$ and $V_2(y)\leftarrow\mathit{Flight}(x,y)$ (departure cities, arrival cities). These do **not** determine $Q$: databases $\{(a,b),(c,d)\}$ and $\{(a,d),(c,b)\}$ give identical view extents $V_1=\{a,c\}, V_2=\{b,d\}$ but different $Q$. No rewriting — exact or contained — can recover the lost join structure. This is exactly the Nash–Segoufin–Vianu phenomenon: missing the join attribute destroys determinacy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

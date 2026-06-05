@@ -41,12 +41,27 @@ Active directions: *mixed-consistency* indexes that classify each update as mono
 - Verified, machine-checked GSI maintenance specs (TLA+/Ivy) for production stores.
 
 ## 9. Key References
-- **[Foundational]** A. Gupta, I. S. Mumick. *Maintenance of Materialized Views: Problems, Techniques, and Applications.* IEEE Data Eng. Bull., 1995.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[SOTA]** J. M. Hellerstein, P. Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020.
-- **[SOTA]** P. Bailis, A. Fekete, M. J. Franklin, A. Ghodsi, J. M. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-confluence).* VLDB, 2014.
-- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Survey]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011.
+- **[Foundational]** A. Gupta, I. S. Mumick. *Maintenance of Materialized Views: Problems, Techniques, and Applications.* IEEE Data Eng. Bull., 1995. — [DBLP](https://dblp.org/rec/journals/debu/GuptaM95.html)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** J. M. Hellerstein, P. Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [arXiv](https://arxiv.org/abs/1901.01930)
+- **[SOTA]** P. Bailis, A. Fekete, M. J. Franklin, A. Ghodsi, J. M. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-confluence).* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1402.2237)
+- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Survey]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011. — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
+
+## 10. Worked Example
+
+Base table `users(id, city)` partitioned by `id`; GSI on `city` partitioned by city value. Row $k_5$ moves from `city='NYC'` to `city='LA'`. The write at partition $p$ (by id) induces two index mutations on *different* partitions:
+$$\delta^-(q_{\text{NYC}}): \text{remove } k_5, \qquad \delta^+(q_{\text{LA}}): \text{insert } k_5.$$
+
+Without coordination, suppose $\delta^+$ lands first and a reader queries `WHERE city='LA'` then `WHERE city='NYC'`:
+
+| step | $q_\text{NYC}$ | $q_\text{LA}$ | reader sees |
+|------|------|------|------|
+| t0 | $\{k_5\}$ | $\{\}$ | — |
+| t1 | $\{k_5\}$ | $\{k_5\}$ | $k_5$ in **both** cities (phantom) |
+| t2 | $\{\}$ | $\{k_5\}$ | consistent |
+
+The window $[t1,t2)$ shows a *dangling/duplicate* entry. Because this update is non-monotone (a delete is required), the CALM theorem says it **cannot** be made coordination-free at any strong level — exactly one synchronization round (or Spanner-style 2PC) is provably necessary to eliminate the $t1$ anomaly. The open quantitative gap (§6) is bounding the *expected count* of such anomalies as a function of replication lag.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

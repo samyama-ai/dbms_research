@@ -57,12 +57,26 @@ For *static* sizes the picture is essentially tight ($\Theta(\log k)$ randomized
 
 ## 9. Key References
 
-- **[Foundational]** Cao, Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. on Internet Technologies and Systems, 1997.
-- **[Foundational]** Young. *On-Line File Caching (LANDLORD).* Algorithmica, 2002.
-- **[SOTA]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[Foundational]** Albers, Arora, Khanna. *Page Replacement for General Caching Problems.* SODA, 1999.
-- **[SOTA]** Leis, Haubenschild, Alhomssi, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018.
-- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021.
+- **[Foundational]** Cao, Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. on Internet Technologies and Systems, 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
+- **[Foundational]** Young. *On-Line File Caching (LANDLORD).* Algorithmica, 2002. — [DOI](https://doi.org/10.1007/s00453-001-0124-5)
+- **[SOTA]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[Foundational]** Albers, Arora, Khanna. *Page Replacement for General Caching Problems.* SODA, 1999. — [ACM](https://dl.acm.org/doi/10.5555/314500.314528)
+- **[SOTA]** Leis, Haubenschild, Alhomssi, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/LeisHK018.html)
+- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+Byte budget $M = 10$ KB. Uncompressed page size $B = 4$ KB. Three pages compress differently:
+$p_1$ ($r=4 \Rightarrow s_1 = 1$ KB), $p_2$ ($r=2 \Rightarrow s_2 = 2$ KB), $p_3$ ($r=1 \Rightarrow s_3 = 4$ KB, incompressible). Fetch cost $c_p = 1$ (fault model).
+
+Request stream: $p_1, p_2, p_3, p_1, p_2$. Start empty.
+
+- $p_1$ miss: cache $\{p_1\}$, used $1$ KB.
+- $p_2$ miss: cache $\{p_1,p_2\}$, used $3$ KB.
+- $p_3$ miss: used would be $7$ KB $\le 10$ — fits, cache $\{p_1,p_2,p_3\}$, used $7$ KB.
+- $p_1$ hit, $p_2$ hit. Total misses $= 3$.
+
+Contrast a frame-count pool sized to $\lfloor M/B \rfloor = 2$ frames: it holds only 2 pages, evicting $p_1$ before its reuse and paying $4$ misses. GreedyDual-Size keys eviction on $H = \text{clock} + c_p/s_p$, so the cheap-to-evict bulky $p_3$ ($c/s = 0.25$) loses to $p_1$ ($c/s = 1$) — exactly the content-dependent capacity win. Here the worst-case bound is $k = M/\min_p s_p = 10/1 = 10$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

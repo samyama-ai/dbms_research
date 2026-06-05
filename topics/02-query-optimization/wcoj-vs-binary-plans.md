@@ -82,12 +82,25 @@ with sound cost-based pruning over mixed eliminations, plus its complexity, is n
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008 / SICOMP, 2013.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** Aberger et al. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD, 2017.
-- **[SOTA]** Freitag, Bandle, Schmidt, Kemper, Neumann. *Adopting Worst-Case Optimal Joins in Relational Database Systems.* VLDB, 2020.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008 / SICOMP, 2013. — [DOI](https://doi.org/10.1137/110859440) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [DOI](https://doi.org/10.1145/3180143) — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105) — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Aberger et al. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3129246) — [arXiv](https://arxiv.org/abs/1503.02368)
+- **[SOTA]** Freitag, Bandle, Schmidt, Kemper, Neumann. *Adopting Worst-Case Optimal Joins in Relational Database Systems.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407797) — [DBLP](https://dblp.org/rec/journals/pvldb/FreitagBSKN20.html)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991) — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Triangle query $Q = R(a,b) \bowtie S(b,c) \bowtie T(c,a)$ where each relation is a **star**: one hub value joined to $N-1$ spokes, so $|R|=|S|=|T|=N$.
+
+**Binary plan.** Compute $R \bowtie S$ first. Both share the hub on attribute $b$, so the intermediate $R\bowtie S$ has $\Theta(N^2)$ tuples — yet the final answer (triangles) is only $O(N)$. The optimizer materializes a quadratic blow-up it then throws away: cost $\Theta(N^2)$.
+
+**AGM bound.** The fractional edge cover assigns $x_e = \tfrac12$ to each of the 3 edges (each attribute is covered: $\tfrac12+\tfrac12 = 1$). So
+$$|Q| \le |R|^{1/2}|S|^{1/2}|T|^{1/2} = N^{3/2}.$$
+
+**WCOJ plan (Generic Join, order $a,b,c$).** Intersect candidate $a$ values, then for each $a$ extend to $b$ via $R$ and to $c$ via $T$, intersecting against $S$. Total work is $\tilde O(N^{3/2})$ — matching AGM and avoiding the quadratic intermediate.
+
+For $N=10^4$: binary $\approx 10^8$ tuples vs. WCOJ $\approx 10^6$ — a $100\times$ gap. A hybrid optimizer should pick WCOJ for this cyclic core but may still prefer a binary hash join for an acyclic appendage like a dimension lookup.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

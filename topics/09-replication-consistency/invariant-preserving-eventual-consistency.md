@@ -64,13 +64,23 @@ Sound, automated analyses exist, so the problem is partially solved; the gap is 
 
 ## 9. Key References
 
-- **[Foundational]** Li, C., Porto, D., Clement, A., Gehrke, J., Preguiça, N., Rodrigues, R. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012.
-- **[SOTA]** Balegas, V., Duarte, S., Ferreira, C., Rodrigues, R., Preguiça, N., Najafzadeh, M., Shapiro, M. *Putting Consistency Back into Eventual Consistency (Indigo).* EuroSys, 2015.
-- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016.
-- **[SOTA]** Sivaramakrishnan, K. C., Kaki, G., Jagannathan, S. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015.
-- **[SOTA]** Houshmand, F., Lesani, M. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019.
-- **[Foundational]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011.
-- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
+- **[Foundational]** Li, C., Porto, D., Clement, A., Gehrke, J., Preguiça, N., Rodrigues, R. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/LiPCGPR12.html)
+- **[SOTA]** Balegas, V., Duarte, S., Ferreira, C., Rodrigues, R., Preguiça, N., Najafzadeh, M., Shapiro, M. *Putting Consistency Back into Eventual Consistency (Indigo).* EuroSys, 2015. — [DOI](https://doi.org/10.1145/2741948.2741972)
+- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm Strong Enough: Reasoning About Consistency Choices in Distributed Systems (CISE).* POPL, 2016. — [DOI](https://doi.org/10.1145/2837614.2837625)
+- **[SOTA]** Sivaramakrishnan, K. C., Kaki, G., Jagannathan, S. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015. — [DOI](https://doi.org/10.1145/2737924.2737981)
+- **[SOTA]** Houshmand, F., Lesani, M. *Hamsaz: Replication Coordination Analysis and Synthesis.* POPL, 2019. — [DOI](https://doi.org/10.1145/3290387)
+- **[Foundational]** Ameloot, T., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011. — [DBLP](https://dblp.org/rec/conf/pods/AmelootNB11.html)
+- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+
+## 10. Worked Example
+
+Invariant $I$: account balance $b \ge 0$. Two replicas $R_1$, $R_2$ both start with $b = 100$. Operation `withdraw(amount)` checks $b \ge amount$ locally, then emits effect $b \mathrel{-}= amount$.
+
+Apply the CISE rule:
+1. **Sequential safety:** `withdraw(80)` on $b=100$ leaves $b=20 \ge 0$. Holds.
+2. **Stability under merge:** $R_1$ runs `withdraw(80)` ($b: 100\to 20$); concurrently $R_2$, *not seeing* it, runs `withdraw(80)` ($b: 100\to 20$). Merge both effects: $b = 100 - 80 - 80 = -60 < 0$. **Stability fails** — each was locally safe but their effects don't compose.
+
+So `withdraw`/`withdraw` is a *non-$I$-commuting pair* and must be tokened (mutually excluded / globally ordered), forcing coordination. Contrast `deposit`: its effect $b \mathrel{+}= amount$ only *increases* $b$, is monotone, and can never falsify $b \ge 0$ — so `deposit` stays coordination-free (CALM-safe). The analysis thus coordinates exactly the withdrawals, leaving deposits fast. An Indigo-style escrow of, say, 50 units per replica would let each withdraw up to its budget without coordination, deferring the token to budget exhaustion.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

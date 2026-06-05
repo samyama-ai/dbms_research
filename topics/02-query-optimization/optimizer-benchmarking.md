@@ -49,12 +49,20 @@ The gap is **empirical, not mathematical**: there is broad agreement that *true-
 
 ## 9. Key References
 
-- **[Foundational]** V. Leis, A. Gubichev, A. Mirchev, P. Boncz, A. Kemper, T. Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015 (Join Order Benchmark).
-- **[Foundational]** G. Moerkotte, T. Neumann, G. Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009 (Q-error).
-- **[SOTA]** Y. Han et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation.* VLDB, 2021 (P-error, STATS-CEB).
-- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** B. Ding et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB, 2021.
-- **[Survey]** TPC. *TPC-H and TPC-DS Benchmark Specifications.* Transaction Processing Performance Council.
+- **[Foundational]** V. Leis, A. Gubichev, A. Mirchev, P. Boncz, A. Kemper, T. Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015 (Join Order Benchmark). — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** G. Moerkotte, T. Neumann, G. Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009 (Q-error). — [DOI](https://doi.org/10.14778/1687627.1687738)
+- **[SOTA]** Y. Han et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation.* VLDB, 2021 (P-error, STATS-CEB). — [arXiv](https://arxiv.org/abs/2109.05877)
+- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** B. Ding et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3484224.3484234)
+- **[Survey]** TPC. *TPC-H and TPC-DS Benchmark Specifications.* Transaction Processing Performance Council. — [TPC](https://www.tpc.org/tpch/)
+
+## 10. Worked Example
+
+**Isolating search from estimation.** A 3-table query runs in $T=900$ ms. Inject *true* cardinalities and re-plan: the oracle-cardinality optimum runs in $T^\star=300$ ms. Then
+$$\text{SubOpt} = \frac{T}{T^\star} = \frac{900}{300} = 3.0,$$
+so the optimizer's plan is $3\times$ slower than the best plan achievable *if estimation were perfect*. Because true cardinalities were used to find $T^\star$, this gap is attributed to **estimation error**, not the cost model or search.
+
+**Q-error bound in action.** Suppose the join $R\bowtie S$ has true size $n=10{,}000$ but the estimator predicts $\hat n=40{,}000$. Then $Q\text{-err}=\max(\tfrac{40000}{10000},\tfrac{10000}{40000})=4$. The Moerkotte–Neumann–Steidl theorem says plan cost under a monotone cost model degrades by at most a factor $Q^4 = 4^4 = 256$ in the worst case — a provable ceiling linking estimation accuracy to plan quality, and the reason low Q-error (or P-error) is the right knob to standardize.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

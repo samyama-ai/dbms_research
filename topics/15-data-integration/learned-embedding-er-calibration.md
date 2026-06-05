@@ -45,12 +45,26 @@ Govind (Wisconsin, Magellan), Tang/Li (HKUST, Ditto), Angelopoulos–Bates–Jor
 
 ## 9. Key References
 
-- **[Foundational]** C. Guo, G. Pleiss, Y. Sun, K. Weinberger. *On calibration of modern neural networks.* ICML, 2017.
-- **[SOTA]** A. Angelopoulos, S. Bates, et al. *Conformal risk control* / *Learn then Test: Calibrating predictive algorithms to achieve risk control.* 2021–2023.
-- **[SOTA]** Y. Li, J. Li, Y. Suhara, A. Doan, W.-C. Tan. *Deep entity matching with pre-trained language models (Ditto).* VLDB, 2020.
-- **[SOTA]** S. Mudgal et al. *Deep learning for entity matching: A design space exploration (DeepMatcher).* SIGMOD, 2018.
-- **[Foundational]** R. Tibshirani, R. Foygel Barber, E. Candès, A. Ramdas. *Conformal prediction under covariate shift.* NeurIPS, 2019.
-- **[Survey]** C. Bishop / A. Niculescu-Mizil, R. Caruana. *Predicting good probabilities with supervised learning.* ICML, 2005.
+- **[Foundational]** C. Guo, G. Pleiss, Y. Sun, K. Weinberger. *On calibration of modern neural networks.* ICML, 2017. — [arXiv](https://arxiv.org/abs/1706.04599)
+- **[SOTA]** A. Angelopoulos, S. Bates, et al. *Conformal risk control* / *Learn then Test: Calibrating predictive algorithms to achieve risk control.* 2021–2023. — [arXiv](https://arxiv.org/abs/2110.01052)
+- **[SOTA]** Y. Li, J. Li, Y. Suhara, A. Doan, W.-C. Tan. *Deep entity matching with pre-trained language models (Ditto).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2004.00584)
+- **[SOTA]** S. Mudgal et al. *Deep learning for entity matching: A design space exploration (DeepMatcher).* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196926)
+- **[Foundational]** R. Tibshirani, R. Foygel Barber, E. Candès, A. Ramdas. *Conformal prediction under covariate shift.* NeurIPS, 2019. — [arXiv](https://arxiv.org/abs/1904.06019)
+- **[Survey]** C. Bishop / A. Niculescu-Mizil, R. Caruana. *Predicting good probabilities with supervised learning.* ICML, 2005. — [DOI](https://doi.org/10.1145/1102351.1102430)
+
+## 10. Worked Example
+
+A matcher outputs similarity scores; we bin a calibration set into score buckets and compare predicted confidence to empirical match rate:
+
+| bucket | mean score $\bar p$ | #pairs | #true matches | empirical acc |
+|--------|------|--------|---------------|---------------|
+| 0.8–1.0 | 0.90 | 100 | 70 | 0.70 |
+| 0.6–0.8 | 0.70 | 100 | 50 | 0.50 |
+| 0.4–0.6 | 0.50 | 100 | 45 | 0.45 |
+
+**ECE** = $\sum_b \frac{n_b}{N}\,|\,\text{acc}_b - \bar p_b\,| = \tfrac{100}{300}(0.20+0.20+0.05) = 0.15$. The model is **overconfident** (acc $<$ score everywhere) — the Guo et al. signature.
+
+**Conformal risk control for precision.** Target precision $\ge 0.90$, i.e. risk (FDR) $\le \alpha=0.10$. Sweep the threshold $\tau$ upward; on the calibration set pick the smallest $\tau$ whose empirical FDR plus finite-sample slack $O(\sqrt{\log(1/\delta)/n})$ stays $\le 0.10$. Here even the top bucket has FDR $0.30$, so no $\tau$ certifies $0.90$ precision — the matcher must **abstain** or be recalibrated. This is the core tension: high F1 yet no risk-controlled operating point.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

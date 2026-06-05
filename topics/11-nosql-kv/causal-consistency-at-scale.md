@@ -61,13 +61,23 @@ The strongest scaling results bound metadata **independent of clients and keys**
 
 ## 9. Key References
 
-- **[Foundational]** Lamport, L. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** Charron-Bost, B. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991.
-- **[SOTA]** Lloyd, W., Freedman, M., Kaminsky, M., Andersen, D. *Don't Settle for Eventual: Scalable Causal Consistency for Wide-Area Storage with COPS.* SOSP, 2011.
-- **[SOTA]** Du, J., Iorgulescu, C., Roy, A., Zwaenepoel, W. *GentleRain: Cheap and Scalable Causal Consistency with Physical Clocks.* SoCC, 2014.
-- **[SOTA]** Akkoorath, D., et al. *Cure: Strong Semantics Meets High Availability and Low Latency.* ICDCS, 2016.
-- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011.
-- **[SOTA]** Mehdi, S., et al. *I Can't Believe It's Not Causal! Scalable Causal Consistency with No Slowdown Cascades (Occult).* NSDI, 2017.
+- **[Foundational]** Lamport, L. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** Charron-Bost, B. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+- **[SOTA]** Lloyd, W., Freedman, M., Kaminsky, M., Andersen, D. *Don't Settle for Eventual: Scalable Causal Consistency for Wide-Area Storage with COPS.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
+- **[SOTA]** Du, J., Iorgulescu, C., Roy, A., Zwaenepoel, W. *GentleRain: Cheap and Scalable Causal Consistency with Physical Clocks.* SoCC, 2014. — [DOI](https://doi.org/10.1145/2670979.2670983)
+- **[SOTA]** Akkoorath, D., et al. *Cure: Strong Semantics Meets High Availability and Low Latency.* ICDCS, 2016. — [DOI](https://doi.org/10.1109/ICDCS.2016.98)
+- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[SOTA]** Mehdi, S., et al. *I Can't Believe It's Not Causal! Scalable Causal Consistency with No Slowdown Cascades (Occult).* NSDI, 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/mehdi)
+
+## 10. Worked Example
+
+Alice posts $w_1$: "Lost my dog!" then later $w_2$: "Found him!" — so $w_1 \rightarrow w_2$ (program order). Bob replies $w_3$: "So glad!" after reading $w_2$, giving $w_2 \rightarrow w_3$, hence $w_1 \rightarrow w_3$ transitively.
+
+**Causality requires:** no replica makes $w_2$ visible before $w_1$, nor $w_3$ before $w_2$. Otherwise a reader sees "So glad!" under a post still saying "Lost my dog!" — a causal violation.
+
+**Vector-clock tracking** ($n=3$ sources) gives exact precision: $w_3$ carries $VC = (1,?,1)$ requiring Alice's entry $\ge 1$ before applying — but this is $\Theta(n)$ metadata, and Charron-Bost forbids beating it for *exact* tracking.
+
+**GentleRain** instead tags each write with one scalar physical timestamp and computes a Global Stable Time (GST) = min across servers. A remote write with timestamp $\tau$ becomes visible only once $GST \ge \tau$, guaranteeing all causally-earlier writes (lower timestamps) are already applied. Metadata drops to $O(1)$ per write — but if one server's clock lags, GST stalls, delaying *all* visibility: the false-dependency / latency price of coarse tracking.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

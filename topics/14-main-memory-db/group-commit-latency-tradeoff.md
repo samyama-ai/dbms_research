@@ -44,11 +44,21 @@ For **steady / Poisson** loads the problem is essentially *solved*: self-clockin
 - Energy-aware batching (flush cost as energy, not just latency).
 
 ## 9. Key References
-- **[Foundational]** D. DeWitt, R. Katz, F. Olken, L. Shapiro, M. Stonebraker, D. Wood. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984.
-- **[Foundational]** D. Gawlick, D. Kinkade. *Varieties of Concurrency Control in IMS/VS Fast Path.* IEEE Data Eng. Bull., 1985.
-- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** R. Johnson, I. Pandis, R. Stoica, M. Athanassoulis, A. Ailamaki. *Aether: A Scalable Approach to Logging.* VLDB, 2010.
-- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992 (group commit, ch. on logging).
+- **[Foundational]** D. DeWitt, R. Katz, F. Olken, L. Shapiro, M. Stonebraker, D. Wood. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/971697.602261)
+- **[Foundational]** D. Gawlick, D. Kinkade. *Varieties of Concurrency Control in IMS/VS Fast Path.* IEEE Data Eng. Bull., 1985. — [DBLP](https://dblp.org/db/journals/debu/debu8.html)
+- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** R. Johnson, I. Pandis, R. Stoica, M. Athanassoulis, A. Ailamaki. *Aether: A Scalable Approach to Logging.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920928)
+- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992 (group commit, ch. on logging). — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+
+## 10. Worked Example
+
+Suppose commit requests arrive at $\lambda = 50{,}000$/s and one log flush costs $c = 100\,\mu s$ (fixed, payload-independent up to the batch threshold).
+
+**No batching ($B=1$):** each commit triggers its own flush, so max throughput is $1/c = 10{,}000$/s — but $\lambda = 50{,}000 > 10{,}000$, so the queue is *unstable*. The system cannot keep up.
+
+**Size batching, $B = 10$:** capacity $\mu = B/c = 10/(100\,\mu s) = 100{,}000$/s, comfortably above $\lambda$. Mean batching delay while a batch fills $\approx (B-1)/(2\lambda) = 9/(100{,}000) = 90\,\mu s$; total commit latency $\approx 90 + 100 = 190\,\mu s$.
+
+**Self-clocking:** the next flush starts the instant the previous returns. In each $100\,\mu s$ window, $\lambda c = 50{,}000 \times 100\,\mu s = 5$ commits accumulate, so $B^\star \approx 5$ adapts automatically. Throughput stays at the device limit $1/c = 10{,}000$ flushes/s carrying $50{,}000$ commits/s, while the added delay is just one in-flight flush ($\le c = 100\,\mu s$) — illustrating the throughput/tail-latency frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

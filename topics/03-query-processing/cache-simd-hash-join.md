@@ -100,12 +100,22 @@ these axes.
 
 ## 9. Key References
 
-- **[Foundational]** Manegold, Boncz, Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE 2002.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM 1988.
-- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE 2013.
-- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015.
-- **[Survey]** Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016.
-- **[SOTA]** Blanas, Li, Patel. *Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs.* SIGMOD 2011.
+- **[Foundational]** Manegold, Boncz, Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE 2002. — [DOI](https://doi.org/10.1109/TKDE.2002.1019210)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544839)
+- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015. — [DOI](https://doi.org/10.1145/2723372.2747645)
+- **[Survey]** Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2882917)
+- **[SOTA]** Blanas, Li, Patel. *Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs.* SIGMOD 2011. — [DOI](https://doi.org/10.1145/1989323.1989328)
+
+## 10. Worked Example
+
+Join build side $R$ with $|R|=2^{27}$ tuples (16 B each $=2$ GB), probe $|S|=2^{30}$. Cache $M=2^{23}$ tuples (128 MB); the hash table is $\approx 2|R|=2^{28}$ slots $\gg M$.
+
+**Non-partitioned probe.** Each of the $2^{30}$ probes hits a random slot $>$ cache, so $\approx 2^{30}$ cache misses at $\sim 100$ cycles $=10^{11}$ cycles — memory-stall bound.
+
+**Radix-partitioned.** Choose fan-out so each partition fits in cache: need $f^p\gtrsim |R|/M = 2^{27}/2^{23}=16$, so a **single pass** with $f=16$ suffices. Cost: $O(\tfrac{|R|+|S|}{B})$ streaming transfers, then probes that hit cache-resident sub-tables. With $B=8$ tuples/line, $\tfrac{|R|+|S|}{B}\approx \tfrac{2^{30}}{8}=2^{27}$ transfers — roughly $1000\times$ fewer misses than the random-probe approach.
+
+**The TLB cliff.** If instead we picked $f=4096$ to one-pass a larger $R$, the 4096 output buffers exceed a typical 64-entry data-TLB reach, so each scatter write triggers a TLB miss — the partitioning pass itself thrashes. This is exactly why the optimal fan-out is machine-specific (TLB reach, cache size), and no single fixed $f$ is portable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,22 @@ Active directions: per-key / per-range closed timestamps and learned lag predict
 
 ## 9. Key References
 
-- **[Foundational]** Corbett, Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** Moraru, Andersen, Kaminsky. *Paxos Quorum Leases: Fast Reads Without Sacrificing Writes.* SoCC, 2014.
-- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020.
-- **[SOTA]** Huang, et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020.
-- **[Survey]** Bailis, et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
+- **[Foundational]** Corbett, Dean, et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** Moraru, Andersen, Kaminsky. *Paxos Quorum Leases: Fast Reads Without Sacrificing Writes.* SoCC, 2014. — [DOI](https://doi.org/10.1145/2670979.2671001)
+- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+- **[SOTA]** Huang, et al. *TiDB: A Raft-based HTAP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415535)
+- **[Survey]** Bailis, et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+
+## 10. Worked Example
+
+Consider one shard with leader $\ell$ and follower $r$. The leader publishes a **closed timestamp** every heartbeat interval $h = 3\text{ s}$; one-way replication latency is $d = 50\text{ ms}$ and clock uncertainty $\varepsilon = 5\text{ ms}$. At wall-clock $t = 100.000\text{ s}$, the most recent closed timestamp $r$ has received is $\mathit{ct}_r = 96.945\text{ s}$ (it heard the $t{=}97.000$ heartbeat $d$ late, minus $\varepsilon$).
+
+- **Lag:** $L_r = t - \mathit{ct}_r = 100.000 - 96.945 = 3.055\text{ s} \approx h + d + \varepsilon$.
+- **Bounded-staleness read** at $\tau = 96.9\text{ s}$: since $\tau \le \mathit{ct}_r$, $r$ serves locally with **zero leader round-trips**, staleness $\le 3.055\text{ s}$.
+- **Read at $\tau = 99.0\text{ s}$:** $\tau > \mathit{ct}_r$, so $r$ must **wait** for the next closed timestamp or **redirect** to $\ell$.
+
+Tightening $h$ to $200\text{ ms}$ drops the bound to $\approx 255\text{ ms}$, approaching the $d+\varepsilon = 55\text{ ms}$ propagation floor (Section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

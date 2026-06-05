@@ -40,11 +40,19 @@ Directions: CXL memory pooling and tiered DRAM/NVM to make cold capacity cheap i
 - CXL/NVM tiering that eliminates the warm-up cliff entirely.
 
 ## 9. Key References
-- **[Foundational]** Liu, Jaiyen, Veras, Mutlu. *RAIDR: Retention-Aware Intelligent DRAM Refresh.* ISCA, 2012.
-- **[SOTA]** DeBrabant, Pavlo, Tu, Stonebraker, Zdonik. *Anti-Caching: A New Approach to Database Management System Architecture.* VLDB, 2013.
-- **[SOTA]** Eldawy, Levandoski, Larson. *Trekking Through Siberia: Managing Cold Data in a Memory-Optimized Database.* VLDB, 2014.
-- **[Foundational]** Irani, Shukla, Gupta. *Online Strategies for Dynamic Power Management in Systems with Multiple Power-Saving States.* ACM TECS, 2003.
-- **[Survey]** Mutlu. *Memory Scaling: A Systems Architecture Perspective.* IMW, 2013.
+- **[Foundational]** Liu, Jaiyen, Veras, Mutlu. *RAIDR: Retention-Aware Intelligent DRAM Refresh.* ISCA, 2012. — [DBLP](https://dblp.org/rec/conf/isca/LiuJVM12.html)
+- **[SOTA]** DeBrabant, Pavlo, Tu, Stonebraker, Zdonik. *Anti-Caching: A New Approach to Database Management System Architecture.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2556549.2556575)
+- **[SOTA]** Eldawy, Levandoski, Larson. *Trekking Through Siberia: Managing Cold Data in a Memory-Optimized Database.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732967.2732968)
+- **[Foundational]** Irani, Shukla, Gupta. *Online Strategies for Dynamic Power Management in Systems with Multiple Power-Saving States.* ACM TECS, 2003. — [DOI](https://dl.acm.org/doi/10.1145/860176.860180)
+- **[Survey]** Mutlu. *Memory Scaling: A Systems Architecture Perspective.* IMW, 2013. — [DOI](https://doi.org/10.1109/IMW.2013.6582088)
+
+## 10. Worked Example
+
+**Ski-rental for one DRAM rank.** A rank costs $P_{\text{idle}} = 1$ unit/sec to keep refreshed. Powering it down saves that, but waking it on the next access costs a fixed penalty $B = 10$ units (energy of refill + the latency tax). The controller, seeing no access, must decide each second: keep refreshing (rent) or power down now (buy the wake-up).
+
+The classic deterministic rule: keep refreshing until accumulated idle cost equals the buy cost $B$, then power down. Here, refresh for $10$ s, then spin down. Worst case the access arrives just after you spin down: you paid $10$ (refreshing) $+ 10$ (wake) $= 20$, versus the offline optimum of $10$ (had you spun down immediately). Ratio $20/10 = 2$ — matching the **2-competitive** upper and lower bound of sections 4-5.
+
+**Tiering arithmetic.** Dataset $D = 1$ TB, hot set $W = 50$ GB, $P_{\text{DRAM}} = 0.04$ W/GB, cold-tier (CXL/NVM) $P_{\text{cold}} = 0.005$ W/GB. Idle power $\approx 0.04 \times 50 + 0.005 \times 950 = 2 + 4.75 = 6.75$ W, versus all-DRAM $0.04 \times 1000 = 40$ W — a $5.9\times$ idle reduction, but cold accesses now pay the tier's wake latency.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

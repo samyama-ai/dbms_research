@@ -53,12 +53,20 @@ The **I-confluence theorem itself is a lower bound**: if $(T,I)$ is *not* I-conf
 
 ## 9. Key References
 
-- **[Foundational]** P. Bailis, A. Fekete, M. Franklin, A. Ghodsi, J. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-Confluence).* VLDB, 2015.
-- **[Foundational]** J. M. Hellerstein. *The Declarative Imperative (CALM Conjecture).* SIGMOD Record, 2010.
-- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational Transducers for Declarative Networking (CALM Proof).* JACM / PODS, 2013.
-- **[SOTA]** C. Li, D. Porto, A. Clement, J. Gehrke, N. Preguiça, R. Rodrigues. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue Consistency).* OSDI, 2012.
-- **[SOTA]** V. Balegas, S. Duarte, C. Ferreira, R. Rodrigues, N. Preguiça, et al. *Putting Consistency Back into Eventual Consistency (Indigo / Explicit Consistency).* EuroSys, 2015.
-- **[SOTA]** A. Gotsman, H. Yang, C. Ferreira, M. Najafzadeh, M. Shapiro. *'Cause I'm Strong Enough: Reasoning about Consistency Choices in Distributed Systems (CISE).* POPL, 2016.
+- **[Foundational]** P. Bailis, A. Fekete, M. Franklin, A. Ghodsi, J. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-Confluence).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[Foundational]** J. M. Hellerstein. *The Declarative Imperative (CALM Conjecture).* SIGMOD Record, 2010. — [DOI](https://doi.org/10.1145/1860702.1860704)
+- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational Transducers for Declarative Networking (CALM Proof).* JACM / PODS, 2013. — [DOI](https://doi.org/10.1145/2450142.2450151)
+- **[SOTA]** C. Li, D. Porto, A. Clement, J. Gehrke, N. Preguiça, R. Rodrigues. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue Consistency).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/li)
+- **[SOTA]** V. Balegas, S. Duarte, C. Ferreira, R. Rodrigues, N. Preguiça, et al. *Putting Consistency Back into Eventual Consistency (Indigo / Explicit Consistency).* EuroSys, 2015. — [DOI](https://doi.org/10.1145/2741948.2741972)
+- **[SOTA]** A. Gotsman, H. Yang, C. Ferreira, M. Najafzadeh, M. Shapiro. *'Cause I'm Strong Enough: Reasoning about Consistency Choices in Distributed Systems (CISE).* POPL, 2016. — [DBLP](https://dblp.org/rec/conf/popl/GotsmanYFNS16.html)
+
+## 10. Worked Example
+
+Two replicas $r_1, r_2$ start from a shared bank account with `balance = 100`. Merge $\sqcup$ is "apply both operations."
+
+**I-confluent invariant — none / monotone counter.** Invariant $I$: `total_deposits` only grows. $r_1$ does `deposit(+30)`, $r_2$ does `deposit(+50)` concurrently. Each local state is $I$-valid; merging gives `balance = 180`, still $I$-valid. So $I(s_1)\wedge I(s_2)\Rightarrow I(s_1\sqcup s_2)$ holds — runs **coordination-free**.
+
+**Non-I-confluent invariant — $balance \ge 0$.** Now $I$: `balance >= 0`. $r_1$ does `withdraw(70)` (local: $100-70=30$, valid), $r_2$ does `withdraw(80)` (local: $100-80=20$, valid). Both states are $I$-valid individually, but $s_1\sqcup s_2$ applies both: $100-70-80 = -50 < 0$, violating $I$. The implication fails, so by the I-confluence theorem **no** coordination-free, available, convergent execution is safe — at least one withdrawal must coordinate (or use an escrow budget splitting the $\$100$ into per-replica reservations of $\$50$ each).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

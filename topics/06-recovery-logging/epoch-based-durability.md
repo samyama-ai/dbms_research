@@ -33,11 +33,23 @@ Active: adaptive epoch length controllers reacting to load; epoch-based durabili
 (i) Provably optimal adaptive epoch sizing under bounded-burst load. (ii) Distributed/cross-shard epoch durability with tight loss bounds. (iii) Composing epoch durability with quorum replication and bounded-staleness frontiers. (iv) PM/CXL-native epoch persistence. (v) Formal verification of epoch-release recoverability invariants.
 
 ## 9. Key References
-- **[Foundational]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[SOTA]** Kimura, H. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
+- **[Foundational]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/zheng_wenting)
+- **[SOTA]** Kimura, H. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2746480)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+
+## 10. Worked Example
+
+Take epoch length $E = 40$ ms, arrival rate $\lambda = 50{,}000$ txns/s, and persist (fsync) latency $= 10$ ms, with single-epoch lag ($D = \mathcal{E}-1$).
+
+**Throughput / fsync amortization.** Transactions per epoch $= E\cdot\lambda = 0.040 \times 50{,}000 = 2000$. One fsync persists the whole epoch, so the fsync cost is amortized over 2000 commits instead of paying $10$ ms per commit — a per-commit log-flush of $10/2000 = 5\ \mu$s of fsync time.
+
+**Loss bound.** A crash can lose only epochs $> D$. With single-epoch lag that is at most one in-flight epoch $\approx E\lambda = 2000$ transactions.
+
+**Client-visible latency.** A txn that commits logically just after epoch $e$ opens waits up to $E$ for the epoch to close, plus the persist latency: $\le 40 + 10 = 50$ ms before its result is released.
+
+**Tuning trade-off.** Halving to $E = 20$ ms cuts the loss window and commit latency ($\le 30$ ms) but doubles the fsync rate (now 1000 txns amortize each fsync, $10\ \mu$s/commit). This is the monotone latency-loss-vs-throughput dial in $E$; the loss window cannot fall below the $10$ ms persist latency without reverting toward per-commit fsync.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

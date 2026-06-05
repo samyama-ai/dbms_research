@@ -56,12 +56,22 @@ Directions: (i) **adaptive epoch sizing** reacting to load/tail-latency SLOs, in
 
 ## 9. Key References
 
-- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016.
-- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** H. Lim, M. Kaminsky, D. G. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017.
-- **[Foundational]** M. J. Fischer, N. A. Lynch, M. S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* Journal of the ACM, 1985.
-- **[Foundational]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
+- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
+- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** H. Lim, M. Kaminsky, D. G. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064015)
+- **[Foundational]** M. J. Fischer, N. A. Lynch, M. S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* Journal of the ACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** P. A. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+
+## 10. Worked Example
+
+Take arrival rate $\lambda = 50{,}000$ txn/s, per-epoch coordination cost (one group fsync) $C = 1$ ms, and durability delay $d = 1$ ms. Compare two epoch lengths.
+
+**Short epoch, $E = 1$ ms:** batch $B = \lambda E = 50$ txn. Throughput $X = B/(E+C) = 50/(2\text{ ms}) = 25{,}000$ txn/s — coordination eats half the time. Mean commit latency $\mathbb{E}[L] \approx s + E/2 + d = s + 0.5 + 1 = s + 1.5$ ms.
+
+**Long epoch, $E = 40$ ms (Silo-style):** $B = 2000$ txn, $X = 2000/(41\text{ ms}) \approx 48{,}800$ txn/s — within $2.5\%$ of the work-bound ceiling $1/w_{\text{txn}}$. But latency balloons to $\mathbb{E}[L] \approx s + 20 + 1 = s + 21$ ms.
+
+So a $40\times$ longer epoch buys nearly $2\times$ throughput while inflating mean latency $\sim 14\times$. This traces the $X$-vs-$L$ Pareto frontier: throughput saturates as $E$ grows ($25{,}000 \to 48{,}800$) while $\mathbb{E}[L]$ rises linearly in $E$, and never drops below the floor $d = 1$ ms.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

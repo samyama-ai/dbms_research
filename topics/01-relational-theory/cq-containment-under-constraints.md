@@ -58,12 +58,18 @@ For the decidable Datalog$^\pm$ classes, upper and lower bounds **match** — th
 
 ## 9. Key References
 
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977.
-- **[Foundational]** D. S. Johnson, A. Klug. *Testing Containment of Conjunctive Queries Under Functional and Inclusion Dependencies.* JCSS, 1984.
-- **[SOTA]** A. Calì, G. Gottlob, T. Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog±).* JWS / PODS, 2009–2012.
-- **[SOTA]** V. Bárány, B. ten Cate, L. Segoufin. *Guarded Negation.* JACM, 2015.
-- **[SOTA]** G. Gottlob, M. Manna, A. Pieris. *Combining Decidability Paradigms for Existential Rules / Complexity of Query Answering.* PODS / TOCL, 2013–2015.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** D. S. Johnson, A. Klug. *Testing Containment of Conjunctive Queries Under Functional and Inclusion Dependencies.* JCSS, 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90081-3)
+- **[SOTA]** A. Calì, G. Gottlob, T. Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog±).* JWS / PODS, 2009–2012. — [DOI](https://doi.org/10.1145/1559795.1559809)
+- **[SOTA]** V. Bárány, B. ten Cate, L. Segoufin. *Guarded Negation.* JACM, 2015. — [DOI](https://doi.org/10.1145/2701414)
+- **[SOTA]** G. Gottlob, M. Manna, A. Pieris. *Combining Decidability Paradigms for Existential Rules / Complexity of Query Answering.* PODS / TOCL, 2013–2015. — [DOI (TPLP)](https://doi.org/10.1017/S1471068413000550)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Schema: $\text{Emp}(e,d)$, $\text{Dept}(d)$. Constraint $\Sigma$: the inclusion dependency $\text{Emp}[d]\subseteq\text{Dept}[d]$, i.e. the TGD $\text{Emp}(e,d)\to\text{Dept}(d)$. Take
+$$Q_1(e)\leftarrow \text{Emp}(e,d),\qquad Q_2(e)\leftarrow \text{Emp}(e,d)\wedge \text{Dept}(d).$$
+Without constraints $Q_1\not\subseteq Q_2$: the canonical DB of $Q_1$ is $\{\text{Emp}(e_0,d_0)\}$ (freeze the variables), and $Q_2$ has no homomorphism into it because no $\text{Dept}$ atom exists. Now chase with $\Sigma$: the TGD fires, adding $\text{Dept}(d_0)$, giving $\mathrm{chase}(\hat Q_1,\Sigma)=\{\text{Emp}(e_0,d_0),\text{Dept}(d_0)\}$. Now $Q_2$ maps in via $e\mapsto e_0,\,d\mapsto d_0$. Hence $Q_1\subseteq_\Sigma Q_2$ — the constraint *forced* a containment that was false without it. This single chase step (terminating because the IND is non-recursive here) is exactly the decision procedure; with recursive INDs the chase may grow unboundedly, which is why decidability tracks chase behaviour.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

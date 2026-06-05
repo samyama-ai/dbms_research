@@ -42,11 +42,21 @@ The clean abstractions (bulk-service, ski-rental) are tight, but they discard ex
 - SLO-aware policies giving p99 guarantees rather than mean-latency optima.
 
 ## 9. Key References
-- **[Foundational]** Gawlick, D. & Kinkade, D. *Varieties of Concurrency Control in IMS/VS Fast Path.* IEEE Database Engineering Bulletin, 1985. (Origin of group commit.)
-- **[SOTA]** Johnson, R., Pandis, I., Stoica, R., Athanassoulis, M. & Ailamaki, A. *Aether: A Scalable Approach to Logging.* VLDB, 2010.
-- **[Foundational]** Deb, R. K. & Serfozo, R. F. *Optimal Control of Batch Service Queues.* Advances in Applied Probability, 1973.
-- **[Foundational]** Karlin, A., Manasse, M., McGeoch, L. & Owicki, S. *Competitive Randomized Algorithms for Nonuniform Problems (ski rental / rent-or-buy).* Algorithmica, 1994.
-- **[Foundational]** DeWitt, D. et al. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984. (Early group-commit batching analysis.)
+- **[Foundational]** Gawlick, D. & Kinkade, D. *Varieties of Concurrency Control in IMS/VS Fast Path.* IEEE Database Engineering Bulletin, 1985. (Origin of group commit.) — [DBLP](https://dblp.org/rec/journals/debu/GawlickK85.html)
+- **[SOTA]** Johnson, R., Pandis, I., Stoica, R., Athanassoulis, M. & Ailamaki, A. *Aether: A Scalable Approach to Logging.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920928)
+- **[Foundational]** Deb, R. K. & Serfozo, R. F. *Optimal Control of Batch Service Queues.* Advances in Applied Probability, 1973. — [DOI](https://doi.org/10.2307/1426040)
+- **[Foundational]** Karlin, A., Manasse, M., McGeoch, L. & Owicki, S. *Competitive Randomized Algorithms for Nonuniform Problems (ski rental / rent-or-buy).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
+- **[Foundational]** DeWitt, D. et al. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984. (Early group-commit batching analysis.) — [DOI](https://doi.org/10.1145/602259.602261)
+
+## 10. Worked Example
+
+Let a flush cost $c = 1\,\text{ms}$ and Poisson commit arrivals at $\lambda = 2000$/s. A timer policy releasing every $T$ ms batches on average $\lambda T$ transactions per flush, so amortized flush cost per txn is $c/(\lambda T)$, while the mean added latency from waiting is $\approx T/2$. The per-transaction overhead is
+
+$$f(T) = \frac{c}{\lambda T} + \frac{T}{2}.$$
+
+Minimizing, $f'(T)= -c/(\lambda T^2) + 1/2 = 0 \Rightarrow T^\star = \sqrt{2c/\lambda}$ — the $\sqrt{}$-rule. Plugging in: $T^\star = \sqrt{2\cdot 10^{-3}/2000} = \sqrt{10^{-6}} = 1\,\text{ms}$, batching $\lambda T^\star = 2$ txns/flush, overhead $f(T^\star)=\sqrt{2c/\lambda}\approx 1\,\text{ms}$/txn.
+
+Ski-rental view: each waiting txn "pays rent" in latency; flushing is the one-time "buy." A deterministic policy that flushes once accumulated wait equals $c$ is $2$-competitive against the offline optimum; randomizing the threshold tightens this to $e/(e-1)\approx 1.58$. Under closed-loop arrivals (latency throttles the very arrivals it batches), neither bound transfers cleanly — the open core of this problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

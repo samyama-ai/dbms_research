@@ -54,11 +54,21 @@ Any scan that must report which of $n$ rows satisfy a predicate with non-trivial
 
 ## 9. Key References
 
-- **[Foundational]** P. O'Neil, D. Quass. *Improved Query Performance with Variant Indexes (bit-sliced indexes).* SIGMOD, 1997.
-- **[SOTA]** Y. Li, J. M. Patel. *BitWeaving: Fast Scans for Main Memory Data Processing.* SIGMOD, 2013.
-- **[SOTA]** Z. Feng, E. Lo, B. Kao, W. Xu. *ByteSlice: Pushing the Envelope of Main Memory Data Processing with a New Storage Layout.* SIGMOD, 2015.
-- **[SOTA]** T. Willhalm et al. *SIMD-Scan: Ultra Fast In-Memory Table Scan Using On-Chip Vector Processing Units.* VLDB, 2009.
-- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
+- **[Foundational]** P. O'Neil, D. Quass. *Improved Query Performance with Variant Indexes (bit-sliced indexes).* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253260.253268)
+- **[SOTA]** Y. Li, J. M. Patel. *BitWeaving: Fast Scans for Main Memory Data Processing.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465322)
+- **[SOTA]** Z. Feng, E. Lo, B. Kao, W. Xu. *ByteSlice: Pushing the Envelope of Main Memory Data Processing with a New Storage Layout.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2747642)
+- **[SOTA]** T. Willhalm et al. *SIMD-Scan: Ultra Fast In-Memory Table Scan Using On-Chip Vector Processing Units.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687671)
+- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+
+## 10. Worked Example
+
+Suppose a column of $n=8$ values is order-preservingly dictionary-encoded into $b=3$-bit codes, and we evaluate the predicate `value > 4` $\Rightarrow$ `code > 4` (i.e. code $\ge 101_2$). The codes are:
+
+`[2, 6, 1, 7, 4, 5, 0, 3]` $= [010, 110, 001, 111, 100, 101, 000, 011]$.
+
+**BitWeaving/V** stores these bit-sliced: plane $P_2$ (MSB) = `01010100`, $P_1$ = `10101001`, $P_0$ = `00111011`. To test `> 4` ($= 100_2$), the high plane $P_2$ alone already decides every row where $P_2=1$ (codes $\ge 4$): rows $\{1,3,4,5\}$ are candidates, rows with $P_2=0$ ($\{0,2,6,7\}$) are immediately rejected. Among candidates, only those strictly $> 4$ survive: row 4 has code exactly $4$ ($100$) and is dropped; rows $\{1,3,5\}$ (codes $6,7,5$) pass.
+
+**Cost:** word-RAM work is $O(nb/w)$; with $w=64$ all $8$ rows fit in one word per plane, and **early stopping** at $P_2$ means we touch $\approx 1$ plane instead of $3$ — illustrating the best-case $O(n/w)$ versus the $\Theta(n)$ decode-then-compare baseline.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

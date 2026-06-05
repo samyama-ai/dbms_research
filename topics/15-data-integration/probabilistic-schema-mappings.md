@@ -42,11 +42,21 @@ A full PTIME/#P-hard dichotomy for by-tuple answering under existential-rule map
 
 ## 9. Key References
 
-- **[Foundational]** Dong, Halevy, Yu. *Data Integration with Uncertainty.* VLDB 2007 / VLDB Journal 2009.
-- **[Foundational]** Fagin, Kimelfeld, Kolaitis. *Probabilistic Data Exchange.* ICDT 2010 / JACM 2011.
-- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB 2004 / VLDBJ 2007; *The Dichotomy of Conjunctive Queries on Probabilistic Structures.* PODS 2007.
-- **[Survey]** Suciu, Olteanu, Ré, Koch. *Probabilistic Databases.* Morgan & Claypool, 2011.
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007.
+- **[Foundational]** Dong, Halevy, Yu. *Data Integration with Uncertainty.* VLDB 2007 / VLDB Journal 2009. — [DOI](https://doi.org/10.1007/s00778-008-0119-9)
+- **[Foundational]** Fagin, Kimelfeld, Kolaitis. *Probabilistic Data Exchange.* ICDT 2010 / JACM 2011. — [DOI](https://doi.org/10.1145/1989727.1989729)
+- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB 2004 / VLDBJ 2007; *The Dichotomy of Conjunctive Queries on Probabilistic Structures.* PODS 2007. — [DOI](https://doi.org/10.1007/s00778-006-0004-3)
+- **[Survey]** Suciu, Olteanu, Ré, Koch. *Probabilistic Databases.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00362ED1V01Y201105DTM016)
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+
+## 10. Worked Example
+
+A discovered attribute mapping is uncertain: the source column `addr` maps to target `home` with prob $0.6$, else to `work` with prob $0.4$. So $\mathcal{M}_1$ (prob $0.6$) and $\mathcal{M}_2$ (prob $0.4$). Source has two tuples, $t_1, t_2$, each carrying an address.
+
+**By-table.** One mapping governs everything: $\Pr[\text{both addresses are }home] = \Pr[\mathcal{M}_1] = 0.6$. Linear in $k=2$ candidates.
+
+**By-tuple.** Each tuple independently picks $\mathcal{M}_1$ or $\mathcal{M}_2$. Query $Q$: "is there a `home` address?" The four assignment-worlds are $(\mathcal{M}_i \text{ for } t_1, \mathcal{M}_j \text{ for } t_2)$:
+$$\Pr[Q] = 1 - \Pr[\text{neither is }home] = 1 - (0.4)(0.4) = 0.84.$$
+With $n$ tuples there are $2^n$ worlds — the sum is exponential in general. For this hierarchical (single-table) query a safe plan computes $0.84$ in PTIME; but a non-hierarchical pattern like $R(x),S(x,y),T(y)$ over mapping-choice variables makes by-tuple evaluation **#P-hard** (Dalvi–Suciu), exactly the dichotomy boundary of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

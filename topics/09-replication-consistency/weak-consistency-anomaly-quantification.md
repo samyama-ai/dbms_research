@@ -43,12 +43,22 @@ This is **empirically open**, not theoretically closed. We can (a) *detect* anom
 - Scalable exact/approximate checkers for causal and transactional weak models under correlated failures.
 
 ## 9. Key References
-- **[Foundational]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999.
-- **[SOTA]** Kingsbury, Alvisi. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
-- **[SOTA]** Golab, Li, Shah. *Analyzing Consistency Properties for Fun and Profit* (Δ/k-atomicity). PODC, 2011.
-- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
+- **[Foundational]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT PDF](http://pmg.csail.mit.edu/papers/adya-phd.pdf)
+- **[SOTA]** Kingsbury, Alvisi. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554)
+- **[SOTA]** Golab, Li, Shah. *Analyzing Consistency Properties for Fun and Profit* (Δ/k-atomicity). PODC, 2011. — [DOI](https://doi.org/10.1145/1993806.1993834)
+- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+
+## 10. Worked Example
+
+**Predict, then detect.** A Dynamo-style store: $N=3$, $W=1$, $R=1$, so $W+R = 2 \not> N = 3$ — a partial quorum, stale reads possible. Write-propagation has mean delay 10 ms (exponential). PBS asks: a read $t$ ms after a write, what is $\Pr[\text{stale}]$?
+
+A read at $t=5$ ms hits a replica that received the new value only if propagation finished within 5 ms: $\Pr[\text{fresh}] = 1 - e^{-5/10} \approx 0.39$, so $\Pr[\text{stale}] \approx 0.61$. At $t=30$ ms it drops to $e^{-3}\approx 0.05$. This is the predictive (PBS) side.
+
+**Detection side.** Suppose we log this history (list-append on key $x$):
+$$T_1:\ \text{append}(x,1)\quad T_2:\ \text{append}(x,2)\quad T_3:\ \text{read}(x)\to[1]$$
+$T_3$ read $[1]$ but $T_2$'s append-$2$ committed before $T_3$ began (real-time order). Elle builds the DSG, finds edge $T_2 \to T_3$ (version order) plus $T_3 \to T_2$ (missed write), a **cycle** = a G1/G-single anomaly witnessing non-monotonic/stale reads. One observed anomaly, matching the ~61% staleness PBS predicted.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

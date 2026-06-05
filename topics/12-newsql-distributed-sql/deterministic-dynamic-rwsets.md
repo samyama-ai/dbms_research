@@ -45,11 +45,21 @@ Upper bounds are constant-round *in expectation* under benign workloads; there i
 - Extending guarantees to range predicates, secondary indexes, and stored procedures with control flow.
 
 ## 9. Key References
-- **[Foundational]** A. Thomson, T. Diamond, S. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Foundational]** A. Thomson, D. Abadi. *The Case for Determinism in Database Systems.* VLDB, 2010.
-- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** T. Qadah, M. Sadoghi. *QueCC: A Queue-Oriented, Control-Free Concurrency Architecture.* Middleware, 2018.
-- **[Survey]** D. Abadi, J. Faleiro. *An Overview of Deterministic Database Systems.* CACM, 2018.
+- **[Foundational]** A. Thomson, T. Diamond, S. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Foundational]** A. Thomson, D. Abadi. *The Case for Determinism in Database Systems.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920855)
+- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** T. Qadah, M. Sadoghi. *QueCC: A Queue-Oriented, Control-Free Concurrency Architecture.* Middleware, 2018. — [DOI](https://doi.org/10.1145/3274808.3274810)
+- **[Survey]** D. Abadi, J. Faleiro. *An Overview of Deterministic Database Systems.* CACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+
+## 10. Worked Example
+
+Transaction $T$: `UPDATE accounts SET flag=1 WHERE balance > (SELECT AVG(balance) FROM accounts)`. The write set depends on the runtime average — unknown before execution, so Calvin cannot lock keys up front.
+
+**OLLP trace.** Recon phase reads all balances at state $s$: averages to $100$; rows with balance $>100$ are keys $\{k_2,k_5,k_9\}$, so $\hat R = \hat W = \{k_2,k_5,k_9\}$. $T$ is then submitted to global ordering as a one-shot transaction declaring this set; locks are acquired deterministically in $O$-order.
+
+**Validation.** Before committing, re-check that the relevant state is unchanged. Suppose a concurrent committed transaction raised $k_7$'s balance from $90\to130$. Now the true write set is $\{k_2,k_5,k_7,k_9\}\not\subseteq\hat W$ — the prediction is stale, so $T$ **aborts and retries**.
+
+**Cost.** $2$ rounds (recon + execute) in the common case, $O(1)$ amortized under low contention rate $\lambda$. But an adversary that bumps one boundary balance each retry forces unbounded re-runs — the missing worst-case bound of §5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

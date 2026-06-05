@@ -43,12 +43,24 @@ Read-mostly, low-contention serializable range indexing is effectively *solved* 
 - Formal verification (e.g., in Iris/separation logic) of latch-free B-tree + range-lock protocols.
 
 ## 9. Key References
-- **[Foundational]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
-- **[Foundational]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012.
-- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic Lock Coupling: A Scalable and Practical Synchronization Paradigm.* IEEE Data Eng. Bull. / DaMoN, 2019.
-- **[Foundational]** K. P. Eswaran, J. Gray, R. Lorie, I. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** C. Mohan. *ARIES/KVL: A Key-Value Locking Method for Concurrency Control of Multiaction Transactions.* VLDB, 1990.
+- **[Foundational]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[Foundational]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012. — [DOI](https://doi.org/10.1145/2168836.2168855)
+- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic Lock Coupling: A Scalable and Practical Synchronization Paradigm.* IEEE Data Eng. Bull. / DaMoN, 2019. — [DBLP](https://dblp.org/rec/journals/debu/LeisH019.html)
+- **[Foundational]** K. P. Eswaran, J. Gray, R. Lorie, I. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** C. Mohan. *ARIES/KVL: A Key-Value Locking Method for Concurrency Control of Multiaction Transactions.* VLDB, 1990. — [DBLP](https://dblp.org/rec/conf/vldb/Mohan90.html)
+
+## 10. Worked Example
+
+Leaf holds keys $\{10, 20, 40\}$. Transaction $T_1$ runs `SELECT COUNT(*) WHERE k BETWEEN 25 AND 35`, scanning the predicate $P=[25,35]$ and finding $0$ matches.
+
+Concurrently $T_2$ inserts $k=30$ (a phantom for $P$).
+
+**Pessimistic next-key locking:** $T_1$'s scan lands between $20$ and $40$, so it takes a *gap lock* on the next key $40$ covering the open interval $(20,40)$. $T_2$'s insert of $30$ must acquire a conflicting lock on the same gap and *blocks* until $T_1$ commits. No phantom; serializable.
+
+**Optimistic validation (latch-free path):** $T_1$ traverses with version counters, records the scanned leaf's version $v=7$, reads $0$ rows, finishes. At commit, $T_1$ re-checks the leaf: $T_2$'s CAS-insert bumped the version to $v=8$, and $30\in[25,35]$. Validation detects the predicate conflict and *aborts* $T_1$.
+
+Both give a serializable outcome; the trade is one blocked insert ($O(1)$ wait) versus one wasted scan (abort + retry) — exactly the contention-dependent cost of §4–§6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

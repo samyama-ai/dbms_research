@@ -47,11 +47,21 @@ Work on lattice/interval-based clock compression and *Bloom clocks* (probabilist
 
 ## 9. Key References
 
-- **[Foundational]** B. Charron-Bost. *Concerning the size of logical clocks in distributed systems.* Information Processing Letters, 1991.
-- **[Foundational]** L. Lamport. *Time, clocks, and the ordering of events in a distributed system.* CACM, 1978.
-- **[SOTA]** W. Lloyd, M. Freedman, M. Kaminsky, D. Andersen. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011.
-- **[SOTA]** J. Du, C. Iorgulescu, A. Roy, W. Zwaenepoel. *GentleRain: cheap and scalable causal consistency with physical clocks.* SoCC, 2014.
-- **[SOTA]** M. Bravo, L. Rodrigues, P. Van Roy. *Saturn: a distributed metadata service for causal consistency.* EuroSys, 2017.
+- **[Foundational]** B. Charron-Bost. *Concerning the size of logical clocks in distributed systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+- **[Foundational]** L. Lamport. *Time, clocks, and the ordering of events in a distributed system.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[SOTA]** W. Lloyd, M. Freedman, M. Kaminsky, D. Andersen. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
+- **[SOTA]** J. Du, C. Iorgulescu, A. Roy, W. Zwaenepoel. *GentleRain: cheap and scalable causal consistency with physical clocks.* SoCC, 2014. — [DOI](https://doi.org/10.1145/2670979.2670983)
+- **[SOTA]** M. Bravo, L. Rodrigues, P. Van Roy. *Saturn: a distributed metadata service for causal consistency.* EuroSys, 2017. — [DOI](https://doi.org/10.1145/3064176.3064210)
+
+## 10. Worked Example
+
+Three replicas $P_1, P_2, P_3$ ($N=3$). On $P_1$: write $a$ (set $x{=}1$); on $P_2$, having seen $a$: write $b$ (set $y{=}2$), so $a \to b$. Causal consistency requires no replica makes $b$ visible before $a$.
+
+**Vector clock (exact):** $b$ ships with $VC_b = [1,1,0]$ — three entries, $\Theta(N)$ bits. $P_3$ checks deliverability: it may apply $b$ only once its local clock dominates $[1,1,0]$ on every entry except $P_2$'s own slot, i.e. it has already applied $a$. This is exact: no false dependencies, but cost grows with $N$ (Charron-Bost's $\Omega(N)$ floor).
+
+**Scalar (GentleRain):** $b$ carries one physical-clock timestamp $ts_b = 17$. $P_3$ applies $b$ only when its *global stable time* $\ge 17$ — which also blocks any *unrelated* concurrent write $c$ with $ts_c = 16$ that $b$ never depended on. So $O(1)$ metadata buys a **false dependency**: $c$ is needlessly delayed until time $17$ propagates everywhere.
+
+This is the core tradeoff: $3$ entries and zero false deps, versus $1$ scalar and added visibility latency. The open question is the tight Pareto curve between these for genuine partial replication.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

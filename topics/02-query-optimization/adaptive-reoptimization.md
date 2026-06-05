@@ -54,12 +54,22 @@ Active directions: (i) **learned cardinality + re-optimization hybrids** — usi
 
 ## 9. Key References
 
-- **[Foundational]** N. Kabra, D. J. DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998.
-- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[SOTA]** V. Markl, V. Raman, D. Simmen, G. Lohman, H. Pirahesh, M. Cilimdzic. *Robust Query Processing through Progressive Optimization.* SIGMOD, 2004.
-- **[SOTA]** A. Dutt, J. R. Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014.
-- **[SOTA]** Naveen Reddy, J. R. Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005.
-- **[Survey]** A. Deshpande, Z. Ives, V. Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007.
+- **[Foundational]** N. Kabra, D. J. DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998. — [ACM](https://dl.acm.org/doi/10.1145/276304.276315)
+- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [ACM](https://dl.acm.org/doi/10.1145/342009.335420)
+- **[SOTA]** V. Markl, V. Raman, D. Simmen, G. Lohman, H. Pirahesh, M. Cilimdzic. *Robust Query Processing through Progressive Optimization.* SIGMOD, 2004. — [ACM](https://dl.acm.org/doi/10.1145/1007568.1007642)
+- **[SOTA]** A. Dutt, J. R. Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [PDF](https://dsl.cds.iisc.ac.in/publications/conference/bouquet.pdf)
+- **[SOTA]** Naveen Reddy, J. R. Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[Survey]** A. Deshpande, Z. Ives, V. Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007. — [PDF](https://www.cs.umd.edu/~amol/papers/fnt-aqp.pdf)
+
+## 10. Worked Example
+
+Query: $A \bowtie B \bowtie C$. The optimizer estimates $|A\bowtie B| = 1{,}000$ rows and chooses the plan $(A\bowtie B)\bowtie C$ with a hash join on $C$, costed at $\approx 1{,}000 + |C|$ probes.
+
+At the materialization checkpoint after $A\bowtie B$ completes, the engine observes the **actual** cardinality $c = 200{,}000$ (a $200\times$ underestimate, q-error $200$). The current plan's residual cost is now $200{,}000 + |C|$ probe operations against $C$ — far worse than estimated.
+
+Re-optimization: with $c$ now known exactly, the residual optimizer reconsiders join order and finds that building the hash table on the small relation $C$ ($|C| = 500$) and probing with the 200k-row stream costs $\approx 500$ build $+ 200{,}000$ probe, but switching the build side avoids re-hashing 200k rows, saving roughly $40\%$.
+
+Decision rule: switch only if $\text{cost}(P_{\text{rem}}) - \text{cost}(P'_{\text{rem}}) > \text{switch cost}$. Here the materialized $A\bowtie B$ is reused (no work discarded), so switch cost is just one extra build, and re-optimization fires.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

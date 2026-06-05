@@ -43,12 +43,24 @@ Each ingredient is individually understood, but their **composition under crash 
 - Anchored, low-overhead defenses against log truncation/rollback (TEE or external transparency anchor).
 
 ## 9. Key References
-- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method ... Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Schneier, B. & Kelsey, J. *Secure Audit Logs to Support Computer Forensics.* ACM TISSEC, 1999.
-- **[Foundational]** Bellare, M. & Yee, B. *Forward-Security in Private-Key Cryptography.* CT-RSA, 2003.
-- **[SOTA]** Crosby, S. A. & Wallach, D. S. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security, 2009.
-- **[Foundational]** Rogaway, P. *Authenticated-Encryption with Associated-Data (AEAD).* ACM CCS, 2002.
-- **[Survey]** Ferraiolo, H. et al. / NIST SP 800-38D. *Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC.* NIST, 2007.
+- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method ... Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Schneier, B. & Kelsey, J. *Secure Audit Logs to Support Computer Forensics.* ACM TISSEC, 1999. — [DOI](https://doi.org/10.1145/317087.317089)
+- **[Foundational]** Bellare, M. & Yee, B. *Forward-Security in Private-Key Cryptography.* CT-RSA, 2003. — [DOI](https://doi.org/10.1007/3-540-36563-X_1)
+- **[SOTA]** Crosby, S. A. & Wallach, D. S. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security, 2009. — [USENIX](https://www.usenix.org/conference/usenixsecurity09/technical-sessions/presentation/efficient-data-structures-tamper-evident)
+- **[Foundational]** Rogaway, P. *Authenticated-Encryption with Associated-Data (AEAD).* ACM CCS, 2002. — [DOI](https://doi.org/10.1145/586110.586125)
+- **[Survey]** Dworkin, M. / NIST SP 800-38D. *Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC.* NIST, 2007. — [DOI](https://doi.org/10.6028/NIST.SP.800-38D)
+
+## 10. Worked Example
+
+Consider a compressed-and-encrypted WAL written as self-delimiting AEAD frames. Each frame holds a block of records and is stored as
+$$F_j = \langle \text{len},\ N_j,\ C_j,\ T_j \rangle,\quad (C_j \| T_j) = \mathit{Enc}_k(N_j,\ A_j,\ \text{zstd}(records_j)),$$
+where $A_j = \text{LSN-of-block}\,\|\,j$ is associated data and $T_j$ is a 16-byte tag.
+
+Say block $F_5$ compresses 40 records ($8\,\text{KB} \to 2\,\text{KB}$, ratio $\rho = 0.25$). The crash happens mid-write of $F_6$, leaving a torn frame.
+
+- **Recovery prefix:** scan $F_1\dots F_5$, verifying each tag $T_j$. $F_6$'s tag fails (or `len` overruns the file), so recovery stops; the valid prefix is $F_1\dots F_5$. The whole block $F_6$ is lost — the **block-granularity atomicity floor**: you cannot recover record 41 without 42–60 in the same compression unit.
+- **Nonce safety:** $N_j = \text{LSN}_j$ is derived deterministically, so re-writing $F_6$ after restart reuses no nonce from $F_1\dots F_5$ — preserving GCM security.
+- **Truncation attack:** an adversary deleting $F_5$ is **undetectable** without an external anchor (e.g. a TEE-sealed high-water LSN), since $F_1\dots F_4$ is itself a valid prefix — the fundamental rollback impossibility.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

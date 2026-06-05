@@ -67,12 +67,30 @@ This is **genuinely open** as a principled problem: there is no formal framework
 
 ## 9. Key References
 
-- **[Foundational]** Wijsen. *Database Repairing Using Updates.* ACM TODS, 2005.
-- **[Foundational]** Afrati, Kolaitis. *Repair Checking in Inconsistent Databases: Algorithms and Complexity.* ICDT, 2009.
-- **[SOTA]** Lopatenko, Bertossi. *Complexity of Consistent Query Answering... under Cardinality-Based and Incremental Repair Semantics.* ICDT, 2007.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019.
+- **[Foundational]** Wijsen. *Database Repairing Using Updates.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1093382.1093385)
+- **[Foundational]** Afrati, Kolaitis. *Repair Checking in Inconsistent Databases: Algorithms and Complexity.* ICDT, 2009. — [DOI](https://doi.org/10.1145/1514894.1514899)
+- **[SOTA]** Lopatenko, Bertossi. *Complexity of Consistent Query Answering... under Cardinality-Based and Incremental Repair Semantics.* ICDT, 2007. — [DOI](https://doi.org/10.1007/11965893_13)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019. — [DOI](https://doi.org/10.1145/3310205)
+
+## 10. Worked Example
+
+Relation $R(\text{Zip}, \text{City})$ with FD $\text{Zip}\to\text{City}$, three tuples:
+
+| t | Zip | City |
+|---|-----|------|
+| $t_1$ | 10001 | NYC |
+| $t_2$ | 10001 | NYC |
+| $t_3$ | 10001 | Boston |
+
+$t_3$ conflicts with the majority on the same Zip.
+
+- **S-repair (delete only):** the minimal subset repair deletes $t_3$, giving $I' = \{t_1, t_2\}$, $\delta = 1$ tuple. We lose the Zip↔Boston row entirely.
+- **U-repair (update cells):** change $t_3.\text{City} = \text{Boston} \to \text{NYC}$, a single cell edit, $\delta = 1$ cell. Tuple identity (and any keys referencing $t_3$) is preserved.
+- **Cardinality repair:** maximizes $|I \cap I'|$; here it coincides with the U-repair (3 tuples kept vs. 2).
+
+Now ask $Q = \pi_{\text{City}}(R)$. Under S-repairs the *certain answer* is $\{\text{NYC}\}$; under U-repairs (where the fresh value could also have been any consistent city) the certain answer can be empty. **Same instance, same FD — the semantics changes $Q$'s answer**, exactly the section-2 point: selection is a query-semantics decision, not just an efficiency one.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

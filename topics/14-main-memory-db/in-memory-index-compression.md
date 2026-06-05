@@ -46,12 +46,25 @@ Static and approximate cases are essentially *closed* (filters and PGM/SuRF hit 
 - Co-design with hardware (SIMD/decompression accelerators, CXL).
 
 ## 9. Key References
-- **[SOTA]** H. Zhang, H. Lim, D. Andersen, M. Kaminsky, K. Keeton, A. Pavlo. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* VLDB, 2020.
-- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Foundational]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013.
-- **[Survey]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016.
+- **[SOTA]** H. Zhang, H. Lim, D. Andersen, M. Kaminsky, K. Keeton, A. Pavlo. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018. — [DBLP](https://dblp.org/rec/conf/sigmod/ZhangLLAKKP18.html)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Foundational]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[Survey]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.5555/3092586)
+
+## 10. Worked Example
+
+Index $n = 10^6$ keys drawn from a $u = 2^{32}$ universe.
+
+**Information-theoretic floor.** Storing the *set* exactly needs
+$\mathcal{B}(n,u) = \lceil\log_2\binom{u}{n}\rceil \approx n\log_2(u/n) = 10^6\times\log_2(2^{32}/10^6) \approx 10^6\times 12 = 12\text{ Mbit} \approx 1.5\text{ MB}.$
+
+**B+-tree baseline.** With 8 B keys + 8 B child pointers and ~50% fill, a B+-tree easily consumes $\ge 20$–$30$ MB — over $15\times$ the floor.
+
+**Approximate filter.** If we only need membership at false-positive rate $\varepsilon = 1\%$, the floor drops to $n\log_2(1/\varepsilon) = 10^6\times\log_2(100) \approx 6.64\text{ Mbit} = 830\text{ KB}$. A classic Bloom filter pays the $1.44\times$ penalty ($\approx 1.2$ MB); a quotient/ribbon filter reaches $\approx 1.0$–$1.08\times$ ($\approx 0.9$ MB) — essentially the floor.
+
+**Learned (PGM) angle.** If the keys are near-uniform, a piecewise-linear model with $m \ll n$ segments (say $m = 1000$, each a slope+intercept = 16 B) stores in $\approx 16$ KB and answers a lookup with one $O(\log m)$ model probe plus a local $O(\log\varepsilon)$ search — illustrating how distribution structure beats the generic $n\log_2(u/n)$ bound while keeping $O(\log n)$ queries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

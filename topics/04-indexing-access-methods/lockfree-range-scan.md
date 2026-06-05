@@ -46,11 +46,19 @@ Lock-free linearizable scans are *achieved*; the open frontier is (a) **wait-fre
 - Formal (model-checked) verification of helping-based range-scan protocols.
 
 ## 9. Key References
-- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[SOTA]** M. Arbel-Raviv, T. Brown. *Harnessing Epoch-Based Reclamation for Efficient Range Queries.* PPoPP, 2018.
-- **[SOTA]** D. Basin, et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017.
-- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
-- **[SOTA]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012.
+- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[SOTA]** M. Arbel-Raviv, T. Brown. *Harnessing Epoch-Based Reclamation for Efficient Range Queries.* PPoPP, 2018. — [DOI](https://doi.org/10.1145/3178487.3178489)
+- **[SOTA]** D. Basin, et al. *KiWi: A Key-Value Map for Scalable Real-Time Analytics.* PPoPP, 2017. — [DOI](https://doi.org/10.1145/3018743.3018761)
+- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012. — [DOI](https://doi.org/10.1145/2168836.2168855)
+
+## 10. Worked Example
+
+A sorted linked list holds keys $\{10,20,30,40\}$. Thread $A$ runs `range(15,35)` (should return $\{20,30\}$); thread $B$ concurrently does `insert(25)` and `delete(20)`.
+
+Without coordination, $A$ traverses $20$ (reads it), then $B$ inserts $25$ and deletes $20$, then $A$ reaches $30$ — $A$ might return $\{20,30\}$ while *also* a node $25$ that committed before $A$ saw $30$. Is $\{20,30\}$ linearizable? Only if there is a single instant where the live set restricted to $[15,35]$ equals exactly the returned set. If $B$'s two writes straddle $A$'s reads, no such instant exists — the scan is non-linearizable.
+
+The versioned-CAS fix: stamp the scan with timestamp $t_s$. Each node carries a version; $A$ reports a node iff its insert-version $\le t_s$ and its delete-version $> t_s$. With $t_s$ taken before $B$ commits, $A$ deterministically returns $\{20,30\}$ — the snapshot at $t_s$ — regardless of interleaving, and $B$ never blocks. Cost: $O(|\text{result}| + c)$, with $c$ the overlapping updates helped.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

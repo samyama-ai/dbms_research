@@ -58,12 +58,26 @@ Active threads: **fairness and order-dependence** of the restricted chase (does 
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. (Weak acyclicity.)
-- **[Foundational]** B. Marnette. *Generalized schema-mappings: from termination to tractability.* PODS, 2009. (Super-weak acyclicity, Skolem chase.)
-- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP/LICS, 2014.
-- **[SOTA]** B. C. Grau, I. Horrocks, M. Krötzsch, C. Kupke, D. Magka, B. Motik, Z. Wang. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013. (MFA/MSA.)
-- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *That's All Folks! LLUNATIC Goes Open Source.* VLDB, 2014. (Chase engine.)
-- **[Survey]** M. Calautti, G. Gottlob, A. Pieris. *Chase Termination for Guarded Existential Rules.* PODS, 2015.
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. (Weak acyclicity.) — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** B. Marnette. *Generalized schema-mappings: from termination to tractability.* PODS, 2009. (Super-weak acyclicity, Skolem chase.) — [DOI](https://doi.org/10.1145/1559795.1559799)
+- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP/LICS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-43951-7_25)
+- **[SOTA]** B. C. Grau, I. Horrocks, M. Krötzsch, C. Kupke, D. Magka, B. Motik, Z. Wang. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013. (MFA/MSA.) — [arXiv](https://arxiv.org/abs/1406.4110)
+- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *That's All Folks! LLUNATIC Goes Open Source.* VLDB, 2014. (Chase engine.) — [DOI](https://doi.org/10.14778/2733004.2733031)
+- **[Survey]** M. Calautti, G. Gottlob, A. Pieris. *Chase Termination for Guarded Existential Rules.* PODS, 2015. — [DOI](https://doi.org/10.1145/2745754.2745773)
+
+## 10. Worked Example
+
+A single TGD that creates an infinite oblivious chase but a terminating *restricted* chase, showing the variants diverge.
+$$\Sigma:\quad P(x,y) \rightarrow \exists z\; P(y,z).$$
+Start from $D = \{P(a,b)\}$.
+
+**Oblivious chase** fires on *every* trigger regardless of satisfaction:
+$$P(a,b) \Rightarrow P(b,n_1) \Rightarrow P(n_1,n_2) \Rightarrow P(n_2,n_3) \Rightarrow \dots$$
+Each new fact $P(\cdot, n_i)$ is itself a fresh trigger, so the chase **never halts** — an infinite chain.
+
+**Restricted (standard) chase** fires only if the head is not *already* satisfiable. After producing $P(b,n_1)$, when the trigger $P(b,n_1)$ asks for some $z$ with $P(n_1,z)$, no such fact exists yet, so it fires once more producing $P(n_1,n_2)$ — this particular $\Sigma$ still diverges, but a small change ($P(x,y)\rightarrow \exists z\,P(z,x)$ with a reflexive seed) makes the restricted chase halt while oblivious loops.
+
+**Position dependency graph:** the existential position $P[2]$ feeds the universal position $P[1]$ of the same rule via the join on $y$ — a cycle *through an existential position*, so the set is **not weakly acyclic**, correctly predicting possible non-termination.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

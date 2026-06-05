@@ -45,12 +45,28 @@ Per-window asymptotics are essentially **closed** (sorting + $O(1)$-amortized sl
 - Distributed window functions with low shuffle for skewed partitions.
 
 ## 9. Key References
-- **[SOTA]** Leis, Kundhikanjana, Kemper, Neumann. *Efficient Processing of Window Functions in Analytical SQL Queries.* PVLDB, 2015.
-- **[SOTA]** Tangwongsan, Hirzel, Schneider, Wu. *General Incremental Sliding-Window Aggregation (FlatFAT).* PVLDB, 2015.
-- **[SOTA]** Tangwongsan, Hirzel, Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017.
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979 (interesting orders).
-- **[Foundational]** Bellamkonda et al. *Adaptive and Big Data Scale Parallel Execution of Window Functions* / Oracle window optimizations. PVLDB, 2013.
-- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* FnT Databases, 2013.
+- **[SOTA]** Leis, Kundhikanjana, Kemper, Neumann. *Efficient Processing of Window Functions in Analytical SQL Queries.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794375)
+- **[SOTA]** Tangwongsan, Hirzel, Schneider, Wu. *General Incremental Sliding-Window Aggregation (FlatFAT).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** Tangwongsan, Hirzel, Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017. — [DOI](https://doi.org/10.1145/3093742.3093925)
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979 (interesting orders). — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Bellamkonda et al. *Adaptive and Big Data Scale Parallel Execution of Window Functions* / Oracle window optimizations. PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536235)
+- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* FnT Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Query: `SUM(x) OVER (ORDER BY t ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)` — a sliding sum of width $w=3$. Input column (already sorted by $t$): $x = [4, 2, 7, 1, 5]$.
+
+Using prefix sums $P = [0,4,6,13,14,19]$ (with $P_0=0$, $P_k=\sum_{j\le k}x_j$), the frame for row $i$ is $[\max(1,i-1),\min(N,i+1)]$ and its sum is $P_u - P_{l-1}$:
+
+| i | frame | $P_u - P_{l-1}$ | result |
+|---|-------|-----------------|--------|
+| 1 | [1,2] | $P_2 - P_0 = 6$  | 6 |
+| 2 | [1,3] | $P_3 - P_0 = 13$ | 13 |
+| 3 | [2,4] | $P_4 - P_1 = 10$ | 10 |
+| 4 | [3,5] | $P_5 - P_2 = 13$ | 13 |
+| 5 | [4,5] | $P_5 - P_3 = 6$  | 6 |
+
+Because `SUM` is invertible, each output is one subtraction — $O(N)$ total, with no $O(N\cdot w)$ rescan (§4). Since the input already carries the `ORDER BY t` physical order, the $O(N\log N)$ sort is elided — the columnar opportunity of §4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

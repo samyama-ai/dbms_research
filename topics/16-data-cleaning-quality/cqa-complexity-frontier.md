@@ -62,12 +62,30 @@ The frontier is **closed** for self-join-free conjunctive queries under exactly 
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999.
-- **[Foundational]** Fuxman, Miller. *First-Order Query Rewriting for Inconsistent Databases.* ICDT, 2005 / JCSS, 2007.
-- **[SOTA]** Wijsen. *Certain Conjunctive Query Answering in First-Order Logic.* ACM TODS, 2012.
-- **[SOTA]** Koutris, Wijsen. *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* PODS, 2015; ACM TODS, 2017.
-- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SAT, 2019.
-- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011.
+- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[Foundational]** Fuxman, Miller. *First-Order Query Rewriting for Inconsistent Databases.* ICDT, 2005 / JCSS, 2007. — [DOI](https://doi.org/10.1016/j.jcss.2006.10.013)
+- **[SOTA]** Wijsen. *Certain Conjunctive Query Answering in First-Order Logic.* ACM TODS, 2012. — [DOI](https://doi.org/10.1145/2188349.2188351)
+- **[SOTA]** Koutris, Wijsen. *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* PODS, 2015; ACM TODS, 2017. — [DOI](https://doi.org/10.1145/3068334)
+- **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SAT, 2019. — [arXiv](https://arxiv.org/abs/1905.02828)
+- **[Survey]** Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+
+## 10. Worked Example
+
+Relation $R(\underline{A},B)$ with primary key $A$. Inconsistent instance (two key-blocks):
+
+| A | B |
+|---|---|
+| 1 | a |
+| 1 | b |
+| 2 | a |
+
+Block $A{=}1$ has two tuples, so a repair picks exactly one; block $A{=}2$ has one. There are $2\times 1 = 2$ repairs: $r_1=\{(1,a),(2,a)\}$ and $r_2=\{(1,b),(2,a)\}$.
+
+Query $Q_1: \exists x\,(R(x,a))$ — "some tuple has $B=a$." It holds in $r_1$ (via $(1,a)$) and in $r_2$ (via $(2,a)$), so $Q_1$ is a **consistent answer** (true in *all* repairs).
+
+Query $Q_2: \exists x\,(R(x,b))$ holds in $r_2$ but not $r_1$, so $Q_2$ is **not** consistent — one counter-repair suffices.
+
+For sjf-CQs like these the attack graph is acyclic, so $\mathsf{CERTAINTY}$ is in $\mathsf{FO}$: $Q_1$ rewrites to the SQL test "every $A$-block of an $a$-witness... " checkable in one pass. Adding a self-join (e.g. $R(x,y)\wedge R(y,x)$) can make the attack graph cyclic and push the problem to $\mathsf{coNP}$-complete via a 2-coloring reduction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -36,11 +36,23 @@ Active directions: extending lower bounds to the cell-probe model and to dynamic
 - Formal three-way (read/update/memory, i.e. RUM) impossibility frontier with matching constructions.
 
 ## 9. Key References
-- **[Foundational]** Gerth Stølting Brodal, Rolf Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
-- **[Foundational]** Alok Aggarwal, Jeffrey S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Michael A. Bender, Martin Farach-Colton, William Jannen, et al. *An Introduction to Bε-trees and Write-Optimization.* ;login: / USENIX, 2015.
-- **[Foundational]** Michael A. Bender, Martin Farach-Colton, et al. *Cache-Oblivious Streaming B-trees (COLA / shuttle trees).* SPAA, 2007.
-- **[Survey]** Manos Athanassoulis, Michael S. Kester, Lukas Maas, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
+- **[Foundational]** Gerth Stølting Brodal, Rolf Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+- **[Foundational]** Alok Aggarwal, Jeffrey S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Michael A. Bender, Martin Farach-Colton, William Jannen, et al. *An Introduction to Bε-trees and Write-Optimization.* ;login: / USENIX, 2015. — [USENIX](https://www.usenix.org/publications/login/oct15/bender)
+- **[Foundational]** Michael A. Bender, Martin Farach-Colton, et al. *Cache-Oblivious Streaming B-trees (COLA / shuttle trees).* SPAA, 2007. — [DOI](https://doi.org/10.1145/1248377.1248393)
+- **[Survey]** Manos Athanassoulis, Michael S. Kester, Lukas Maas, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.uni-trier.de/rec/conf/edbt/AthanassoulisKM16.html)
+
+## 10. Worked Example
+
+Take $N=10^9$ keys and block size $B=1024$, so $\log_B N = \log_{1024} 10^9 \approx 3$. Plug into the B$^\varepsilon$-tree bounds for three settings of $\varepsilon$:
+
+| $\varepsilon$ | fanout $B^\varepsilon$ | insert $=\dfrac{\log_B N}{\varepsilon B^{1-\varepsilon}}$ | query $=\dfrac{\log_B N}{\varepsilon}$ |
+|---|---|---|---|
+| $1$ (B-tree) | $1024$ | $\approx 3$ | $\approx 3$ |
+| $\tfrac12$ | $32$ | $\dfrac{3}{0.5\cdot 32}\approx 0.19$ | $\approx 6$ |
+| $\tfrac14$ | $\approx 5.7$ | $\dfrac{3}{0.25\cdot 180}\approx 0.067$ | $\approx 12$ |
+
+Going from a plain B-tree ($\varepsilon=1$) to $\varepsilon=\tfrac14$ cuts amortized insert I/Os from $3$ to $0.067$ — a $\sim 45\times$ speedup — while query I/Os rise from $3$ to $12$ ($4\times$). The Brodal–Fagerberg lower bound says this product-style trade is essentially optimal in the comparison/indivisibility external-memory model: you cannot push insert below $\approx\frac{\log_B N}{B^{1-\varepsilon}}$ without paying proportionally on the query side. The open question is whether allowing arbitrary bit-encoding (cell-probe) can beat this row.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

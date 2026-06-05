@@ -122,12 +122,31 @@ wall plug.
 
 ## 9. Key References
 
-- **[Foundational]** D. Tsirogiannis, S. Harizopoulos, M. A. Shah. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010.
-- **[Foundational]** W. Lang, J. M. Patel. *Towards Eco-friendly Database Management Systems.* CIDR, 2009.
-- **[Foundational]** F. Yao, A. Demers, S. Shenker. *A Scheduling Model for Reduced CPU Energy.* FOCS, 1995.
-- **[SOTA]** S. Albers. *Energy-Efficient Algorithms.* Communications of the ACM 53(5), 2010.
-- **[SOTA]** W. Lang, R. Kandhan, J. M. Patel. *Rethinking Query Processing for Energy Efficiency: Slowing Down to Win the Race.* IEEE Data Eng. Bulletin, 2011.
-- **[Survey]** S. Harizopoulos, M. A. Shah, J. Meza, P. Ranganathan. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009.
+- **[Foundational]** D. Tsirogiannis, S. Harizopoulos, M. A. Shah. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807194)
+- **[Foundational]** W. Lang, J. M. Patel. *Towards Eco-friendly Database Management Systems.* CIDR, 2009. — [DBLP](https://dblp.org/rec/conf/cidr/LangP09.html) · [arXiv](https://arxiv.org/abs/0909.1767)
+- **[Foundational]** F. Yao, A. Demers, S. Shenker. *A Scheduling Model for Reduced CPU Energy.* FOCS, 1995. — [DOI](https://doi.org/10.1109/SFCS.1995.492493)
+- **[SOTA]** S. Albers. *Energy-Efficient Algorithms.* Communications of the ACM 53(5), 2010. — [DOI](https://doi.org/10.1145/1735223.1735245)
+- **[SOTA]** W. Lang, R. Kandhan, J. M. Patel. *Rethinking Query Processing for Energy Efficiency: Slowing Down to Win the Race.* IEEE Data Eng. Bulletin, 2011. — [DBLP](https://dblp.org/rec/journals/debu/LangKP11.html)
+- **[Survey]** S. Harizopoulos, M. A. Shah, J. Meza, P. Ranganathan. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009. — [DBLP](https://dblp.org/rec/conf/cidr/HarizopoulosSR09.html) · [arXiv](https://arxiv.org/abs/0909.1784)
+
+## 10. Worked Example
+
+A scan-and-aggregate operator does a fixed amount of work $W$ that takes time $t = W/f$ at
+frequency $f$. Use dynamic power $P_{\text{dyn}}(f) = c\,f^{3}$ (the $\gamma=3$ cubic model)
+with $c = 1$, plus static/leakage power $P_{\text{stat}} = 4$. Let $W = 1$, so $t = 1/f$ and
+
+$$E(f) = (c f^{3} + P_{\text{stat}})\cdot \frac{W}{f} = f^{2} + \frac{4}{f}.$$
+
+Minimize: $E'(f) = 2f - 4/f^{2} = 0 \Rightarrow f^{3} = 2 \Rightarrow f^\* = 2^{1/3} \approx 1.26$.
+
+- At $f = 1$: $E = 1 + 4 = 5$ joules, time $= 1.0$.
+- At $f^\* \approx 1.26$: $E \approx 1.59 + 3.17 = 4.76$ joules, time $\approx 0.79$.
+- At $f = 2$ (race-to-idle): $E = 4 + 2 = 6$ joules, time $= 0.5$.
+
+The energy minimum sits at moderate $f^\*$, but high static power ($P_{\text{stat}}=4$) pulls
+the optimum toward faster execution — illustrating Tsirogiannis et al.'s "race to idle":
+when leakage dominates, finishing quickly beats running slow. Lower $P_{\text{stat}}$ would
+shift $f^\*$ down, favoring the slow-and-cool regime.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

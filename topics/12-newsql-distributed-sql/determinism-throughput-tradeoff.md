@@ -48,12 +48,22 @@ Active: deterministic MVCC with finer intra-batch parallelism (Caracal lineage);
 
 ## 9. Key References
 
-- **[Foundational]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Foundational]** Tu, Zheng, et al. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Lu, Yu, Madden, et al. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019.
-- **[SOTA]** Faleiro, Abadi. *Rethinking serializable multiversion concurrency control (Bohm).* VLDB, 2015.
-- **[Survey]** Abadi, Faleiro. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018.
+- **[Foundational]** Thomson, Abadi, et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Foundational]** Tu, Zheng, et al. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** Lu, Yu, Madden, et al. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342647)
+- **[SOTA]** Faleiro, Abadi. *Rethinking serializable multiversion concurrency control (Bohm).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2809974.2809981)
+- **[Survey]** Abadi, Faleiro. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+
+## 10. Worked Example
+
+Batch of $4$ transactions accessing keys: $T_1\{a\}$, $T_2\{a,b\}$, $T_3\{c\}$, $T_4\{c,d\}$. Conflict graph $G$ has edges $T_1\!-\!T_2$ (share $a$) and $T_3\!-\!T_4$ (share $c$); the two components are independent.
+
+**Opportunistic CC** can run all of $\{T_1\text{ or }T_2\}$ and $\{T_3\text{ or }T_4\}$ in parallel and commit in *any* finish order — makespan $\approx 2$ conflict-serialized steps, picking whichever order finishes first.
+
+**Deterministic** systems fix a global sequence, say $T_1\!<\!T_2\!<\!T_3\!<\!T_4$. The independent components still parallelize (2 lanes), so makespan is also $2$ steps here — determinism is "throughput-free" because the pre-assigned order admits a linear extension matching the optimal schedule.
+
+Now add a hot key: every $T_i$ writes $h$. Then $G$ is a clique, the conflict critical path is $\Omega(4)$, and *both* paradigms are floored at makespan $4$ — a shared bound, not a separation. This illustrates §5: skew gives a common floor, and no clean separation theorem is known.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

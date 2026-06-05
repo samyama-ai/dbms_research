@@ -50,11 +50,23 @@ Active directions: **learned and adaptive CC** (Polyjuice, CormCC-style hybrids)
 
 ## 9. Key References
 
-- **[SOTA]** Prasaad, G.; Cheung, A.; Suciu, D. *Handling Highly Contended OLTP Workloads Using Fast Dynamic Partitioning (Strife).* SIGMOD, 2020.
-- **[SOTA]** Yan, C.; Cheung, A. *Leveraging Lock Contention to Improve OLTP Application Performance (Quro).* PVLDB, 2016.
-- **[SOTA]** Wang, Z.; Mu, S.; Cui, Y.; Yi, H.; Chen, H.; Li, J. *Scaling Multicore Databases via Constrained Parallel Execution (IC3).* SIGMOD, 2016.
-- **[SOTA]** Wang, J.; Ding, D.; Wang, H.; Christensen, C.; Wang, Z.; Chen, H.; Li, J. *Polyjuice: High-Performance Transactions via Learned Concurrency Control.* OSDI, 2021.
-- **[Foundational]** Garey, M. R.; Johnson, D. S. *Computers and Intractability: A Guide to the Theory of NP-Completeness.* W. H. Freeman, 1979.
+- **[SOTA]** Prasaad, G.; Cheung, A.; Suciu, D. *Handling Highly Contended OLTP Workloads Using Fast Dynamic Partitioning (Strife).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389764)
+- **[SOTA]** Yan, C.; Cheung, A. *Leveraging Lock Contention to Improve OLTP Application Performance (Quro).* PVLDB, 2016. — [DOI](https://doi.org/10.14778/2876473.2876479)
+- **[SOTA]** Wang, Z.; Mu, S.; Cui, Y.; Yi, H.; Chen, H.; Li, J. *Scaling Multicore Databases via Constrained Parallel Execution (IC3).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882958)
+- **[SOTA]** Wang, J.; Ding, D.; Wang, H.; Christensen, C.; Wang, Z.; Chen, H.; Li, J. *Polyjuice: High-Performance Transactions via Learned Concurrency Control.* OSDI, 2021. — [USENIX](https://www.usenix.org/conference/osdi21/presentation/wang-jiachen)
+- **[Foundational]** Garey, M. R.; Johnson, D. S. *Computers and Intractability: A Guide to the Theory of NP-Completeness.* W. H. Freeman, 1979. — [DBLP](https://dblp.org/rec/books/fm/GareyJ79.html)
+
+## 10. Worked Example
+
+A batch of five transactions with conflict graph $G$ (edge = footprint overlap on a conflicting op):
+$T_1{-}T_2$, $T_2{-}T_3$, $T_3{-}T_1$ (a triangle on a hot key) plus $T_4{-}T_5$. The scheduler wants the fewest *waves*, where each wave is an independent (conflict-free) set executable in parallel.
+
+This is graph coloring. The triangle $\{T_1,T_2,T_3\}$ needs $3$ colors (its chromatic number is $3$); $T_4,T_5$ need $2$ but can reuse colors already spent. A valid 3-coloring:
+- Wave 1: $\{T_1, T_4\}$
+- Wave 2: $\{T_2, T_5\}$
+- Wave 3: $\{T_3\}$
+
+Running each wave concurrently yields zero in-wave aborts in $3$ serial rounds. A contention-*blind* scheduler that admitted all five at once would force the triangle to abort/retry roughly $2$ transactions on the hot key. Strife does essentially this clustering: it splits the batch into conflict-free groups (here the two components) and serializes only the residue. The catch (section 5): minimum coloring is NP-hard and inapproximable within $n^{1-\epsilon}$, so optimal wave-minimization is intractable in general — heuristics give no guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

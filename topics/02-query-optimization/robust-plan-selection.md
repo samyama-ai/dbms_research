@@ -52,12 +52,22 @@ Active work: (i) **learned + robust hybrids** that shrink $R$ using calibrated M
 
 ## 9. Key References
 
-- **[Foundational]** B. Babcock, S. Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005.
-- **[SOTA]** A. Dutt, J. R. Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014.
-- **[SOTA]** S. Karthik, J. R. Haritsa, S. Kenkre, V. Pandit. *Platform-Independent Robust Query Processing.* ICDE, 2016 / TKDE (SpillBound).
-- **[Foundational]** Harish D., P. N. Darera, J. R. Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007.
-- **[Foundational]** T. Ibaraki, T. Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[Survey]** J. R. Haritsa. *The Picasso Database Query Optimizer Visualizer.* PVLDB, 2010.
+- **[Foundational]** B. Babcock, S. Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066172)
+- **[SOTA]** A. Dutt, J. R. Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588566)
+- **[SOTA]** S. Karthik, J. R. Haritsa, S. Kenkre, V. Pandit. *Platform-Independent Robust Query Processing.* ICDE, 2016 / TKDE (SpillBound). — [DOI](https://doi.org/10.1109/ICDE.2016.7498251)
+- **[Foundational]** Harish D., P. N. Darera, J. R. Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/DDH07.html)
+- **[Foundational]** T. Ibaraki, T. Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[Survey]** J. R. Haritsa. *The Picasso Database Query Optimizer Visualizer.* PVLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1921027)
+
+## 10. Worked Example
+
+A 1-D selectivity axis $s\in[0,1]$ with three POSP plans whose costs cross:
+
+- $P_a$ optimal for small $s$, $P_b$ mid-range, $P_c$ large $s$.
+
+**Static-plan regret.** Suppose at $s^\star$ the true optimum is $\text{opt}(s^\star)=100$ but a single fixed plan $P_a$ costs $700$ there: $\text{SubOpt}=700/100=7$. Pick $P_b$ instead and it costs $1000$ at some other $s'$ where $\text{opt}=100$ — ratio $10$. No single static plan beats a small constant everywhere; the worst-case ratio is data-dependent and can be forced large.
+
+**Bouquet execution.** Lay down cost-doubling contours $IC_k=\{s:\text{opt}(s)=2^k\}$, say at costs $1,2,4,8,16$. Execute plans contour-by-contour with a budget cap at each level; when a plan exhausts its $2^k$ budget without finishing, the true selectivity must lie beyond that contour, so advance. The geometric sum $1+2+4+\dots+2^k \le 2\cdot 2^k$ bounds total work at $\le 2\times$ the optimal-for-that-contour cost per error-prone dimension. With $D$ such dimensions, SpillBound's analysis yields the structure-independent bound $\text{MSO}\le D^2+3D$ — e.g. $D=2 \Rightarrow \text{MSO}\le 10$, independent of where the true $s$ actually lies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -60,11 +60,23 @@ For a *single* theta predicate, the gap is **closed up to constant factors** (ma
 
 ## 9. Key References
 
-- **[Foundational]** Okcan, Riedewald. *Processing Theta-Joins using MapReduce.* SIGMOD, 2011.
-- **[SOTA]** Khayyat et al. *Lightning Fast and Space Efficient Inequality Joins (IEJoin).* VLDB, 2015.
-- **[Foundational]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010.
-- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS / SICOMP, 2008/2013.
+- **[Foundational]** Okcan, Riedewald. *Processing Theta-Joins using MapReduce.* SIGMOD, 2011. — [DOI](https://doi.org/10.1145/1989323.1989423)
+- **[SOTA]** Khayyat et al. *Lightning Fast and Space Efficient Inequality Joins (IEJoin).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2831360.2831362)
+- **[Foundational]** Afrati, Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010. — [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017. — [DOI](https://doi.org/10.1145/3125644)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS / SICOMP, 2008/2013. — [DOI](https://doi.org/10.1137/110859440)
+
+## 10. Worked Example
+
+Join $R(a)$ with $S(b)$ on $\theta : R.a < S.b$, with $|R| = |S| = 1000$ and $r = 4$ reducers. The join matrix $M$ is $1000 \times 1000$; $M_{ij}=1$ iff $S_i.b > R_j.a$ (an upper-triangular-ish region).
+
+**Cartesian fallback:** ship every $(R_j, S_i)$ pair — $10^6$ candidates, one reducer does all $\Rightarrow$ no parallelism.
+
+**1-Bucket-Theta:** tile $M$ into $r = 4$ near-square regions, a $2 \times 2$ grid of $500 \times 500$ blocks. A tuple is replicated once per region its row or column touches: each of $R$'s 1000 tuples falls in one column-band hitting 2 regions, so total input shipped $\approx 2(|R|+|S|) = 4000$ tuples, i.e. each reducer receives
+$$\frac{|R|+|S|}{\sqrt r} = \frac{2000}{2} = 1000\text{ tuples},$$
+matching the $O((|R|+|S|)/\sqrt r)$ upper bound. Each reducer then scans its $500 \times 500$ sub-block locally for pairs with $R.a < S.b$.
+
+The region lower bound says any complete cover forces some reducer to receive $\Omega(2000/\sqrt4) = \Omega(1000)$ — so 1-Bucket-Theta is constant-factor optimal here. Output can still be up to $\Theta(|R||S|/2) \approx 5\times10^5$ pairs, which is the output-sensitivity term no partitioning can shrink.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

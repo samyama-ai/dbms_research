@@ -51,12 +51,16 @@ Active in production-systems venues: CockroachDB and TiKV teams iterate on load-
 
 ## 9. Key References
 
-- **[Foundational]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI 2012.
-- **[Foundational]** Michael Greenwald, Sanjeev Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD 2001.
-- **[SOTA]** Charles Masson, Jee E. Rim, Homin K. Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB 2019.
-- **[SOTA]** Ahmed Metwally, Divyakant Agrawal, Amr El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT 2005.
-- **[SOTA]** Rebecca Taft et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD 2020.
-- **[Foundational]** Gary Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971.
+- **[Foundational]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Michael Greenwald, Sanjeev Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD 2001. — [DOI](https://doi.org/10.1145/375663.375670)
+- **[SOTA]** Charles Masson, Jee E. Rim, Homin K. Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB 2019. — [arXiv](https://arxiv.org/abs/1908.10693)
+- **[SOTA]** Ahmed Metwally, Divyakant Agrawal, Amr El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+- **[SOTA]** Rebecca Taft et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+- **[Foundational]** Gary Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971. — [DOI](https://doi.org/10.1214/aoms/1177693055)
+
+## 10. Worked Example
+
+A shard owns keys $[0,100)$ with sampled request counts on four sub-buckets: $[0,25)\!:\!10$, $[25,50)\!:\!20$, $[50,75)\!:\!120$, $[75,100)\!:\!50$ req/s — total $200$ req/s, so the hotness threshold $\tau=150$ is breached. The **load median** $k^*$ satisfies $\int_0^{k^*} f = 100$. Cumulative load reaches $30$ at key $50$ and $150$ at key $75$; linearly interpolating inside the hot $[50,75)$ bucket: $k^* \approx 50 + 25\cdot\frac{100-30}{120} \approx 64.6$. Splitting at $65$ yields left shard $[0,65)\approx 90$ req/s and right shard $[65,100)\approx 110$ req/s — far better balanced than a naive *size*-based split at the midpoint $50$ (which would give $30$ vs $170$). Note: if instead all $120$ req/s landed on the single key $60$, no range split helps ($k^*$ is degenerate) — the lower bound's *unsplittable hot key* case, requiring replication/caching of key $60$ rather than a boundary move.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

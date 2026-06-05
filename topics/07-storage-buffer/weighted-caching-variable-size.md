@@ -53,12 +53,26 @@ For **weighted caching** the picture is closed: $\Theta(\log k)$ randomized, exa
 Eliminate resource augmentation in online general caching; settle the exact offline approximation constant; tighten learning-augmented bounds (Pareto-optimal consistency/robustness) under variable sizes; bridge to deployed size-aware admission policies with provable guarantees.
 
 ## 9. Key References
-- **[Foundational]** N. Young. *On-Line File Caching (Landlord).* SODA, 1998 / Algorithmica.
-- **[Foundational]** P. Cao, S. Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997.
-- **[Foundational]** M. Chrobak, H. Karloff, T. Payne, S. Vishwanathan. *New Results on Server Problems.* SIAM J. Discrete Math, 1991.
-- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *Randomized Competitive Algorithms for Generalized Caching.* STOC 2008 / SIAM J. Comput.
-- **[SOTA]** A. Adamaszek, A. Czumaj, M. Englert, H. Räcke. *An $O(\log k)$-Competitive Algorithm for Generalized Caching.* SODA 2012.
-- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998.
+- **[Foundational]** N. Young. *On-Line File Caching (Landlord).* SODA, 1998 / Algorithmica. — [DOI](https://doi.org/10.1007/s00453-001-0124-5)
+- **[Foundational]** P. Cao, S. Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
+- **[Foundational]** M. Chrobak, H. Karloff, T. Payne, S. Vishwanathan. *New Results on Server Problems.* SIAM J. Discrete Math, 1991. — [DOI](https://doi.org/10.1137/0404017)
+- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *Randomized Competitive Algorithms for Generalized Caching.* STOC 2008 / SIAM J. Comput. — [DOI](https://doi.org/10.1137/090779000)
+- **[SOTA]** A. Adamaszek, A. Czumaj, M. Englert, H. Räcke. *An $O(\log k)$-Competitive Algorithm for Generalized Caching.* SODA 2012. — [DBLP](https://dblp.org/rec/conf/soda/AdamaszekCER12.html)
+- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
+
+## 10. Worked Example
+
+Cache capacity $k=10$. Three pages: $A$ (size $w_A=8$, cost $c_A=8$), $B$ ($w_B=2$, $c_B=2$), $C$ ($w_C=2$, $c_C=10$). Request sequence: $A,B,C,B,A,C$ (bit model, cost = size unless noted; here $C$ is expensive relative to its size).
+
+**Step trace under Landlord / GreedyDual-Size** (evict the page with smallest credit $H+c/w$, decrement others):
+- $A$: miss, fetch (cost 8). Cache $\{A\}$, used 8/10.
+- $B$: miss, fetch (cost 2). Cache $\{A,B\}$, used 10/10.
+- $C$: miss; need 2 units. $A$ has credit $8/8=1$, $B$ has $2/2=1$, but $C$'s value $10/2=5$ is high. Evict $B$ (low credit), fetch $C$ (cost 10). Cache $\{A,C\}$.
+- $B$: miss again, evict $A$? $A$ credit $1 < C$ credit $5$, so evict $A$, fetch $B$. Cache $\{C,B\}$.
+- $A$: miss, fetch (cost 8) — evict $B$. Cache $\{C,A\}$.
+- $C$: **hit** (retained because cost/size $=5$ kept it resident).
+
+The high-$c/w$ page $C$ survives churn; total fetch cost $=8+2+10+2+8=30$, versus a size-blind FIFO that would have re-fetched $C$ (extra $+10$). This shows why weighting by $c/w$, not size alone, matters.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -53,12 +53,25 @@ This is genuinely **open**. Even granting calibrated costs, there is no global-o
 
 ## 9. Key References
 
-- **[Foundational]** G. Wiederhold. *Mediators in the Architecture of Future Information Systems.* IEEE Computer, 1992.
-- **[Foundational]** L. Haas et al. *Optimizing Queries Across Diverse Data Sources (Garlic).* VLDB, 1997.
-- **[Foundational]** A. Y. Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001.
-- **[SOTA]** J. Duggan et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015.
-- **[SOTA]** B. Kolev et al. *CloudMdsQL: Querying Heterogeneous Cloud Data Stores with a Common Language.* Distributed and Parallel Databases, 2016.
-- **[Survey]** R. Tan, R. Chirkova, V. Gadepally, T. Mattson. *Enabling Query Processing across Heterogeneous Data Models: A Survey.* IEEE Big Data, 2017.
+- **[Foundational]** G. Wiederhold. *Mediators in the Architecture of Future Information Systems.* IEEE Computer, 1992. — [DOI](https://doi.org/10.1109/2.121508)
+- **[Foundational]** L. Haas et al. *Optimizing Queries Across Diverse Data Sources (Garlic).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/HaasKWY97.html)
+- **[Foundational]** A. Y. Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[SOTA]** J. Duggan et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814713)
+- **[SOTA]** B. Kolev et al. *CloudMdsQL: Querying Heterogeneous Cloud Data Stores with a Common Language.* Distributed and Parallel Databases, 2016. — [DOI](https://doi.org/10.1007/s10619-015-7185-y)
+- **[Survey]** R. Tan, R. Chirkova, V. Gadepally, T. Mattson. *Enabling Query Processing across Heterogeneous Data Models: A Survey.* IEEE Big Data, 2017. — [DOI](https://doi.org/10.1109/BigData.2017.8258302)
+
+## 10. Worked Example
+
+A query joins `Orders` (relational warehouse $E_1$, 1M rows) with `Reviews` (document store $E_2$, 200K docs) on `product_id`, filtering `Reviews.stars = 5` (selectivity $0.1$).
+
+Two plans:
+
+- **Plan A — move-then-join in mediator:** ship all 200K reviews to the mediator, filter, join. Movement cost dominates: $200\text{K} \times c_{\text{net}}$.
+- **Plan B — pushdown filter to $E_2$:** $E_2$ applies `stars = 5` first, emitting only $200\text{K}\times 0.1 = 20\text{K}$ docs, then move + join. Movement drops $10\times$.
+
+The catch: $E_1$ reports cost in *page reads*, $E_2$ in *internal credits*. The calibration map $\phi_2$ learned by probing finds $1\text{ credit}\approx 0.3$ page-reads. Only after applying $\phi_2$ can the optimizer compare:
+$$\hat{C}(B)=\underbrace{20\text{K}\cdot c_{\text{net}}}_{\text{move}}+\phi_2(\text{filter})+\underbrace{C_{\text{join}}}_{\text{mediator}} \ll \hat{C}(A).$$
+Without calibration, the opaque $E_2$ filter cost looks "free" or "infinite," and the optimizer cannot reliably choose B over A — the core heterogeneity obstacle.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

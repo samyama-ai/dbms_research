@@ -60,12 +60,28 @@ For *exact* discovery the gap is the quadratic evidence-set construction vs. the
 
 ## 9. Key References
 
-- **[Foundational]** Chu, Ilyas, Papotti. *Discovering Denial Constraints.* PVLDB, 2013.
-- **[SOTA]** Bleifuß, Kruse, Naumann. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017.
-- **[SOTA]** Pena, de Almeida, Naumann. *Discovery of Approximate (and Exact) Denial Constraints.* PVLDB, 2019/2021.
-- **[Foundational]** Fredman, Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* J. Algorithms, 1996.
-- **[Survey]** Abedjan, Golab, Naumann, Papenbrock. *Data Profiling.* Synthesis Lectures / VLDB tutorials, 2018.
-- **[SOTA]** Chernishev et al. *Desbordante: Data Profiling Toolkit.* 2023–2024.
+- **[Foundational]** Chu, Ilyas, Papotti. *Discovering Denial Constraints.* PVLDB, 2013. — [DOI](https://dl.acm.org/doi/10.14778/2536258.2536262)
+- **[SOTA]** Bleifuß, Kruse, Naumann. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017. — [DOI](https://dl.acm.org/doi/10.14778/3157794.3157800)
+- **[SOTA]** Pena, de Almeida, Naumann. *Discovery of Approximate (and Exact) Denial Constraints.* PVLDB, 2019/2021. — [DOI](https://dl.acm.org/doi/10.14778/3368289.3368293)
+- **[Foundational]** Fredman, Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* J. Algorithms, 1996. — [DOI](https://doi.org/10.1006/jagm.1996.0062)
+- **[Survey]** Abedjan, Golab, Naumann, Papenbrock. *Data Profiling.* Synthesis Lectures / VLDB tutorials, 2018. — [DOI](https://doi.org/10.1007/978-3-031-01865-7)
+- **[SOTA]** Chernishev et al. *Desbordante: Data Profiling Toolkit.* 2023–2024. — [arXiv](https://arxiv.org/abs/2301.05965)
+
+## 10. Worked Example
+
+Take a 3-row salary table $R(\text{Emp}, \text{Role}, \text{Sal})$:
+
+| t | Role | Sal |
+|---|------|-----|
+| $t_1$ | Mgr | 90 |
+| $t_2$ | Eng | 70 |
+| $t_3$ | Eng | 70 |
+
+Candidate DC: $\varphi : \neg(t_\alpha.\text{Role}=t_\beta.\text{Role} \wedge t_\alpha.\text{Sal}\neq t_\beta.\text{Sal})$ — "same role $\Rightarrow$ same salary."
+
+Build evidence sets over ordered pairs. Predicates: $p_= : \text{Role}{=}$, $p_{\neq}:\text{Sal}{\neq}$. Pair $(t_2,t_3)$: roles equal, salaries equal $\Rightarrow$ satisfies $p_=$ but **not** $p_{\neq}$, so $\{p_=, p_{\neq}\}$ is not a subset of its evidence. Pair $(t_1,t_2)$: roles differ, so $p_=$ fails. No pair satisfies *both* $p_=$ and $p_{\neq}$, so $\varphi$ holds exactly: $g_1=0/9=0$.
+
+Now add $t_4(\text{Eng}, 80)$. Pair $(t_2,t_4)$ has equal role, unequal salary $\Rightarrow$ violates $\varphi$. With $|r|=4$, $g_1 = 2/16 = 0.125$ (pairs $(t_2,t_4),(t_3,t_4)$). If $\epsilon=0.1$, $\varphi$ is rejected; raising $\epsilon$ to $0.15$ admits it as approximate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

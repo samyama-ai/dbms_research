@@ -50,12 +50,23 @@ The status is **empirically-open**: pruning *correctness* is closed (admissible 
 
 ## 9. Key References
 
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995.
-- **[Foundational]** Xu (Bilgin). *Efficiency in the Columbia Database Query Optimizer.* MS Thesis, Portland State University, 1998.
-- **[SOTA]** Soliman et al. *Orca: A Modular Query Optimizer Architecture for Big Data.* SIGMOD, 2014.
-- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Foundational]** Weitzman. *Optimal Search for the Best Alternative.* Econometrica, 1979. (Pandora's box / optimal search)
-- **[Survey]** Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998.
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[Foundational]** Xu (Bilgin). *Efficiency in the Columbia Database Query Optimizer.* MS Thesis, Portland State University, 1998. — [PDF](https://15721.courses.cs.cmu.edu/spring2019/papers/22-optimizer1/xu-columbia-thesis1998.pdf)
+- **[SOTA]** Soliman et al. *Orca: A Modular Query Optimizer Architecture for Big Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2595637)
+- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Weitzman. *Optimal Search for the Best Alternative.* Econometrica, 1979. (Pandora's box / optimal search) — [DOI](https://doi.org/10.2307/1910412)
+- **[Survey]** Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275492)
+
+## 10. Worked Example
+
+Memo with group $g_0$ for $A\bowtie B\bowtie C$. The optimizer maintains an upper bound $UB$ (best full-plan cost found) and per-group admissible lower bounds.
+
+Trace with branch-and-bound:
+1. Fire a rule yielding plan $(A\bowtie B)\bowtie C$, fully costed at $UB = 100$.
+2. Consider subgroup $g_1 = (A\bowtie C)$. Its admissible lower bound — the cheapest conceivable completion, e.g. $LB(g_1) = 120$ from a cardinality bound — already satisfies $LB(g_1) = 120 \ge UB = 100$.
+3. **Prune:** the entire subtree rooted at $g_1$ is skipped without optimizing it. Soundness holds because $LB$ never overestimates, so no plan through $g_1$ can beat $100$.
+
+Scheduling matters for *efficiency*: had the optimizer fired the $g_1$-expansion rule **first** (before finding $UB=100$), $UB$ would start at $\infty$ and the prune at step 3 would not trigger — wasting work exploring $g_1$. The final optimum is identical either way (run to fixpoint), but firing the *promising* rule early tightens $UB$ sooner. Under a time budget, a bad firing order can return a worse plan, illustrating why optimal scheduling — absent a proven policy — remains empirically-open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

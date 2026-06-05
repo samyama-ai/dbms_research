@@ -104,11 +104,26 @@ jointly with NUMA placement and SIMD layout rather than independently.
 
 ## 9. Key References
 
-- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005.
-- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014.
-- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM 1999.
-- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: An Embeddable Analytical Database.* SIGMOD 2019.
-- **[Survey]** Kersten, Leis, Kemper, Neumann, Pavlo, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries.* VLDB 2018.
+- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM 1999. — [DOI](https://doi.org/10.1145/324133.324234)
+- **[SOTA]** Raasveldt, Mühleisen. *DuckDB: An Embeddable Analytical Database.* SIGMOD 2019. — [DOI](https://doi.org/10.1145/3299869.3320212)
+- **[Survey]** Kersten, Leis, Kemper, Neumann, Pavlo, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries.* VLDB 2018. — [DOI](https://doi.org/10.14778/3275366.3284966)
+
+## 10. Worked Example
+
+A filter pipeline keeps $w=4$ active columns of $b=8$ bytes, on a CPU with $C_{L2}=256$ KB. The residency bound is
+$$v \le \frac{C_{L2}}{w\,b} = \frac{262144}{4\cdot 8} = 8192 \text{ tuples.}$$
+Take per-tuple cost $t(v)=\frac{c_{\text{fixed}}}{v}+c_{\text{simd}}+c_{\text{miss}}(v)$ with $c_{\text{fixed}}=200$ ns/batch, $c_{\text{simd}}=0.5$ ns, and $c_{\text{miss}}=0$ while resident but $+2$ ns once $v>8192$.
+
+| $v$ | dispatch $200/v$ | simd | miss | $t(v)$ (ns) |
+|------|------|------|------|------|
+| 64 | 3.13 | 0.5 | 0 | **3.63** |
+| 1024 | 0.20 | 0.5 | 0 | **0.70** |
+| 8192 | 0.024 | 0.5 | 0 | **0.52** |
+| 16384 | 0.012 | 0.5 | 2 | **2.51** |
+
+The optimum sits at the plateau just under the cache cliff: $v^\*\approx 8192$. Note the steep jump at $v=16384$ once the working set spills L2 — exactly the nonconvex cliff Section 5 describes. DuckDB's default $v=2048$ lands safely on the plateau ($t\approx 0.60$ ns).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

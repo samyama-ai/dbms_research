@@ -51,11 +51,21 @@ Directions: **AVX-512 conflict-detection-driven** aggregation and dedup; **SVE/R
 - Co-design of compression encodings so kernels operate directly on encoded data without decompression.
 
 ## 9. Key References
-- **[Foundational]** Zhou, Ross. *Implementing Database Operations Using SIMD Instructions.* SIGMOD 2002.
-- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015.
-- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE 2013.
-- **[SOTA]** Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016.
-- **[Survey]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014.
+- **[Foundational]** Zhou, Ross. *Implementing Database Operations Using SIMD Instructions.* SIGMOD 2002. — [DOI](https://doi.org/10.1145/564691.564709)
+- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015. — [DOI](https://doi.org/10.1145/2723372.2747645)
+- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544839)
+- **[SOTA]** Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2882917)
+- **[Survey]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+
+## 10. Worked Example
+
+Consider a SIMD group-by SUM with lane width $w=8$ over keys, accumulating into per-group buckets via scatter.
+
+**Distinct case.** A vector of 8 keys all map to different groups: `[g0,g1,g2,g3,g4,g5,g6,g7]`. The scatter writes 8 buckets in one instruction — no conflict. Throughput $=O(n/w)$, i.e. $\bar k=1$, full $8\times$ lane utilization.
+
+**Conflict case.** A skewed vector `[g0,g0,g0,g0,g1,g1,g2,g3]`: four lanes target $g0$. A naive scatter would lose 3 of the 4 updates (last-writer-wins). `VPCONFLICTD` detects the colliding indices, and the four $g0$ updates must be **serialized** into a prefix-sum within the conflict class. Per-vector cost rises to $\bar k = \max$ duplication $=4$.
+
+**Adversarial case.** All $n$ keys equal $g0$: every update serializes, collapsing the kernel to scalar speed — the $\Omega(\text{max per-vector duplication})$ lower bound of §5. Speedup degrades from $8\times$ (distinct) toward $1\times$, showing why aggregation saturation is *data-dependent* and motivates skew-adaptive fallback.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

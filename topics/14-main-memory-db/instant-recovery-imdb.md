@@ -37,12 +37,23 @@ Directions: (i) **persistent-memory / CXL** IMDBs where recovery is near-zero be
 - A unified crash-consistency theory for NVM/CXL persistent-memory databases.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* TODS, 1992.
-- **[Foundational]** Gray, J., Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[SOTA]** Diaconu, C., et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[SOTA]** Sauer, C., Graefe, G., Härder, T. *Instant Restore After a Media Failure.* ADBIS / TODS, 2017–2018.
-- **[Survey]** Graefe, G., Guy, W., Sauer, C. *Instant Recovery with Write-Ahead Logging.* Synthesis Lectures on Data Management, 2016.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Gray, J., Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** Diaconu, C., et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+- **[SOTA]** Zheng, W., Tu, S., Kohler, E., Liskov, B. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+- **[SOTA]** Sauer, C., Graefe, G., Härder, T. *Instant Restore After a Media Failure.* ADBIS / TODS, 2017–2018. — [arXiv](https://arxiv.org/abs/1702.08042)
+- **[Survey]** Graefe, G., Guy, W., Sauer, C. *Instant Recovery with Write-Ahead Logging.* Synthesis Lectures on Data Management, 2016. — [DOI](https://doi.org/10.1007/978-3-031-01857-2)
+
+## 10. Worked Example
+
+A crashed IMDB holds $N = 200$ GB of committed data, with $U = 50$ MB of uncommitted (in-flight) transaction work and a $2$ GB dirty-page/partition restore index. Disk read bandwidth is $2$ GB/s.
+
+**Classic full recovery (eager).** Reload the whole heap + replay: availability time $\approx N / \text{bw} = 200\,\text{GB} / 2\,\text{GB/s} = 100$ s before the first transaction can run — and it scales with $N$.
+
+**Instant restore (on-demand).** Reconstruct only metadata + restore index + undo set:
+$A \approx (2\,\text{GB} + 50\,\text{MB}) / 2\,\text{GB/s} \approx 1.0$ s — independent of $N$. The system is *queryable* in ~1 s; the remaining $\approx 198$ GB materializes lazily on first access.
+
+**The lower bound bites.** The aggregate work is unchanged: the bytes that get served must still be read, so *full* residency is $\Omega(N + U) \approx 200$ GB of I/O regardless. Instant restore does not reduce total work — it only relocates it from the critical availability path to amortized post-crash first-touches. A cold first access to an unrestored segment still pays a one-segment stall (the open tail-latency gap).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

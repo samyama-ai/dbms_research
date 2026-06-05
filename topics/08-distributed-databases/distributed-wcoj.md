@@ -39,11 +39,24 @@ Abo Khamis, Ngo, Rudra, Suciu (RelationalAI) on functional-aggregate queries and
 - Worst-case-optimal distributed evaluation under updates / streaming inputs.
 
 ## 9. Key References
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SICOMP, 2013.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with...* (PANDA). PODS, 2017.
-- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* TODS, 2017.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SICOMP, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with...* (PANDA). PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* TODS, 2017. — [DOI](https://doi.org/10.1145/3129246)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+Evaluate the **triangle query** $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ where each relation has $N$ tuples.
+
+**Binary plan:** first compute $R\bowtie S$. On a worst-case instance (each relation a "wheel"), the intermediate $R\bowtie S$ has $\Theta(N^2)$ tuples even though the final output is only $\Theta(N^{1.5})$ — so a pairwise plan materializes a quadratic blowup.
+
+**AGM bound:** the fractional edge cover assigns $u_e^* = 1/2$ to each of the 3 edges (each variable $a,b,c$ is covered: $\frac12+\frac12 = 1 \ge 1$). So
+$$|Q| \le \prod_e |R_e|^{u_e^*} = N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2}.$$
+
+**WCOJ (Generic-Join):** process variable-at-a-time. Pick $a$ from $\pi_a R \cap \pi_a T$; for each, pick $b$ from matching $R,S$; then check $c$. Total work $\tilde O(N^{3/2})$ — matching AGM, never forming the $N^2$ intermediate.
+
+**Distributed:** HyperCube hashes $(a,b,c)$ across a $p^{1/3}\times p^{1/3}\times p^{1/3}$ grid; each machine runs Generic-Join locally on its $\tilde O(N/p^{2/3})$-tuple share, giving total communication $\tilde O(N^{3/2}+N)$ in $O(1)$ rounds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

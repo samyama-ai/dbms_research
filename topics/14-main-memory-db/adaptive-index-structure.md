@@ -39,12 +39,18 @@ Threads: drift-aware learned indexes with online segment re-fitting and concept-
 - Unifying learned and pointer indexes in one analyzable cost metric with reorganization debt accounted for.
 
 ## 9. Key References
-- **[Foundational]** Idreos, S., Kersten, M., Manegold, S. *Database Cracking.* CIDR, 2007.
-- **[Foundational]** Borodin, A., Linial, N., Saks, M. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** Ding, J., et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[SOTA]** Ferragina, P., Vinciguerra, G. *The PGM-Index.* VLDB, 2020.
-- **[SOTA]** Halim, F., Idreos, S., Karras, P., Yap, R. *Stochastic Database Cracking.* VLDB, 2012.
+- **[Foundational]** Idreos, S., Kersten, M., Manegold, S. *Database Cracking.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p07.pdf)
+- **[Foundational]** Borodin, A., Linial, N., Saks, M. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Ding, J., et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** Ferragina, P., Vinciguerra, G. *The PGM-Index.* VLDB, 2020. — [PDF](http://www.vldb.org/pvldb/vol13/p1162-ferragina.pdf)
+- **[SOTA]** Halim, F., Idreos, S., Karras, P., Yap, R. *Stochastic Database Cracking.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1203.0055)
+
+## 10. Worked Example
+
+Take an unsorted column $A = [7,2,9,4,1,8,5,3]$ ($n=8$) and database cracking. Query 1, `2 ≤ A < 6`, partitions $A$ in-place into three pieces — $\{<2\}=[1]$, $\{[2,6)\}=[2,4,5,3]$, $\{\ge 6\}=[7,9,8]$ — at cost $\Theta(n)=8$ comparisons, leaving cracker-index boundaries at positions 1 and 5. Query 2, `A < 4`, only needs to re-partition the middle piece $[2,4,5,3]$ into $[2,3]\mid[4,5]$ — cost $4$, not 8, because the prior crack already isolated the relevant range.
+
+Cost trace: under a *random* range-query stream, expected total reorganization work is $\Theta(n\log n)$, i.e. amortized $\Theta(\log n)\approx 3$ per query here, converging toward fully sorted. But an *adversary* repeating disjoint thin ranges forces near-$\Theta(n)$ each time. The MTS lower bound $\Omega(\log|S|)$ on switching among $|S|$ configurations is exactly why no morphing policy escapes this adversarial floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

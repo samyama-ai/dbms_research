@@ -57,12 +57,16 @@ For the **static** min-max partition given an $\epsilon$-quantile summary, placi
 
 ## 9. Key References
 
-- **[Foundational]** Greenwald, M., Khanna, S. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001.
-- **[Foundational]** Chang, F., et al. *Bigtable: A Distributed Storage System for Structured Data.* OSDI, 2006.
-- **[SOTA]** Masson, C., Rim, J.E., Lee, H.K. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019.
-- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** Metwally, A., Agrawal, D., El Abbadi, A. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT, 2005.
-- **[Survey]** Cormode, G., Veselý, P. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020.
+- **[Foundational]** Greenwald, M., Khanna, S. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375670)
+- **[Foundational]** Chang, F., et al. *Bigtable: A Distributed Storage System for Structured Data.* OSDI, 2006. — [USENIX](https://www.usenix.org/conference/osdi-06/bigtable-distributed-storage-system-structured-data)
+- **[SOTA]** Masson, C., Rim, J.E., Lee, H.K. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1908.10693)
+- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Metwally, A., Agrawal, D., El Abbadi, A. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT, 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+- **[Survey]** Cormode, G., Veselý, P. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020. — [arXiv](https://arxiv.org/abs/1905.03838)
+
+## 10. Worked Example
+
+Suppose a key space holds request density that is uniform on $[0,1)$ except a Zipfian-style spike: $80\%$ of load falls in $[0.9,1.0)$. We want $p=4$ balanced ranges, so each should carry $\approx 25\%$ of load. The optimal boundaries sit at the $1/4, 2/4, 3/4$ **load quantiles** of $f$, not at the key-space quartiles $0.25, 0.5, 0.75$. The cold region $[0,0.9)$ carries only $20\%$ of load, so a *single* range covers it up to the point where cumulative load hits $25\%$ — already inside the hot zone. Working it out: the first boundary lands near key $0.9$ (capturing the cold $20\%$ plus a sliver of heat), and the remaining three boundaries pack tightly into $[0.9,1.0)$ to split the dominant $80\%$. A naive size/key-space-even split ($0.25,0.5,0.75$) would instead give loads $\approx 5\%,5\%,5\%,85\%$ — a $17\times$ imbalance, exactly the hot-range failure the load-quantile placement avoids.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

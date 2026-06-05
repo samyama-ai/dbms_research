@@ -42,12 +42,25 @@ Active: scaling SMT-based checkers (PolySI, Viper, IsoVista) to more isolation l
 - Statistically principled anomaly-rate estimation and SLA-style "isolation auditing."
 
 ## 9. Key References
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
-- **[SOTA]** Tan, Zhao, Jung, et al. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
-- **[SOTA]** Huang, Liu, Zhang, et al. *PolySI: Efficient Black-Box Checking of Snapshot Isolation.* VLDB, 2023.
-- **[Survey]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DOI](https://doi.org/10.1109/ICDE.2000.839388)
+- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** Tan, Zhao, Jung, et al. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan)
+- **[SOTA]** Huang, Liu, Zhang, et al. *PolySI: Efficient Black-Box Checking of Snapshot Isolation.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3583140.3583145)
+- **[Survey]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+
+## 10. Worked Example
+
+A black-box checker observes three transactions on keys $x,y$ (initial $x_0,y_0$):
+- $T_1$: write $x{=}1$ (creates $x_1$).
+- $T_2$: write $y{=}1$ (creates $y_1$); read $x \Rightarrow$ saw $x_1$.
+- $T_3$: read $x \Rightarrow x_1$; read $y \Rightarrow y_0$.
+
+Build the DSG. From $T_2$'s read of $x_1$: a **wr** edge $T_1 \to T_2$. From $T_3$ reading $y_0$ (the version *before* $T_2$'s write $y_1$): an **anti-dependency** $T_3 \to T_2$ (rw). From $T_3$ reading $x_1$: **wr** edge $T_1 \to T_3$.
+
+Edges: $T_1\to T_2,\; T_1\to T_3,\; T_3\to T_2$. No cycle $\Rightarrow$ the history **is serializable**, with the unique order $T_1, T_3, T_2$.
+
+Now suppose instead $T_3$ had also been read by $T_2$ as $y_1$ *and* $T_3$ read $y_0$: that forces both $T_2\to T_3$ and $T_3\to T_2$, a 2-cycle $\Rightarrow$ **non-serializable**, and the cycle is the witness Elle/Cobra would report. The hard part the checker solved here: *inferring* the version order from reads — NP-complete in general (Papadimitriou), tractable because values are unique.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

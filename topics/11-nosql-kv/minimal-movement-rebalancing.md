@@ -1,6 +1,7 @@
 # Provably Minimal-Movement Rebalancing
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/minimal-movement-rebalancing` · **Status:** partially-solved
+> **Verification note:** Consistent Hashing with Bounded Loads (Mirrokni–Thorup–Zadimoghaddam) appeared on arXiv in 2016 and at SODA 2018, not NeurIPS 2016 as the section-2 parenthetical states.
 
 ## 1. Problem Statement
 
@@ -50,12 +51,20 @@ Active work on weighted consistent hashing with tight bounds and on *constrained
 
 ## 9. Key References
 
-- **[Foundational]** David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy. *Consistent Hashing and Random Trees.* STOC 1997.
-- **[Foundational]** John Lamping, Eric Veach. *A Fast, Minimal Memory, Consistent Hash Algorithm.* arXiv:1406.2294, 2014.
-- **[SOTA]** Vahab Mirrokni, Mikkel Thorup, Morteza Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA 2018 (arXiv:1608.01350).
-- **[SOTA]** Daniel E. Eisenbud et al. *Maglev: A Fast and Reliable Software Network Load Balancer.* NSDI 2016.
-- **[SOTA]** Gal Mendelson, Shay Vargaftik, Katherine Barabash, et al. *AnchorHash: A Scalable Consistent Hash.* IEEE/ACM Transactions on Networking, 2021.
-- **[Foundational]** David Thaler, Chinya Ravishankar. *Using Name-Based Mappings to Increase Hit Rates (HRW / Rendezvous Hashing).* IEEE/ACM ToN, 1998.
+- **[Foundational]** David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy. *Consistent Hashing and Random Trees.* STOC 1997. — [DOI](https://doi.org/10.1145/258533.258660)
+- **[Foundational]** John Lamping, Eric Veach. *A Fast, Minimal Memory, Consistent Hash Algorithm.* arXiv:1406.2294, 2014. — [arXiv](https://arxiv.org/abs/1406.2294)
+- **[SOTA]** Vahab Mirrokni, Mikkel Thorup, Morteza Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA 2018 (arXiv:1608.01350). — [arXiv](https://arxiv.org/abs/1608.01350)
+- **[SOTA]** Daniel E. Eisenbud et al. *Maglev: A Fast and Reliable Software Network Load Balancer.* NSDI 2016. — [USENIX](https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/eisenbud)
+- **[SOTA]** Gal Mendelson, Shay Vargaftik, Katherine Barabash, et al. *AnchorHash: A Scalable Consistent Hash.* IEEE/ACM Transactions on Networking, 2021. — [DOI](https://doi.org/10.1109/TNET.2020.3039547)
+- **[Foundational]** David Thaler, Chinya Ravishankar. *Using Name-Based Mappings to Increase Hit Rates (HRW / Rendezvous Hashing).* IEEE/ACM ToN, 1998. — [DOI](https://doi.org/10.1109/90.663936)
+
+## 10. Worked Example
+
+Suppose $N = 12{,}000$ keys are hashed uniformly onto the ring over $n = 3$ nodes $A,B,C$, each owning $\approx 4{,}000$ keys.
+
+**Add a 4th node $D$.** The information-theoretic floor says $D$ must receive $\mathbb{E}[\text{moved}] \ge N/(n+1) = 12000/4 = 3000$ keys. Plain consistent hashing achieves exactly this in expectation: $D$ claims one arc of the ring and steals only the keys falling in that arc — *no other reassignments occur*. Contrast a naive $\text{node}=h(k)\bmod n$ scheme: changing $n=3\to4$ remaps keys whenever $h(k)\bmod 3 \neq h(k)\bmod 4$, moving roughly $\tfrac{3}{4}N = 9000$ keys — a $3\times$ waste.
+
+**Balance check.** With plain hashing, loads vary by $\Theta(\log n / n)$, so a node might hold $5{,}500$ vs the $3{,}000$ ideal. Adding $v=100$ virtual tokens per node shrinks the relative spread to $O(1/\sqrt{v}) = 10\%$, giving $\approx 3{,}000 \pm 300$ per node while preserving the optimal $\sim 3000$-key movement.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

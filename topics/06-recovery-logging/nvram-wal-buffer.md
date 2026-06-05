@@ -41,12 +41,18 @@ The latency win is real and repeatedly measured; the **empirically-open** gap is
 - Standard benchmarks isolating the commit-path durability win from confounding caching effects.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method ... Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** Wang, T. & Johnson, R. *Scalable Logging through Emerging Non-Volatile Memory.* VLDB, 2014.
-- **[SOTA]** Huang, J., Schwan, K. & Qureshi, M. K. *NVRAM-aware Logging in Transaction Systems.* VLDB, 2014.
-- **[SOTA]** Kimura, H. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015.
-- **[SOTA]** Raad, A., Wickerson, J., Neiger, G. & Vafeiadis, V. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020.
-- **[Survey]** Arulraj, J. & Pavlo, A. *Non-Volatile Memory Database Management Systems.* Morgan & Claypool Synthesis Lectures, 2019.
+- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method ... Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Wang, T. & Johnson, R. *Scalable Logging through Emerging Non-Volatile Memory.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732951.2732960)
+- **[SOTA]** Huang, J., Schwan, K. & Qureshi, M. K. *NVRAM-aware Logging in Transaction Systems.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735496.2735502)
+- **[SOTA]** Kimura, H. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2746480)
+- **[SOTA]** Raad, A., Wickerson, J., Neiger, G. & Vafeiadis, V. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020. — [DBLP](https://dblp.org/rec/journals/pacmpl/RaadWNV20.html)
+- **[Survey]** Arulraj, J. & Pavlo, A. *Non-Volatile Memory Database Management Systems.* Morgan & Claypool Synthesis Lectures, 2019. — [DBLP](https://dblp.org/rec/series/synthesis/2019Arulraj.html)
+
+## 10. Worked Example
+
+Take a commit-heavy OLTP loop. With block `fsync`, each commit pays $c_{\text{fsync}} \approx 200\,\mu s$, so a single thread caps at $1/c \approx 5{,}000$ commits/s. Move the log tail to NVRAM with eADR: a commit now persists one 64-byte log line via a store + `SFENCE` at $\approx 100\,ns$, so the same thread reaches $\approx 10^7$ commits/s — a $2000\times$ ceiling lift, until the *drain* to SSD becomes the binding rate.
+
+Now size the tail $B$. Suppose commit arrivals burst at $\lambda = 8\times10^5$ records/s (each 256 B) while the SSD drains at $\mu = 6\times10^5$ records/s. Since $\lambda > \mu$ transiently, the tail fills at $2\times10^5$ rec/s $= 51\,\text{MB/s}$. A $B = 512\,\text{MB}$ NVRAM tail absorbs $\approx 10\,s$ of such a burst before back-pressure. With overflow probability $\sim e^{-\theta B}$, doubling $B$ squares the safety margin. Crucially, durability against *media* loss still requires the eventual SSD drain or replication — the $fsync$ is hidden, not abolished.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

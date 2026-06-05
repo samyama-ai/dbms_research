@@ -42,12 +42,22 @@ Directions: interval/epoch-based and "two-version" GC that decouples long reader
 - Machine-checked proofs of GC safety co-designed with the isolation level.
 
 ## 9. Key References
-- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD 2008 / ACM TODS, 2009.
-- **[SOTA]** Neumann, Mühlbauer, Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[SOTA]** Böttcher, Leis, Neumann, Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (Steam).* VLDB, 2019.
-- **[SOTA]** Lim, Kaminsky, Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017.
-- **[SOTA]** Diaconu, Freedman, Ismert, Larson, Mittal, Stonecipher, Verma, Zwilling. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
+- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD 2008 / ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620587)
+- **[SOTA]** Neumann, Mühlbauer, Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[SOTA]** Böttcher, Leis, Neumann, Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (Steam).* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[SOTA]** Lim, Kaminsky, Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064015)
+- **[SOTA]** Diaconu, Freedman, Ismert, Larson, Mittal, Stonecipher, Verma, Zwilling. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+
+## 10. Worked Example
+
+A tuple $x$ has version chain $x_0$ (commit ts 10) $\to x_1$ (ts 20) $\to x_2$ (ts 30). Active transactions: a long analytical reader $T_L$ started at $t_s=12$, plus short writers continuously committing. The reclamation frontier is $t_{\min}=\min$ active start $=12$.
+
+$T_L$ reads the latest version with commit ts $\le 12$, namely $x_0$. So $x_0$ cannot be collected. Even though $x_1,x_2$ supersede it for everyone newer, $T_L$ pins $x_0$ until it finishes.
+
+Now apply the bound $|\text{versions}| \le n + W\cdot(\text{now}-t_{\min})$. With write rate $W=10^5$/s and $T_L$ running $\tau=60$ s, the store accumulates up to $6\times10^6$ extra versions — pure version explosion from one old reader.
+
+Steam-style interval GC helps if $T_L$ touches few tuples: versions of keys $T_L$ never reads are invisible to *all* snapshots and collectable despite the old $t_{\min}$. Fork-snapshot offload instead frees $x_0$ entirely by serving $T_L$ from a frozen copy, restoring the live bound to $O(n + W\cdot\delta)$ for small $\delta$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

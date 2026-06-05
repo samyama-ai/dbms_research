@@ -59,12 +59,22 @@ Each component (competitive eviction, shifting regret, streaming frequency) is t
 
 ## 9. Key References
 
-- **[Foundational]** O'Neil, O'Neil, Weikum. *The LRU-K Page Replacement Algorithm.* SIGMOD, 1993.
-- **[Foundational]** Megiddo, Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003.
-- **[SOTA]** Levandoski, Larson, Stoica. *Identifying Hot and Cold Data in Main-Memory Databases (Siberia).* ICDE, 2013.
-- **[SOTA]** Song, Berger, Li, Lloyd. *Learning Relaxed Belady for Content Distribution Network Caching (LRB).* NSDI, 2020.
-- **[Foundational]** Herbster, Warmuth. *Tracking the Best Expert.* Machine Learning, 1998.
-- **[Survey]** Metwally, Agrawal, El Abbadi. *Efficient Computation of Frequent and Top-k Elements (Space-Saving).* ICDT, 2005.
+- **[Foundational]** O'Neil, O'Neil, Weikum. *The LRU-K Page Replacement Algorithm.* SIGMOD, 1993. — [DBLP](https://dblp.org/rec/conf/sigmod/ONeilOW93.html)
+- **[Foundational]** Megiddo, Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003. — [USENIX](https://www.usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache)
+- **[SOTA]** Levandoski, Larson, Stoica. *Identifying Hot and Cold Data in Main-Memory Databases (Siberia).* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544811)
+- **[SOTA]** Song, Berger, Li, Lloyd. *Learning Relaxed Belady for Content Distribution Network Caching (LRB).* NSDI, 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/song)
+- **[Foundational]** Herbster, Warmuth. *Tracking the Best Expert.* Machine Learning, 1998. — [DOI](https://doi.org/10.1023/A:1007424614876)
+- **[Survey]** Metwally, Agrawal, El Abbadi. *Efficient Computation of Frequent and Top-k Elements (Space-Saving).* ICDT, 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+
+## 10. Worked Example
+
+Fast tier holds $k=2$ pages; cost is per fast-tier miss. Asymmetric penalties: false-cold $c_h=4$, false-hot $c_c=1$. Stream of accesses to pages $\{A,B,C\}$:
+$$A,A,A,B,C,C,A,A,B,B,C,C$$
+Counts: $A{=}5$, $C{=}4$, $B{=}3$. Space-Saving with 2 counters tracks the top-2; after the prefix $A,A,A,B,C$ it estimates $\{A{:}3, C{:}1(+\text{err})\}$ and labels $A,C$ hot, $B$ cold.
+
+Bayes threshold: keep hot when $\Pr[\text{hot}]\ge c_c/(c_h+c_c)=1/5=0.2$ — a low bar, so we err toward keeping pages. Demoting $B$ (true count 3, genuinely the coldest) is correct, costing $c_h$ only on each of $B$'s 3 demoted accesses $=3{\times}4=12$, versus evicting $C$ which would cost $4{\times}4=16$. So labeling $B$ cold is optimal in hindsight.
+
+Now a skew shift: after $t{=}9$, $B$ becomes hottest. A static classifier keeps paying false-cold penalty on $B$; Fixed-Share re-weights toward "$B$ hot" within $O(\sqrt{S})$ steps, bounding the regret from the single switch $S=1$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

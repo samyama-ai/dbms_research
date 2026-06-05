@@ -50,11 +50,21 @@ Push-based and disaggregated shuffle services with locality hints (Meta Cosco/Ze
 
 ## 9. Key References
 
-- **[SOTA]** M. Shen et al. *Magnet: Push-based Shuffle Service for Large-scale Data Processing.* VLDB 2020.
-- **[Foundational]** R. Krauthgamer, J. Naor, R. Schwartz. *Partitioning Graphs into Balanced Components.* SODA 2009.
-- **[Foundational]** S. Rao. *Small Distortion and Volume Preserving Embeddings for Planar and Euclidean Metrics.* SoCG 1999 (sparsest-cut machinery underlying balanced partitioning).
-- **[SOTA]** S. Rajaraman et al. / Sailfish: S. Rao, R. Ramakrishnan et al. *Sailfish: A Framework for Large Scale Data Processing.* SoCC 2012.
-- **[Survey]** P. Carbone et al. *Apache Flink / State and Shuffle Management*, and Spark AQE documentation — systems references for adaptive shuffle.
+- **[SOTA]** M. Shen et al. *Magnet: Push-based Shuffle Service for Large-scale Data Processing.* VLDB 2020. — [DOI](https://doi.org/10.14778/3415478.3415558)
+- **[Foundational]** R. Krauthgamer, J. Naor, R. Schwartz. *Partitioning Graphs into Balanced Components.* SODA 2009. — [DOI](https://doi.org/10.1137/1.9781611973068.102)
+- **[Foundational]** S. Rao. *Small Distortion and Volume Preserving Embeddings for Planar and Euclidean Metrics.* SoCG 1999 (sparsest-cut machinery underlying balanced partitioning). — [DOI](https://doi.org/10.1145/304893.304983)
+- **[SOTA]** S. Rajaraman et al. / Sailfish: S. Rao, R. Ramakrishnan et al. *Sailfish: A Framework for Large Scale Data Processing.* SoCC 2012. — [DOI](https://doi.org/10.1145/2391229.2391233)
+- **[Survey]** P. Carbone et al. *Apache Flink / State and Shuffle Management*, and Spark AQE documentation — systems references for adaptive shuffle. — [DOI](https://doi.org/10.14778/3137765.3137777)
+
+## 10. Worked Example
+
+Two zones, $p=4$ workers ($w_1,w_2$ in zone A, $w_3,w_4$ in zone B). Intra-zone byte cost $=0$, cross-zone cost $=1$ per byte. A shuffle produces 4 hash partitions $q_0,\dots,q_3$, each 100 bytes. Producers: zone A emits all tuples for $q_0,q_1$; zone B emits all tuples for $q_2,q_3$. Load cap $L=200$ bytes/worker (2 partitions each).
+
+Placement X (key-blind round-robin): $q_0\!\to\!w_1, q_1\!\to\!w_3, q_2\!\to\!w_2, q_3\!\to\!w_4$. Cross-zone bytes: $q_1$ (A→B, 100) $+\,q_2$ (B→A, 100) $=200$, cost $=200$.
+
+Placement Y (locality-aware): $q_0,q_1\!\to$ zone A ($w_1,w_2$); $q_2,q_3\!\to$ zone B ($w_3,w_4$). Every partition's producers already sit in its target zone, so cross-zone bytes $=0$, cost $=0$. Both respect $L=200$.
+
+So a topology-aware assignment cuts egress from $200$ to $0$ here. The hardness: with skewed producer maps and a balance cap, finding the cost-minimal $\pi$ is the balanced-min-cut/QAP problem of section 2 — NP-hard in general.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

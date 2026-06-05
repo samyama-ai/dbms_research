@@ -56,12 +56,20 @@ The corners and the three pairwise edges have tight results; the **interior thre
 
 ## 9. Key References
 
-- **[Foundational]** Attiya, H., Welch, J. L. *Sequential consistency versus linearizability.* ACM TOCS, 1994.
-- **[Foundational]** Lipton, R. J., Sandberg, J. S. *PRAM: a scalable shared memory.* Technical Report, Princeton, 1988.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services.* ACM SIGACT News, 2002.
-- **[SOTA]** Bailis, P., Venkataraman, S., Hellerstein, J. M., Franklin, M. J., Stoica, I. *Probabilistically Bounded Staleness for practical partial quorums.* VLDB, 2012.
-- **[SOTA]** Bailis, P., Fekete, A., Franklin, M. J., Ghodsi, A., Hellerstein, J. M., Stoica, I. *Coordination avoidance in database systems.* VLDB, 2015.
-- **[Foundational]** Abadi, D. *Consistency tradeoffs in modern distributed database system design (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Attiya, H., Welch, J. L. *Sequential consistency versus linearizability.* ACM TOCS, 1994. — [DOI](https://doi.org/10.1145/176575.176576)
+- **[Foundational]** Lipton, R. J., Sandberg, J. S. *PRAM: a scalable shared memory.* Technical Report, Princeton, 1988. — [Princeton TR](https://www.cs.princeton.edu/research/techreps/708)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Bailis, P., Venkataraman, S., Hellerstein, J. M., Franklin, M. J., Stoica, I. *Probabilistically Bounded Staleness for practical partial quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[SOTA]** Bailis, P., Fekete, A., Franklin, M. J., Ghodsi, A., Hellerstein, J. M., Stoica, I. *Coordination avoidance in database systems.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1402.2237)
+- **[Foundational]** Abadi, D. *Consistency tradeoffs in modern distributed database system design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+Take the Attiya–Welch edge concretely. Two replicas $R_1, R_2$ implement a linearizable register; one-way message-delay uncertainty is $u = 10$ ms. The theorem says read latency $\ge u/4 = 2.5$ ms and write latency $\ge u/2 = 5$ ms — you cannot serve both instantly.
+
+Now relax with staleness. Let writes propagate with mean delay $d = 8$ ms. A client wants a **local** read at $\ell = 0$ ms (no round trip). By the information-propagation floor, that read cannot reflect any write issued within the last $d - \ell = 8$ ms of travel, so its staleness is bounded below by $\Delta \gtrsim 8$ ms.
+
+Availability dimension: during a partition, $R_2$ either answers locally (available, $a = 1$, but stale by the full partition duration) or blocks (consistent, $a < 1$). At operating point $(\Delta, a, \ell) = (8\text{ ms}, 1, 0)$ we sit on the achievable edge; pushing $\Delta \to 0$ while keeping $a = 1, \ell = 0$ is forbidden — exactly the three-way frontier $\Phi$ this problem seeks to pin down.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

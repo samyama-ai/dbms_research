@@ -52,12 +52,22 @@ The question is **largely settled negatively in the pointer machine** (no linear
 - Dynamic (insert/delete) multidimensional structures matching the static frontier.
 
 ## 9. Key References
-- **[Foundational]** J. L. Bentley. *Multidimensional Binary Search Trees Used for Associative Searching.* CACM, 1975.
-- **[Foundational]** B. Chazelle. *Lower Bounds for Orthogonal Range Searching: I. The Reporting Case / II. The Arithmetic Model.* JACM, 1990.
-- **[SOTA]** P. Afshani, L. Arge, K. G. Larsen. *Orthogonal Range Reporting in Three and Higher Dimensions.* FOCS/SoCG, 2009–2012.
-- **[Foundational]** A. Guttman. *R-Trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984.
-- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-dimensional Indexes (Flood).* SIGMOD, 2020.
-- **[Survey]** P. K. Agarwal, J. Erickson. *Geometric Range Searching and Its Relatives.* Advances in Discrete and Computational Geometry, 1999.
+- **[Foundational]** J. L. Bentley. *Multidimensional Binary Search Trees Used for Associative Searching.* CACM, 1975. — [DOI](https://doi.org/10.1145/361002.361007)
+- **[Foundational]** B. Chazelle. *Lower Bounds for Orthogonal Range Searching: I. The Reporting Case / II. The Arithmetic Model.* JACM, 1990. — [DOI](https://doi.org/10.1145/77600.77614)
+- **[SOTA]** P. Afshani, L. Arge, K. G. Larsen. *Orthogonal Range Reporting in Three and Higher Dimensions.* FOCS/SoCG, 2009–2012. — [PDF](https://cs.au.dk/~larsen/papers/orth_in_3_and_higher.pdf)
+- **[Foundational]** A. Guttman. *R-Trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/602259.602266)
+- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-dimensional Indexes (Flood).* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1912.01668)
+- **[Survey]** P. K. Agarwal, J. Erickson. *Geometric Range Searching and Its Relatives.* Advances in Discrete and Computational Geometry, 1999. — [PDF](https://jeffe.cs.illinois.edu/pubs/survey.html)
+
+## 10. Worked Example
+
+Take $n=6$ points in $\mathbb{R}^2$: $\{(1,2),(3,5),(4,1),(6,7),(8,3),(9,6)\}$ and query box $Q=[2,8]\times[1,5]$. The answer is $\{(3,5),(4,1),(8,3)\}$, so $k=3$.
+
+**kd-tree** ($O(n)$ space): split on $x$ at median $\approx 4$, then on $y$. A query descends, pruning subtrees whose bounding box misses $Q$. Worst-case it visits $O(\sqrt{n})=O(n^{1-1/d})$ cells with $d=2$ — here roughly $\sqrt 6\approx 2.4$ node-paths beyond the $k$ output points.
+
+**Range tree** ($O(n\log n)$ space): a primary BST on $x$ finds the canonical subtrees covering $[2,8]$ ($O(\log n)\approx 3$ nodes), each carrying a secondary BST on $y$ searched for $[1,5]$: query $O(\log^2 n + k)$.
+
+The contrast — linear space but $\Theta(\sqrt n)$ query vs. polylog query but $\Theta(n\log n)$ space — is exactly the unresolved tension. The pointer-machine bound $\Omega(n(\log n/\log\log n)^{d-1})$ says you cannot have both $O(n)$ space and polylog query for $d\ge 2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

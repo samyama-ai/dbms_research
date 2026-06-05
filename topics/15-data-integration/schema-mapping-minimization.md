@@ -56,12 +56,20 @@ Active: equivalence and minimization for **SO-tgds and plain SO-tgds** (Pichler,
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* ACM TODS, 2005.
-- **[Foundational]** R. Fagin, P. Kolaitis, A. Nash, L. Popa. *Towards a Theory of Schema-Mapping Optimization.* PODS, 2008.
-- **[SOTA]** G. Gottlob, R. Pichler, V. Savenkov. *Normalization and Optimization of Schema Mappings.* PVLDB / VLDB Journal, 2009–2011.
-- **[SOTA]** I. Feinerer, R. Pichler, E. Sallinger, V. Savenkov. *On the Undecidability of the Equivalence of Second-Order Tuple Generating Dependencies.* AMW / Information Systems, 2015.
-- **[SOTA]** G. Mecca, P. Papotti, S. Raunich. *Core Schema Mappings.* SIGMOD, 2009.
-- **[Survey]** M. Arenas, P. Barceló, L. Libkin, F. Murlak. *Foundations of Data Exchange.* Cambridge University Press, 2014.
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* ACM TODS, 2005. — [ACM](https://dl.acm.org/doi/10.1145/1061318.1061323)
+- **[Foundational]** R. Fagin, P. Kolaitis, A. Nash, L. Popa. *Towards a Theory of Schema-Mapping Optimization.* PODS, 2008. — [DOI](https://doi.org/10.1145/1376916.1376922)
+- **[SOTA]** G. Gottlob, R. Pichler, V. Savenkov. *Normalization and Optimization of Schema Mappings.* PVLDB / VLDB Journal, 2009–2011. — [DOI](https://doi.org/10.1007/s00778-011-0226-x)
+- **[SOTA]** I. Feinerer, R. Pichler, E. Sallinger, V. Savenkov. *On the Undecidability of the Equivalence of Second-Order Tuple Generating Dependencies.* AMW / Information Systems, 2015. — [DOI](https://doi.org/10.1016/j.is.2014.09.003)
+- **[SOTA]** G. Mecca, P. Papotti, S. Raunich. *Core Schema Mappings.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559914)
+- **[Survey]** M. Arenas, P. Barceló, L. Libkin, F. Murlak. *Foundations of Data Exchange.* Cambridge University Press, 2014. — [Cambridge](https://www.cambridge.org/core/books/foundations-of-data-exchange/FABEE52F4A503AA9DEFC54A9382AF54C)
+
+## 10. Worked Example
+
+Consider a mapping $M$ with two s-t TGDs from $\mathrm{Emp}(e)$ to a target with $\mathrm{Worker}(e,p)$:
+$$\sigma_1:\ \mathrm{Emp}(e) \to \exists p\, \mathrm{Worker}(e,p), \qquad \sigma_2:\ \mathrm{Emp}(e) \to \exists p_1 p_2\, \mathrm{Worker}(e,p_1) \wedge \mathrm{Worker}(e,p_2).$$
+Is $\sigma_2$ redundant? Chase $\sigma_2$'s body with $M$: from $\mathrm{Emp}(a)$, $\sigma_1$ already produces $\mathrm{Worker}(a, N)$. The RHS of $\sigma_2$ maps homomorphically into this single atom via $p_1, p_2 \mapsto N$ — so $\sigma_2$ adds no certain answers and is **implied by $\sigma_1$**.
+
+Hence $M \equiv_{\mathrm{CQ}} M' = \{\sigma_1\}$, halving the dependency count. Note the RHS of $\sigma_2$ is itself non-core: its **core** (minimal homomorphic image) is the single atom $\mathrm{Worker}(e,p_1)$, recovering $\sigma_1$. This illustrates the two minimization moves — *core reduction* within a TGD's RHS and *redundant-TGD elimination* across TGDs — both decided by a homomorphism/implication test ($\mathrm{NP}$ for s-t GLAV).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

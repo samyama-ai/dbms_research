@@ -44,11 +44,21 @@ Recovering a dependency/copying DAG generalizes **Bayesian-network structure lea
 - Robustness to adversarial/strategic copiers; provenance-aware fusion using cryptographic or watermark signals.
 
 ## 9. Key References
-- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Integrating Conflicting Data: The Role of Source Dependence.* VLDB, 2009.
-- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Truth Discovery and Copying Detection in a Dynamic World.* VLDB, 2009.
-- **[SOTA]** X. L. Dong, L. Berti-Équille, Y. Hu, D. Srivastava. *Global Detection of Complex Copying Relationships Between Sources.* VLDB, 2010.
-- **[SOTA]** X. L. Dong et al. *Knowledge-Based Trust: Estimating the Trustworthiness of Web Sources.* VLDB, 2015.
-- **[Foundational]** D. M. Chickering. *Learning Bayesian Networks is NP-Complete.* Learning from Data (AI & Statistics V), 1996.
+- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Integrating Conflicting Data: The Role of Source Dependence.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687690)
+- **[Foundational]** X. L. Dong, L. Berti-Équille, D. Srivastava. *Truth Discovery and Copying Detection in a Dynamic World.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687691)
+- **[SOTA]** X. L. Dong, L. Berti-Équille, Y. Hu, D. Srivastava. *Global Detection of Complex Copying Relationships Between Sources.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1921008)
+- **[SOTA]** X. L. Dong et al. *Knowledge-Based Trust: Estimating the Trustworthiness of Web Sources.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1502.03519)
+- **[Foundational]** D. M. Chickering. *Learning Bayesian Networks is NP-Complete.* Learning from Data (AI & Statistics V), 1996. — [DOI](https://doi.org/10.1007/978-1-4612-2404-4_12)
+
+## 10. Worked Example
+
+Three sources report a country's capital over $|\Phi|=100$ objects. Per-source error rate $\epsilon=0.1$, so two *independent* sources should share a wrong answer on about $\epsilon^2\cdot 100 = 1$ object.
+
+Observed shared-*false* counts: $|\bar\Phi_f(S_1,S_2)| = 12$, while $|\bar\Phi_f(S_1,S_3)| = 1$ and $|\bar\Phi_f(S_2,S_3)| = 1$.
+
+For the pair $(S_1,S_2)$, seeing 12 identical mistakes when independence predicts $\approx 1$ is a $\sim$Poisson tail of $e^{-1}1^{12}/12! \approx 10^{-12}$ — overwhelming evidence of copying. Bayes' rule drives the posterior copying probability $c\to 1$. The fusion loop then discounts the second source's vote by $(1-c)\approx 0$, so $S_1,S_2$ count as essentially *one* witness rather than two.
+
+Direction ($S_1\!\to\!S_2$ vs. $S_2\!\to\!S_1$) needs the accuracy asymmetry: the less-accurate source is inferred to be the copier. With only 12 shared errors, if both are equally accurate the direction is statistically indistinguishable — the identifiability floor of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

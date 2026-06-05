@@ -39,12 +39,23 @@ Active: learned/ML cost models and *learned compaction* policies that adapt size
 - Analysis accounting for in-progress compaction and read amplification during merges.
 
 ## 9. Key References
-- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018.
-- **[SOTA]** A. Huynh, H. Chaudhari, E. Terzi, M. Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB, 2022.
-- **[Foundational]** G. S. Brodal, R. Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
-- **[Foundational]** L. Arge. *The Buffer Tree: A Technique for Designing Batched External Data Structures.* Algorithmica, 2003.
+- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DBLP](https://dblp.org/rec/conf/sigmod/DayanAI17.html)
+- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** A. Huynh, H. Chaudhari, E. Terzi, M. Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2110.13801)
+- **[Foundational]** G. S. Brodal, R. Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+- **[Foundational]** L. Arge. *The Buffer Tree: A Technique for Designing Batched External Data Structures.* Algorithmica, 2003. — [DOI](https://doi.org/10.1007/s00453-003-1021-x)
+
+## 10. Worked Example
+
+Take $n = 10^9$ entries, buffer $B = 10^6$ entries, size ratio $T = 10$. Then
+$$L = \lceil \log_{10}(10^9/10^6)\rceil = \lceil\log_{10}(10^3)\rceil = 3 \text{ levels}.$$
+
+**Point lookup, leveling.** Probe one run per level $= 3$ runs, but Bloom filters cut disk reads to false positives. With a *uniform* FPR $p = 0.01$ per level, expected wasted I/Os $= \sum_i p_i = 3 \times 0.01 = 0.03$, so a negative lookup costs $\approx 0.03$ I/Os; a positive one adds 1 read.
+
+**Monkey reallocation.** Hold the same total bits but set $p_i \propto T^{i}$, so deeper, larger levels get *higher* FPR (they hold most keys, so most bits). Skewing the budget toward shallow levels drops the *sum* $\sum_i p_i$ — e.g. $(0.001, 0.01, 0.1)$ sums to $0.111$ but, reweighted by level sizes, the *expected* probes-per-lookup fall below the uniform allocation, matching the $O(L\cdot e^{-M/n})$ bound.
+
+**Tiering contrast.** With up to $T-1 = 9$ runs/level, worst-case probes jump to $\approx 9 \times 3 = 27$ runs — illustrating the read penalty traded for cheaper writes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,11 +50,19 @@ Runtime/adaptive query execution with finer-grained, mid-stage statistics (Datab
 
 ## 9. Key References
 
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms / LATIN 2004.
-- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982.
-- **[Foundational]** A. Metwally, D. Agrawal, A. El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams.* ICDT 2005.
-- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Skew in Parallel Query Processing.* PODS 2014.
-- **[Survey]** G. Cormode, K. Yi. *Small Summaries for Big Data.* Cambridge University Press, 2020.
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms / LATIN 2004. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982. — [DOI](https://doi.org/10.1016/0167-6423(82)90012-0)
+- **[Foundational]** A. Metwally, D. Agrawal, A. El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams.* ICDT 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Skew in Parallel Query Processing.* PODS 2014. — [arXiv](https://arxiv.org/abs/1401.1872)
+- **[Survey]** G. Cormode, K. Yi. *Small Summaries for Big Data.* Cambridge University Press, 2020. — [Cambridge](https://www.cambridge.org/core/books/small-summaries-for-big-data/B41310C236A3D3574C273C42B71F35A4)
+
+## 10. Worked Example
+
+Shuffle $N=1000$ tuples into $p=4$ reducers; ideal load is $N/p = 250$. Suppose one key $x$ secretly carries $400$ tuples (40% mass) — if it lands on one reducer, that reducer's load is $\ge 400$, a $1.6\times$ straggler. Take detection threshold $L^\*=(1+\beta)N/p$ with $\beta=0.5$, so $L^\*=375$.
+
+Run a Misra–Gries summary with $s=O(p/\beta)=8$ counters over a prefix. After observing $m=200$ tuples, $x$'s true rate is $0.40$, so its expected prefix count is $\approx 80$, while the $\epsilon N$ error with $\epsilon=1/s$ is $\le 200/8=25$. We flag $x$ once its estimate $\hat f_x \ge \beta N/p = 125$ extrapolated — comfortably crossing once $\hat f_x m/m \cdot N \approx 400 > 375$.
+
+Mitigation: split $x$ across all $4$ reducers, dropping its per-reducer load to $400/4=100$. Extra traffic $\approx 3\times100=300$ bytes-units versus a full re-shuffle of $1000$ — a $3.3\times$ saving, illustrating the detect-then-split tradeoff.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

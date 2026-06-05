@@ -44,12 +44,21 @@ Active threads: (1) **Unifying frameworks** — Free Join and its successors gen
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing / FOCS, 2008/2013.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[Foundational]** Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT 2014.
-- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS, 2017.
-- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD 2023.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing / FOCS, 2008/2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT 2014. — [DOI](https://doi.org/10.5441/002/ICDT.2014.13)
+- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS, 2017. — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD 2023. — [DOI](https://doi.org/10.1145/3589295)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+Triangle query $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ on a "star + clique" instance: one hub vertex connected to all others, with $|R|=|S|=|T|=N$. The AGM bound uses the fractional edge cover $x_R=x_S=x_T=\tfrac12$ (each attribute $a,b,c$ covered: $\tfrac12+\tfrac12\ge 1$), giving
+$$\mathrm{AGM}(Q)=N^{1/2}\cdot N^{1/2}\cdot N^{1/2}=N^{3/2}.$$
+
+**Binary plan:** materialize $R\bowtie S$ first. On the star instance the hub forces the intermediate $|R\bowtie S|=\Theta(N^2)$ tuples before joining $T$ — asymptotically worse than $N^{3/2}$.
+
+**Generic Join / LFTJ:** pick order $a,b,c$. For each $a$ value, intersect $R$'s neighbors with $T$'s; for each surviving $b$, intersect $S$ and $T$ — total work $\tilde O(N^{3/2})$, matching AGM. With $N=10^6$: $N^{3/2}=10^9$ versus the binary plan's $N^2=10^{12}$, a $1000\times$ gap. This is exactly the cyclic case where WCOJ provably wins; on acyclic queries the constants flip the other way (Section 6).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

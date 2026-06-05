@@ -46,13 +46,21 @@ Directions: reducing EPaxos's dependency-tracking overhead and slow-path frequen
 
 ## 9. Key References
 
-- **[Foundational]** Lamport. *Fast Paxos.* Distributed Computing, 2006.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[Foundational]** Gray, Lamport. *Consensus on Transaction Commit.* ACM TODS, 2006.
-- **[SOTA]** Moraru, Andersen, Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** Zhang, et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP/OSDI, 2015.
-- **[SOTA]** Howard, Malkhi, Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database* (parallel commits). SIGMOD, 2020.
+- **[Foundational]** Lamport. *Fast Paxos.* Distributed Computing, 2006. — [DOI](https://doi.org/10.1007/s00446-006-0005-x)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Gray, Lamport. *Consensus on Transaction Commit.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+- **[SOTA]** Moraru, Andersen, Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2517350)
+- **[SOTA]** Zhang, et al. *Building Consistent Transactions with Inconsistent Replication (TAPIR).* SOSP/OSDI, 2015. — [DOI](https://doi.org/10.1145/2815400.2815404)
+- **[SOTA]** Howard, Malkhi, Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.OPODIS.2016.25)
+- **[SOTA]** Taft, et al. *CockroachDB: The Resilient Geo-Distributed SQL Database* (parallel commits). SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+
+## 10. Worked Example
+
+Fast Paxos quorum sizing with $n=5$ acceptors. A classic quorum is any majority, $|Q| = 3$. The fast path needs $|Q_f|$ such that two fast quorums and one classic quorum always share an acceptor: $|Q_f| \ge n - \lfloor (n-1)/3 \rfloor = 5 - \lfloor 4/3 \rfloor = 5 - 1 = 4$. So a fast quorum is $4$ of $5$ — larger than the majority of $3$, the price of skipping a round.
+
+Check intersection: any $Q_{f1}, Q_{f2}$ of size $4$ overlap in $\ge 3$ acceptors, and any classic $Q$ of size $3$ meets that overlap in $\ge 3+3-5 = 1$. So no two distinct values can both look chosen — safety holds.
+
+Latency: client $\to$ 4 acceptors $\to$ learner is **2 message delays** versus 4 for classic Paxos (client $\to$ leader $\to$ acceptors $\to$ learner). But if two clients propose concurrently to overlapping-but-not-identical fast quorums, a *collision* occurs and the protocol falls back to the slow path — illustrating why the fast path is a common-case optimization, never a replacement, exactly the FLP-mandated fallback.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

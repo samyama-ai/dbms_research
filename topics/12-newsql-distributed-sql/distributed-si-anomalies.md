@@ -109,12 +109,23 @@ reads**, where the snapshot cut is intentionally stale *(frontier — verify)*.
 
 ## 9. Key References
 
-- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995.
-- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[SOTA]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015.
-- **[SOTA]** Beillahi, Bouajjani, Enea. *Checking Robustness Against Snapshot Isolation.* CAV, 2019.
-- **[Systems]** Du, Elnikety, Zwaenepoel. *Clock-SI: Snapshot Isolation for Partitioned Data Stores Using Loosely Synchronized Clocks.* SRDS, 2013.
-- **[Foundational]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999.
+- **[Foundational]** Berenson, Bernstein, Gray, Melton, O'Neil, O'Neil. *A Critique of ANSI SQL Isolation Levels.* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223785)
+- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** Cerone, Bernardi, Gotsman. *A Framework for Transactional Consistency Models with Atomic Visibility.* CONCUR, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2015.58)
+- **[SOTA]** Beillahi, Bouajjani, Enea. *Checking Robustness Against Snapshot Isolation.* CAV, 2019. — [arXiv](https://arxiv.org/abs/1905.08406)
+- **[Systems]** Du, Elnikety, Zwaenepoel. *Clock-SI: Snapshot Isolation for Partitioned Data Stores Using Loosely Synchronized Clocks.* SRDS, 2013. — [DOI](https://doi.org/10.1109/SRDS.2013.26)
+- **[Foundational]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT](http://pmg.csail.mit.edu/papers/adya-phd.pdf)
+
+## 10. Worked Example
+
+Classic write skew. Invariant: at least one of two on-call doctors must stay (`x + y \ge 1`), with $x=y=1$ initially. The rows sit on **different shards** $S_x, S_y$.
+
+- $T_1$ reads snapshot $\{x{=}1, y{=}1\}$, sees $y=1$, sets $x \leftarrow 0$ (writes only on $S_x$).
+- $T_2$ reads the same snapshot, sees $x=1$, sets $y \leftarrow 0$ (writes only on $S_y$).
+
+Per-shard first-committer-wins finds no conflict: $T_1$ touches only $x$, $T_2$ only $y$, so each commits. Result $x=y=0$ — invariant violated, yet no serial order ($T_1;T_2$ or $T_2;T_1$) produces it.
+
+DSG check: $T_1 \xrightarrow{rw} T_2$ (T_1 read $y$, T_2 overwrote it) and $T_2 \xrightarrow{rw} T_1$ (T_2 read $x$, T_1 overwrote it). This is a cycle with two consecutive $rw$ edges — exactly Fekete et al.'s dangerous structure, both transactions acting as pivots. A global FCW or SSI promotion would abort one; the sharded check cannot see the cross-shard cycle.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

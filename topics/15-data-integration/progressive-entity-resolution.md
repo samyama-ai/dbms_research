@@ -50,12 +50,27 @@ Offline-expectation greedy is tight ($1-1/e$). The open gap is the **online–of
 
 ## 9. Key References
 
-- **[Foundational]** S. E. Whang, D. Marmaros, H. Garcia-Molina. *Pay-As-You-Go Entity Resolution.* IEEE TKDE / ICDE, 2013.
-- **[SOTA]** Y. Altowim, D. V. Kalashnikov, S. Mehrotra. *Progressive Approach to Relational Entity Resolution.* VLDB, 2014.
-- **[SOTA]** T. Papenbrock, A. Heise, F. Naumann. *Progressive Duplicate Detection.* IEEE TKDE, 2015.
-- **[Survey]** G. Papadakis, E. Ioannou, E. Thanos, T. Palpanas. *The Four Generations of Entity Resolution.* Morgan & Claypool (Synthesis Lectures), 2021.
-- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions.* Math. Programming, 1978. ($1-1/e$ greedy.)
-- **[Foundational]** U. Feige. *A threshold of $\ln n$ for approximating set cover.* JACM, 1998.
+- **[Foundational]** S. E. Whang, D. Marmaros, H. Garcia-Molina. *Pay-As-You-Go Entity Resolution.* IEEE TKDE / ICDE, 2013. — [DOI](https://doi.org/10.1109/TKDE.2012.43)
+- **[SOTA]** Y. Altowim, D. V. Kalashnikov, S. Mehrotra. *Progressive Approach to Relational Entity Resolution.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732967.2732975)
+- **[SOTA]** T. Papenbrock, A. Heise, F. Naumann. *Progressive Duplicate Detection.* IEEE TKDE, 2015. — [DOI](https://doi.org/10.1109/TKDE.2014.2359666)
+- **[Survey]** G. Papadakis, E. Ioannou, E. Thanos, T. Palpanas. *The Four Generations of Entity Resolution.* Morgan & Claypool (Synthesis Lectures), 2021. — [DOI](https://doi.org/10.1007/978-3-031-01878-7)
+- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions.* Math. Programming, 1978. ($1-1/e$ greedy.) — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** U. Feige. *A threshold of $\ln n$ for approximating set cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+
+## 10. Worked Example
+
+Four candidate pairs, each cost $w=1$, with match probabilities and (unknown) true labels:
+
+| pair | $p(c)$ | $y$ | benefit/cost $p/w$ |
+|------|-------|-----|------|
+| $c_1$ | 0.9 | match | 0.9 |
+| $c_2$ | 0.8 | non-match | 0.8 |
+| $c_3$ | 0.5 | match | 0.5 |
+| $c_4$ | 0.2 | match | 0.2 |
+
+Budget $B=2$ (two comparisons). **Greedy by $p/w$** orders $c_1, c_2, c_3, c_4$ and spends on $c_1, c_2$: recovers $c_1$ only — **1 true match** (it wasted a slot on the high-scored false positive $c_2$). The **offline oracle**, knowing $y$, picks $c_1, c_3$: **2 matches**.
+
+So the realized recall is $1/2$ of optimal here — a concrete instance of the *online–offline gap* (Section 6): imperfect scores ($c_2$ scored above the true match $c_3$) cost recall. The recall–cost AUC for greedy is $\int_0^2$ of the step function $0\!\to\!1\!\to\!1$, vs the oracle's $0\!\to\!1\!\to\!2$. No deterministic order beats this adversarial mis-calibration without distributional assumptions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

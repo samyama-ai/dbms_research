@@ -1,6 +1,7 @@
 # Vectorized vs. Compiled Execution Frontier
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/vectorized-vs-compiled` · **Status:** empirically-open
+> **Verification note:** The VLDB 2018 "Compiled and Vectorized Queries" study's fifth author is Andrew Pavlo, not Mühleisen (DBLP KerstenLKNPB18); the reference list has been corrected accordingly.
 
 ## 1. Problem Statement
 Analytical query engines realize a physical plan in one of two dominant paradigms:
@@ -44,11 +45,23 @@ Active directions: **MLIR/LLVM-based unified IRs** (LingoDB, Apache DataFusion's
 - Extending the frontier analysis to GPUs/FPGAs and to disaggregated / cloud storage where I/O dominates.
 
 ## 9. Key References
-- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005.
-- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011.
-- **[SOTA/Survey]** Kersten, Leis, Kemper, Neumann, Mühleisen, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB 2018.
-- **[SOTA]** Kohn, Leis, Neumann. *Adaptive Execution of Compiled Queries.* ICDE 2018.
-- **[SOTA]** Behm et al. *Photon: A Fast Query Engine for Lakehouse Systems.* SIGMOD 2022.
+- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005. — [PDF](https://www.cidrdb.org/cidr2005/papers/P19.pdf)
+- **[Foundational]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB 2011. — [PDF](https://www.vldb.org/pvldb/vol4/p539-neumann.pdf)
+- **[SOTA/Survey]** Kersten, Leis, Kemper, Neumann, Pavlo, Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB 2018. — [DBLP](https://dblp.org/rec/journals/pvldb/KerstenLKNPB18.html)
+- **[SOTA]** Kohn, Leis, Neumann. *Adaptive Execution of Compiled Queries.* ICDE 2018. — [DBLP](https://dblp.org/rec/conf/icde/KohnL018.html)
+- **[SOTA]** Behm et al. *Photon: A Fast Query Engine for Lakehouse Systems.* SIGMOD 2022. — [DOI](https://doi.org/10.1145/3514221.3526054)
+
+## 10. Worked Example
+
+Consider one pipeline executed $n$ times (one invocation per output tuple group). Measured per-tuple execution: vectorized $t^{\text{vec}}_{\text{exec}}=5$ ns, compiled $t^{\text{jit}}_{\text{exec}}=2$ ns, with a one-time JIT cost $c_{\text{compile}}=30{,}000$ ns (30 µs).
+
+Apply the amortization model $T = c_{\text{compile}} + n\cdot t_{\text{exec}}$. Break-even cardinality:
+$$ n^* = \frac{c_{\text{compile}}}{t^{\text{vec}}_{\text{exec}} - t^{\text{jit}}_{\text{exec}}} = \frac{30{,}000}{5-2} = 10{,}000 \text{ tuples}. $$
+
+- At $n=1{,}000$: vectorized $T=5{,}000$ ns vs compiled $T=30{,}000+2{,}000=32{,}000$ ns. **Interpret wins** (small query — compile cost dominates).
+- At $n=100{,}000$: vectorized $T=500{,}000$ ns vs compiled $T=30{,}000+200{,}000=230{,}000$ ns. **Compile wins** (~$2.2\times$).
+
+The crossover at $n^*=10{,}000$ is exactly what adaptive systems like Umbra exploit: start interpreting, and only pay $c_{\text{compile}}$ once a pipeline is observed to exceed $n^*$. Note $n^*$ shifts with hardware ($t_{\text{exec}}$) and operator mix, which is why no single static rule is optimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

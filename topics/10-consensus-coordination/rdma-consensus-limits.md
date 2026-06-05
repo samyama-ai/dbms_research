@@ -41,11 +41,23 @@ There is no proven round-complexity *separation* between two-sided and one-sided
 - Standardizing the NIC-failure semantics so portable safety proofs are possible across vendors.
 
 ## 9. Key References
-- **[Foundational]** Maurice Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** Leslie Lamport. *Lower Bounds for Asynchronous Consensus.* Distributed Computing, 2006.
-- **[SOTA]** Marius Poke, Torsten Hoefler. *DARE: High-Performance State Machine Replication on RDMA Networks.* HPDC, 2015.
-- **[SOTA]** Marcos K. Aguilera et al. *Microsecond Consensus for Microsecond Applications (Mu).* OSDI, 2020.
-- **[SOTA]** Aleksandar Dragojević et al. *FaRM: Fast Remote Memory.* NSDI, 2014.
+- **[Foundational]** Maurice Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** Leslie Lamport. *Lower Bounds for Asynchronous Consensus.* Distributed Computing, 2006. — [DOI](https://doi.org/10.1007/s00446-006-0155-x)
+- **[SOTA]** Marius Poke, Torsten Hoefler. *DARE: High-Performance State Machine Replication on RDMA Networks.* HPDC, 2015. — [DOI](https://doi.org/10.1145/2749246.2749267)
+- **[SOTA]** Marcos K. Aguilera et al. *Microsecond Consensus for Microsecond Applications (Mu).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/aguilera)
+- **[SOTA]** Aleksandar Dragojević et al. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87)
+
+## 10. Worked Example
+
+Consider Mu-style replication with $n=3$ replicas ($f=1$, $2f+1=3$), leader $L$ and followers $A,B$. Each follower exports a log region $L_A,L_B$ over RDMA reliable-connection transport, granting **write permission only to the current leader**.
+
+Commit path for one request, on the fast path:
+1. $L$ issues a one-sided `WRITE` of the entry into slot $s$ of $L_A$ and $L_B$ — no follower CPU runs.
+2. $L$ waits for the two NIC `WRITE` completions. With both followers plus $L$ itself, the entry is durable on a quorum of $2 < 3$... actually $L$ counts itself, so $L_A$ done + local = 2 of 3 suffices: **1 RDMA round trip** ($\approx 1.3\,\mu s$).
+
+Compare TCP/Multi-Paxos: prepare + accept = 2 message delays at $\approx 30\text{–}100\,\mu s$ kernel RTT each. RDMA does not beat the *asymptotic* $\ge 2$ round-trip floor (a one-sided op is itself a round trip), but shrinks the constant by $\sim 50\times$.
+
+Failover: to fence stale $L$, $A$ and $B$ **revoke** $L$'s write permission via the NIC ($Q$-permission change), so $L$'s in-flight `WRITE`s fail — no extra consensus round. The cost: a passive replica whose CPU is dead but NIC alive still serves memory, splitting fail-stop into NIC-vs-CPU liveness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

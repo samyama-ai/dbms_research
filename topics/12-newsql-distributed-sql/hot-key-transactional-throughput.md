@@ -111,12 +111,22 @@ engineering teams.
 
 ## 9. Key References
 
-- **[Foundational]** O'Neil, P. *The Escrow Transactional Method.* ACM TODS, 1986.
-- **[Foundational]** Eswaran, K., Gray, J., Lorie, R., Traiger, I. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[SOTA]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** O'Neil, P. *The Escrow Transactional Method.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7265)
+- **[Foundational]** Eswaran, K., Gray, J., Lorie, R., Traiger, I. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[SOTA]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+A leaderboard counter row $x$ is the hot key, with cross-region commit latency $L = 5$ ms per serializable write (one quorum round). Under the fluid model, single-key throughput is capped at $1/L = 1/0.005 = 200$ writes/s — regardless of cluster size.
+
+**Skew effect.** With $N = 10^6$ keys and Zipfian $s = 1.2 > 1$, the hottest key absorbs a $\Theta(1)$ fraction; say $1/H_{N,s} \approx 0.45$. If the workload offers $10{,}000$ writes/s, about $4{,}500$/s target $x$ but only $200$/s can commit — the row caps the **whole system** at $200/0.45 \approx 444$ effective writes/s.
+
+**Escrow path.** If updates are pure increments (commutative), conflicts relax to an integrity check; the per-op latch $\ell = 50\,\mu\text{s}$ replaces $L$. Ceiling rises to $1/\ell = 1/0.00005 = 20{,}000$ writes/s — a $100\times$ gain, valid as long as no constraint (e.g. "count $\ge 0$") threshold is crossed.
+
+**Deterministic batching.** Calvin-style epochs of $B = 100$ hot-key txns amortize one round: $B/L_{\text{epoch}} = 100/0.005 = 20{,}000$/s, matching escrow without requiring commutativity.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

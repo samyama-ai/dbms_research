@@ -43,13 +43,25 @@ The **static, single-objective** subproblems are essentially closed (greedy is o
 - Cost models capturing real object-store pricing (request cost, egress, cold-start).
 
 ## 9. Key References
-- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[SOTA]** Gupta, Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999.
-- **[SOTA]** Vuppalapati et al. *Building an Elastic Query Engine on Disaggregated Storage (Snowflake).* NSDI, 2020.
-- **[Foundational]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** Gupta, Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_28)
+- **[SOTA]** Vuppalapati et al. *Building an Elastic Query Engine on Disaggregated Storage (Snowflake).* NSDI, 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/vuppalapati)
+- **[Foundational]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Suppose four cuboids could be cached on a hot SSD tier holding **2 slots**; everything else lives on S3. Per-query latencies: an SSD hit costs $1$ unit, an S3 read $20$ units. Cuboid access frequencies (queries/hour): $c_1{=}50,\ c_2{=}30,\ c_3{=}10,\ c_4{=}5$.
+
+Greedy submodular placement picks slots by marginal latency saved $= f_i\cdot(20-1)=19 f_i$:
+- Round 1: $c_1$ saves $19\cdot50=950$. Pick $c_1$.
+- Round 2: $c_2$ saves $19\cdot30=570$. Pick $c_2$.
+
+Greedy stops at budget 2 with total hourly saving $950+570=1520$ units. The optimal 2-subset is also $\{c_1,c_2\}$, so greedy is exact here; in general it guarantees $\ge(1-1/e)\approx0.63$ of optimum (Nemhauser–Wolsey–Fisher).
+
+Add an SLO: every query must finish $\le5$ units. Then any cuboid served from S3 ($20>5$) violates it, so the *decision* form ("place all within budget meeting SLOs") is infeasible at budget 2 — illustrating how SLO constraints turn the tractable submodular pick into an NP-complete feasibility question.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

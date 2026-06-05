@@ -41,12 +41,22 @@ The runtime side is essentially solved (command logging is cheap and undo-free).
 - Determinism-preserving handling of UDFs, external calls, and non-deterministic built-ins.
 
 ## 9. Key References
-- **[Foundational]** Thomson, A., Diamond, T., Weng, S.-C., Ren, K., Shao, P. & Abadi, D. J. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[SOTA]** Malviya, N., Weisberg, A., Madden, S. & Stonebraker, M. *Rethinking Main Memory OLTP Recovery (command logging).* ICDE, 2014.
-- **[SOTA]** Lu, Y., Yu, X., Suo, L. & Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[Foundational]** Abadi, D. J. & Faleiro, J. M. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018.
-- **[Foundational]** Kallman, R. et al. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008.
-- **[SOTA]** Faleiro, J. M., Abadi, D. J. & Hellerstein, J. M. *High Performance Transactions via Early Write Visibility.* VLDB, 2017.
+- **[Foundational]** Thomson, A., Diamond, T., Weng, S.-C., Ren, K., Shao, P. & Abadi, D. J. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Malviya, N., Weisberg, A., Madden, S. & Stonebraker, M. *Rethinking Main Memory OLTP Recovery (command logging).* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816685)
+- **[SOTA]** Lu, Y., Yu, X., Cao, L. & Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[Foundational]** Abadi, D. J. & Faleiro, J. M. *An Overview of Deterministic Database Systems.* Communications of the ACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+- **[Foundational]** Kallman, R. et al. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1454159.1454211)
+- **[SOTA]** Faleiro, J. M., Abadi, D. J. & Hellerstein, J. M. *High Performance Transactions via Early Write Visibility.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3055540.3055553)
+
+## 10. Worked Example
+
+A deterministic engine checkpoints at $s_k$, then processes $n-k = 10{,}000$ input txns before a crash. Each txn re-executes in $\bar t_{\text{exec}} = 50\,\mu s$; physical redo would apply effects in $\bar t_{\text{apply}} = 2\,\mu s$.
+
+**Serial command-log recovery.** Replay all $10{,}000$ txns: $10{,}000 \times 50\,\mu s = 0.5\,s$. Physical redo would take $10{,}000 \times 2\,\mu s = 0.02\,s$ — command logging is $25\times$ slower at recovery, the price $\bar t_{\text{exec}}/\bar t_{\text{apply}}$ of logging inputs not effects.
+
+**Parallel replay.** Build the conflict DAG. Suppose total work $W = 0.5\,s$, longest dependency chain $C_\infty = 0.05\,s$ (200 txns deep on one hot key), and $p = 16$ cores. Brent's bound: makespan $\le W/p + C_\infty = 0.5/16 + 0.05 = 0.031 + 0.05 = 0.081\,s$.
+
+So parallelism nearly matches physical redo — but the $C_\infty = 0.05\,s$ critical path is an irreducible floor: more cores cannot beat it. With a pathological single chain ($C_\infty = W$), parallel replay collapses back to $0.5\,s$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

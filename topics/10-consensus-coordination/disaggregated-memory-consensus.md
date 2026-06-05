@@ -50,12 +50,20 @@ Active directions: consensus and transactions natively over **CXL 3.0 shared/fab
 
 ## 9. Key References
 
-- **[Foundational]** Maurice Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Igor Zablotchi. *The Impact of RDMA on Agreement.* PODC, 2019.
-- **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Athanasios Xygkis, Igor Zablotchi. *Microsecond Consensus for Microsecond Applications (Mu).* OSDI, 2020.
-- **[SOTA]** Aleksandar Dragojević, Dushyanth Narayanan, Miguel Castro, Orion Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014.
-- **[Foundational]** Michael C. Loui, Hosame H. Abu-Amara. *Memory Requirements for Agreement Among Unreliable Asynchronous Processes.* Advances in Computing Research, 1987.
+- **[Foundational]** Maurice Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Igor Zablotchi. *The Impact of RDMA on Agreement.* PODC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331601)
+- **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Athanasios Xygkis, Igor Zablotchi. *Microsecond Consensus for Microsecond Applications (Mu).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/aguilera)
+- **[SOTA]** Aleksandar Dragojević, Dushyanth Narayanan, Miguel Castro, Orion Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevic)
+- **[Foundational]** Michael C. Loui, Hosame H. Abu-Amara. *Memory Requirements for Agreement Among Unreliable Asynchronous Processes.* Advances in Computing Research, 1987. — [DBLP search](https://dblp.org/search?q=Memory+Requirements+for+Agreement+Among+Unreliable+Asynchronous+Processes)
+
+## 10. Worked Example
+
+Two compute nodes $p_1, p_2$ race to decide one value in a shared remote cell `D` (initially $\bot$) on a passive memory pool.
+
+**Registers only (consensus number 1).** Suppose the pool exposes only one-sided READ/WRITE. $p_1$ READs `D` = $\bot$, intends to write $v_1$; concurrently $p_2$ READs `D` = $\bot$, intends $v_2$. Both then WRITE; the last writer wins, but neither can *agree* on the outcome wait-free — Herlihy's hierarchy puts atomic registers at consensus number $1$, so deterministic wait-free consensus for $n\ge 2$ is **impossible** (Loui–Abu-Amara). No protocol over plain READ/WRITE fixes this.
+
+**With CAS (consensus number $\infty$).** Now the pool supports atomic compare-and-swap. $p_1$ issues `CAS(D, ⊥, v1)` and $p_2$ issues `CAS(D, ⊥, v2)`. Exactly one succeeds atomically — say $p_1$ — installing $v_1$; $p_2$'s CAS fails (sees $v_1 \ne \bot$) and adopts $v_1$. One winner, agreement reached in **$O(1)$ remote round trips**. This is the Mu-style fast path: a single one-sided atomic verb decides, with no acceptor CPU on the memory side — but a single memory node holding `D` remains a shared-fate failure point, so durability still needs $\ge f+1$ replicated copies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

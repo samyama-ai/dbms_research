@@ -48,12 +48,22 @@ Static predecessor is, for practical purposes, **closed** (matching $\Theta$ bou
 - Reconciling **learned-index** average-case optimality with cell-probe worst case.
 
 ## 9. Key References
-- **[Foundational]** P. van Emde Boas. *Preserving Order in a Forest in Less Than Logarithmic Time.* FOCS, 1975.
-- **[Foundational]** M. Fredman, D. Willard. *Surpassing the Information-Theoretic Bound with Fusion Trees.* JCSS, 1993.
-- **[SOTA]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[SOTA]** M. Pătraşcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006.
-- **[Foundational]** A. Yao. *Should Tables Be Sorted?* JACM, 1981.
-- **[Survey]** K. G. Larsen. *Cell-Probe Lower Bounds for Data Structures* (survey / thesis material), 2013.
+- **[Foundational]** P. van Emde Boas. *Preserving Order in a Forest in Less Than Logarithmic Time.* FOCS, 1975. — [DBLP](https://dblp.org/db/conf/focs/focs75.html)
+- **[Foundational]** M. Fredman, D. Willard. *Surpassing the Information-Theoretic Bound with Fusion Trees.* JCSS, 1993. — [DOI](https://doi.org/10.1016/0022-0000(93)90040-4)
+- **[SOTA]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[SOTA]** M. Pătraşcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006. — [arXiv](https://arxiv.org/abs/cs/0502041)
+- **[Foundational]** A. Yao. *Should Tables Be Sorted?* JACM, 1981. — [DOI](https://doi.org/10.1145/322261.322274)
+- **[Survey]** K. G. Larsen. *Cell-Probe Lower Bounds for Data Structures* (survey / thesis material), 2013. — [PDF](https://cs.au.dk/~larsen/papers/dissertation.pdf)
+
+## 10. Worked Example
+
+Let $S=\{2,5,9,14\}$ over the universe $U=\{0,\dots,15\}$, so $w=4$ bits, $n=4$. Query $\text{pred}(11)=\max\{y\in S:y\le 11\}=9$.
+
+**Comparison/B-tree view:** binary search probes $\lceil\log_2 n\rceil=2$ cells — compare $11$ to $9$ (the median), then to $14$, settling on $9$.
+
+**vEB view:** a stratified tree over $U$ splits the 4-bit key into a high 2-bit and low 2-bit half. $11=\mathtt{1011}$ has high half $\mathtt{10}=2$. The cluster for high-half $2$ holds $\{9\}$ (i.e. $\mathtt{1001}$), and $9\le 11$, so $\text{pred}=9$ in $O(\log w)=O(\log\log U)=\log_2 4=2$ probes — independent of $n$.
+
+For large $w$ a **fusion tree** instead packs $B=\Theta(w^{1/5})$ keys into one word and finds the predecessor in $O(\log_w n)$ probes. The Pătraşcu–Thorup bound says the *minimum* over the regimes — here $\min(\log_w n,\ \log\log U)$ — is the tight static answer, and this small instance shows both branches landing in 2 probes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

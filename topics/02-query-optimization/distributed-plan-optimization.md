@@ -55,12 +55,21 @@ There is no unified theory that *jointly* optimizes join order, partitioning, pl
 
 ## 9. Key References
 
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** G. Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bull., 1995.
-- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013).
-- **[SOTA]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010.
-- **[SOTA]** J. Zhou et al. *SCOPE: Parallel Databases Meet MapReduce.* VLDB Journal, 2012.
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018.
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** G. Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bull., 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013). — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment.* EDBT, 2010. — [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[SOTA]** J. Zhou et al. *SCOPE: Parallel Databases Meet MapReduce.* VLDB Journal, 2012. — [DOI](https://doi.org/10.1007/s00778-012-0280-z)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+
+## 10. Worked Example
+
+Join $R(a,b)\bowtie_b S(b,c)$ on $m=4$ nodes. $R$ is hash-partitioned on $a$ (so $b$ is scattered randomly); $S$ is hash-partitioned on $b$. Sizes: $|R|=400$ MB, $|S|=40$ MB.
+
+- **Plan A — shuffle $R$ on $b$:** repartition $R$ so it co-locates with $S$. Shuffle cost $\approx \frac{m-1}{m}|R| = \frac34(400)=300$ MB across the network, then a local join.
+- **Plan B — broadcast $S$:** ship all of $S$ to every node: cost $(m-1)\cdot|S| = 3(40)=120$ MB. $R$ never moves.
+
+Plan B wins ($120 < 300$ MB) because $S$ is small — exactly the broadcast-vs-shuffle decision an exchange-aware optimizer must make. Now suppose a later filter shrinks $R$ to 30 MB at runtime: adaptive re-optimization (AQE) would flip back to shuffling $R$ ($\frac34(30)=22.5$ MB $<120$ MB). The optimal $\delta$ annotation is data-dependent, which is why static cost models miss it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

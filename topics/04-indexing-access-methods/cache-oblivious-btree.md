@@ -39,10 +39,20 @@ Directions: simplified PMA variants with lower rebalancing constants; "rewired"/
 - Cache-oblivious *learned* indexes with worst-case fallback.
 
 ## 9. Key References
-- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[Foundational]** Bender, Demaine, Farach-Colton. *Cache-Oblivious B-Trees.* FOCS, 2000.
-- **[SOTA]** Brodal, Fagerberg, Jacob. *Cache-Oblivious Search Trees via Binary Trees of Small Height.* SODA, 2002.
-- **[SOTA]** Bender, Duan, Iacono, Wu. *A Locality-Preserving Cache-Oblivious Dynamic Dictionary.* SODA, 2002 / J. Algorithms.
+- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[Foundational]** Bender, Demaine, Farach-Colton. *Cache-Oblivious B-Trees.* FOCS, 2000. — [DBLP](https://dblp.org/rec/conf/focs/BenderDF00.html)
+- **[SOTA]** Brodal, Fagerberg, Jacob. *Cache-Oblivious Search Trees via Binary Trees of Small Height.* SODA, 2002. — [DBLP](https://dblp.org/rec/conf/soda/BrodalFJ02.html)
+- **[SOTA]** Bender, Duan, Iacono, Wu. *A Locality-Preserving Cache-Oblivious Dynamic Dictionary.* SODA, 2002 / J. Algorithms. — [DOI](https://doi.org/10.1016/j.jalgor.2004.07.002)
+
+## 10. Worked Example
+
+Lay out a complete binary search tree of $n = 15$ nodes (height $h = 4$) in the **van Emde Boas** layout. Split at the middle level: a top subtree of height 2 (3 nodes: root + 2 children) and four bottom subtrees of height 2 (3 nodes each). Each size-3 block is stored contiguously, then blocks are concatenated:
+
+$$[\underbrace{r, a, b}_{\text{top}}]\,[\underbrace{c,d,e}_{}]\,[\underbrace{f,g,h}_{}]\,[\underbrace{i,j,k}_{}]\,[\underbrace{l,m,n}_{}]$$
+
+Suppose block size $B = 3$ (so each vEB block is one disk block). A root-to-leaf search visits $h = 4$ tree nodes but only **2 blocks**: the top block (covering levels 1–2) then one bottom block (levels 3–4). That is $O(\log_B n) = O(\log_3 15) \approx 2$ transfers — matching a $B$-tree *without ever naming $B$ in the code*.
+
+Contrast a naïve breadth-first array layout: the leaf and its ancestors land in different blocks, so a search can touch up to $4$ blocks. The vEB recursion guarantees that at the recursion level where subtree size $\approx B$, each subtree fits in $O(1)$ blocks, giving the optimal $O(\log_B n)$ for *every* $B$ simultaneously.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

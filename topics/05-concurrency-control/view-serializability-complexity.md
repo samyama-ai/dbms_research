@@ -51,11 +51,23 @@ Active threads connect serializability recognition to constraint-satisfaction di
 
 ## 9. Key References
 
-- **[Foundational]** Papadimitriou, C. H. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Eswaran, K. P.; Gray, J. N.; Lorie, R. A.; Traiger, I. L. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[Foundational]** Papadimitriou, C. H. *The Theory of Database Concurrency Control.* Computer Science Press, 1986.
-- **[Survey]** Bernstein, P. A.; Hadzilacos, V.; Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[SOTA]** Fekete, A. *Allocating Isolation Levels to Transactions.* PODS, 2005.
+- **[Foundational]** Papadimitriou, C. H. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Eswaran, K. P.; Gray, J. N.; Lorie, R. A.; Traiger, I. L. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[Foundational]** Papadimitriou, C. H. *The Theory of Database Concurrency Control.* Computer Science Press, 1986. — [DBLP search](https://dblp.org/search?q=Theory+of+Database+Concurrency+Control+Papadimitriou)
+- **[Survey]** Bernstein, P. A.; Hadzilacos, V.; Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[SOTA]** Fekete, A. *Allocating Isolation Levels to Transactions.* PODS, 2005. — [DBLP search](https://dblp.org/search?q=Allocating+Isolation+Levels+to+Transactions+Fekete)
+
+## 10. Worked Example
+
+The classic history that is **view-serializable but not conflict-serializable**, showing why VSR is strictly larger than CSR (and harder to test). Three transactions on one object $x$, with $T_2$ and $T_3$ performing *blind writes*:
+
+$$H:\; r_1(x)\; w_2(x)\; w_1(x)\; w_3(x)$$
+
+**Not CSR.** The conflict graph has $T_1\to T_2$ ($r_1(x)$ before $w_2(x)$) and $T_2\to T_1$ ($w_2(x)$ before $w_1(x)$): a 2-cycle, so $SG(H)$ is cyclic and $H \notin \text{CSR}$.
+
+**But in VSR.** Take the serial order $T_1, T_2, T_3$. Reads-from: $r_1(x)$ reads the initial value in both $H$ and the serial order (no write precedes it). Final write on $x$: $w_3(x)$ in both. Same reads-from + same final writes $\Rightarrow$ view-equivalent, so $H \in \text{VSR}$.
+
+The blind writes $w_2, w_3$ are what let VSR ignore the spurious $T_1\!\leftrightarrow\!T_2$ conflict. Detecting this serial witness requires searching acyclic orientations of Papadimitriou's polygraph — the step proved **NP-complete** (1979) — versus the $O(n+e)$ cycle test that already rejected $H$ from CSR.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -61,12 +61,16 @@ Active directions: (1) sharpening the **guarded / frontier-guarded / sticky / wa
 
 ## 9. Key References
 
-- **[Foundational]** C. Beeri, M. Y. Vardi. *The Implication Problem for Data Dependencies.* ICALP, 1981.
-- **[Foundational]** M. A. Casanova, R. Fagin, C. H. Papadimitriou. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* JCSS, 1984.
-- **[SOTA]** C. Herrmann. *On the Undecidability of Implications Between Embedded Multivalued Dependencies.* Information and Computation, 1995.
-- **[Foundational]** S. S. Cosmadakis, P. C. Kanellakis, M. Y. Vardi. *Polynomial-Time Implication Problems for Unary Inclusion Dependencies.* JACM, 1990.
-- **[SOTA]** B. Kenig, D. Suciu. *Integrity Constraints Revisited: From Exact to Approximate Implication.* ICDT / LMCS, 2020–2022.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. 8–10).
+- **[Foundational]** C. Beeri, M. Y. Vardi. *The Implication Problem for Data Dependencies.* ICALP, 1981. — [DOI](https://doi.org/10.1007/3-540-10843-2_7)
+- **[Foundational]** M. A. Casanova, R. Fagin, C. H. Papadimitriou. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* JCSS, 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90075-8)
+- **[SOTA]** C. Herrmann. *On the Undecidability of Implications Between Embedded Multivalued Dependencies.* Information and Computation, 1995. — [DOI](https://doi.org/10.1006/inco.1995.1148)
+- **[Foundational]** S. S. Cosmadakis, P. C. Kanellakis, M. Y. Vardi. *Polynomial-Time Implication Problems for Unary Inclusion Dependencies.* JACM, 1990. — [DOI](https://doi.org/10.1145/78935.78937)
+- **[SOTA]** B. Kenig, D. Suciu. *Integrity Constraints Revisited: From Exact to Approximate Implication.* ICDT / LMCS, 2020–2022. — [arXiv](https://arxiv.org/abs/1812.09987)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. 8–10). — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+Consider relation $R(A,B,C)$ and ask whether the two MVDs $A \twoheadrightarrow B$ and $A \twoheadrightarrow C$ imply the JD $\bowtie[AB, AC]$ — i.e., lossless decomposition into $AB$ and $AC$. Because $B$ and $C$ together with $A$ exhaust the attributes, this is a *full* MVD setting, so the chase decides it. Freeze the JD body: tuples $t_1=(a,b_1,c_1)$, $t_2=(a,b_2,c_2)$. Applying $A \twoheadrightarrow B$ to the $A$-group $\{t_1,t_2\}$ generates the swapped tuple $(a,b_1,c_2)$; that tuple is exactly the join witness $\pi_{AB}t_1 \bowtie \pi_{AC}t_2$ the JD demands. The chase halts, the head is satisfied, so $\{A\twoheadrightarrow B,\ A\twoheadrightarrow C\} \models \bowtie[AB,AC]$. Now drop a column — make the MVDs *embedded* over $XYZ \subsetneq R$ in a wider relation. The swap tuples may force fresh values on the hidden attributes, the chase need not terminate, and (Herrmann) no algorithm decides such EMVD implication. The single missing attribute is the entire difference between decidable and undecidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

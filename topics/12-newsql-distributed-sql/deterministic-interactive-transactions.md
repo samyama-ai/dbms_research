@@ -48,11 +48,21 @@ The gap is between full native interactivity (available in non-deterministic sys
 - Programming-model support (e.g., session compilation) to maximize the one-shot fraction.
 
 ## 9. Key References
-- **[Foundational]** A. Thomson, T. Diamond, S. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
-- **[Foundational]** A. Thomson, D. Abadi. *The Case for Determinism in Database Systems.* VLDB, 2010.
-- **[Survey]** D. Abadi, J. Faleiro. *An Overview of Deterministic Database Systems.* CACM, 2018.
-- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020.
-- **[SOTA]** C. Zhou, K. Ren et al. *Detock: High Performance Multi-region Transactions at Scale.* SIGMOD, 2023.
+- **[Foundational]** A. Thomson, T. Diamond, S. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Foundational]** A. Thomson, D. Abadi. *The Case for Determinism in Database Systems.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920855)
+- **[Survey]** D. Abadi, J. Faleiro. *An Overview of Deterministic Database Systems.* CACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
+- **[SOTA]** Y. Lu, X. Yu, L. Cao, S. Madden. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
+- **[SOTA]** C. D. T. Nguyen, J. K. Miller, D. Abadi. *Detock: High Performance Multi-region Transactions at Scale.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589293)
+
+## 10. Worked Example
+
+A client runs an interactive booking: `BEGIN; r1 = SELECT seats FROM flight WHERE id=42;` then, *based on $r_1$ and external pricing logic $\phi$*, either `UPDATE flight SET seats=seats-1` or `ROLLBACK`. The branch is invisible to other replicas a priori.
+
+**Naive deterministic attempt.** Order the transaction in sequence $O$ before execution. But the schedule depends on the branch, which depends on $r_1$ — not a function of $O$ alone. Replicas would diverge. So §5's obstruction bites: the schedule cannot be fixed until $r_1$ is observed.
+
+**Capture reduction.** Entry replica runs the round trips first: reads $r_1=\text{seats}=3>0$, evaluates $\phi$, resolves to the concrete one-shot `UPDATE flight SET seats=2 WHERE id=42`. *Only this resolved statement* enters $O$ and is replicated; all replicas replay it deterministically — $0$ extra aborts, but the $\rho=2$ client round trips are serialized on one replica before global ordering.
+
+**Cost contrast.** Holding the conflict lock on $\text{flight}[42]$ across $\rho$ wide-area round trips (the alternative) reintroduces exactly the lock-holding cost determinism aimed to remove — the §6 gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

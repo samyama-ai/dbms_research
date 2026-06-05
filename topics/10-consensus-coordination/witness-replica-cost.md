@@ -52,11 +52,21 @@ Active work: cost-aware quorum placement integrating real cloud pricing into rep
 
 ## 9. Key References
 
-- **[Foundational]** Leslie Lamport, Dahlia Malkhi, Lidong Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009.
-- **[Foundational]** Leslie Lamport, Mike Massa. *Cheap Paxos.* DSN, 2004.
-- **[SOTA]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019.
-- **[Foundational]** David K. Gifford. *Weighted Voting for Replicated Data.* SOSP, 1979.
+- **[Foundational]** Leslie Lamport, Dahlia Malkhi, Lidong Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [ACM](https://dl.acm.org/doi/10.1145/1582716.1582783)
+- **[Foundational]** Leslie Lamport, Mike Massa. *Cheap Paxos.* DSN, 2004. — [DBLP](https://dblp.org/rec/conf/dsn/LamportM04.html)
+- **[SOTA]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.OPODIS.2016.25)
+- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019. — [DOI](https://doi.org/10.1109/TPDS.2019.2929793)
+- **[Foundational]** David K. Gifford. *Weighted Voting for Replicated Data.* SOSP, 1979. — [ACM](https://dl.acm.org/doi/10.1145/800215.806583)
+
+## 10. Worked Example
+
+Tolerate $f=1$ crash. Full majority needs $2f+1=3$ full replicas $\{A,B,C\}$, each storing all data — three copies.
+
+**Witnessed alternative:** keep $f+1=2$ full replicas $\{A,B\}$ plus $1$ witness $W$ (votes, stores nothing). Voters $=\{A,B,W\}$, so safety still uses majority-of-3 quorums (size 2), and any two intersect. Data copies drop from 3 to 2 — roughly half the storage/egress.
+
+Check the durability invariant $\delta(Q_r)\ge d$ with target $d=2$. Quorum $\{A,B\}$: $\delta=2$ (both full) — safe. Quorum $\{A,W\}$: $\delta=1$. If a write is acknowledged by $\{A,W\}$ and then $A$ crashes, the value survives on **zero** full replicas — lost, even though the quorum was "valid." This is the hidden-durability pitfall: intersection holds but $\delta(Q_r)\to1$.
+
+Fix via Flexible Paxos: force replication quorums to be exactly $\{A,B\}$ (size $f+1=2$, both full, $\delta=2$) while election quorums grow to $n-f=2$ including $W$. Safety + durability both hold; the price is one less unit of election availability.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

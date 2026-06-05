@@ -63,12 +63,25 @@ For **complete $\pm1$** instances the gap is nearly closed: upper bound $\approx
 
 ## 9. Key References
 
-- **[Foundational]** Bansal, Blum, Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004.
-- **[SOTA]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Ranking and Clustering.* JACM, 2008.
-- **[SOTA]** Chawla, Makarychev, Schramm, Yaroslavtsev. *Near Optimal LP Rounding Algorithm for Correlation Clustering.* STOC, 2015.
-- **[Foundational]** Arasu, Ré, Suciu. *Large-Scale Deduplication with Constraints using Dedupalog.* ICDE, 2009.
-- **[SOTA]** Cohen-Addad, Lattanzi, et al. *Correlation Clustering in Constant Many Parallel Rounds / Sublinear Memory.* ICML/PODS, 2021–2024.
-- **[Survey]** Böcker, Baumbach. *Cluster Editing.* CiE, 2013.
+- **[Foundational]** Bansal, Blum, Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004. — [DOI](https://doi.org/10.1023/B:MACH.0000033116.57574.95)
+- **[SOTA]** Ailon, Charikar, Newman. *Aggregating Inconsistent Information: Ranking and Clustering.* JACM, 2008. — [DOI](https://doi.org/10.1145/1411509.1411513)
+- **[SOTA]** Chawla, Makarychev, Schramm, Yaroslavtsev. *Near Optimal LP Rounding Algorithm for Correlation Clustering.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1412.0681)
+- **[Foundational]** Arasu, Ré, Suciu. *Large-Scale Deduplication with Constraints using Dedupalog.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.43)
+- **[SOTA]** Cohen-Addad, Lattanzi, et al. *Correlation Clustering in Constant Many Parallel Rounds / Sublinear Memory.* ICML/PODS, 2021–2024. — [arXiv](https://arxiv.org/abs/2106.08448)
+- **[Survey]** Böcker, Baumbach. *Cluster Editing.* CiE, 2013. — [DOI](https://doi.org/10.1007/978-3-642-39053-1_5)
+
+## 10. Worked Example
+
+Four records $\{a,b,c,d\}$. The matcher emits positive edges $a\!\sim\!b$, $b\!\sim\!c$, $c\!\sim\!d$ and one negative edge $a\!\not\sim\!d$ (it thinks $a$ and $d$ are different entities). All edges have unit weight.
+
+**Plain transitive closure** of the positive edges merges everything: $\{a,b,c,d\}$ — one component. But this ignores the negative edge, paying 1 disagreement (an intra-cluster $-$ edge), and risks a catastrophic merge if $b\!\sim\!c$ was a false positive.
+
+**Correlation clustering** (cluster editing) minimizes disagreements. Compare two partitions:
+
+- $\{a,b,c,d\}$: violates $a\!\not\sim\!d$ → cost $1$.
+- $\{a,b\},\{c,d\}$: cuts the positive edge $b\!\sim\!c$ → cost $1$; satisfies $a\!\not\sim\!d$.
+
+Both cost 1, so the optimum is $1$, not $0$ — the evidence is genuinely inconsistent. A pivot run choosing $b$ as pivot would pull in $a,c$, then $d$ via $c$, recovering the single cluster. The example shows why precision $<1$ forces an objective that *trades off* edges rather than blindly closing.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

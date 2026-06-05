@@ -40,11 +40,17 @@ Active: cloud-database teams (AWS DynamoDB adaptive capacity, CockroachDB Labs, 
 - Per-key heterogeneous policies driven by online skew estimation.
 
 ## 9. Key References
-- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[Foundational]** Dean, Barroso. *The Tail at Scale.* CACM, 2013.
-- **[SOTA]** Lamport, Malkhi, Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009.
-- **[SOTA]** Van Aken, Pavlo, et al. *Automatic Database Management System Tuning Through Large-Scale Machine Learning (OtterTune).* SIGMOD, 2017.
+- **[Foundational]** DeCandia et al. *Dynamo: Amazon's Highly Available Key-Value Store.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294281)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Dean, Barroso. *The Tail at Scale.* CACM, 2013. — [DOI](https://doi.org/10.1145/2408776.2408794)
+- **[SOTA]** Lamport, Malkhi, Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [DOI](https://doi.org/10.1145/1582716.1582783)
+- **[SOTA]** Van Aken, Pavlo, et al. *Automatic Database Management System Tuning Through Large-Scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+
+## 10. Worked Example
+
+Take per-replica annual failure probability $f = 0.02$ over the repair window. For plain replication, durability is $1 - f^{N}$: at $N=3$, loss $\approx 0.02^3 = 8\times10^{-6}$ ("five nines"); at $N=5$, loss $\approx 3.2\times10^{-9}$ ("eight nines"). Suppose the SLO needs $\ge$ six nines durability — then $N=3$ falls short, $N=4$ ($1.6\times10^{-7}$) suffices.
+
+Now pick $(R,W)$ for $N=4$ with strong reads. The intersection rule requires $R+W>N$ and $W>N/2$, so $W\ge3$. Choosing $W=3,R=2$ gives $R+W=5>4$ (valid); writes wait on the 3rd-fastest of 4 replicas, reads on the 2nd-fastest. If replica latencies are i.i.d. $\sim 10\text{ms}\cdot\text{Exp}$, the $q$-th order statistic of $N$ has mean $10\sum_{i=N-q+1}^{N}\frac1i$ ms: read ($q=2,N=4$) $\approx 10(\tfrac13+\tfrac14)=5.8$ ms, write ($q=3$) $\approx 10(\tfrac12+\tfrac13+\tfrac14)=10.8$ ms. The static optimizer enumerates this tiny grid ($N\le7$) to find the cheapest config meeting all constraints.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

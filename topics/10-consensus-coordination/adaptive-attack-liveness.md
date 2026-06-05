@@ -50,12 +50,23 @@ Open in the strong sense. We know how to get adaptive liveness *either* by rando
 
 ## 9. Key References
 
-- **[Foundational]** C. Dwork, N. Lynch, L. Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988.
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** M. Yin, D. Malkhi, M. K. Reiter, G. Gueta, I. Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019.
-- **[SOTA]** Y. Gilad, R. Hemo, S. Micali, G. Vlachos, N. Zeldovich. *Algorand: Scaling Byzantine Agreements for Cryptocurrencies.* SOSP, 2017.
-- **[SOTA]** R. Gelashvili, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman, Z. Xiang. *Jolteon and Ditto: Network-Adaptive Efficient Consensus with Asynchronous Fallback.* Financial Cryptography, 2022.
-- **[Survey]** I. Abraham, K. Nayak, et al. *Decentralized Thoughts* (blog series on adaptive adversaries, responsiveness, and BFT lower bounds), 2019–2024.
+- **[Foundational]** C. Dwork, N. Lynch, L. Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. — [DOI](https://doi.org/10.1145/42282.42283)
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** M. Yin, D. Malkhi, M. K. Reiter, G. Gueta, I. Abraham. *HotStuff: BFT Consensus with Linearity and Responsiveness.* PODC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331591)
+- **[SOTA]** Y. Gilad, R. Hemo, S. Micali, G. Vlachos, N. Zeldovich. *Algorand: Scaling Byzantine Agreements for Cryptocurrencies.* SOSP, 2017. — [DOI](https://doi.org/10.1145/3132747.3132757)
+- **[SOTA]** R. Gelashvili, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman, Z. Xiang. *Jolteon and Ditto: Network-Adaptive Efficient Consensus with Asynchronous Fallback.* Financial Cryptography, 2022. — [arXiv](https://arxiv.org/abs/2106.10362)
+- **[Survey]** I. Abraham, K. Nayak, et al. *Decentralized Thoughts* (blog series on adaptive adversaries, responsiveness, and BFT lower bounds), 2019–2024. — [site](https://decentralizedthoughts.github.io/)
+
+## 10. Worked Example
+
+Take $n = 4$, so $f = \lfloor (4-1)/3 \rfloor = 1$. Validators $\{P_0,P_1,P_2,P_3\}$ run HotStuff with **round-robin** leaders $L(v) = P_{v \bmod 4}$, and the adversary has budget $f=1$ adaptive corruption.
+
+Because $L$ is predictable, the adversary computes the leader of the *next* view before it acts. Suppose the current leader $P_1$ (view 1) is honest and about to commit. The adversary instead spends its one corruption on $P_2 = L(2)$ *before* view 2 begins. Now:
+
+- View 2: leader $P_2$ is Byzantine, stays silent → timeout → failed view, $\Delta$ wasted.
+- View 3: leader $P_3$ honest → commits.
+
+So a *single* corruption costs one failed view here. Generalizing, with budget $f$ and predictable leaders the adversary can burn up to $f$ consecutive views, giving the $\Omega(f)$ latency-after-GST lower bound. Replacing $L$ with a VRF makes $L(2)$ unknown until self-reveal, so the adversary cannot pre-target it — the crux of adaptive liveness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

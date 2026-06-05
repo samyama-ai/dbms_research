@@ -1,6 +1,7 @@
 # Skew-Resilient Key Distribution
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/skew-resilient-key-distribution` · **Status:** open
+> **Verification note:** The "Small Cache, Big Effect" paper (Fan et al.) appeared at SoCC 2011, not SOSP 2011 as stated in Section 3; the Section 9 reference correctly cites SOCC.
 
 ## 1. Problem Statement
 
@@ -53,12 +54,22 @@ The pieces exist but the *combined* problem is open: there is no single scheme t
 
 ## 9. Key References
 
-- **[Foundational]** Karger, D. et al. *Consistent Hashing and Random Trees.* STOC, 1997.
-- **[Foundational]** Azar, Y., Broder, A., Karlin, A., Upfal, E. *Balanced Allocations (Power of Two Choices).* SIAM J. Computing, 1999.
-- **[SOTA]** Mirrokni, V., Thorup, M., Zadimoghaddam, M. *Consistent Hashing with Bounded Loads.* SODA, 2018.
-- **[SOTA]** Fan, B., Lim, H., Andersen, D., Kaminsky, M. *Small Cache, Big Effect: Provable Load Balancing for Randomly Partitioned Cluster Services.* SOCC, 2011.
-- **[Systems]** Adya, A. et al. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016.
-- **[Systems]** Jin, X. et al. *NetCache: Balancing Key-Value Stores with Fast In-Network Caching.* SOSP, 2017.
+- **[Foundational]** Karger, D. et al. *Consistent Hashing and Random Trees.* STOC, 1997. — [DOI](https://doi.org/10.1145/258533.258660)
+- **[Foundational]** Azar, Y., Broder, A., Karlin, A., Upfal, E. *Balanced Allocations (Power of Two Choices).* SIAM J. Computing, 1999. — [DOI](https://doi.org/10.1137/S0097539795288490)
+- **[SOTA]** Mirrokni, V., Thorup, M., Zadimoghaddam, M. *Consistent Hashing with Bounded Loads.* SODA, 2018. — [arXiv](https://arxiv.org/abs/1608.01350)
+- **[SOTA]** Fan, B., Lim, H., Andersen, D., Kaminsky, M. *Small Cache, Big Effect: Provable Load Balancing for Randomly Partitioned Cluster Services.* SOCC, 2011. — [DBLP](https://dblp.org/rec/conf/cloud/FanLAK11.html)
+- **[Systems]** Adya, A. et al. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/adya)
+- **[Systems]** Jin, X. et al. *NetCache: Balancing Key-Value Stores with Fast In-Network Caching.* SOSP, 2017. — [DOI](https://doi.org/10.1145/3132747.3132764)
+
+## 10. Worked Example
+
+Take $m=4$ nodes and a Zipf-skewed workload of $1000$ req/s. One celebrity key absorbs $p_{\max}=400$ req/s; the remaining $600$ req/s spread evenly over many cold keys. Average load $\bar L = 1000/4 = 250$ req/s.
+
+Place the hot key on node 1: node 1 sees $\ge 400$ even with zero cold keys, so imbalance $\ge 400/250 = 1.6$ — *no placement* of a single unsplit key can do better (lower-bound floor $L \ge p_{\max}$).
+
+Now replicate the hot key to $r=4$ nodes; its read load splits to $400/4=100$ per node. Each node then carries $100 + 600/4 = 250 = \bar L$ — perfect balance, imbalance ratio $1.0$.
+
+Alternatively, a front cache holding just the hottest key absorbs all $400$ req/s; backends serve only the $600$ cold req/s, $150$ each. This matches the Small-Cache result: caching $O(m\log m)$ keys balances the cluster independent of skew, at the cost of giving up range locality.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

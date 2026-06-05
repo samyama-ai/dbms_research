@@ -54,12 +54,21 @@ The single-decision online gap is **closed** (matching $2$ / $1.58$ bounds). The
 
 ## 9. Key References
 
-- **[Foundational]** Ron Avnur, Joseph M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[SOTA]** Maryann Xue et al. (Databricks). *Adaptive Query Execution in Apache Spark 3.0.* Databricks Engineering Blog / Spark Summit, 2020.
-- **[Foundational]** Anna R. Karlin, Mark S. Manasse, Lyle A. McGeoch, Susan Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental / rent-or-buy).* Algorithmica, 1994.
-- **[Foundational]** Allan Borodin, Nathan Linial, Michael Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[Survey]** Amol Deshpande, Zachary Ives, Vijayshankar Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007.
-- **[SOTA]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (algorithms-with-predictions framework).
+- **[Foundational]** Ron Avnur, Joseph M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/335191.335420)
+- **[SOTA]** Maryann Xue et al. (Databricks). *Adaptive Query Execution in Apache Spark 3.0.* Databricks Engineering Blog / Spark Summit, 2020. — [Databricks](https://www.databricks.com/blog/2020/05/29/adaptive-query-execution-speeding-up-spark-sql-at-runtime.html)
+- **[Foundational]** Anna R. Karlin, Mark S. Manasse, Lyle A. McGeoch, Susan Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental / rent-or-buy).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
+- **[Foundational]** Allan Borodin, Nathan Linial, Michael Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[Survey]** Amol Deshpande, Zachary Ives, Vijayshankar Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007. — [DOI](https://doi.org/10.1561/1900000001)
+- **[SOTA]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (algorithms-with-predictions framework). — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+Cast a single repartition decision as **ski-rental**. A stage currently runs under a skewed partitioning costing $a = 5$ units of work per remaining tuple (a hot worker straggles). A balanced repartition would cost $b = 1$ per tuple afterward, but the reshuffle has fixed cost $C = 40$ tuples-worth of all-to-all traffic. The horizon $m$ (tuples still to process) is unknown.
+
+- **Offline optimum:** if it knew $m$, it would repartition iff $C \le (a-b)m$, i.e. $40 \le 4m \iff m \ge 10$.
+- **Deterministic rule:** keep paying the skew penalty until accumulated extra cost $(a-b)\cdot t$ reaches $C$, then repartition. Here that break-even is at $t = C/(a-b) = 10$ tuples.
+
+Suppose the true horizon turns out to be $m = 10$. The algorithm pays $4 \times 10 = 40$ in extra skew cost, then repartitions ($+40$), total overhead $80$; the offline optimum pays $\min(40,\,40)=40$. Ratio $80/40 = 2$ — exactly the **$2$-competitive** worst case. A randomized buy-time (drawn from the classic $e/(e-1)$ distribution) lowers the expected ratio to $\approx 1.58$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

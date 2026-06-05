@@ -58,12 +58,20 @@ This is **empirically open**: there is no theory predicting achievable precision
 
 ## 9. Key References
 
-- **[SOTA]** Heidari, McGrath, Ilyas, Rekatsinas. *HoloDetect: Few-Shot Learning for Error Detection.* SIGMOD, 2019.
-- **[SOTA]** Mahdavi et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019.
-- **[SOTA]** Liu, Han, et al. *Picket: Guarding Against Corrupted Data in Tabular Data during Learning and Inference.* VLDB Journal, 2020/2022.
-- **[Foundational]** Dawid, Skene. *Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm.* Applied Statistics, 1979.
-- **[Foundational]** Ratner, Bach, Ehrenberg, Fries, Wu, Ré. *Snorkel: Rapid Training Data Creation with Weak Supervision.* VLDB, 2017.
-- **[Survey]** Abedjan, Chu, Deng, Fernandez, Ilyas, Ouzzani, Papotti, Stonebraker, Tang. *Detecting Data Errors: Where Are We and What Needs to Be Done?* PVLDB, 2016.
+- **[SOTA]** Heidari, McGrath, Ilyas, Rekatsinas. *HoloDetect: Few-Shot Learning for Error Detection.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319888)
+- **[SOTA]** Mahdavi et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3324956)
+- **[SOTA]** Liu, Han, et al. *Picket: Guarding Against Corrupted Data in Tabular Data during Learning and Inference.* VLDB Journal, 2020/2022. — [DOI](https://doi.org/10.1007/s00778-021-00699-w)
+- **[Foundational]** Dawid, Skene. *Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm.* Applied Statistics, 1979. — [DOI](https://doi.org/10.2307/2346806)
+- **[Foundational]** Ratner, Bach, Ehrenberg, Fries, Wu, Ré. *Snorkel: Rapid Training Data Creation with Weak Supervision.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3157794.3157797)
+- **[Survey]** Abedjan, Chu, Deng, Fernandez, Ilyas, Ouzzani, Papotti, Stonebraker, Tang. *Detecting Data Errors: Where Are We and What Needs to Be Done?* PVLDB, 2016. — [DOI](https://doi.org/10.14778/2994509.2994518)
+
+## 10. Worked Example
+
+One dirty cell, three independent unsupervised detectors $d_1,d_2,d_3$ voting on whether a cell is an error. We have no labels, but Dawid–Skene/Snorkel can estimate accuracies from *agreement structure*. Over many cells the pairwise agreement rates are: $\Pr[d_1{=}d_2]=0.82$, $\Pr[d_1{=}d_3]=0.78$, $\Pr[d_2{=}d_3]=0.74$.
+
+Assume conditional independence given the true label and accuracy $a_i=\Pr[d_i\text{ correct}]$. For two-class balanced labels, agreement $\Pr[d_i{=}d_j]=a_i a_j+(1{-}a_i)(1{-}a_j)=2a_ia_j-a_i-a_j+1$. Solving the three equations (method of moments) gives, e.g., $a_1\approx0.90,\ a_2\approx0.85,\ a_3\approx0.80$ — recovered with **no ground truth**.
+
+Now a cell where $d_1=\text{error}, d_2=\text{error}, d_3=\text{clean}$. The log-odds posterior is $\log\frac{0.90}{0.10}+\log\frac{0.85}{0.15}-\log\frac{0.80}{0.20}\approx 2.20+1.73-1.39=2.54>0$, so the weighted vote flags it as an error. Note the impossibility caveat: if the noise channel made all three detectors agree-by-correlation, the independence assumption breaks and $a_i$ become non-identifiable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

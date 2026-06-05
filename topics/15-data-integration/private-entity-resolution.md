@@ -46,12 +46,20 @@ Active directions: **per-entity / individualized DP** and **smooth sensitivity**
 
 ## 9. Key References
 
-- **[Foundational]** C. Dwork, F. McSherry, K. Nissim, A. Smith. *Calibrating noise to sensitivity in private data analysis.* TCC, 2006.
-- **[Foundational]** C. Dwork, A. Roth. *The algorithmic foundations of differential privacy.* Found. & Trends in TCS, 2014.
-- **[SOTA]** W. Dong, K. Yi. *Residual sensitivity for differentially private multi-way joins.* SIGMOD, 2021.
-- **[SOTA]** J. Blocki, A. Blum, A. Datta, O. Sheffet. *Differentially private data analysis of social networks via restricted sensitivity.* ITCS, 2013.
-- **[Survey]** P. Christen, T. Ranbaduge, R. Schnell. *Linking Sensitive Data: Methods and Techniques for Privacy-Preserving Record Linkage.* Springer, 2020.
-- **[Foundational]** I. Fellegi, A. Sunter. *A theory for record linkage.* Journal of the American Statistical Association, 1969.
+- **[Foundational]** C. Dwork, F. McSherry, K. Nissim, A. Smith. *Calibrating noise to sensitivity in private data analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** C. Dwork, A. Roth. *The algorithmic foundations of differential privacy.* Found. & Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+- **[SOTA]** W. Dong, K. Yi. *Residual sensitivity for differentially private multi-way joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813)
+- **[SOTA]** J. Blocki, A. Blum, A. Datta, O. Sheffet. *Differentially private data analysis of social networks via restricted sensitivity.* ITCS, 2013. — [arXiv](https://arxiv.org/abs/1208.4586)
+- **[Survey]** P. Christen, T. Ranbaduge, R. Schnell. *Linking Sensitive Data: Methods and Techniques for Privacy-Preserving Record Linkage.* Springer, 2020. — [DOI](https://doi.org/10.1007/978-3-030-59706-1)
+- **[Foundational]** I. Fellegi, A. Sunter. *A theory for record linkage.* Journal of the American Statistical Association, 1969. — [DOI](https://doi.org/10.1080/01621459.1969.10501049)
+
+## 10. Worked Example
+
+Party A has $A=\{a_1,\dots,a_5\}$; party B has one "hub" record $b_1$ that, under the similarity threshold, matches **all** of A (e.g. a generic placeholder name). The true match set is $M=\{(a_i,b_1)\}_{i=1}^5$, so $|M|=5$.
+
+**Sensitivity blowup.** Remove $b_1$ (one neighboring change): the released match set drops from 5 pairs to 0. So the global sensitivity of "number of matched pairs" is $\Delta f = 5$, and in general one record can change the count by $\Theta(n)$. To be $\varepsilon$-DP, the Laplace mechanism must add noise $\mathrm{Lap}(\Delta f/\varepsilon)$; at $\varepsilon=1$ that is $\mathrm{Lap}(5)$ — std. dev. $5\sqrt{2}\approx 7.07$, swamping the true count of 5.
+
+**Truncation fix.** Cap each B-record's degree at $\tau=1$. Now $\Delta f = 1$, noise is $\mathrm{Lap}(1)$, but four of the five true matches are *discarded* — recall falls to $1/5$. This is the Section-6 frontier in miniature: strong DP forces either unbounded noise ($\Omega(n/\varepsilon)$) or aggressive truncation that destroys recall.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

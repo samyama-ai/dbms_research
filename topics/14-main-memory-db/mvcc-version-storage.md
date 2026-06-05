@@ -47,11 +47,25 @@ The retention lower bound is fundamental, but it only bites for keys actually to
 - Visibility-check vectorization so deep chains do not break SIMD scans.
 
 ## 9. Key References
-- **[SOTA]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017.
-- **[Foundational]** T. Neumann, T. Mühlbauer, A. Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[Foundational]** P.-Å. Larson, S. Blanas, C. Diaconu, C. Freedman, J. Patel, M. Zwilling. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases.* VLDB, 2011.
-- **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (STEAM).* VLDB, 2019.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems / In-Memory OLTP lectures.* CMU 15-721 course materials.
+- **[SOTA]** Y. Wu, J. Arulraj, J. Lin, R. Xian, A. Pavlo. *An Empirical Evaluation of In-Memory Multi-Version Concurrency Control.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067427)
+- **[Foundational]** T. Neumann, T. Mühlbauer, A. Kemper. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[Foundational]** P.-Å. Larson, S. Blanas, C. Diaconu, C. Freedman, J. Patel, M. Zwilling. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases.* VLDB, 2011. — [DOI](https://doi.org/10.14778/2095686.2095689)
+- **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (STEAM).* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems / In-Memory OLTP lectures.* CMU 15-721 course materials. — [course site](https://15721.courses.cs.cmu.edu/)
+
+## 10. Worked Example
+
+One tuple $k$ is updated every timestep, building a newest-to-oldest chain. After 6 updates the versions have validity intervals:
+
+$$v_6:[6,\infty)\ \to\ v_5:[5,6)\ \to\ v_4:[4,5)\ \to\ v_3:[3,4)\ \to\ v_2:[2,3)\ \to\ v_1:[1,2)$$
+
+A long reader $T_L$ started at $\mathrm{ts}=3$ and is still active; all other transactions have finished. The recycling watermark is $W=\min_i \mathrm{ts}(T_i)=3$.
+
+**Visibility for $T_L$.** It needs the version live at timestamp 3, i.e. $v_3$ with $[3,4)$. A newest-first scan walks $v_6\to v_5\to v_4\to v_3$ — depth 4.
+
+**GC.** Any version with $\mathrm{end}(v)\le W=3$ is provably dead: $v_1\,[1,2)$ and $v_2\,[2,3)$ qualify and are freed. Versions $v_3,\dots,v_6$ must be retained because $v_3$ is visible to $T_L$ and $v_4,v_5,v_6$ lie between $W$ and now.
+
+**The coupling (§2).** With creation rate $r=1$/step and reader lag $\mathrm{now}-W = 6-3 = 3$, expected chain depth $\Theta(r\cdot(\mathrm{now}-W))=3$, and retained versions $\Theta(r\cdot L)$ with $L=3$. If $T_L$ commits, $W$ jumps to 6 and $v_3,v_4,v_5$ become collectable — illustrating why a single long reader pins memory.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

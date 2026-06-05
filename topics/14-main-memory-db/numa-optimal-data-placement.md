@@ -42,12 +42,28 @@ Directions: (i) learned/RL-based adaptive repartitioning that estimates affinity
 - Extending the model and algorithms to CXL/tiered and rack-scale memory.
 
 ## 9. Key References
-- **[Foundational]** Sahni, S., Gonzalez, T. *P-Complete Approximation Problems (QAP inapproximability).* JACM, 1976.
-- **[Foundational]** Karypis, G., Kumar, V. *Multilevel k-way Partitioning (METIS/hMETIS).* JPDC / SIAM, 1998.
-- **[SOTA]** Leis, V., Boncz, P., Kemper, A., Neumann, T. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework.* SIGMOD, 2014.
-- **[SOTA]** Porobic, D., Liarou, E., Tözün, P., Ailamaki, A. *ATraPos: Adaptive Transaction Processing on Hardware Islands.* ICDE, 2014.
-- **[SOTA]** Krauthgamer, R., Naor, J., Schwartz, R. *Partitioning Graphs into Balanced Components.* SODA, 2009.
-- **[Survey]** Pandis, I., Johnson, R., Hardavellas, N., Ailamaki, A. *Data-Oriented Transaction Execution (DORA).* VLDB, 2010.
+- **[Foundational]** Sahni, S., Gonzalez, T. *P-Complete Approximation Problems (QAP inapproximability).* JACM, 1976. — [DOI](https://doi.org/10.1145/321958.321975)
+- **[Foundational]** Karypis, G., Kumar, V. *Multilevel k-way Partitioning (METIS/hMETIS).* JPDC / SIAM, 1998. — [DBLP](https://dblp.org/rec/journals/jpdc/KarypisK98.html)
+- **[SOTA]** Leis, V., Boncz, P., Kemper, A., Neumann, T. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[SOTA]** Porobic, D., Liarou, E., Tözün, P., Ailamaki, A. *ATraPos: Adaptive Transaction Processing on Hardware Islands.* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816692)
+- **[SOTA]** Krauthgamer, R., Naor, J., Schwartz, R. *Partitioning Graphs into Balanced Components.* SODA, 2009. — [DOI](https://doi.org/10.1137/1.9781611973068.102)
+- **[Survey]** Pandis, I., Johnson, R., Hardavellas, N., Ailamaki, A. *Data-Oriented Transaction Execution (DORA).* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920959)
+
+## 10. Worked Example
+
+Four data partitions $\{P_1,P_2,P_3,P_4\}$, each size 1, to be placed on $k=2$ NUMA nodes with capacity 2 each. Access affinity (co-access frequency) is the weighted graph:
+
+$$f(P_1,P_2)=10,\quad f(P_3,P_4)=8,\quad f(P_2,P_3)=1,\quad \text{others}=0.$$
+
+NUMA distance: $d(\text{local})=1$, $d(\text{remote})=3$. Cost $=\sum f(u,v)\,d(\pi(u),\pi(v))$.
+
+**Placement A:** node 0 $=\{P_1,P_2\}$, node 1 $=\{P_3,P_4\}$. Local edges $P_1P_2$ and $P_3P_4$; only $P_2P_3$ is remote.
+$$\text{cost}_A = 10(1)+8(1)+1(3)=21.$$
+
+**Placement B:** node 0 $=\{P_1,P_3\}$, node 1 $=\{P_2,P_4\}$. Now $P_1P_2$ and $P_3P_4$ both cross sockets:
+$$\text{cost}_B = 10(3)+8(3)+1(1)=55.$$
+
+Placement A wins by keeping the two heavy edges local — exactly the capacitated min-cut the heuristics target. With only 4 vertices we could enumerate all $\binom{4}{2}/1=3$ balanced cuts, but at $n$ partitions the search is $\binom{n}{n/2}$, and the decision form is NP-hard (§5), forcing the multilevel heuristics of §4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

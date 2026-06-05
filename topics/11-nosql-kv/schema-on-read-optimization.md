@@ -35,12 +35,19 @@ Directions: **learned cardinality estimation over JSON/semi-structured data** an
 - Integration of WCOJ guarantees with heterogeneous, partially-typed document data.
 
 ## 9. Key References
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Abiteboul, Buneman, Suciu. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000.
-- **[Foundational]** Goldman, Widom. *DataGuides: Enabling Query Formulation and Optimization in Semistructured Databases.* VLDB, 1997.
-- **[SOTA]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[SOTA]** Baazizi, Colazzo, Ghelli, Sartiani. *Schema Inference for Massive JSON Datasets.* EDBT, 2017.
-- **[Survey]** Davoudian, Chen, Liu. *A Survey on NoSQL Stores.* ACM Computing Surveys, 2018.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[Foundational]** Abiteboul, Buneman, Suciu. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000. — [DBLP search](https://dblp.org/search?q=Data%20on%20the%20Web%20From%20Relations%20to%20Semistructured%20Data%20and%20XML)
+- **[Foundational]** Goldman, Widom. *DataGuides: Enabling Query Formulation and Optimization in Semistructured Databases.* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/GoldmanW97.html)
+- **[SOTA]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Baazizi, Colazzo, Ghelli, Sartiani. *Schema Inference for Massive JSON Datasets.* EDBT, 2017. — [DOI](https://doi.org/10.5441/002/edbt.2017.21)
+- **[Survey]** Davoudian, Chen, Liu. *A Survey on NoSQL Stores.* ACM Computing Surveys, 2018. — [DOI](https://doi.org/10.1145/3158661)
+
+## 10. Worked Example
+
+A document collection holds 4 records with a heterogeneous `age` field:
+`{age: 25}`, `{age: 30}`, `{age: "unknown"}`, `{}` (absent). A query filters `age > 28`. With a fixed catalog the optimizer would have a histogram; here the field's "type" is itself a distribution: $P(\text{int})=0.5$, $P(\text{string})=0.25$, $P(\text{absent})=0.25$. Only the 2 integer-typed records can satisfy `> 28`, and exactly one does, so the true selectivity is $1/4=0.25$.
+
+Estimating this from a sample of size $n$ carries Chernoff error: to get selectivity within $\pm\epsilon=0.05$ with confidence $1-\delta=0.95$ needs $n = O(\epsilon^{-2}\log(1/\delta)) \approx \frac{\ln(1/0.05)}{2\cdot0.05^2} \approx 600$ sampled documents. The plan decision — use a sparse secondary index on `age` vs. full scan — flips depending on whether the estimate clears the index break-even selectivity (say $0.1$). Because the string/absent mass ($0.5$) never matches, ignoring type heterogeneity and assuming all 4 records are integers would overestimate selectivity at $0.5$, wrongly favoring a scan.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

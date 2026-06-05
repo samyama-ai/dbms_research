@@ -50,11 +50,19 @@ Active: log-as-the-database / log-is-the-truth designs (e.g., Amazon Aurora's "t
 
 ## 9. Key References
 
-- **[Foundational]** C. Mohan et al. *ARIES.* ACM TODS, 1992.
-- **[SOTA]** Ryan Johnson, Ippokratis Pandis, Radu Stoica, Anastasia Ailamaki, Babak Falsafi. *Aether: A Scalable Approach to Logging.* VLDB, 2010.
-- **[SOTA]** Stephen Tu, Wenting Zheng, Eddie Kohler, Barbara Liskov, Samuel Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Tianzheng Wang, Ryan Johnson. *Scalable Logging through Emerging Non-Volatile Memory.* VLDB, 2014.
-- **[SOTA]** Wenting Zheng et al. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014.
+- **[Foundational]** C. Mohan et al. *ARIES.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Ryan Johnson, Ippokratis Pandis, Radu Stoica, Anastasia Ailamaki, Babak Falsafi. *Aether: A Scalable Approach to Logging.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920928)
+- **[SOTA]** Stephen Tu, Wenting Zheng, Eddie Kohler, Barbara Liskov, Samuel Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** Tianzheng Wang, Ryan Johnson. *Scalable Logging through Emerging Non-Volatile Memory.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732951.2732960)
+- **[SOTA]** Wenting Zheng et al. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+
+## 10. Worked Example
+
+Take $N=64$ committing cores, all serializing through one global LSN counter. Model the counter cache line as a critical section of $L=80$ ns (one coherence round-trip to fetch the line exclusive). A single shared counter can hand out at most $1/L = 12.5$M LSNs/s, so aggregate commit throughput is capped at $\approx 12.5$M txn/s no matter how many cores you add — and USL's coherence term $\beta>0$ actually *bends the curve down* past the peak.
+
+Now switch to Silo-style epoch commit. Replace the per-commit counter bump with one global epoch advanced every $40$ ms by a single thread; each core stamps commits with its read-mostly copy of the epoch. The hot cache line is now read $64\times$ but written once per epoch ($25$/s), removing the write-coherence bottleneck: per-core commit work becomes contention-free, and aggregate throughput scales as $\Theta(N)$.
+
+The trade-off appears in the *durability window*: a crash can lose up to one epoch of committed-but-not-yet-persisted work, i.e. $\le 40$ ms of transactions — exactly the latency-for-throughput exchange section 6 flags as workload-dependent.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,13 +45,25 @@ This is **partially solved**: the worst-case competitive theory is closed ($\The
 - Standard scan-heavy benchmarks separating flood-immunity from raw hit rate.
 
 ## 9. Key References
-- **[Foundational]** O'Neil, O'Neil, Weikert. *The LRU-K Page Replacement Algorithm for Database Disk Buffering.* SIGMOD, 1993.
-- **[Foundational]** Megiddo, Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003.
-- **[SOTA]** Jiang, Zhang. *LIRS: An Efficient Low Inter-Reference Recency Set Replacement Policy.* SIGMETRICS, 2002.
-- **[SOTA]** Rodriguez, Vietri, et al. *Learning Cache Replacement with CACHEUS.* FAST, 2021.
-- **[SOTA]** Yang, Zhang, et al. *FIFO Queues Are All You Need for Cache Eviction (SIEVE).* SOSP/NSDI, 2024.
-- **[Foundational]** Fiat, Karp, Luby, McGeoch, Sleator, Young. *Competitive Paging Algorithms.* J. Algorithms, 1991.
-- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML/JACM, 2018/2021.
+- **[Foundational]** O'Neil, O'Neil, Weikert. *The LRU-K Page Replacement Algorithm for Database Disk Buffering.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170081)
+- **[Foundational]** Megiddo, Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003. — [USENIX](https://www.usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache)
+- **[SOTA]** Jiang, Zhang. *LIRS: An Efficient Low Inter-Reference Recency Set Replacement Policy.* SIGMETRICS, 2002. — [DOI](https://doi.org/10.1145/511334.511340)
+- **[SOTA]** Rodriguez, Vietri, et al. *Learning Cache Replacement with CACHEUS.* FAST, 2021. — [USENIX](https://www.usenix.org/conference/fast21/presentation/rodriguez)
+- **[SOTA]** Yang, Zhang, et al. *FIFO Queues Are All You Need for Cache Eviction (SIEVE).* SOSP/NSDI, 2024. — [USENIX](https://www.usenix.org/conference/nsdi24/presentation/zhang-yazhuo)
+- **[Foundational]** Fiat, Karp, Luby, McGeoch, Sleator, Young. *Competitive Paging Algorithms.* J. Algorithms, 1991. — [arXiv](https://arxiv.org/abs/cs/0205038)
+- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML/JACM, 2018/2021. — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+Cache size $k=3$. Hot working set $\{A,B,C\}$ is accessed repeatedly; then a one-shot scan touches $S_1,S_2,S_3,S_4$ (each once, never reused).
+
+Trace: $A,B,C,A,B,C,\;S_1,S_2,S_3,S_4,\;A,B,C$.
+
+**Plain LRU.** After the loop, cache is $[C,B,A]$ (MRU→LRU). The scan evicts the entire hot set: $S_1$ evicts $A$, $S_2$ evicts $B$, $S_3$ evicts $C$, $S_4$ evicts $S_1$. Final cache $\{S_4,S_3,S_2\}$. The closing $A,B,C$ are all **misses**: 3 extra misses from flooding.
+
+**LRU-2 (scan-resistant).** It evicts by the time of the *2nd*-most-recent reference; the singly-referenced scan pages have backward-2 distance $=\infty$, so they sit in a probationary slot and are evicted first. $A,B,C$ (each referenced $\ge 2$ times) survive every scan page. Closing $A,B,C$ are all **hits**.
+
+Flood immunity saves $3$ misses here; on a scan of length $L\gg k$ it saves up to $k$ hot pages regardless of $L$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

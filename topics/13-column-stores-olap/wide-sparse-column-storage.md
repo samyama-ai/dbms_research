@@ -45,12 +45,31 @@ The gap is **open and largely empirical**: industrial systems handle sparse wide
 - Co-design with vectorized execution so projecting $k\ll m$ columns has no $m$-dependent overhead.
 
 ## 9. Key References
-- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010.
-- **[Foundational]** Beckmann, Halverson, Krishnamurthy, Naughton. *Extending RDBMSs To Support Sparse Datasets.* ICDE, 2006.
-- **[SOTA]** Abadi, Madden, Hachem. *Column-Stores vs. Row-Stores: How Different Are They Really?* SIGMOD, 2008.
-- **[SOTA]** *Apache Arrow / Parquet* columnar format specifications (project documentation).
-- **[Foundational]** Navathe, Ceri, Wiederhold, Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984.
-- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010. — [DBLP](https://dblp.uni-trier.de/rec/journals/pvldb/MelnikGLRSTV10.html)
+- **[Foundational]** Beckmann, Halverson, Krishnamurthy, Naughton. *Extending RDBMSs To Support Sparse Datasets.* ICDE, 2006. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/BeckmannHKN06.xml)
+- **[SOTA]** Abadi, Madden, Hachem. *Column-Stores vs. Row-Stores: How Different Are They Really?* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376712)
+- **[SOTA]** *Apache Arrow / Parquet* columnar format specifications (project documentation). — [Parquet format](https://parquet.apache.org/docs/file-format/)
+- **[Foundational]** Navathe, Ceri, Wiederhold, Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1994.2209)
+- **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Take $N=4$ rows and $m=6$ columns $\{c_1,\dots,c_6\}$ — a tiny "wide" table. Present cells ($\Omega$):
+
+| row | values present |
+|----|----------------|
+| 1 | $c_1, c_3$ |
+| 2 | $c_1, c_4$ |
+| 3 | $c_2, c_3$ |
+| 4 | $c_1, c_3$ |
+
+So $\mathrm{nnz}=8$ out of $Nm=24$, density $\rho=1/3$.
+
+**Dense-per-column cost:** 6 physical columns, each carrying a 4-bit NULL bitmap = 24 presence bits plus 6 file/metadata handles — much of it spent encoding absence.
+
+**Sparse (CSR-like) cost:** store only the 8 present $(\text{row},\text{col},\text{value})$ entries. Presence needs $\approx \mathrm{nnz}\log_2\frac{Nm}{\mathrm{nnz}} = 8\log_2 3 \approx 12.7$ bits, versus 24 bits for the dense bitmaps.
+
+**Column grouping:** affinity counts co-access. Here $c_1$ and $c_3$ co-occur in rows 1 and 4 ($w_{13}=2$), so a vertical-partitioning heuristic groups $\{c_1,c_3\}$ together, letting a query projecting both read one contiguous group instead of two scattered columns. Finding the globally optimal grouping over all $m$ columns is the NP-hard vertical-partitioning problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -48,12 +48,20 @@ Active threads: **OCWA$^*$** and label-driven semantics (Libkin school) generali
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005.
-- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of answering queries using materialized views.* PODS, 1998.
-- **[SOTA]** L. Libkin. *Data exchange and incomplete information.* PODS, 2006.
-- **[SOTA]** A. Hernich. *Answering non-monotonic queries in relational data exchange.* ICDT, 2010 / Logical Methods in CS, 2011.
-- **[SOTA]** G. Gottlob, A. Nash. *Efficient core computation in data exchange.* Journal of the ACM, 2008.
-- **[Survey]** L. Libkin. *Certain answers as objects and knowledge.* Artificial Intelligence, 2016.
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* Theoretical Computer Science, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of answering queries using materialized views.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275516)
+- **[SOTA]** L. Libkin. *Data exchange and incomplete information.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142360)
+- **[SOTA]** A. Hernich. *Answering non-monotonic queries in relational data exchange.* ICDT, 2010 / Logical Methods in CS, 2011. — [arXiv](https://arxiv.org/abs/1107.1456)
+- **[SOTA]** G. Gottlob, A. Nash. *Efficient core computation in data exchange.* Journal of the ACM, 2008. — [DOI](https://doi.org/10.1145/1391289.1391293)
+- **[Survey]** L. Libkin. *Certain answers as objects and knowledge.* Artificial Intelligence, 2016. — [DOI](https://doi.org/10.1016/j.artint.2015.11.004)
+
+## 10. Worked Example
+
+GAV mapping: source `Emp(name, dept)` with the single st-tgd $\text{Emp}(n,d) \to \text{Works}(n,d)$. Source $I = \{\text{Emp}(\text{Ann},\text{Sales})\}$. The chase gives universal solution $U = \{\text{Works}(\text{Ann},\text{Sales})\}$.
+
+**Open-world (OWA).** A solution may add facts, e.g. $J = U \cup \{\text{Works}(\text{Bob},\text{HR})\}$ is valid. Query $Q_1(x) = \exists d\,\text{Works}(x,d)$ (monotone) has certain answer $\{\text{Ann}\}$ — Bob is not certain (some solution omits him). Computed directly as $Q_1(U)_{\downarrow} = \{\text{Ann}\}$.
+
+**Where OWA fails.** Non-monotone query $Q_2 = \neg\exists x\,(\text{Works}(x,\text{HR}))$ ("no one in HR"). Under OWA $Q_2$ is *false certainly* (some solution adds an HR tuple), so certain answer is **no** — counterintuitive, since nothing forces HR. Under Libkin's **CWA-solutions** only justified facts survive: the unique CWA-minimal model is $U$ itself, so $Q_2$ is **true**. This is exactly the monotone-PTIME vs non-monotone-coNP/undecidable gap of Section 6: $Q_1$ is easy under either reading; $Q_2$ separates the two semantics.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

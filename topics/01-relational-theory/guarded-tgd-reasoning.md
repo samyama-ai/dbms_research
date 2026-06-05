@@ -51,13 +51,23 @@ Groups: **Gottlob / Pieris / Sallinger (Oxford, Edinburgh, TU Wien — VADALOG)*
 
 ## 9. Key References
 
-- **[Foundational]** Beeri, Vardi. *The Implication Problem for Data Dependencies* (undecidability of tgd implication). ICALP 1981.
-- **[Foundational]** Calì, Gottlob, Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog$^\pm$).* PODS 2009 / JWS.
-- **[SOTA]** Calì, Gottlob, Pieris. *Towards More Expressive Ontology Languages: The Query Answering Problem* (separability, non-conflicting keys). Artificial Intelligence, 2012.
-- **[SOTA]** Baget, Leclère, Mugnier, Salvat. *On Rules with Existential Variables: Walking the Decidability Line.* Artificial Intelligence, 2011.
-- **[SOTA]** Bárány, Gottlob, Otto. *Querying the Guarded Fragment.* LICS 2010 / LMCS.
-- **[SOTA]** Bellomarini, Gottlob, Sallinger. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* VLDB 2018.
-- **[Survey]** Mugnier, Thomazo. *An Introduction to Ontology-Based Query Answering with Existential Rules.* Reasoning Web, 2014.
+- **[Foundational]** Beeri, Vardi. *The Implication Problem for Data Dependencies* (undecidability of tgd implication). ICALP 1981. — [DOI](https://doi.org/10.1007/3-540-10843-2_7)
+- **[Foundational]** Calì, Gottlob, Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog$^\pm$).* PODS 2009 / JWS. — [DOI](https://doi.org/10.1145/1559795.1559809)
+- **[SOTA]** Calì, Gottlob, Pieris. *Towards More Expressive Ontology Languages: The Query Answering Problem* (separability, non-conflicting keys). Artificial Intelligence, 2012. — [DOI](https://doi.org/10.1016/j.artint.2012.08.002)
+- **[SOTA]** Baget, Leclère, Mugnier, Salvat. *On Rules with Existential Variables: Walking the Decidability Line.* Artificial Intelligence, 2011. — [DOI](https://doi.org/10.1016/j.artint.2011.03.002)
+- **[SOTA]** Bárány, Gottlob, Otto. *Querying the Guarded Fragment.* LICS 2010 / LMCS. — [arXiv](https://arxiv.org/abs/1309.5822)
+- **[SOTA]** Bellomarini, Gottlob, Sallinger. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* VLDB 2018. — [DOI](https://doi.org/10.14778/3213880.3213888)
+- **[Survey]** Mugnier, Thomazo. *An Introduction to Ontology-Based Query Answering with Existential Rules.* Reasoning Web, 2014. — [DOI](https://doi.org/10.1007/978-3-319-10587-1_6)
+
+## 10. Worked Example
+
+A guarded TGD whose chase is infinite yet has bounded treewidth. Take the single rule
+
+$$\rho:\quad \text{Person}(x) \;\to\; \exists y\ \big(\text{Person}(y) \wedge \text{parent}(y, x)\big),$$
+
+with database $\mathcal{D} = \{\text{Person}(a)\}$. The body atom $\text{Person}(x)$ is a guard (it contains every body variable), so $\rho$ is guarded. Chasing: $\text{Person}(a)$ fires $\rho$, inventing null $n_1$ with $\text{parent}(n_1,a)$; then $\text{Person}(n_1)$ fires again, inventing $n_2$, and so on — an *infinite* ancestor chain $a \leftarrow n_1 \leftarrow n_2 \leftarrow \cdots$.
+
+The chase never terminates, yet the result is a tree (a path), so its treewidth is $1$. By the bounded-treewidth model property, BCQ answering is decidable: the BCQ $Q :\!-\, \text{parent}(u,v),\text{parent}(w,u)$ ("someone has a grandparent") is *entailed*, since $\text{parent}(n_2,n_1),\text{parent}(n_1,a)$ appears after two steps. Contrast: replace the body with an unguarded conjunction over independent variables and the chase can build a grid (unbounded treewidth), which is exactly where decidability is lost. The guard is what keeps complexity at 2EXPTIME-complete combined, PTIME in data.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

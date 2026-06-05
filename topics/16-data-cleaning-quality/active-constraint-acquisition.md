@@ -61,12 +61,23 @@ This sits at the intersection of constraint discovery (the hypothesis space) and
 
 ## 9. Key References
 
-- **[Foundational]** Angluin. *Queries and Concept Learning.* Machine Learning, 1988.
-- **[Foundational]** Hanneke. *Theory of Disagreement-Based Active Learning.* Foundations and Trends in ML, 2014.
-- **[Foundational]** Sarawagi, Bhamidipaty. *Interactive Deduplication using Active Learning.* KDD, 2002.
-- **[SOTA]** Bleifuß, Kruse, Naumann. *Efficient Denial Constraint Discovery with Hydra.* VLDB, 2017.
-- **[SOTA]** Mahdavi et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019.
-- **[SOTA]** Mahdavi, Abedjan. *Baran: Effective Error Correction via a Unified Context Representation.* VLDB, 2020.
+- **[Foundational]** Angluin. *Queries and Concept Learning.* Machine Learning, 1988. — [DOI](https://doi.org/10.1023/A:1022821128753)
+- **[Foundational]** Hanneke. *Theory of Disagreement-Based Active Learning.* Foundations and Trends in ML, 2014. — [DOI](https://doi.org/10.1561/2200000037)
+- **[Foundational]** Sarawagi, Bhamidipaty. *Interactive Deduplication using Active Learning.* KDD, 2002. — [DOI](https://doi.org/10.1145/775047.775087)
+- **[SOTA]** Bleifuß, Kruse, Naumann. *Efficient Denial Constraint Discovery with Hydra.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3157794.3157800)
+- **[SOTA]** Mahdavi et al. *Raha: A Configuration-Free Error Detection System.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3324956)
+- **[SOTA]** Mahdavi, Abedjan. *Baran: Effective Error Correction via a Unified Context Representation.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407801)
+
+## 10. Worked Example
+
+Suppose the hypothesis class is the FD candidates over schema $R(A,B,C)$, so $\mathcal{H}$ = single-attribute determinants of $A$: $\{B\!\to\!A,\ C\!\to\!A,\ BC\!\to\!A\}$ plus "none holds" — $|\mathcal{H}|=4$. Generalized binary search asks oracle questions that each ideally halve the version space, so $\lceil \log_2 4\rceil = 2$ well-chosen queries suffice in the noise-free case.
+
+Trace: data has tuples $t_1=(a_1,b_1,c_1)$, $t_2=(a_2,b_1,c_2)$.
+
+- Query 1: "Is the pair $(t_1,t_2)$ a violation of $B\!\to\!A$?" They agree on $B$ ($b_1$) but differ on $A$, so oracle says **yes, violation** $\Rightarrow$ eliminate $B\!\to\!A$ and $B$-only determinants. Version space halves to $\{C\!\to\!A, \text{none}\}$.
+- Query 2: "Does $C\!\to\!A$ hold?" Oracle inspects and says **yes** $\Rightarrow$ converge to $\Sigma=\{C\!\to\!A\}$.
+
+With a noisy oracle of error rate $\eta=0.2$, the $\Omega(1/(1-2\eta)^2)=\Omega(1/0.36)\approx 2.8\times$ repetition factor means each question is effectively asked $\sim 3$ times (majority vote) to retain confidence — illustrating the Castro–Nowak penalty.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

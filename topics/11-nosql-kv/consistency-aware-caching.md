@@ -53,12 +53,20 @@ The gap is **stratified by level**. Session and bounded-staleness levels are ess
 
 ## 9. Key References
 
-- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[Foundational]** Terry, D. et al. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994.
-- **[SOTA]** Bailis, P. et al. *Bolt-on Causal Consistency.* SIGMOD, 2013.
-- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[Foundational]** Attiya, H., Welch, J. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994.
-- **[Systems]** Nishtala, R. et al. *Scaling Memcache at Facebook.* NSDI, 2013.
+- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[Foundational]** Terry, D. et al. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994. — [DBLP search](https://dblp.org/search?q=Session%20Guarantees%20for%20Weakly%20Consistent%20Replicated%20Data)
+- **[SOTA]** Bailis, P. et al. *Bolt-on Causal Consistency.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465279)
+- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[Foundational]** Attiya, H., Welch, J. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994. — [DOI](https://doi.org/10.1145/176575.176576)
+- **[Systems]** Nishtala, R. et al. *Scaling Memcache at Facebook.* NSDI, 2013. — [USENIX](https://www.usenix.org/conference/nsdi13/technical-sessions/presentation/nishtala)
+
+## 10. Worked Example
+
+A session $s$ on a client cache holds version vectors. It wrote key $k$, producing $V_s = \{A{:}5, B{:}2\}$ (replica A at logical time 5, B at 2). The edge cache holds a stale copy $(k, v_{old}, W)$ with $W = \{A{:}3, B{:}2\}$.
+
+**Read-your-writes check.** Serve locally iff $W \ge V_s$ componentwise on keys $s$ wrote. Here $W_A = 3 < 5 = V_{s,A}$, so $W \not\ge V_s$: the cached value is *not* RYW-safe. The cache must refresh from the store (one round-trip) rather than serve $v_{old}$. After refresh it caches $W' = \{A{:}5, B{:}2\} \ge V_s$ — now a hit, with **zero coordination on every subsequent read** until the session writes again. Metadata cost is $O(W_s)$, the keys the session touched.
+
+**Bounded staleness contrast.** With anti-entropy period $\Delta = 50$ ms and clock skew $\epsilon = 5$ ms, a value stamped at $t$ is at most $(\Delta+\epsilon) = 55$ ms stale. If the SLA tolerates 100 ms staleness, the cache serves *any* such entry locally with no RTT — trading freshness precision for a higher hit rate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

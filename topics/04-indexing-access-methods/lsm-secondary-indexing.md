@@ -47,11 +47,21 @@ The eager↔lazy spectrum is *engineered* but not *characterized*: no theorem st
 - Multi-attribute / composite secondary indexes with shared validation state.
 
 ## 9. Key References
-- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** C. Luo, M. Carey. *Efficient Data Ingestion and Query Processing for LSM-Based Storage Systems.* VLDB, 2019.
-- **[SOTA]** S. Alsubaiee, et al. *Storage Management in AsterixDB.* VLDB, 2014.
-- **[Survey]** C. Luo, M. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020.
-- **[SOTA]** S. Dharmasiri, et al. *Storage-Attached Indexing for Apache Cassandra.* (DataStax / industrial track), 2023.
+- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** C. Luo, M. Carey. *Efficient Data Ingestion and Query Processing for LSM-Based Storage Systems.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1808.08896)
+- **[SOTA]** S. Alsubaiee, et al. *Storage Management in AsterixDB.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732951.2732958)
+- **[Survey]** C. Luo, M. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+- **[SOTA]** S. Dharmasiri, et al. *Storage-Attached Indexing for Apache Cassandra.* (DataStax / industrial track), 2023. — [DBLP search](https://dblp.org/search?q=Storage-Attached%20Indexing%20Apache%20Cassandra)
+
+## 10. Worked Example
+
+A users table is ingested into an LSM store keyed by `user_id`; we want a secondary index on `city`. Record $k{=}7$ is first written as $(7,\text{"Pune"},t_1)$, later updated to $(7,\text{"Goa"},t_2)$ with $t_2>t_1$ — a *blind* write, so the engine never reads the old "Pune".
+
+**Lazy (validation):** the index now holds two postings, $(\text{Pune},7)$ and $(\text{Goa},7)$. A query `city = 'Pune'` returns candidate $\{7\}$, then point-looks-up $k{=}7$ in the primary store, finds current value "Goa" $\ne$ "Pune", and discards it — correct, but it paid $1$ primary probe ($O(L)$ I/O) for a false positive. Ingest stayed cheap.
+
+**Eager (synchronous):** at $t_2$ the engine first reads old value "Pune" (cost $O(L)$), then emits a tombstone $(\text{Pune},7,t_2,\text{del})$ plus $(\text{Goa},7,t_2)$. The query for "Pune" returns clean postings with no validation probe — but every update now costs an extra lookup, raising write amplification.
+
+The open problem: for a given churn rate (here, how often `city` changes) and read/write mix, which point on this spectrum minimizes $c_wW+c_rR$? No theorem yet says.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

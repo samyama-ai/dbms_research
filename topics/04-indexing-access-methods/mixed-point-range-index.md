@@ -43,12 +43,22 @@ The gap is between rich *empirical* Pareto frontiers (learned hybrids dominate o
 - Online learning of $p$ with regret bounds against the best fixed structure.
 
 ## 9. Key References
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Foundational]** M. Athanassoulis, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020.
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Foundational]** M. Athanassoulis, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[SOTA]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
+- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [PDF](https://vldb.org/pvldb/vol14/p1-marcus.pdf)
+
+## 10. Worked Example
+
+Take $n=8$ keys $\{3,7,12,18,25,31,40,52\}$, block size $B=4$. A workload sends $p=0.5$ point lookups and $0.5$ range scans.
+
+- **Pure hash index:** point lookup of key $25$ costs $O(1)$ = ~1 probe. But a range query $[12,40]$ cannot be answered — you must scan all 8 keys.
+- **Pure B-tree:** range $[12,40]$ descends $\lceil\log_2 8\rceil = 3$ levels, then scans $r=4$ matches in $\lceil r/B\rceil = 1$ block I/O: cost $\approx 3+1$. But point lookup of $25$ also pays the full $\log_2 8 = 3$ descent instead of $O(1)$.
+- **Composite (B-tree backbone + hash filter):** point lookup of $25$ hits the hash in ~1 probe; range $[12,40]$ uses the backbone at cost $\approx 4$.
+
+Expected cost: hash-only $= 0.5(1)+0.5(8)=4.5$; B-tree-only $=0.5(3)+0.5(4)=3.5$; composite $\approx 0.5(1)+0.5(4)=2.5$ — but the composite pays extra space for the auxiliary filter, exactly the unproven tradeoff at the heart of the problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

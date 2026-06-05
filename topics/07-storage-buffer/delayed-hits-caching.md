@@ -1,6 +1,7 @@
 # Competitive Caching with Delayed Hits
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/delayed-hits-caching` · **Status:** partially-solved
+> **Verification note:** The Atre et al. delayed-hits paper appeared at ACM SIGCOMM 2020 (not SIGMOD); the §3 venue tag has been corrected accordingly.
 
 ## 1. Problem Statement
 
@@ -25,7 +26,7 @@ so caching decisions affect cost **across requests coupled in time** — evictio
 
 ## 3. State of the Art (SOTA)
 
-**Systems-SOTA.** The phenomenon was named and quantified by **Atre, Sherry, Wang, Berger — "Caching with Delayed Hits"** (SIGMOD 2020), who showed delayed hits dominate latency in high-bandwidth CDN/edge caches (where $Z \gg$ inter-arrival time) and proposed **MAD (Minimum-Aggregate-Delay)**, a delay-aware ranking policy with strong empirical gains over LRU/Bélády-style policies. Production CDN and RDMA/disaggregated-memory caches face exactly this regime.
+**Systems-SOTA.** The phenomenon was named and quantified by **Atre, Sherry, Wang, Berger — "Caching with Delayed Hits"** (SIGCOMM 2020), who showed delayed hits dominate latency in high-bandwidth CDN/edge caches (where $Z \gg$ inter-arrival time) and proposed **MAD (Minimum-Aggregate-Delay)**, a delay-aware ranking policy with strong empirical gains over LRU/Bélády-style policies. Production CDN and RDMA/disaggregated-memory caches face exactly this regime.
 
 **Theory-SOTA.** Subsequent work formalized competitive analysis: **Zhang, Berger et al.** and follow-ups gave offline structural results and online algorithms; the offline problem's hardness and approximability, and tight online ratios as a function of $Z$ and $k$, were partially characterized — hence **partially-solved**. *(frontier — verify)* for the exact best-known ratios in the latest variants.
 
@@ -59,12 +60,24 @@ This is **partially-solved**: the model is formalized, the offline optimum's div
 
 ## 9. Key References
 
-- **[Foundational/SOTA]** Atre, Sherry, Wang, Berger. *Caching with Delayed Hits.* ACM SIGCOMM, 2020.
-- **[Foundational]** Belady. *A Study of Replacement Algorithms for a Virtual-Storage Computer (MIN).* IBM Systems Journal, 1966.
-- **[Foundational]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** Fiat, Karp, Luby, McGeoch, Sleator, Young. *Competitive Paging Algorithms.* Journal of Algorithms, 1991.
-- **[SOTA]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021.
+- **[Foundational/SOTA]** Atre, Sherry, Wang, Berger. *Caching with Delayed Hits.* ACM SIGCOMM, 2020. — [DOI](https://doi.org/10.1145/3387514.3405883)
+- **[Foundational]** Belady. *A Study of Replacement Algorithms for a Virtual-Storage Computer (MIN).* IBM Systems Journal, 1966. — [DOI](https://doi.org/10.1147/sj.52.0078)
+- **[Foundational]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** Fiat, Karp, Luby, McGeoch, Sleator, Young. *Competitive Paging Algorithms.* Journal of Algorithms, 1991. — [arXiv](https://arxiv.org/abs/cs/0205038)
+- **[SOTA]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[Survey]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+Fetch latency $Z = 10$ time units. Page $p$ (not cached) is requested at times $t = 0, 3, 7$.
+
+- $t=0$: miss for $p$; a fetch is launched, completing at $t = 0 + Z = 10$. Cost $= Z = 10$.
+- $t=3$: $p$ still in flight (arrives at $10$). This is a **delayed hit**, costing the residual wait $10 - 3 = 7$.
+- $t=7$: again in flight. Delayed hit, cost $10 - 7 = 3$.
+
+Aggregate latency $= 10 + 7 + 3 = 20$.
+
+Contrast the two naive models. Treating all three as **independent misses** predicts $3Z = 30$ (overcount — only one fetch actually runs). Treating the burst as **one miss** predicts $Z = 10$ (undercount — it ignores the queued waits). The true cost $20$ lies strictly between, and depends on *arrival times within the window*. This is why Bélády's MIN is suboptimal: MIN minimizes the miss count, but here eviction value hinges on temporal density — clustering reuses inside one $Z$-window is cheaper than spreading them, something a miss-count objective cannot see.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

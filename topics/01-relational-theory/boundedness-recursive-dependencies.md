@@ -43,11 +43,23 @@ Groups: **Benedikt (Oxford)**, **Barceló (PUC/IMFD Chile)**, **Bourhis**, **Cal
 
 ## 9. Key References
 
-- **[Foundational]** Gaifman, Mairson, Sagiv, Vardi. *Undecidable Optimization Problems for Database Logic Programs.* PODS 1987 / JACM 1993.
-- **[Foundational]** Cosmadakis, Gaifman, Kanellakis, Vardi. *Decidable Optimization Problems for Database Logic Programs.* STOC 1988.
-- **[SOTA]** Marcinkowski. *Achilles, Turtle, and Undecidable Boundedness Problems for Small Datalog Programs.* SIAM J. Computing, 1999.
-- **[SOTA]** Grahne, Onet / Calautti, Gottlob, Pieris. *Chase Termination & Boundedness for Existential Rules.* PODS/ICDT, 2010s.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog chapters).
+- **[Foundational]** Gaifman, Mairson, Sagiv, Vardi. *Undecidable Optimization Problems for Database Logic Programs.* PODS 1987 / JACM 1993. — [DOI](https://doi.org/10.1145/174130.174142)
+- **[Foundational]** Cosmadakis, Gaifman, Kanellakis, Vardi. *Decidable Optimization Problems for Database Logic Programs.* STOC 1988. — [DOI](https://doi.org/10.1145/62212.62259)
+- **[SOTA]** Marcinkowski. *Achilles, Turtle, and Undecidable Boundedness Problems for Small Datalog Programs.* SIAM J. Computing, 1999. — [DOI](https://doi.org/10.1137/S0097539797322140)
+- **[SOTA]** Grahne, Onet / Calautti, Gottlob, Pieris. *Chase Termination & Boundedness for Existential Rules.* PODS/ICDT, 2010s. — [DBLP search](https://dblp.org/search?q=Calautti+Gottlob+Pieris+chase+termination+existential+rules)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog chapters). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Contrast two linear Datalog programs over an EDB edge relation $E$.
+
+**Bounded program** $P_1$ ("reach within 2 hops"):
+$$T(x,y) \;{:}\!-\; E(x,y). \qquad T(x,y) \;{:}\!-\; E(x,z),\,E(z,y).$$
+Here $T_{P_1}^{1}(\emptyset)=T_{P_1}^{2}(\emptyset)$ for every database: the second rule is non-recursive (its body uses only $E$), so a single pass suffices. $P_1$ is **bounded** ($k=1$) and rewrites to the UCQ $E(x,y)\lor\exists z\,(E(x,z)\land E(z,y))$ — evaluable in $\mathrm{AC}^0$.
+
+**Unbounded program** $P_2$ (transitive closure):
+$$T(x,y) \;{:}\!-\; E(x,y). \qquad T(x,y) \;{:}\!-\; E(x,z),\,T(z,y).$$
+On a path $1\!\to\!2\!\to\!\cdots\!\to\!n$, fixpoint needs $n-1$ iterations: $T_{P_2}^{k}$ keeps growing with input size, so no constant $k$ works. $P_2$ is **unbounded** and provably not FO-expressible. Deciding which side a given program falls on is, by GMSV, **undecidable** in general — yet for these linear sirups it is decidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

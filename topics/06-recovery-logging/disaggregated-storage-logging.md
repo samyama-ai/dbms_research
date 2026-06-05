@@ -52,11 +52,21 @@ Active threads: WAL over CXL-attached / fabric-attached memory shortening the du
 
 ## 9. Key References
 
-- **[SOTA]** Alexandre Verbitski, Anurag Gupta, Debanjan Saha, Murali Brahmadesam, Kamal Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Panagiotis Antonopoulos, Alex Budovski, Cristian Diaconu, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[Foundational]** Mahesh Balakrishnan, Dahlia Malkhi, Vijayan Prabhakaran, et al. *CORFU: A Shared Log Design for Flash Clusters.* NSDI, 2012.
-- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
+- **[SOTA]** Alexandre Verbitski, Anurag Gupta, Debanjan Saha, Murali Brahmadesam, Kamal Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Panagiotis Antonopoulos, Alex Budovski, Cristian Diaconu, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[Foundational]** Mahesh Balakrishnan, Dahlia Malkhi, Vijayan Prabhakaran, et al. *CORFU: A Shared Log Design for Flash Clusters.* NSDI, 2012. — [USENIX](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/balakrishnan)
+- **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+A compute node ships redo to a $6$-replica storage quorum across $3$ AZs (Aurora-style), committing on a write quorum $|W|=4$, reading on $|R|=3$. Check the quorum-intersection invariant $|W|+|R|>N$: $4+3=7>6$, so every read sees the latest committed write. Fault tolerance: $|W|=4>f$ holds for $f=3$ failures, but durability survives losing any $N-|W|=2$ replicas (a full AZ) since $4$ live replicas still hold every commit.
+
+**Commit.** Txn $T$ emits records with $\text{LSN}=101..105$. Compute cannot ack until $\ge 4$ replicas persist them — one network round trip ($\approx 0.5\,ms$ on RDMA), the durability floor.
+
+**Reordering.** The channel delivers $103,105,101,102$ (104 lost). Each storage node tracks its highest gap-free LSN; the **VCL** = $103$ (since $104$ is missing). Commit visibility is gated at VCL $=103$: $T$'s commit at LSN $105$ is *not* yet durable.
+
+**Recovery.** Storage gossips to fetch $104$; once filled, VCL advances to $105$ and $T$ becomes durable. A fresh compute node attaches and reads pages on-demand — no redo on its critical path.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -51,11 +51,21 @@ There is no formal model that maps (per-tenant ingest rates, data sizes, compact
 
 ## 9. Key References
 
-- **[Foundational]** Gulati, A., Merchant, A., Varman, P. *mClock: Handling Throughput Variability for Hypervisor IO Scheduling.* OSDI, 2010.
-- **[Foundational]** Ghodsi, A. et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011.
-- **[SOTA]** Dayan, N., Idreos, S. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018.
-- **[SOTA]** Kakaraparthy, A. et al. / Cao, Z. et al. *Characterizing, Modeling, and Benchmarking RocksDB Key-Value Workloads at Facebook.* FAST, 2020.
-- **[Systems]** Kivity, A. et al. *Seastar / ScyllaDB IO Scheduler.* (design docs / ScyllaDB engineering), 2017–.
+- **[Foundational]** Gulati, A., Merchant, A., Varman, P. *mClock: Handling Throughput Variability for Hypervisor IO Scheduling.* OSDI, 2010. — [USENIX](https://www.usenix.org/conference/osdi10/mclock-handling-throughput-variability-hypervisor-io-scheduling)
+- **[Foundational]** Ghodsi, A. et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011. — [USENIX](https://www.usenix.org/conference/nsdi11/dominant-resource-fairness-fair-allocation-multiple-resource-types)
+- **[SOTA]** Dayan, N., Idreos, S. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Kakaraparthy, A. et al. / Cao, Z. et al. *Characterizing, Modeling, and Benchmarking RocksDB Key-Value Workloads at Facebook.* FAST, 2020. — [USENIX](https://www.usenix.org/conference/fast20/presentation/cao-zhichao)
+- **[Systems]** Kivity, A. et al. *Seastar / ScyllaDB IO Scheduler.* (design docs / ScyllaDB engineering), 2017–. — [ScyllaDB design doc](https://www.scylladb.com/2016/04/14/io-scheduler-1/)
+
+## 10. Worked Example
+
+Two tenants share one node with device bandwidth $C = 500$ MB/s. Tenant $A$ (noisy) ingests $w_A = 50$ MB/s; tenant $B$ (quiet, latency-sensitive) ingests $w_B = 5$ MB/s. Both run leveled LSMs with write amplification $\text{WA} \approx 30$.
+
+**Background demand:** $A$ needs $w_A\cdot\text{WA} = 50\times30 = 1500$ MB/s of compaction I/O — already $3\times$ the device cap. $B$ needs $5\times30 = 150$ MB/s. Total $1650$ MB/s $\gg C = 500$.
+
+**Saturation lower bound (section 5):** demanded bytes exceed movable bytes, so by pigeonhole isolation is impossible without throttling — either $A$'s ingestion stalls, or $A$'s $L_0$ files pile up and read amplification grows for *whoever* shares the cache.
+
+**With weighted fair queuing (mClock), share $B$ a reservation** of, say, $150$ MB/s: $B$'s compaction keeps pace, its $L_0$ count stays under the write-stall trigger, so $B$'s reads remain $O(\log N_B)$. The remaining $350$ MB/s goes to $A$, which now *must* be admission-throttled to $\le 350/30 \approx 11.7$ MB/s ingest — internalizing $A$'s debt rather than letting it degrade $B$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

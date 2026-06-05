@@ -63,12 +63,27 @@ The no-constraint and DL-Lite corners are **closed and tight**. The genuinely op
 
 ## 9. Key References
 
-- **[Foundational]** Imieliński, T., Lipski, W. *Incomplete Information in Relational Databases.* JACM, 1984.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** Abiteboul, S., Kanellakis, P., Grahne, G. *On the Representation and Querying of Sets of Possible Worlds.* Theoretical Computer Science, 1991.
-- **[SOTA]** Calì, A., Gottlob, G., Pieris, A. *Towards More Expressive Ontology Languages (Datalog±).* Artificial Intelligence, 2012.
-- **[SOTA]** Libkin, L. *SQL's Three-Valued Logic and Certain Answers.* ACM TODS, 2016.
-- **[Survey]** Bienvenu, M., Ortiz, M. *Ontology-Mediated Query Answering with Data-Tractable Description Logics.* Reasoning Web, 2015.
+- **[Foundational]** Imieliński, T., Lipski, W. *Incomplete Information in Relational Databases.* JACM, 1984. — [DOI](https://doi.org/10.1145/1634.1886)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Foundational]** Abiteboul, S., Kanellakis, P., Grahne, G. *On the Representation and Querying of Sets of Possible Worlds.* Theoretical Computer Science, 1991. — [DBLP search](https://dblp.org/search?q=On%20the%20Representation%20and%20Querying%20of%20Sets%20of%20Possible%20Worlds)
+- **[SOTA]** Calì, A., Gottlob, G., Pieris, A. *Towards More Expressive Ontology Languages (Datalog±).* Artificial Intelligence, 2012. — [DOI](https://doi.org/10.1016/j.artint.2012.08.002)
+- **[SOTA]** Libkin, L. *SQL's Three-Valued Logic and Certain Answers.* ACM TODS, 2016. — [DOI](https://doi.org/10.1145/2877206)
+- **[Survey]** Bienvenu, M., Ortiz, M. *Ontology-Mediated Query Answering with Data-Tractable Description Logics.* Reasoning Web, 2015. — [DOI](https://doi.org/10.1007/978-3-319-21768-0_9)
+
+## 10. Worked Example
+
+Naïve table $T$ over $\text{Emp}(\text{name},\text{dept})$ with a marked null $\bot$ (unknown department):
+
+| name  | dept  |
+|-------|-------|
+| Ann   | Sales |
+| Bob   | $\bot$ |
+
+**Query** $Q_1$: "names of employees" $=\pi_{\text{name}}(\text{Emp})$. Naïve evaluation treats $\bot$ as a value, projects, and keeps tuples — both $\bot$-free after projecting to name — giving $\mathrm{cert}(Q_1)=\{\text{Ann},\text{Bob}\}$. Correct: in *every* completion both rows exist.
+
+**Query** $Q_2$: "names in Sales" $=\pi_{\text{name}}(\sigma_{\text{dept}=\text{Sales}}\text{Emp})$. Naïve evaluation: Ann matches; Bob's row has $\bot\neq$ the constant Sales under the keep-only-$\bot$-free rule, so it is dropped. $\mathrm{cert}(Q_2)=\{\text{Ann}\}$ — and indeed Bob is *not* certain, since a completion may set Bob's dept to HR.
+
+**Why negation breaks this:** for $Q_3$="names not in Sales", Bob is certain only if $\bot\neq\text{Sales}$ in all completions — false. Deciding such certain answers with $\neq$/negation is $\text{coNP}$-hard in data complexity, versus PTIME naïve evaluation for the positive $Q_1,Q_2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

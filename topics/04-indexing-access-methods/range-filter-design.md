@@ -38,11 +38,21 @@ Active threads: learned + worst-case hybrid range filters that fall back to a gu
 - Workload-adaptive auto-tuning with regret guarantees; integration with the global LSM filter-memory budget.
 
 ## 9. Key References
-- **[SOTA]** Huanchen Zhang, Hyeontaek Lim, et al. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018.
-- **[SOTA]** Siqiang Luo, Subarna Chatterjee, Niv Dayan, et al. *Rosetta: A Robust Space-Time Optimized Range Filter for Key-Value Stores.* SIGMOD, 2020.
-- **[SOTA]** Kapil Vaidya et al. *SNARF: A Learning-Enhanced Range Filter.* SIGMOD/VLDB, 2022.
-- **[SOTA]** Eric R. Knorr, Manos Athanassoulis, et al. *Proteus: A Self-Designing Range Filter.* SIGMOD, 2022.
-- **[Foundational]** Burton H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970.
+- **[SOTA]** Huanchen Zhang, Hyeontaek Lim, et al. *SuRF: Practical Range Query Filtering with Fast Succinct Tries.* SIGMOD, 2018. — [DBLP](https://dblp.org/rec/conf/sigmod/ZhangLLAKKP18.html)
+- **[SOTA]** Siqiang Luo, Subarna Chatterjee, Niv Dayan, et al. *Rosetta: A Robust Space-Time Optimized Range Filter for Key-Value Stores.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389731)
+- **[SOTA]** Kapil Vaidya et al. *SNARF: A Learning-Enhanced Range Filter.* SIGMOD/VLDB, 2022. — [DOI](https://doi.org/10.14778/3529337.3529347)
+- **[SOTA]** Eric R. Knorr, Manos Athanassoulis, et al. *Proteus: A Self-Designing Range Filter.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2207.01503)
+- **[Foundational]** Burton H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+
+## 10. Worked Example
+
+Store keys $S=\{0010, 0100, 1101\}$ (4-bit universe, $U=16$). A SuRF-style trie keeps shared prefixes plus a 1-bit suffix per key. Query the empty range $[0101,0111]$ (binary $0101$–$0111$).
+
+- All stored keys share no prefix with $011\ast$ except via the root. Walking the trie on prefix $01$ reaches the branch for $0100$ only; the truncated suffix bit for that key is $0$, distinguishing $0100$ from $011\ast$. The filter correctly reports **empty** — a true negative.
+
+Now query $[0100,0100]$. The trie reaches $0100$ exactly and reports **maybe** — a true positive.
+
+The false-positive risk: query $[0101,0101]$. With only a 1-bit suffix stored for $0100$, the trie cannot distinguish $0100$ from $0101$ if they share the truncated prefix $010$, so it may report **maybe** — a false positive. Adding more suffix bits costs $\approx n$ extra bits but lowers FPR. With $k$ suffix bits the per-key collision probability is $\approx 2^{-k}$, illustrating the bits-vs-FPR knob.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -48,13 +48,23 @@ The single-tier and idealized multi-tier theory is closed up to constants; the *
 A competitive theory for monetized multi-tier caching with write-amplification; online Pareto-frontier tracking for hit-rate vs. \$; endurance-aware demotion guarantees; integration with the disaggregated/CXL tier (see `disaggregated-buffer-pool`); benchmark suites with real object-store pricing.
 
 ## 9. Key References
-- **[Foundational]** N. Young. *On-Line File Caching (Landlord).* SODA 1998 / Algorithmica.
-- **[Foundational]** P. Cao, S. Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997.
-- **[SOTA]** B. Berger, B. Berg, T. Zhang, et al. *The CacheLib Caching Engine: Design and Experiences at Scale.* USENIX OSDI 2020.
-- **[SOTA]** D. Berger, R. Sitaraman, M. Harchol-Balter. *AdaptSize: Orchestrating the Hot Object Memory Cache in a Content Delivery Network.* USENIX NSDI 2017.
-- **[SOTA]** J. Yang, Y. Zhang, et al. *FIFO Queues Are All You Need for Cache Eviction (S3-FIFO).* ACM SOSP 2023.
-- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *Randomized Competitive Algorithms for Generalized Caching.* STOC 2008.
-- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998.
+- **[Foundational]** N. Young. *On-Line File Caching (Landlord).* SODA 1998 / Algorithmica. — [arXiv](https://arxiv.org/abs/cs/0205033)
+- **[Foundational]** P. Cao, S. Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
+- **[SOTA]** B. Berger, B. Berg, T. Zhang, et al. *The CacheLib Caching Engine: Design and Experiences at Scale.* USENIX OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/berg)
+- **[SOTA]** D. Berger, R. Sitaraman, M. Harchol-Balter. *AdaptSize: Orchestrating the Hot Object Memory Cache in a Content Delivery Network.* USENIX NSDI 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/berger)
+- **[SOTA]** J. Yang, Y. Zhang, et al. *FIFO Queues Are All You Need for Cache Eviction (S3-FIFO).* ACM SOSP 2023. — [PDF](https://yazhuozhang.com/assets/publication/sosp23-s3fifo.pdf)
+- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *Randomized Competitive Algorithms for Generalized Caching.* STOC 2008. — [DOI](https://doi.org/10.1137/090779000)
+- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. — [Cambridge](https://www.cambridge.org/9780521563925)
+
+## 10. Worked Example
+
+A DRAM cache holds $k=2$ objects. Misses are served from object storage with **per-object fetch costs** (dollars + stall): $c_A=1,\ c_B=1,\ c_C=10$ (C is a large cold-tier object). Request stream: $A,B,C,A,B,C$.
+
+**LRU** (cost-blind) on the second pass: cache after $A,B,C$ holds $\{B,C\}$. Then $A$ misses (evict B), $B$ misses (evict C), $C$ misses (evict A). Three misses on pass 2 cost $1+1+10=12$.
+
+**GreedyDual-Size/Landlord** weights eviction by $c_p$: it keeps the expensive $C$ resident because its credit (initialized to $c_C=10$) decays slowest. On pass 2, $C$ stays cached, so the only misses are the cheap $A,B$ (cost $1+1=2$); $C$ hits.
+
+Cost-aware caching here cuts pass-2 miss cost from $12$ to $2$ — a $6\times$ reduction — precisely by protecting the high-$\$$ object that uniform LRU happily evicts. Landlord is $k$-competitive on this weighted objective.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

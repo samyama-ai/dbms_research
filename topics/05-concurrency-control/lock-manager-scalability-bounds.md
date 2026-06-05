@@ -49,12 +49,20 @@ Active directions: scaling CC to hundreds/thousands of cores and to **disaggrega
 
 ## 9. Key References
 
-- **[SOTA]** Yu, X.; Bezerra, G.; Pavlo, A.; Devadas, S.; Stonebraker, M. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* PVLDB, 2014.
-- **[SOTA]** Ren, K.; Thomson, A.; Abadi, D. J. *Lightweight Locking for Main Memory Database Systems (VLL).* PVLDB, 2013.
-- **[SOTA]** Tu, S.; Zheng, W.; Kohler, E.; Liskov, B.; Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[Foundational]** Dwork, C.; Herlihy, M.; Waarts, O. *Contention in Shared Memory Algorithms.* JACM, 1997.
-- **[Foundational]** Mellor-Crummey, J. M.; Scott, M. L. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors.* ACM TOCS, 1991.
-- **[Foundational]** Attiya, H.; Hendler, D.; Woelfel, P. *Tight RMW Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008.
+- **[SOTA]** Yu, X.; Bezerra, G.; Pavlo, A.; Devadas, S.; Stonebraker, M. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* PVLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735511)
+- **[SOTA]** Ren, K.; Thomson, A.; Abadi, D. J. *Lightweight Locking for Main Memory Database Systems (VLL).* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2535568.2448947)
+- **[SOTA]** Tu, S.; Zheng, W.; Kohler, E.; Liskov, B.; Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[Foundational]** Dwork, C.; Herlihy, M.; Waarts, O. *Contention in Shared Memory Algorithms.* JACM, 1997. — [DOI](https://doi.org/10.1145/268999.269000)
+- **[Foundational]** Mellor-Crummey, J. M.; Scott, M. L. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors.* ACM TOCS, 1991. — [DOI](https://doi.org/10.1145/103727.103729)
+- **[Foundational]** Attiya, H.; Hendler, D.; Woelfel, P. *Tight RMR Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008. — [DOI](https://doi.org/10.1145/1374376.1374410)
+
+## 10. Worked Example
+
+Suppose $c=8$ cores all try to lock the same hot tuple (e.g., a counter row) via a centralized manager whose queue head sits on one cache line. Each acquire is a CAS on that line. Cache coherence serializes the 8 CAS attempts: the line must migrate (Modified state) to each core in turn, and each migration costs one coherence round-trip of latency $L \approx 100$ ns.
+
+By the stall-complexity bound, the line incurs $\Omega(c)$ serialized coherence operations, so draining all 8 acquirers takes $\ge 8L = 800$ ns, giving throughput $\le c/(cL) = 1/L \approx 10^7$ lock-ops/s on that line — **independent of total core count $p$**. Adding cores past 8 does not help; they just lengthen the queue.
+
+Contrast a per-tuple latch (Silo/OCC style): if the 8 cores touch 8 *distinct* tuples, each CAS hits a private line, all proceed in parallel in $\approx L$, giving $8/L \approx 8\times10^7$ ops/s — near-linear. The bound bites only when the access set collapses to one line; this is exactly why decentralized schemes "sidestep" rather than break the lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

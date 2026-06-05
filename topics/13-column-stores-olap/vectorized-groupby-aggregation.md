@@ -43,11 +43,21 @@ Directions: (i) *unified adaptive aggregation* that morphs between hashing, radi
 - Co-design with columnar compression so aggregation runs on encoded data (RLE/dictionary) without full decode.
 
 ## 9. Key References
-- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* ICDE 1996.
-- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005.
-- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014.
-- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015.
-- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Modern Processor Architectures.* IEEE TKDE / VLDB lineage, 2014.
+- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* ICDE 1996. — [arXiv](https://arxiv.org/abs/cs/0701155)
+- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR 2005. — [PDF](https://www.cidrdb.org/cidr2005/papers/P19.pdf)
+- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[SOTA]** Polychroniou, Raghavan, Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD 2015. — [DOI](https://doi.org/10.1145/2723372.2747645)
+- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Modern Processor Architectures.* IEEE TKDE / VLDB lineage, 2014. — [DBLP](https://dblp.org/rec/journals/tkde/BalkesenTAO15.html)
+
+## 10. Worked Example
+
+Compute `SELECT region, SUM(sales) GROUP BY region` over $n=8$ rows with keys `[N,S,N,E,S,N,W,E]` and measures `[3,5,2,4,1,6,7,2]`, so $g=4$ groups $\{N,S,E,W\}$.
+
+**Hash path:** scan once, probing a 4-slot table. After the scan: $N=3{+}2{+}6=11$, $S=5{+}1=6$, $E=4{+}2=6$, $W=7$. Cost $O(n)$ probes; since $g=4$ fits in cache, every probe is cheap. The crossover warning fires when $g$ grows past $\approx M/B$: with cache $M=256$KB, block $B=64$B, the table stops fitting once $g\gtrsim 4000$ slots, and random probes start missing cache — the sharp throughput cliff.
+
+**Sort/radix path:** radix-partition the 8 keys by their first byte into $\le g$ runs, then a contiguous sequential reduction sums adjacent equal keys. Cost $\Theta(\tfrac{n}{B}\log_{M/B}\tfrac{g}{B})$ I/Os, locality independent of $g$.
+
+For this tiny instance ($g=4 \ll M/B$) hash wins on constants; the value of the sort path only appears once $g$ blows past cache, illustrating why the crossover is empirical, not asymptotic.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

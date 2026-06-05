@@ -62,13 +62,27 @@ Active directions: (i) **semiring/Datalog$^\circ$ convergence theory** — chara
 
 ## 9. Key References
 
-- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** H. Gaifman, H. Mairson, Y. Sagiv, M. Y. Vardi. *Undecidable Optimization Problems for Database Logic Programs.* JACM, 1993.
-- **[SOTA]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014.
-- **[SOTA]** B. Scholz, H. Jordan, P. Subotić, et al. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, R. Pichler, D. Suciu, Y. R. Wang. *Convergence of Datalog over (Pre-)Semirings.* PODS, 2022.
-- **[Foundational]** N. Immerman. *Relational Queries Computable in Polynomial Time.* Information and Control, 1986.
+- **[Foundational]** F. Bancilhon, D. Maier, Y. Sagiv, J. D. Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986. — [DOI](https://doi.org/10.1145/6012.15399)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** H. Gaifman, H. Mairson, Y. Sagiv, M. Y. Vardi. *Undecidable Optimization Problems for Database Logic Programs.* JACM, 1993. — [DOI](https://doi.org/10.1145/174130.174142)
+- **[SOTA]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014. — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[SOTA]** B. Scholz, H. Jordan, P. Subotić, et al. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016. — [DOI](https://doi.org/10.1145/2892208.2892226)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, R. Pichler, D. Suciu, Y. R. Wang. *Convergence of Datalog over (Pre-)Semirings.* PODS, 2022. — [arXiv](https://arxiv.org/abs/2105.14435)
+- **[Foundational]** N. Immerman. *Relational Queries Computable in Polynomial Time.* Information and Control, 1986. — [DOI](https://doi.org/10.1016/S0019-9958(86)80029-8)
+
+## 10. Worked Example
+
+Transitive closure of a 4-node chain: edges $E=\{(1,2),(2,3),(3,4)\}$. Rule:
+$$T(x,y) \leftarrow E(x,y). \qquad T(x,y) \leftarrow T(x,z), E(z,y).$$
+
+**Semi-naive evaluation** (only join the *new* $\Delta T$ tuples each round):
+
+- Round 0: $\Delta T_0 = E = \{(1,2),(2,3),(3,4)\}$ (3 tuples).
+- Round 1: $\Delta T_1 = \Delta T_0 \bowtie E = \{(1,3),(2,4)\}$ (2 new).
+- Round 2: $\Delta T_2 = \Delta T_1 \bowtie E = \{(1,4)\}$ (1 new).
+- Round 3: $\Delta T_2 \bowtie E = \emptyset \Rightarrow$ fixpoint. Total $|T|=6$.
+
+Iterations $= 3 = $ chain length, matching the $O(n)$ depth bound for linear recursion. Contrast **naive** evaluation, which re-derives all of $T$ each round, performing $\sum$ over the full relation instead of the small $\Delta$ — the semi-naive speedup. A magic-set rewrite seeded by query $T(1, ?)$ would further restrict derivation to tuples reachable from node $1$, never deriving $(2,3),(2,4),(3,4)$ at all.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

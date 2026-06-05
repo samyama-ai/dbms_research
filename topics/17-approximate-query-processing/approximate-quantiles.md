@@ -49,13 +49,24 @@ Active directions: (1) **relative-error and tail-accurate** mergeable sketches w
 - Closing the theory-vs-practice gap for deployed structures (t-digest worst-case analysis).
 
 ## 9. Key References
-- **[Foundational]** M. Greenwald, S. Khanna. *Space-Efficient Online Computation of Quantile Summaries (GK).* SIGMOD, 2001.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** G. Cormode, Z. Karnin, E. Liberty, J. Thaler, P. Veselý. *Relative Error Streaming Quantiles (ReqSketch).* PODS, 2021 / JACM, 2023.
-- **[Foundational]** P. K. Agarwal, G. Cormode, Z. Huang, J. Phillips, Z. Wei, K. Yi. *Mergeable Summaries.* PODS, 2012 / ACM TODS, 2013.
-- **[SOTA]** G. Cormode, P. Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020.
-- **[Foundational]** N. Shrivastava, C. Buragohain, D. Agrawal, S. Suri. *Medians and Beyond: New Aggregation Techniques for Sensor Networks (Q-digest).* SenSys, 2004.
-- **[SOTA]** T. Dunning, O. Ertl. *Computing Extremely Accurate Quantiles Using t-Digests.* 2019 (preprint / Software: Practice and Experience).
+- **[Foundational]** M. Greenwald, S. Khanna. *Space-Efficient Online Computation of Quantile Summaries (GK).* SIGMOD, 2001. — [ACM](https://dl.acm.org/doi/10.1145/375663.375670)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** G. Cormode, Z. Karnin, E. Liberty, J. Thaler, P. Veselý. *Relative Error Streaming Quantiles (ReqSketch).* PODS, 2021 / JACM, 2023. — [arXiv](https://arxiv.org/abs/2004.01668)
+- **[Foundational]** P. K. Agarwal, G. Cormode, Z. Huang, J. Phillips, Z. Wei, K. Yi. *Mergeable Summaries.* PODS, 2012 / ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128)
+- **[SOTA]** G. Cormode, P. Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020. — [arXiv](https://arxiv.org/abs/1905.03838)
+- **[Foundational]** N. Shrivastava, C. Buragohain, D. Agrawal, S. Suri. *Medians and Beyond: New Aggregation Techniques for Sensor Networks (Q-digest).* SenSys, 2004. — [arXiv](https://arxiv.org/abs/cs/0408039)
+- **[SOTA]** T. Dunning, O. Ertl. *Computing Extremely Accurate Quantiles Using t-Digests.* 2019 (preprint / Software: Practice and Experience). — [arXiv](https://arxiv.org/abs/1902.04023)
+
+## 10. Worked Example
+
+Consider a tiny KLL-style **compactor** at one level, capacity $k=4$, fed the stream
+$$3,\;9,\;1,\;7,\;5,\;2,\;8,\;6.$$
+When the buffer fills with 4 items it **compacts**: sort them, then keep either the even-indexed or odd-indexed items (chosen by a fair coin), each survivor now carrying weight 2 and promoted to the next level.
+
+First fill: $\{3,9,1,7\}$, sorted $\to 1,3,7,9$. Coin says "keep odds" $\Rightarrow$ output $\{3,9\}$ (weight 2).
+Second fill: $\{5,2,8,6\}$, sorted $\to 2,5,6,8$. Coin says "keep evens" $\Rightarrow$ output $\{2,6\}$ (weight 2).
+
+To estimate the rank of $x=6$: summed weight of retained items $\le 6$ is $3,2,6\Rightarrow 2+2+2=6$. True rank of $6$ in the original stream is $5$. The error is $|6-5|=1$, well within $\varepsilon n$ for the per-compaction error this level introduces. Each discarded/kept choice perturbs a rank estimate by at most the item weight, and KLL's geometric capacity decay across levels keeps total variance $O(1/\varepsilon^2)$, giving the $O(\tfrac1\varepsilon\log\log\tfrac1\delta)$ space optimum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -28,11 +28,25 @@ Directions: combining stratified samples with compact per-group sketches; FDR-co
 Provable simultaneous per-group CIs without $\sqrt{\log G}$ slack; missing-group *recovery* with sublinear auxiliary structures; integration with cube/materialized-view selection; private skewed group-by with utility floors.
 
 ## 9. Key References
-- **[Foundational]** Acharya, Gibbons, Poosala. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD 2000.
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS 2000.
-- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016.
-- **[Foundational]** McAllester, Schapire. *On the Convergence Rate of Good-Turing Estimators.* COLT 2000.
-- **[SOTA]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA 2007.
+- **[Foundational]** Acharya, Gibbons, Poosala. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD 2000. — [DBLP search](https://dblp.org/search?q=Congressional%20Samples%20for%20Approximate%20Answering%20of%20Group-By%20Queries)
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS 2000. — [ACM](https://dl.acm.org/doi/10.1145/335168.335230)
+- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DBLP](https://dblp.org/rec/conf/sigmod/DingHCC016.html)
+- **[Foundational]** McAllester, Schapire. *On the Convergence Rate of Good-Turing Estimators.* COLT 2000. — [ACM](https://dl.acm.org/doi/10.5555/648299.755182)
+- **[SOTA]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA 2007. — [HAL](https://hal.science/hal-00406166v2)
+
+## 10. Worked Example
+
+A table of $N=10{,}000$ sales rows grouped by `region`, sizes: A=9700, B=250, C=49, D=1. Uniform-sample at rate $p=n/N=0.01$ ($n=100$ rows).
+
+**Missing-group probability** for each group $g$ is $(1-p)^{N_g}\approx e^{-pN_g}$:
+- A: $e^{-97}\approx 0$ (always present)
+- B: $e^{-2.5}\approx 0.082$
+- C: $e^{-0.49}\approx 0.61$
+- D: $e^{-0.01}\approx 0.99$ (almost surely missing)
+
+Expected missing groups $=\sum_g e^{-pN_g}\approx 0+0.082+0.61+0.99\approx 1.68$. **Good–Turing**: if the sample contains $U$ groups seen exactly once, the unseen-group *mass* is estimated as $U/n$.
+
+**Per-group CI width** scales as $1/\sqrt{n_g}$ with $n_g\approx pN_g$: group A gets $n_g\approx 97$ rows (tight), but C gets $\approx 0.5$ rows — no usable interval. **Congressional sampling** instead floors each group at $n_0$ rows: setting $n_0=30$ guarantees relative error $O(1/\sqrt{30})\approx 0.18$ even for C and D, at the cost of over-sampling tiny groups. This illustrates why no sample-only method bounds D's presence: with $N_D=1$, $\Omega(N/N_{\min})=\Omega(10^4)$ samples — the whole table — would be needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

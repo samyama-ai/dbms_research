@@ -47,13 +47,23 @@ Directions: automated **verification tools** that check I-confluence / monotonic
 
 ## 9. Key References
 
-- **[Foundational]** Gilbert, S.; Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002.
-- **[Foundational]** Ameloot, T.; Neven, F.; Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2013 / JACM.
-- **[SOTA]** Bailis, P.; Fekete, A.; Franklin, M.; Ghodsi, A.; Hellerstein, J.; Stoica, I. *Coordination Avoidance in Database Systems.* PVLDB, 2014.
-- **[SOTA]** Li, C.; Porto, D.; Clement, A.; Gehrke, J.; Preguiça, N.; Rodrigues, R. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012.
-- **[SOTA]** Gotsman, A.; Yang, H.; Ferreira, C.; Najafzadeh, M.; Shapiro, M. *'Cause I'm Strong Enough: Reasoning about Consistency Choices in Distributed Systems (CISE).* POPL, 2016.
-- **[Survey]** Hellerstein, J.; Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* Communications of the ACM, 2020.
-- **[Foundational]** Shapiro, M.; Preguiça, N.; Baquero, C.; Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011.
+- **[Foundational]** Gilbert, S.; Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Ameloot, T.; Neven, F.; Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011 / JACM. — [DOI](https://doi.org/10.1145/2450142.2450151)
+- **[SOTA]** Bailis, P.; Fekete, A.; Franklin, M.; Ghodsi, A.; Hellerstein, J.; Stoica, I. *Coordination Avoidance in Database Systems.* PVLDB, 2014. — [arXiv](https://arxiv.org/abs/1402.2237)
+- **[SOTA]** Li, C.; Porto, D.; Clement, A.; Gehrke, J.; Preguiça, N.; Rodrigues, R. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/li)
+- **[SOTA]** Gotsman, A.; Yang, H.; Ferreira, C.; Najafzadeh, M.; Shapiro, M. *'Cause I'm Strong Enough: Reasoning about Consistency Choices in Distributed Systems (CISE).* POPL, 2016. — [PDF](https://software.imdea.org/~gotsman/papers/logic-popl16.pdf)
+- **[Survey]** Hellerstein, J.; Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* Communications of the ACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[Foundational]** Shapiro, M.; Preguiça, N.; Baquero, C.; Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
+
+## 10. Worked Example
+
+Two warehouse replicas track inventory of one SKU, starting at $stock = 10$. Transactions deduct on sale; the invariant is $I : stock \ge 0$.
+
+**Non-confluent case.** Replica A processes a sale of 7 ($stock_A = 3$); replica B independently processes a sale of 6 ($stock_B = 4$). Each local state satisfies $I$. Merge by applying both decrements to the common ancestor: $10 - 7 - 6 = -3 < 0$. So $I(s_A)\wedge I(s_B) \not\Rightarrow I(s_A \sqcup s_B)$ — **not I-confluent**; the "non-negative bounded counter" needs coordination (e.g., escrow).
+
+**Confluent case.** Replace the invariant with a monotone one: a grow-only set $sold$ of order IDs, $I : true$ (no bound). A adds $\{o_1\}$, B adds $\{o_2\}$; merge is set union $\{o_1,o_2\}$, always valid. Monotone ⇒ coordination-free by CALM.
+
+**Escrow fix.** Pre-allocate quota 5 to each replica. A may sell up to 5 locally, B up to 5; $5+5 \le 10$ guarantees $stock \ge 0$ with **zero coordination** until a replica exhausts its quota.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

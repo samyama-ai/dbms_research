@@ -57,13 +57,32 @@ Active: **adversarially robust** streaming HH and the price of robustness (Ben-E
 
 ## 9. Key References
 
-- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982.
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** M. Charikar, K. Chen, M. Farach-Colton. *Finding Frequent Items in Data Streams (CountSketch).* ICALP, 2002.
-- **[SOTA]** V. Braverman, S. R. Chestnut, N. Ivkin, J. Nelson, Z. Wang, D. P. Woodruff. *BPTree: An $\ell_2$ Heavy Hitters Algorithm Using Constant Memory.* COLT/PODS, 2017.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** T. Yang et al. *Elastic Sketch: Adaptive and Fast Network-wide Measurements.* SIGCOMM, 2018.
-- **[Survey]** G. Cormode, M. Hadjieleftheriou. *Finding Frequent Items in Data Streams.* VLDB, 2008.
+- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982. — [DOI](https://doi.org/10.1016/0167-6423(82)90012-0)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** M. Charikar, K. Chen, M. Farach-Colton. *Finding Frequent Items in Data Streams (CountSketch).* ICALP, 2002. — [DBLP](https://dblp.org/rec/conf/icalp/CharikarCF02.html)
+- **[SOTA]** V. Braverman, S. R. Chestnut, N. Ivkin, J. Nelson, Z. Wang, D. P. Woodruff. *BPTree: An $\ell_2$ Heavy Hitters Algorithm Using Constant Memory.* COLT/PODS, 2017. — [arXiv](https://arxiv.org/abs/1603.00759)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** T. Yang et al. *Elastic Sketch: Adaptive and Fast Network-wide Measurements.* SIGCOMM, 2018. — [DOI](https://doi.org/10.1145/3230543.3230544)
+- **[Survey]** G. Cormode, M. Hadjieleftheriou. *Finding Frequent Items in Data Streams.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1454159.1454225)
+
+## 10. Worked Example
+
+Run **Misra–Gries** with $k-1=2$ counters (so $1/\varepsilon=k=3$, i.e. $\varepsilon=1/3$) on the stream
+$$a,\,b,\,a,\,c,\,a,\,b,\,d,\,a.$$
+Processing each item: increment its counter if tracked; else if a free slot exists, start it at 1; else decrement **all** counters and drop any hitting 0.
+
+| item | state after |
+|------|-------------|
+| a | a:1 |
+| b | a:1, b:1 |
+| a | a:2, b:1 |
+| c | (no slot) decrement all → a:1; new c… a:1, c:1 |
+| a | a:2, c:1 |
+| b | (no slot) decrement all → a:1 (c dropped); new b… a:1, b:1 |
+| d | (no slot) decrement all → all 0, dropped |
+| a | a:1 |
+
+Final counters: $a:1$. Guarantee: $\hat f_i \ge f_i - \varepsilon N$ with $N=8$, $\varepsilon N \approx 2.67$. True $f_a=4$; reported lower bound $f_a \ge 4-2.67=1.33$, consistent with $\hat f_a=1$ understating but never over. Any true heavy hitter with $f_i > \varepsilon N = 2.67$ — here only $a$ — is guaranteed to survive in the table, illustrating the $O(1/\varepsilon)$-counter $\ell_1$ guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

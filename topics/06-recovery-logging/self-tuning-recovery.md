@@ -35,11 +35,19 @@ Active: RL- and Bayesian-optimization-based DBMS tuners increasingly incorporate
 (i) Recovery-time as an explicit, verifiable constraint in autotuners (not just an aggregate-metric term). (ii) Provable SLA guarantees under bounded-burst workload models. (iii) Co-tuning durability lag and recovery time jointly. (iv) Safe exploration that never violates the SLA during learning. (v) Transfer/meta-learning so a tuner adapts across engines and hardware.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G., Zhang, B. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[SOTA]** Zhang, J. et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019.
-- **[SOTA]** Pavlo, A. et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Survey]** Chaudhuri, S., Narasayya, V. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G., Zhang, B. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** Zhang, J. et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300085)
+- **[SOTA]** Pavlo, A. et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Survey]** Chaudhuri, S., Narasayya, V. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Set an SLA of $T_{\text{SLO}} = 30$ s redo. Suppose redo replays at $200$ MB/s and the dirty-page generation rate is $d = 50$ MB/s of log. Bounding redo to the SLO requires redo bytes since checkpoint $\le 200 \times 30 = 6000$ MB, so the checkpoint interval must satisfy $d \cdot I \le 6000$, giving $I \le 6000/50 = 120$ s.
+
+Now a workload shift triples the write rate to $d' = 150$ MB/s. Holding the old $I=120$ s would accumulate $150 \times 120 = 18000$ MB of redo $\Rightarrow$ $T_{\text{rec}} = 18000/200 = 90$ s — a $3\times$ SLA violation. A self-tuning controller must shrink the interval to $I' \le 6000/150 = 40$ s (checkpoint $3\times$ more often), spending more flush I/O to keep $T_{\text{rec}} \le 30$ s.
+
+The lower bound (section 5) bites if the spike outruns the max flush rate: if $\phi_{\max} = 100$ MB/s but $d' = 150$ MB/s, dirty pages accumulate faster than they can be checkpointed, and no online tuner can hold the SLA without either throttling throughput or accepting a violation — a peak-to-sustainable ratio of $150/100 = 1.5$ as the competitive floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

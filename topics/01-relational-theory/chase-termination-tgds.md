@@ -45,12 +45,28 @@ Active work characterizes **restricted (standard) chase** termination, which is 
 - Unified theory linking chase termination, finite controllability, and certain-answer decidability.
 
 ## 9. Key References
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005.
-- **[Foundational]** A. Deutsch, A. Nash, J. Remmel. *The Chase Revisited.* PODS, 2008.
-- **[SOTA]** B. Marnette. *Generalized Schema-Mappings: From Termination to Tractability.* PODS, 2009.
-- **[SOTA]** B. Cuenca Grau, I. Horrocks, M. Krötzsch, C. Kupke, D. Magka, B. Motik, Z. Wang. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013.
-- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP, 2014.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. 8–10, chase and dependencies).
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** A. Deutsch, A. Nash, J. Remmel. *The Chase Revisited.* PODS, 2008. — [ACM](https://dl.acm.org/doi/10.1145/1376916.1376938)
+- **[SOTA]** B. Marnette. *Generalized Schema-Mappings: From Termination to Tractability.* PODS, 2009. — [ACM](https://dl.acm.org/doi/10.1145/1559795.1559799)
+- **[SOTA]** B. Cuenca Grau, I. Horrocks, M. Krötzsch, C. Kupke, D. Magka, B. Motik, Z. Wang. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013. — [arXiv](https://arxiv.org/abs/1406.4110)
+- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP, 2014. — [DOI](https://doi.org/10.1007/978-3-662-43951-7_25)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. 8–10, chase and dependencies). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+A single TGD whose chase never terminates, and where restricted vs. oblivious differ. Relation $E(\text{x},\text{y})$, dependency
+$$\tau:\ E(x,y)\to\exists z\,E(y,z).$$
+
+**Oblivious chase** on $D=\{E(a,b)\}$ ignores whether the head is already satisfied and fires on *every* trigger:
+- $E(a,b)\Rightarrow E(b,n_1)$
+- $E(b,n_1)\Rightarrow E(n_1,n_2)$
+- $E(n_1,n_2)\Rightarrow E(n_2,n_3)\ \dots$
+
+an infinite chain — non-terminating.
+
+**Restricted (standard) chase** fires only if no extension already satisfies the head. Same start: each new atom $E(n_{i-1},n_i)$ still has *no* outgoing edge from $n_i$, so the head $\exists z\,E(n_i,z)$ is unsatisfied and the chase still runs forever. So here both diverge.
+
+Now add the seed $D'=\{E(a,a)\}$. Restricted chase: trigger on $E(a,a)$ asks for $\exists z\,E(a,z)$ — already witnessed by $z=a$. No fresh fact is added; restricted chase **terminates immediately**, while the oblivious chase still loops. This separation is exactly why each variant induces a distinct, separately undecidable termination problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

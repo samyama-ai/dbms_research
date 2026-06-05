@@ -49,12 +49,28 @@ The **reachable-set equivalence is essentially settled** for join enumeration: o
 
 ## 9. Key References
 
-- **[Foundational]** Graefe, McKenna. *The Volcano Optimizer Generator: Extensibility and Efficient Search.* ICDE, 1993.
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995.
-- **[SOTA]** DeHaan, Tompa. *Optimal Top-Down Join Enumeration.* SIGMOD, 2007.
-- **[SOTA]** Fender, Moerkotte. *Counter Strike: Generic Top-Down Join Enumeration for Hypergraphs.* PVLDB, 2013.
-- **[SOTA]** Soliman et al. *Orca: A Modular Query Optimizer Architecture for Big Data.* SIGMOD, 2014.
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
+- **[Foundational]** Graefe, McKenna. *The Volcano Optimizer Generator: Extensibility and Efficient Search.* ICDE, 1993. — [DOI](https://doi.org/10.1109/ICDE.1993.344061)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95.html)
+- **[SOTA]** DeHaan, Tompa. *Optimal Top-Down Join Enumeration.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247567)
+- **[SOTA]** Fender, Moerkotte. *Counter Strike: Generic Top-Down Join Enumeration for Hypergraphs.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2556549.2556565)
+- **[SOTA]** Soliman et al. *Orca: A Modular Query Optimizer Architecture for Big Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2595637)
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+
+## 10. Worked Example
+
+Chain query $R_1 \!-\! R_2 \!-\! R_3$ (joins $R_1R_2$ and $R_2R_3$). Count the connected-subgraph / complement pairs (csg-cmp-pairs), the shared lower bound on enumeration for *both* paradigms.
+
+Connected subsets: $\{1\},\{2\},\{3\},\{12\},\{23\},\{123\}$. The valid csg-cmp-pairs (unordered) are:
+- $\{1\}\,|\,\{2\}$, $\{2\}\,|\,\{3\}$ (build the 2-way joins),
+- $\{1\}\,|\,\{23\}$, $\{12\}\,|\,\{3\}$ (two ways to build $\{123\}$).
+
+So $\#\text{ccp}=4$.
+
+**Bottom-up DPccp** generates all 4, filling $\mathrm{best}[\{12\}],\mathrm{best}[\{23\}],\mathrm{best}[\{123\}]$.
+
+**Top-down** with $UB=\infty$ (flat costs) also expands all 4 — no pruning, worst case equals bottom-up. But suppose costing $\{12\}$ first yields $UB=50$, and the lower bound $LB(\{23\})=80>50$: top-down skips generating the $\{1\}|\{23\}$ pair entirely, doing 3 pair-generations instead of 4.
+
+This is the settled slice: both reach the same optimum over the same $\#\text{ccp}$ pairs; only *realized* work differs when the bound bites.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

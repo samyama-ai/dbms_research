@@ -47,12 +47,26 @@ Active directions: disaggregated-memory and CXL-based HTAP where the columnar re
 
 ## 9. Key References
 
-- **[Foundational]** Kemper, A.; Neumann, T. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011.
-- **[SOTA]** Neumann, T.; Mühlbauer, T.; Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[SOTA]** Lang, H.; Mühlbauer, T.; Funke, F.; Boncz, P.; Neumann, T.; Kemper, A. *Data Blocks: Hybrid OLTP and OLAP on Compressed Storage.* SIGMOD, 2016.
-- **[SOTA]** Huang, D. et al. *TiDB: A Raft-based HTAP Database.* PVLDB, 2020.
-- **[Survey]** Özcan, F.; Tian, Y.; Tözün, P. *Hybrid Transactional/Analytical Processing: A Survey.* SIGMOD (tutorial/survey), 2017.
-- **[Foundational]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Kemper, A.; Neumann, T. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767867)
+- **[SOTA]** Neumann, T.; Mühlbauer, T.; Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[SOTA]** Lang, H.; Mühlbauer, T.; Funke, F.; Boncz, P.; Neumann, T.; Kemper, A. *Data Blocks: Hybrid OLTP and OLAP on Compressed Storage.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882925)
+- **[SOTA]** Huang, D. et al. *TiDB: A Raft-based HTAP Database.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415535)
+- **[Survey]** Özcan, F.; Tian, Y.; Tözün, P. *Hybrid Transactional/Analytical Processing: A Survey.* SIGMOD (tutorial/survey), 2017. — [DOI](https://doi.org/10.1145/3035918.3054784)
+- **[Foundational]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+A row-store table `account(id, bal)` is mutated by OLTP while an OLAP query `SELECT SUM(bal)` scans a snapshot. Commit log with timestamps:
+
+| txn | op | $c(T_i)$ |
+|-----|-----|-----|
+| $T_1$ | bal[A]=100, bal[B]=100 | 10 |
+| $T_2$ | transfer 30 A→B (A=70, B=130) | 20 |
+| $T_3$ | bal[C]=50 | 30 |
+
+The analytical query starts at $s = 25$. Its prefix-consistent snapshot $V(25)$ includes exactly $\{T_1, T_2\}$ (both have $c \le 25$) and excludes $T_3$. So it reads $A=70, B=130$ and no $C$, giving $\texttt{SUM}=200$ — total money is conserved (the $T_2$ transfer is seen atomically, never $A=70, B=100$). Staleness is $\Delta = c_{\text{now}} - s = 30 - 25 = 5$ time units (it misses $T_3$).
+
+MVCC GC: the watermark is the oldest live reader $s_{\min}=25$, so the pre-$T_2$ version $B=100$ ($c=10 < 25$) is *not yet* reclaimable — it could still be needed by a reader at $s\in[10,20)$. Only after this query finishes does $s_{\min}$ advance and that version become collectible.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

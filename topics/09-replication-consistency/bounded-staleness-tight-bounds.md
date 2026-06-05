@@ -45,12 +45,20 @@ Active: tightening follower/closed-timestamp reads under weak clocks (HLC refine
 
 ## 9. Key References
 
-- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[Foundational]** Yu, H., Vahdat, A. *Design and Evaluation of a Conit-Based Continuous Consistency Model.* ACM TOCS, 2002.
-- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database (TrueTime).* OSDI, 2012.
-- **[SOTA]** Kulkarni, S., Demirbas, M. et al. *Logical Physical Clocks and Consistent Snapshots in Globally Distributed Databases (HLC).* OPODIS, 2014.
-- **[Foundational]** Charron-Bost, B. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991.
-- **[SOTA]** Almeida, P., Baquero, C., Fonte, V. *Interval Tree Clocks.* OPODIS, 2008.
+- **[SOTA]** Bailis, P. et al. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2212351.2212359)
+- **[Foundational]** Yu, H., Vahdat, A. *Design and Evaluation of a Conit-Based Continuous Consistency Model.* ACM TOCS, 2002. — [DOI](https://doi.org/10.1145/566340.566342)
+- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database (TrueTime).* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[SOTA]** Kulkarni, S., Demirbas, M. et al. *Logical Physical Clocks and Consistent Snapshots in Globally Distributed Databases (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[Foundational]** Charron-Bost, B. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+- **[SOTA]** Almeida, P., Baquero, C., Fonte, V. *Interval Tree Clocks.* OPODIS, 2008. — [DOI](https://doi.org/10.1007/978-3-540-92221-6_18)
+
+## 10. Worked Example
+
+A geo-replicated store has a leader in region $L$ and a follower in region $F$. One-way replication delay is $d = 30$ ms; TrueTime clock uncertainty is $\epsilon = 4$ ms (so $2\epsilon = 8$ ms). A client in $F$ issues a $t$-bounded read with $\tau = 50$ ms.
+
+The follower holds a closed timestamp $T_{\text{closed}}$ — a single scalar guaranteeing "all writes with commit ts $\le T_{\text{closed}}$ are applied locally." At real time $T$, the freshest write the follower can prove it has is at $T - (d + 2\epsilon) = T - 38$ ms. So worst-case staleness $= 38$ ms $\le \tau = 50$ ms: the read is served **locally**, no cross-region round trip, with $O(1)$ metadata.
+
+Now tighten the SLO to $\tau = 20$ ms. Since $d + 2\epsilon = 38 > 20$, the local follower cannot honor it — the read must contact the leader, paying $\ge d$ latency, or be rejected. This illustrates the lower bound $\text{staleness} \ge d_{\min}$: no available local read can be fresher than what has propagated. Shrinking $\epsilon$ (better clocks) reduces only the $2\epsilon$ slack, never the irreducible $d$ floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

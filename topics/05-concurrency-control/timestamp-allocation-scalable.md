@@ -51,11 +51,19 @@ There is no scheme that is simultaneously (1) free of any central/hot allocation
 - Unified theory connecting Silo-style epochs, TicToc data-driven stamps, and HLC under one cost model.
 
 ## 9. Key References
-- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016.
-- **[Foundational]** S. S. Kulkarni, M. Demirbas, D. Madappa, B. Avva, M. Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014.
+- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
+- **[Foundational]** S. S. Kulkarni, M. Demirbas, D. Madappa, B. Avva, M. Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+
+## 10. Worked Example
+
+**Commit-wait cost under TrueTime.** Suppose two clients submit transactions $T_1$ then $T_2$, where $T_2$ starts only after $T_1$ returns to its client. External consistency demands $ts(T_1) < ts(T_2)$ in real time. With clock uncertainty bound $\epsilon = 4\,\text{ms}$, a coordinator picking commit timestamp $s = \text{TT.now().latest}$ must **commit-wait** until $\text{TT.now().earliest} > s$, i.e. for $\approx 2\epsilon = 8\,\text{ms}$, before releasing locks.
+
+Throughput impact on a single hot row: each transaction holds locks for the commit-wait window, so serial throughput on that row is bounded by $\frac{1}{2\epsilon} = \frac{1}{8\,\text{ms}} = 125$ commits/s — independent of CPU.
+
+Contrast: a single global atomic counter has no wait but its cache line ping-pongs; at, say, $100\,\text{ns}$ per remote fetch-and-add across cores, allocation caps at $\sim 10^7$/s but **collapses** under contention. Shrinking $\epsilon$ to $100\,\mu\text{s}$ via PTP raises the commit-wait ceiling to $5000$/s — illustrating the (centralization, latency, consistency) trade-off the problem targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

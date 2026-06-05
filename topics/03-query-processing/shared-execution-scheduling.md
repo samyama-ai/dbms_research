@@ -116,12 +116,32 @@ guarantees and competitive online schedulers for the streaming case.
 
 ## 9. Key References
 
-- **[Foundational]** T. K. Sellis. *Multiple-Query Optimization.* ACM TODS 13(1), 1988.
-- **[Foundational]** P. Roy, S. Seshadri, S. Sudarshan, S. Bhobe. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000.
-- **[SOTA]** S. Harizopoulos, V. Shkapenyuk, A. Ailamaki. *QPipe: A Simultaneously Pipelined Relational Query Engine.* SIGMOD, 2005.
-- **[SOTA]** G. Candea, N. Polyzotis, R. Vingralek. *A Scalable, Predictable Join Operator for Highly Concurrent Data Warehouses (CJOIN).* PVLDB, 2009.
-- **[SOTA]** G. Giannikis, G. Alonso, D. Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* PVLDB, 2012.
-- **[SOTA]** A. Jindal, K. Karanasos, S. Rao, H. Patel. *Selecting Subexpressions to Materialize at Datacenter Scale (CloudViews).* PVLDB, 2018.
+- **[Foundational]** T. K. Sellis. *Multiple-Query Optimization.* ACM TODS 13(1), 1988. — [DOI](https://doi.org/10.1145/42201.42203)
+- **[Foundational]** P. Roy, S. Seshadri, S. Sudarshan, S. Bhobe. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335419)
+- **[SOTA]** S. Harizopoulos, V. Shkapenyuk, A. Ailamaki. *QPipe: A Simultaneously Pipelined Relational Query Engine.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066201)
+- **[SOTA]** G. Candea, N. Polyzotis, R. Vingralek. *A Scalable, Predictable Join Operator for Highly Concurrent Data Warehouses (CJOIN).* PVLDB, 2009. — [DBLP](https://dblp.org/rec/journals/pvldb/CandeaPV09.html)
+- **[SOTA]** G. Giannikis, G. Alonso, D. Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* PVLDB, 2012. — [DOI](https://doi.org/10.14778/2168651.2168654)
+- **[SOTA]** A. Jindal, K. Karanasos, S. Rao, H. Patel. *Selecting Subexpressions to Materialize at Datacenter Scale (CloudViews).* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3192965.3192971)
+
+## 10. Worked Example
+
+Three queries scan a 1000-page table $T$ and build intermediates:
+$q_1$ needs CSE $e_1$ (scan $T$, filter, group), $q_2$ needs $e_1$ and $e_2$, $q_3$ needs $e_2$.
+Build costs $b(e_1)=300$, $b(e_2)=200$; each query's residual cost given its CSEs is $100$.
+
+**No sharing:** each query rebuilds its CSEs. Total
+$\approx (300{+}100)+(300{+}200{+}100)+(200{+}100)=1300$.
+
+**Shared scan:** one cooperative scan of $T$ serves all three — $\Theta(|T|)$ once
+($1000$) instead of $3\times1000$, a $3\times$ I/O win.
+
+**CSE sharing:** materialize $e_1$ once (used by $q_1,q_2$) and $e_2$ once (used by
+$q_2,q_3$): $300+200+3\cdot100 = 800$. Greedy submodular selection picks $e_1$ first
+(benefit $=$ reuse$\times$ saved build $=300$ over its $2$ reusers minus build), then $e_2$,
+giving a $(1-1/e)\approx 0.63$ guarantee versus the NP-hard optimum.
+
+Net: combining shared scan and CSE reuse cuts $1300 \to 800$ of CPU plus a $3\times$ scan
+reduction, illustrating the section-4 bounds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

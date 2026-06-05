@@ -55,11 +55,23 @@ Cardinality inputs $\text{bytes}(e)$ derive from selectivity estimation; worst-c
 
 ## 9. Key References
 
-- **[Foundational]** Valiant. *A Bridging Model for Parallel Computation (BSP).* CACM, 1990.
-- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017.
-- **[SOTA]** Pu et al. *Low Latency Geo-distributed Data Analytics (Iridium).* SIGCOMM, 2015.
-- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Foundational]** Chu, Ioannidis, et al. / Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015 (cardinality-estimation error study).
+- **[Foundational]** Valiant. *A Bridging Model for Parallel Computation (BSP).* CACM, 1990. — [DOI](https://doi.org/10.1145/79173.79181)
+- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017. — [DOI](https://doi.org/10.1145/3125644)
+- **[SOTA]** Pu et al. *Low Latency Geo-distributed Data Analytics (Iridium).* SIGCOMM, 2015. — [DOI](https://doi.org/10.1145/2829988.2787505)
+- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Chu, Ioannidis, et al. / Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015 (cardinality-estimation error study). — [DOI](https://doi.org/10.14778/2850583.2850594)
+
+## 10. Worked Example
+
+A join shuffles $D = 100$ GB. Two plans place the shuffle on different tiers: plan $A$ keeps it intra-rack ($b_{\text{rack}} = 10$ GB/s), plan $B$ spills cross-region ($b_{\text{region}} = 1$ GB/s, egress price $\pi = \$0.02$/GB).
+
+**Flat model** (one bandwidth $b = 5$ GB/s for both): predicts $\text{Cost}(A) = \text{Cost}(B) = 100/5 = 20$ s — it cannot tell them apart, so the optimizer may pick $B$.
+
+**Bandwidth-tagged model:**
+$$\text{Cost}(A) = \frac{100}{10} = 10\text{ s}, \quad \text{Cost}(B) = \frac{100}{1} = 100\text{ s} \;(+\; 100 \times \$0.02 = \$2).$$
+Now $A$ is correctly ranked $10\times$ cheaper in latency and avoids the dollar egress — rank-faithfulness restored.
+
+**Where it breaks (Section 5):** if two concurrent shuffles each send 100 GB over the *same* rack link, the additive model predicts $10 + 10 = 20$ s total but each transfer actually sees half the bandwidth, so both finish at $100/(10/2) = 20$ s — wall-clock is $20$ s, not the per-edge $10$ s the model assumes. Capturing this needs a non-additive max-flow term, the open congestion gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

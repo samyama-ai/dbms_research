@@ -47,11 +47,26 @@ Push toward end-to-end verified CRDT compilers and toward verifying *security/in
 
 ## 9. Key References
 
-- **[Foundational]** V. Gomes, M. Kleppmann, D. Mulligan, A. Beresford. *Verifying strong eventual consistency in distributed systems.* OOPSLA, 2017.
-- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011.
-- **[SOTA]** K. De Porre, C. Scholliers, et al. *VeriFx: Correct Replicated Data Types for the Masses.* ECOOP, 2023.
-- **[SOTA]** S. Laddad, C. Power, M. Milano, A. Cheung, J. M. Hellerstein. *Katara: Synthesizing CRDTs with verified lifting.* OOPSLA, 2022.
-- **[SOTA]** K. Nagar, S. Jagannathan. *Automated parameterized verification of CRDTs.* CONCUR/CAV, 2019.
+- **[Foundational]** V. Gomes, M. Kleppmann, D. Mulligan, A. Beresford. *Verifying strong eventual consistency in distributed systems.* OOPSLA, 2017. — [DOI](https://doi.org/10.1145/3133933)
+- **[Foundational]** M. Shapiro, N. Preguiça, C. Baquero, M. Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[SOTA]** K. De Porre, C. Ferreira, E. Gonzalez Boix. *VeriFx: Correct Replicated Data Types for the Masses.* ECOOP, 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ECOOP.2023.9)
+- **[SOTA]** S. Laddad, C. Power, M. Milano, A. Cheung, J. M. Hellerstein. *Katara: Synthesizing CRDTs with verified lifting.* OOPSLA, 2022. — [DOI](https://doi.org/10.1145/3563336)
+- **[SOTA]** K. Nagar, S. Jagannathan. *Automated parameterized verification of CRDTs.* CAV, 2019. — [DOI](https://doi.org/10.1007/978-3-030-25543-5_26)
+
+## 10. Worked Example
+
+Consider a naive **add/remove set** with state = a plain set $S$, where `add(e)` does $S\cup\{e\}$ and `remove(e)` does $S\setminus\{e\}$, and merge is set union $\sqcup=\cup$. Does it satisfy SEC? Test commutativity of concurrent ops on two replicas, both starting from $S=\emptyset$:
+
+- Replica 1: `add(a)` → $\{a\}$.
+- Replica 2: `remove(a)` (a no-op locally) → $\{\}$.
+
+Merge after exchange:
+- Path A (R1 then R2's effect): $\{a\}\cup\{\} = \{a\}$.
+- Path B: $\{\}\cup\{a\}=\{a\}$.
+
+But now reorder so `remove(a)` is *delivered after* `add(a)` is merged in: $\{a\}$ then `remove(a)` → $\{\}$, versus the other replica that never saw the remove staying at $\{a\}$. Final states **diverge** ($\{\}$ vs $\{a\}$) — the *small-model* counterexample uses just **2 replicas, 2 operations**, exactly the bound reduction theorems promise.
+
+The fix (an **OR-Set**) tags each add with a unique token, $\text{add}(a)\mapsto(a,t_1)$, and `remove` deletes only observed tokens. Then concurrent add/remove commute: a remove cannot erase a token it never saw, so $(S,\sqcup)$ is a genuine join-semilattice and SEC holds — exactly the property a VeriFx-style SMT query would discharge.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

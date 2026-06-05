@@ -57,13 +57,23 @@ For **unweighted paging** the gap is **essentially closed**: matching upper/lowe
 
 ## 9. Key References
 
-- **[Foundational]** László A. Bélády. *A Study of Replacement Algorithms for a Virtual-Storage Computer.* IBM Systems Journal, 1966.
-- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM, 2021.
-- **[SOTA]** Dhruv Rohatgi. *Near-Optimal Bounds for Online Caching with Machine Learned Advice.* SODA, 2020.
-- **[SOTA]** Alexander Wei. *Better and Simpler Learning-Augmented Online Caching.* APPROX, 2020.
-- **[SOTA]** Zhenyu Song, Daniel S. Berger, Kai Li, Wyatt Lloyd. *Learning Relaxed Belady for Content Distribution Network Caching.* NSDI, 2020.
-- **[Survey]** Michael Mitzenmacher, Sergei Vassilvitskii. *Algorithms with Predictions.* CACM, 2022.
+- **[Foundational]** László A. Bélády. *A Study of Replacement Algorithms for a Virtual-Storage Computer.* IBM Systems Journal, 1966. — [DOI](https://doi.org/10.1147/sj.52.0078)
+- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
+- **[SOTA]** Dhruv Rohatgi. *Near-Optimal Bounds for Online Caching with Machine Learned Advice.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1910.12172)
+- **[SOTA]** Alexander Wei. *Better and Simpler Learning-Augmented Online Caching.* APPROX, 2020. — [arXiv](https://arxiv.org/abs/2005.13716)
+- **[SOTA]** Zhenyu Song, Daniel S. Berger, Kai Li, Wyatt Lloyd. *Learning Relaxed Belady for Content Distribution Network Caching.* NSDI, 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/song)
+- **[Survey]** Michael Mitzenmacher, Sergei Vassilvitskii. *Algorithms with Predictions.* CACM, 2022. — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+Cache size $k = 2$, request sequence $\sigma = A\,B\,C\,A\,C\,B$. At each request the oracle gives a predicted next-arrival time $\hat h_i$.
+
+Belady (offline, ground truth): start $\{A,B\}$. Request $C$ (miss): next uses are $A$ at position 4, $B$ at position 6 — evict $B$ (farther). Cache $\{A,C\}$. Then $A$ hit, $C$ hit, $B$ miss (evict $A$, no future use). **Total misses after warm-up: 2.**
+
+A prediction-following policy that *trusts* $\hat h$: if predictions are perfect it reproduces Belady's choice (evict $B$ at the $C$ miss) → 2 misses, so **consistency $\to 1$**.
+
+Now make the oracle adversarial: it predicts $A$ is used soonest, so the policy evicts $A$ instead of $B$ at the $C$ miss → cache $\{B,C\}$, then $A$ at position 4 is a miss too → 3+ misses. A robustifying combiner caps this by also running a marking policy and never trailing it by more than a factor, guaranteeing $O(\log k)$ robustness. With $k=2$ that bound is $H_2 = 1 + \tfrac12 = 1.5$, so the worst case stays bounded — the consistency/robustness interpolation $\mathrm{CR}(\eta) \le \min\{r,\, c + O(\eta/\mathrm{OPT})\}$ in action.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

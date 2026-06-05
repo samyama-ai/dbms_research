@@ -53,12 +53,18 @@ For the bushy-DP model the bounds are **matched** — DPccp/DPhyp hit the $\#\te
 
 ## 9. Key References
 
-- **[Foundational]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees without Cross Products.* VLDB, 2006.
-- **[SOTA]** Moerkotte, Neumann. *Dynamic Programming Strikes Back.* SIGMOD, 2008. (DPhyp)
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995.
-- **[Survey]** Moerkotte. *Building Query Compilers.* (manuscript / lecture notes), ongoing.
-- **[SOTA]** Neumann, Radke. *Adaptive Optimization of Very Large Join Queries.* SIGMOD, 2018.
+- **[Foundational]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees without Cross Products.* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
+- **[SOTA]** Moerkotte, Neumann. *Dynamic Programming Strikes Back.* SIGMOD, 2008. (DPhyp) — [DOI](https://doi.org/10.1145/1376616.1376672)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995. — [DOI](https://doi.org/10.1007/3-540-58907-4_6)
+- **[Survey]** Moerkotte. *Building Query Compilers.* (manuscript / lecture notes), ongoing. — [PDF](https://pi3.informatik.uni-mannheim.de/~moer/querycompiler.pdf)
+- **[SOTA]** Neumann, Radke. *Adaptive Optimization of Very Large Join Queries.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183733)
+
+## 10. Worked Example
+
+Take a **chain** query $R_1 - R_2 - R_3 - R_4$ ($n=4$, edges $\{12,23,34\}$). The number of csg-cmp-pairs DPccp generates is $\binom{n+1}{3}=\binom{5}{3}=10$ (counting unordered $(S_1,S_2)$ splits), matching the $\Theta(n^3)$ chain formula. By contrast a **clique** on the same 4 relations forces the full $3^n$ recurrence: $\sum_{S}(2^{|S|}-2)/2$ over all $2^4$ subsets gives $\tfrac{3^4-2^{4+1}+1}{2}=\tfrac{81-32+1}{2}=25$ pairs.
+
+Concretely the memo fills bottom-up: singletons $\{1\},\{2\},\{3\},\{4\}$; then connected pairs $\{12\},\{23\},\{34\}$ (note $\{13\},\{14\},\{24\}$ are *skipped* for the chain — disconnected); then $\{123\},\{234\}$; finally $\{1234\}$, whose best plan is chosen by comparing the splits $\{1\}|\{234\}$, $\{12\}|\{34\}$, $\{123\}|\{4\}$. So $10$ chain pairs vs. $25$ clique pairs on identical relations — the enumeration cost is purely a function of graph shape, not $n$ alone.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -70,11 +70,21 @@ This is genuinely **open**. There is no canonical "chase with counting" with pro
 
 ## 9. Key References
 
-- **[Foundational]** Lenzerini, M., Nobili, P. *On the Satisfiability of Dependency Constraints in Entity-Relationship Schemata.* Information Systems, 1990.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput. / FOCS, 2008/2013.
-- **[SOTA]** Abo Khamis, M., Ngo, H., Suciu, D. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017.
-- **[SOTA]** Cai, W., Balazinska, M., Suciu, D. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[Survey]** Calì, A., Gottlob, G., Lukasiewicz, T. *A General Datalog-based Framework for Tractable Query Answering over Ontologies (Datalog±).* J. Web Semantics, 2012.
+- **[Foundational]** Lenzerini, M., Nobili, P. *On the Satisfiability of Dependency Constraints in Entity-Relationship Schemata.* Information Systems, 1990. — [DBLP](https://dblp.org/db/journals/is/is15.html)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput. / FOCS, 2008/2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Abo Khamis, M., Ngo, H., Suciu, D. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Cai, W., Balazinska, M., Suciu, D. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Survey]** Calì, A., Gottlob, G., Lukasiewicz, T. *A General Datalog-based Framework for Tractable Query Answering over Ontologies (Datalog±).* J. Web Semantics, 2012. — [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S1570826812000388)
+
+## 10. Worked Example
+
+Schema: $\mathrm{Customer}(c)$, $\mathrm{Account}(c,a)$. A TGD demands every customer own an account:
+$$\mathrm{Customer}(c)\;\to\;\exists a\,\mathrm{Account}(c,a),$$
+and a cardinality constraint caps accounts per customer: $\big|\{a:\mathrm{Account}(c,a)\}\big|\le 2$.
+
+**Chase trace.** Start $D=\{\mathrm{Customer}(c_1)\}$. The TGD fires, adding $\mathrm{Account}(c_1,\nu_1)$ with a fresh null $\nu_1$. The CC is satisfied ($1\le2$). Done — universal model has 1 account tuple. Now suppose a second EGD-like rule re-fires the TGD twice (say via two source rows), yielding $\mathrm{Account}(c_1,\nu_1),\mathrm{Account}(c_1,\nu_2),\mathrm{Account}(c_1,\nu_3)$: three nulls, violating $\le2$. The **counting action** must coalesce two nulls (e.g. $\nu_3:=\nu_1$), an EGD-like equate driven by *arithmetic*, not by an explicit equality dependency.
+
+**AGM cross-check.** A join $\mathrm{Customer}\bowtie\mathrm{Account}$ on $c$ with $|\mathrm{Account}|=N$ and the degree cap $2$ has output $\le 2\cdot|\mathrm{Customer}|$ — far below the unconstrained AGM bound $\prod_e|R_e|^{x_e}$. Capturing such coalescing with a *termination guarantee* is exactly the open gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

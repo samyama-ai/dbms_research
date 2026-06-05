@@ -40,12 +40,33 @@ Active work: **learned and workload-aware clustering** (choosing sort/cluster ke
 - Co-design of sort order with SIMD scan kernels and encodings (links to *Optimal SIMD Operator Kernels*).
 
 ## 9. Key References
-- **[Foundational]** Stonebraker, Abadi, Batkin, Chen, Cherniack, et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005.
-- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[SOTA]** Lemire, Boytsov. *Decoding Billions of Integers per Second through Vectorization.* Software: Practice and Experience, 2015.
-- **[Foundational]** Gaede, Günther. *Multidimensional Access Methods* (space-filling curves / Z-order, Hilbert). ACM Computing Surveys, 1998.
-- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* VLDB, 2020.
+- **[Foundational]** Stonebraker, Abadi, Batkin, Chen, Cherniack, et al. *C-Store: A Column-Oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.uni-trier.de/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** Lemire, Boytsov. *Decoding Billions of Integers per Second through Vectorization.* Software: Practice and Experience, 2015. — [arXiv](https://arxiv.org/abs/1209.2137)
+- **[Foundational]** Gaede, Günther. *Multidimensional Access Methods* (space-filling curves / Z-order, Hilbert). ACM Computing Surveys, 1998. — [DOI](https://doi.org/10.1145/280277.280279)
+- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+
+## 10. Worked Example
+
+Take 8 rows over two columns, $C$ (country, 2 distinct) and $S$ (state, 4 distinct):
+
+| C | S |
+|---|---|
+| US | CA |
+| IN | TN |
+| US | CA |
+| IN | KA |
+| US | NY |
+| IN | TN |
+| US | NY |
+| IN | KA |
+
+**Sort by $(C, S)$:** $C = [\text{IN}\times4, \text{US}\times4]$ → 2 RLE runs; $S = [\text{KA},\text{KA},\text{TN},\text{TN},\text{CA},\text{CA},\text{NY},\text{NY}]$ → 4 runs. Total = 6 runs.
+
+**Sort by $(S, C)$:** $S$ → 4 runs, but $C$ now interleaves (CA→US, KA→IN, ...) giving up to 4 runs. Total = 8 runs.
+
+Ordering the *lower-cardinality* key first ($C$) yields fewer total runs — illustrating the "ascending distinct-count" heuristic of §4. A single linear order cannot make both columns 2-run; the prefix column always wins, the tension formalized in §5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

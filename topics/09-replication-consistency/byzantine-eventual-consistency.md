@@ -56,12 +56,20 @@ SEC-among-honest is solved for **mergeable** datatypes via hash-DAGs; genuinely 
 
 ## 9. Key References
 
-- **[SOTA]** Kleppmann, M., Howard, H. *Byzantine Eventual Consistency and the fundamental limits of resilient replicated systems.* arXiv:2012.00472, 2020.
-- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-free Replicated Data Types.* SSS, 2011.
-- **[Foundational]** Bracha, G., Toueg, S. *Asynchronous consensus and broadcast protocols.* JACM, 1985.
-- **[Foundational]** Castro, M., Liskov, B. *Practical Byzantine Fault Tolerance.* OSDI, 1999.
-- **[SOTA]** Haeberlen, A., Kouznetsov, P., Druschel, P. *PeerReview: practical accountability for distributed systems.* SOSP, 2007.
-- **[Survey]** Kleppmann, M., Wiggins, A., van Hardenberg, P., McGranaghan, M. *Local-first software.* Onward!, 2019.
+- **[SOTA]** Kleppmann, M., Howard, H. *Byzantine Eventual Consistency and the fundamental limits of resilient replicated systems.* arXiv:2012.00472, 2020. — [arXiv](https://arxiv.org/abs/2012.00472)
+- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[Foundational]** Bracha, G., Toueg, S. *Asynchronous consensus and broadcast protocols.* JACM, 1985. — [DOI](https://doi.org/10.1145/4221.214134)
+- **[Foundational]** Castro, M., Liskov, B. *Practical Byzantine Fault Tolerance.* OSDI, 1999. — [ACM](https://dl.acm.org/doi/10.5555/296806.296824)
+- **[SOTA]** Haeberlen, A., Kouznetsov, P., Druschel, P. *PeerReview: practical accountability for distributed systems.* SOSP, 2007. — [DOI](https://doi.org/10.1145/1294261.1294279)
+- **[Survey]** Kleppmann, M., Wiggins, A., van Hardenberg, P., McGranaghan, M. *Local-first software.* Onward!, 2019. — [DOI](https://doi.org/10.1145/3359591.3359737)
+
+## 10. Worked Example
+
+Three honest replicas $\{P_1,P_2,P_3\}$ and one Byzantine replica $B$ collaboratively edit a grow-only set CRDT. Each operation carries a content-addressed dot $h = H(\text{payload}\,\|\,\text{deps})$.
+
+Honest history: $P_1$ issues $a$ (add "x"), then $P_2$ issues $b$ (add "y") with $\text{deps}(b)=\{h_a\}$, so $h_b = H(\text{"add y"}\,\|\,h_a)$. The DAG is $a \to b$.
+
+Now $B$ **equivocates**: it tells $P_1$ that op $c$ has $\text{deps}=\{h_a\}$ and $\text{payload}=\text{"add z"}$, but tells $P_3$ a different $c'$ with the same author-sequence number but $\text{payload}=\text{"add w"}$. Then $h_c = H(\text{"add z"}\,\|\,h_a) \ne H(\text{"add w"}\,\|\,h_a) = h_{c'}$. When $P_1$ and $P_3$ anti-entropy, they exchange $B$'s author chain and observe two ops at the same sequence with **different hashes** — a fork. That pair is a self-authenticating proof of equivocation (both signed by $B$), so $B$ is attributed and evicted. The honest replicas still converge on the set $\{x,y\}$: SEC among the correct nodes holds. Note no $3f+1$ quorum was needed — the join-semilattice merge plus hash-DAG suffices because the set has no agreement-requiring bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

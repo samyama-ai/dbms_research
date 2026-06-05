@@ -50,13 +50,21 @@ This is **genuinely open**. CQA and data exchange are each well-understood *in i
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005.
-- **[Foundational]** R. Fagin, P. G. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* ACM TODS, 2005.
-- **[Foundational]** M. Arenas, L. Bertossi, J. Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999.
-- **[SOTA]** P. Koutris, J. Wijsen. *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries under Primary Key Constraints.* PODS / ACM TODS, 2015–2017. (Dichotomy.)
-- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Survey]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011.
+- **[Foundational]** R. Fagin, P. G. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** R. Fagin, P. G. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1061318.1061323)
+- **[Foundational]** M. Arenas, L. Bertossi, J. Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[SOTA]** P. Koutris, J. Wijsen. *The Data Complexity of Consistent Query Answering for Self-Join-Free Conjunctive Queries under Primary Key Constraints.* PODS / ACM TODS, 2015–2017. (Dichotomy.) — [DOI](https://doi.org/10.1145/3068334)
+- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536360.2536363)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Survey]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+
+## 10. Worked Example
+
+Source $S$ has $\mathsf{Emp}(\text{name}, \text{dept})$ with two rows: $\mathsf{Emp}(\text{Ann}, \text{Sales})$, $\mathsf{Emp}(\text{Ann}, \text{Eng})$. The st-tgd is
+$$\mathsf{Emp}(n,d) \rightarrow \exists o\,\, \mathsf{Target}(n, d, o)$$
+The chase produces $\mathsf{Target}(\text{Ann}, \text{Sales}, N_1)$ and $\mathsf{Target}(\text{Ann}, \text{Eng}, N_2)$ with labeled nulls $N_1, N_2$ (office). Now add a target EGD: $\text{name}$ is a key, i.e. $\mathsf{Target}(n,d_1,o_1) \wedge \mathsf{Target}(n,d_2,o_2) \rightarrow d_1 = d_2$. The EGD tries to equate the constants $\text{Sales} = \text{Eng}$ — a **hard failure**: no solution exists, so we must repair.
+
+Two minimal repairs delete one tuple each: $J_1 = \{\mathsf{Target}(\text{Ann},\text{Sales},N_1)\}$ or $J_2 = \{\mathsf{Target}(\text{Ann},\text{Eng},N_2)\}$. For query $Q(n) \leftarrow \mathsf{Target}(n,\_,\_)$, both repairs return $\text{Ann}$, so $\mathsf{cert}(Q) = \{\text{Ann}\}$ survives. But for $Q'(d) \leftarrow \mathsf{Target}(\text{Ann},d,\_)$, $J_1 \cap J_2$ gives $\emptyset$ — the dept is **not** certain. This shows repair choice destroys mapping-certified info that flat CQA cannot see.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

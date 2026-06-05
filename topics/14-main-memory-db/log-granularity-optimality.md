@@ -42,11 +42,21 @@ Active directions: learned/adaptive logging policies that predict per-transactio
 - Co-design with NVM/CXL where the durability primitive is sub-microsecond.
 
 ## 9. Key References
-- **[SOTA]** Malviya, Weber, Madden, Stonebraker. *Rethinking Main-Memory OLTP Recovery.* ICDE, 2014.
-- **[SOTA]** Zheng, Tu, Kohler, Liskov. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[SOTA]** Yao, Chen, Jagadish, et al. *Adaptive Logging: Optimizing Logging and Recovery Costs in Distributed In-Memory Databases.* SIGMOD, 2016.
-- **[Foundational]** Mohan, Haderle, Lindsay, Pirahesh, Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
+- **[SOTA]** Malviya, Weisberg, Madden, Stonebraker. *Rethinking Main-Memory OLTP Recovery.* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816685)
+- **[SOTA]** Zheng, Tu, Kohler, Liskov. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+- **[SOTA]** Yao, Chen, Jagadish, et al. *Adaptive Logging: Optimizing Logging and Recovery Costs in Distributed In-Memory Databases.* SIGMOD, 2016. — [arXiv](https://arxiv.org/abs/1503.03653)
+- **[Foundational]** Mohan, Haderle, Lindsay, Pirahesh, Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+
+## 10. Worked Example
+
+A stored procedure `Transfer(A,B,$100)` debits one row and credits another (2 tuple updates), invoked $N=10{,}000$ times between checkpoints.
+
+**Command logging.** Each record = procedure name + params $\approx 40$ bytes. Steady-state volume $V_\text{cmd}=10{,}000\times40=400$ KB. Recovery must *re-execute* all 10,000 procedures: $T_\text{replay}\approx 10{,}000\times c_\text{exec}$.
+
+**Physiological logging.** Each tuple update logs a before/after image $\approx 120$ bytes; 2 per call. Volume $V_\text{phys}=10{,}000\times2\times120=2.4$ MB ($6\times$ larger). Recovery just *applies* images: $T_\text{replay}\approx 20{,}000\times c_\text{apply}$, and $c_\text{apply}\ll c_\text{exec}$ (no logic, no contention).
+
+**The ski-rental online choice (§4).** Suppose re-execution is $\beta$-times costlier to replay than apply. The threshold policy logs commands ("renting" cheap durability) until the estimated replay penalty exceeds the byte savings, then switches to physiological ("buying"). With cost objective $\alpha V + \beta\,\mathbb{E}[T_\text{replay}]$, the break-even is where $\alpha(V_\text{phys}-V_\text{cmd}) = \beta(T^\text{cmd}_\text{replay}-T^\text{phys}_\text{replay})$ — and the deterministic policy stays within $2\times$ of the offline optimum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

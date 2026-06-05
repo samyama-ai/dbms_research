@@ -48,12 +48,23 @@ Directions: **scalable, parallel, and incremental** core materialization. *(fron
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* PODS 2003 / TODS, 2005.
-- **[Foundational]** G. Gottlob, A. Nash. *Efficient Core Computation in Data Exchange.* PODS 2006 / JACM, 2008.
-- **[SOTA]** B. Marnette, G. Mecca, P. Papotti. *Scalable Data Exchange with Functional Dependencies.* VLDB, 2010.
-- **[SOTA]** G. Mecca, P. Papotti, S. Raunich. *Core Schema Mappings.* SIGMOD, 2009. (++Spicy.)
-- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *Mapping and Cleaning.* ICDE / VLDB (LLUNATIC), 2014.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005.
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa. *Data Exchange: Getting to the Core.* PODS 2003 / TODS, 2005. — [DOI](https://doi.org/10.1145/1061318.1061323)
+- **[Foundational]** G. Gottlob, A. Nash. *Efficient Core Computation in Data Exchange.* PODS 2006 / JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346334)
+- **[SOTA]** B. Marnette, G. Mecca, P. Papotti. *Scalable Data Exchange with Functional Dependencies.* VLDB, 2010. — [PVLDB](https://vldb.org/pvldb/vol3/R09.pdf)
+- **[SOTA]** G. Mecca, P. Papotti, S. Raunich. *Core Schema Mappings.* SIGMOD, 2009. (++Spicy.) — [DOI](https://doi.org/10.1145/1559845.1559914)
+- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *Mapping and Cleaning.* ICDE / VLDB (LLUNATIC), 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816655)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+Source has $\text{Emp}(\text{Alice})$. Mapping s-t TGD: $\text{Emp}(x) \to \exists m\, \text{Reports}(x,m)$ and $\text{Emp}(x)\to\exists b\,\text{Reports}(b,b)$.
+
+**Chase (canonical universal solution).** Firing both rules on $\text{Alice}$ produces nulls $N_1,N_2$:
+$$J = \{\,\text{Reports}(\text{Alice},N_1),\ \text{Reports}(N_2,N_2)\,\}.$$
+
+**Is $J$ the core?** Consider the endomorphism $h$ with $h(\text{Alice})=\text{Alice}$, $h(N_1)=N_2$, $h(N_2)=N_2$. Then $h(\text{Reports}(\text{Alice},N_1)) = \text{Reports}(\text{Alice},N_2)$ — but that fact is *not* in $J$, so this $h$ fails. Try instead mapping the second fact into the first: there is no way to send $\text{Reports}(N_2,N_2)$ (a self-loop) onto $\text{Reports}(\text{Alice},N_1)$ unless $\text{Alice}=N_1$, impossible since $\text{Alice}$ is a constant. So both facts survive: here $J$ already equals its core.
+
+Contrast: had the second TGD been $\text{Emp}(x)\to\exists m'\,\text{Reports}(x,m')$, the chase would yield two facts $\text{Reports}(\text{Alice},N_1),\text{Reports}(\text{Alice},N_2)$, and the folding $N_2\mapsto N_1$ is an endomorphism — the core collapses to the single fact $\text{Reports}(\text{Alice},N_1)$, halving storage.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

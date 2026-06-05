@@ -37,12 +37,22 @@ Active: constant-time / instant recovery extended to more engines; cloud provide
 (i) A schedulability theory for recovery time (EDF/utilization-bound analogue for flushing vs. RTO deadline). (ii) Multi-tenant recovery-budget isolation and reservation. (iii) Provable RTO under bounded-burst adversaries with throughput near-optimality. (iv) Composing single-node bounds with replica-failover RTO into an end-to-end guarantee. (v) Recovery-time SLO as a first-class field in the query optimizer / admission controller.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** Antonopoulos, P. et al. *Constant Time Recovery in Azure SQL Database.* PVLDB, 2019.
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[Foundational]** Liu, C.L., Layland, J. *Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment.* JACM, 1973.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[Survey]** Härder, T., Reuter, A. *Principles of Transaction-Oriented Database Recovery.* ACM Computing Surveys, 1983.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Antonopoulos, P. et al. *Constant Time Recovery in Azure SQL Database.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3352063.3352131)
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[Foundational]** Liu, C.L., Layland, J. *Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment.* JACM, 1973. — [DOI](https://doi.org/10.1145/321738.321743)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Survey]** Härder, T., Reuter, A. *Principles of Transaction-Oriented Database Recovery.* ACM Computing Surveys, 1983. — [DOI](https://doi.org/10.1145/289.291)
+
+## 10. Worked Example
+
+Suppose the SLO is $T_{\text{SLO}} = 60\,s$ and the workload writes redo at $w = 200\,\text{MB/s}$. Recovery replays at $\beta P = 800\,\text{MB/s}$ with $P=4$ parallel workers, after a fixed $T_{\text{analysis}} = 5\,s$, and constant-time recovery defers undo so $T_{\text{undo}} \approx 0$. The budget for redo replay is $60 - 5 = 55\,s$, so the *maximum tolerable unflushed redo* is
+
+$$\rho_{\max} = \beta P \cdot 55\,s = 800 \times 55 = 44{,}000\,\text{MB} = 44\,\text{GB}.$$
+
+Indirect/target-driven checkpointing must therefore cap dirty redo at $\le 44\,\text{GB}$. At the write rate, redo reaches that cap in $\rho_{\max}/w = 44000/200 = 220\,s$, so a checkpoint flushing every $\le 220\,s$ keeps $T_{\text{rec}}\le 60\,s$.
+
+Schedulability view: treat flushing as a periodic task with utilization $U = w/(\text{flush BW})$. If flush bandwidth is $400\,\text{MB/s}$, then $U = 200/400 = 0.5 \le 1$ — feasible. The lower bound bites if an adversarial burst pushes $w$ above flush capacity: then $R_{\text{redo}}$ grows unbounded unless throughput is throttled — the open SLA-vs-throughput tension.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

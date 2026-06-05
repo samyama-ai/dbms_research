@@ -43,12 +43,22 @@ Certifying $d(R',R^\*)$ over the **full instance** without distributional assump
 - Benchmarks that score *certificate validity*, not just repair F1.
 
 ## 9. Key References
-- **[Foundational]** P. Bohannon, M. Flaster, W. Fan, R. Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005.
-- **[SOTA]** J. Wang, S. Krishnan, M. J. Franklin, K. Goldberg, T. Kraska, T. Milo. *A Sample-and-Clean Framework for Fast and Accurate Query Processing on Dirty Data.* SIGMOD, 2014.
-- **[SOTA]** S. Krishnan, J. Wang, E. Wu, M. J. Franklin, K. Goldberg. *ActiveClean: Interactive Data Cleaning for Statistical Modeling.* VLDB, 2016.
-- **[SOTA]** S. Schelter, D. Lange, P. Schmidt, M. Celikel, F. Biessmann, A. Grafberger. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018.
-- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005.
+- **[Foundational]** P. Bohannon, M. Flaster, W. Fan, R. Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066175)
+- **[SOTA]** J. Wang, S. Krishnan, M. J. Franklin, K. Goldberg, T. Kraska, T. Milo. *A Sample-and-Clean Framework for Fast and Accurate Query Processing on Dirty Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610505)
+- **[SOTA]** S. Krishnan, J. Wang, E. Wu, M. J. Franklin, K. Goldberg. *ActiveClean: Interactive Data Cleaning for Statistical Modeling.* VLDB, 2016. — [DOI](https://doi.org/10.14778/2994509.2994514)
+- **[SOTA]** S. Schelter, D. Lange, P. Schmidt, M. Celikel, F. Biessmann, A. Grafberger. *Automating Large-Scale Data Quality Verification (Deequ).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3229867)
+- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+
+## 10. Worked Example
+
+A repaired table $R'$ has $N = 10{,}000$ cells. We hold an oracle that can clean any sampled cell. Draw $n = 400$ cells uniformly, send them to the oracle, and find that $12$ still differ from truth, so the empirical residual error rate is $\hat{p} = 12/400 = 0.03$.
+
+Hoeffding gives, at confidence $1-\delta = 0.95$ ($\delta = 0.05$):
+$$|\hat{p} - p| \le \sqrt{\tfrac{\ln(2/\delta)}{2n}} = \sqrt{\tfrac{\ln 40}{800}} = \sqrt{\tfrac{3.689}{800}} \approx 0.068.$$
+So we **certify** $p \le 0.03 + 0.068 = 0.098$ with 95% confidence, i.e. at most $\approx 980$ residual erroneous cells.
+
+The catch (section 5): this certifies an *aggregate* rate. A single critical error hidden in an unsampled cell that satisfies all of $\Sigma$ stays invisible — to halve the $\pm0.068$ width we would need $4\times$ the samples ($n=1600$), the unavoidable $\Omega(1/\epsilon^2)$ cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

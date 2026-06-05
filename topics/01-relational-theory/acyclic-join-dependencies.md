@@ -60,12 +60,20 @@ For α-acyclic JDs the theory is **closed**: linear recognition, optimal Yannaka
 
 ## 9. Key References
 
-- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983.
-- **[Foundational]** M. Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981.
-- **[Foundational]** R. Fagin. *Degrees of Acyclicity for Hypergraphs and Relational Database Schemes.* JACM, 1983.
-- **[SOTA]** M. Grohe, D. Marx. *Constraint Solving via Fractional Edge Covers.* SODA / ACM TALG, 2006/2014.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently / PANDA.* PODS, 2016–2017.
-- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016.
+- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322389)
+- **[Foundational]** M. Yannakakis. *Algorithms for Acyclic Database Schemes.* VLDB, 1981. — [DBLP](https://dblp.org/rec/conf/vldb/Yannakakis81.html)
+- **[Foundational]** R. Fagin. *Degrees of Acyclicity for Hypergraphs and Relational Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322390)
+- **[SOTA]** M. Grohe, D. Marx. *Constraint Solving via Fractional Edge Covers.* SODA / ACM TALG, 2006/2014. — [DOI](https://doi.org/10.1145/2636918)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, A. Rudra. *FAQ: Questions Asked Frequently / PANDA.* PODS, 2016–2017. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[Survey]** D. Olteanu, M. Schleich. *Factorized Databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+
+## 10. Worked Example
+
+Take the JD with hyperedges $R_1=\{A,B\}$, $R_2=\{B,C\}$, $R_3=\{C,D\}$ — a "path" hypergraph. **Is it α-acyclic?** Run GYO: vertex $A$ is private to $R_1$, and $R_1\cap R_2=\{B\}\subseteq R_2$, so $R_1$ is an ear — delete it. Now $D$ is private to $R_3$, $R_3\cap R_2=\{C\}\subseteq R_2$ — delete $R_3$. One edge $R_2$ remains; delete it. Empty $\Rightarrow$ **α-acyclic**, with join tree $R_1\!-\!R_2\!-\!R_3$.
+
+**Yannakakis evaluation.** Let $|R_i|=N$. A binary plan computing $R_1\bowtie R_2\bowtie R_3$ can blow up to $N^2$ intermediate tuples on $B$. Yannakakis instead semijoin-reduces along the tree (a full reducer), then joins, costing
+$$O\big(|H|\cdot(|\mathrm{IN}|+|\mathrm{OUT}|)\big)=O(3\cdot(3N+|\mathrm{OUT}|)),$$
+linear in input + output — no quadratic intermediate. Contrast a *cyclic* triangle $\{A,B\},\{B,C\},\{A,C\}$: GYO gets stuck (no ears), $\mathrm{fhw}=3/2$, and evaluation needs $\Omega(N^{3/2})$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

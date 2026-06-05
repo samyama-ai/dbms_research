@@ -56,11 +56,26 @@ The decision problem's complexity is settled (NP-hard / APX-hard). The genuine g
 
 ## 9. Key References
 
-- **[Foundational]** Ailamaki, DeWitt, Hill, Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001.
-- **[Foundational]** Navathe, Ceri, Wiederhold, Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984.
-- **[SOTA]** Grund, Krüger, Plattner, Zeier, Cudre-Mauroux, Madden. *HYRISE — A Main Memory Hybrid Storage Engine.* VLDB, 2010.
-- **[SOTA]** Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Ailamaki, DeWitt, Hill, Skounakis. *Weaving Relations for Cache Performance (PAX).* VLDB, 2001. — [PDF](https://www.vldb.org/conf/2001/P169.pdf)
+- **[Foundational]** Navathe, Ceri, Wiederhold, Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1994.2209)
+- **[SOTA]** Grund, Krüger, Plattner, Zeier, Cudre-Mauroux, Madden. *HYRISE — A Main Memory Hybrid Storage Engine.* VLDB, 2010. — [PDF](https://www.vldb.org/pvldb/vol4/p105-grund.pdf)
+- **[SOTA]** Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Relation with 4 attributes, per-tuple widths $w(A_1){=}w(A_2){=}w(A_3){=}w(A_4){=}1$. Workload:
+- $q_1$ (point lookup, freq $f_1{=}1$): reads $S_1=\{A_1,A_2,A_3,A_4\}$.
+- $q_2$ (scan, freq $f_2{=}9$): reads $S_2=\{A_1\}$.
+- $q_3$ (scan, freq $f_3{=}9$): reads $S_3=\{A_2\}$.
+
+**NSM** (one group $G=\{A_1,A_2,A_3,A_4\}$, $w(G){=}4$): every query touches the group, cost $=(1{+}9{+}9)\times4 = 76$.
+
+**DSM** (singletons): $q_1$ touches all 4 groups (cost 4), $q_2$ touches 1, $q_3$ touches 1. Total $=1{\times}4 + 9{\times}1 + 9{\times}1 = 22$.
+
+**PAX grouping** $\{A_1\},\{A_2\},\{A_3,A_4\}$: $q_1$ cost $=1{+}1{+}2=4$; $q_2{=}1$; $q_3{=}1$. Total $=4+9+9=22$, tying DSM but with better OLTP tuple-reconstruction locality (3 groups vs 4 to stitch).
+
+The affinity graph has edges only from $q_1$, so $a_{ij}{=}1$ for all pairs — grouping the rarely-co-scanned $A_3,A_4$ together costs nothing on the hot scans. DSM/PAX cut cost by $3.5\times$ over NSM here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

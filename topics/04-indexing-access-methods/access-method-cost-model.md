@@ -34,13 +34,24 @@ Active: **learned and hybrid analytical/ML cost models** that generalize across 
 - Auto-synthesis pipelines that emit and deploy custom access methods for a given $W,H$.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** P. G. Selinger, M. M. Astrahan, D. D. Chamberlin, R. A. Lorie, T. G. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** S. Idreos, K. Zoumpatianos, et al. *The Data Calculator: Data Structure Design and Cost Synthesis from First Principles.* SIGMOD, 2018.
-- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018.
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[Survey]** S. Idreos, et al. *The Periodic Table of Data Structures.* IEEE Data Engineering Bulletin, 2018.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** P. G. Selinger, M. M. Astrahan, D. D. Chamberlin, R. A. Lorie, T. G. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[SOTA]** S. Idreos, K. Zoumpatianos, et al. *The Data Calculator: Data Structure Design and Cost Synthesis from First Principles.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3199671)
+- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[Survey]** S. Idreos, et al. *The Periodic Table of Data Structures.* IEEE Data Engineering Bulletin, 2018. — [DBLP](https://dblp.org/db/journals/debu/debu41.html)
+
+## 10. Worked Example
+
+Consider an LSM-tree holding $N/B = 10^6$ entries, size ratio $T$, and a Monkey-style cost model in the I/O model. Point-lookup I/O cost under leveling is $\approx \log_T(N/B)$ levels each guarded by a Bloom filter; write amplification is $\approx T\log_T(N/B)$.
+
+Evaluate two design points:
+
+- $T = 2$: read $\log_2(10^6) \approx 20$ levels; write amp $\approx 2 \times 20 = 40$.
+- $T = 10$: read $\log_{10}(10^6) = 6$ levels; write amp $\approx 10 \times 6 = 60$.
+
+So raising $T$ from 2 to 10 cuts read levels $3.3\times$ (20 → 6) but raises write amplification $1.5\times$ (40 → 60) — a concrete Pareto trade-off the unified cost function $c(d,W,H)$ must expose. A write-heavy workload picks small $T$; a read-heavy one picks large $T$. The open challenge: make this same closed-form navigability hold *across* families (LSM vs. B-tree vs. learned) and across hardware $H$, not just within the LSM continuum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -67,12 +67,24 @@ The gap is conceptual, not merely quantitative: above 5NF there is **no decidabl
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, R. *A Normal Form for Relational Databases That Is Based on Domains and Keys (DKNF).* ACM TODS, 1981.
-- **[Foundational]** Fagin, R. *Multivalued Dependencies and a New Normal Form for Relational Databases (4NF).* ACM TODS, 1977.
-- **[Foundational]** Bernstein, P. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976.
-- **[SOTA]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* J. ACM, 2005.
-- **[SOTA]** Kolahi, S., Libkin, L. *An Information-Theoretic Analysis of Worst-Case Redundancy in Database Design.* ACM TODS, 2010.
-- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** Fagin, R. *A Normal Form for Relational Databases That Is Based on Domains and Keys (DKNF).* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319587.319592)
+- **[Foundational]** Fagin, R. *Multivalued Dependencies and a New Normal Form for Relational Databases (4NF).* ACM TODS, 1977. — [DOI](https://doi.org/10.1145/320557.320571)
+- **[Foundational]** Bernstein, P. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320493.320489)
+- **[SOTA]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* J. ACM, 2005. — [PDF](https://marceloarenas.cl/publications/jacm05.pdf)
+- **[SOTA]** Kolahi, S., Libkin, L. *An Information-Theoretic Analysis of Worst-Case Redundancy in Database Design.* ACM TODS, 2010. — [DOI](https://doi.org/10.1145/1670243.1670248)
+- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+A classic 5NF case JDs catch but 4NF misses. Let $\text{Supply}(\text{Agent}, \text{Company}, \text{Product})$ record "Agent sells Company's Product" with the business rule: if an agent sells some product, and the company makes that product, and the agent represents that company, then the agent sells that company's product — i.e. the ternary JD $\bowtie[\text{AC},\text{CP},\text{AP}]$ holds, but **no** nontrivial MVD holds.
+
+| Agent | Company | Product |
+|-------|---------|---------|
+| Smith | Ford    | car     |
+| Smith | GM      | truck   |
+| Jones | Ford    | truck   |
+
+Smith–Ford, Smith–truck, Ford–truck would force a spurious $(\text{Smith},\text{Ford},\text{truck})$ only if it were truly present; under the rule it must be, so storing all three binary projections $R_1(\text{AC}), R_2(\text{CP}), R_3(\text{AP})$ is lossless and removes the update anomaly. Each $R_i$ is in 5NF. The single table is **not** in 5NF (its nontrivial JD is not implied by its key $\{A,C,P\}$), yet it *is* in 4NF (no nontrivial MVD), showing 5NF strictly above 4NF. DKNF would additionally demand the rule itself follow from domains+keys — which it does not, illustrating why DKNF is often unreachable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

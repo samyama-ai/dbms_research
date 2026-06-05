@@ -108,12 +108,18 @@ Groups: Yale (Abadi), UW-Madison, MPI-SWS, and database-vendor consortia.
 
 ## 9. Key References
 
-- **[Survey]** Breitbart, Y., Garcia-Molina, H., Silberschatz, A. *Overview of Multidatabase Transaction Management.* VLDB Journal, 1992.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Garcia-Molina, H., Salem, K. *Sagas.* SIGMOD, 1987.
-- **[Foundational]** Georgakopoulos, D., Rusinkiewicz, M., Sheth, A. *On Serializability of Multidatabase Transactions Through Forced Local Conflicts.* ICDE, 1991.
-- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006.
+- **[Survey]** Breitbart, Y., Garcia-Molina, H., Silberschatz, A. *Overview of Multidatabase Transaction Management.* VLDB Journal, 1992. — [DOI](https://doi.org/10.1007/BF01231700)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Garcia-Molina, H., Salem, K. *Sagas.* SIGMOD, 1987. — [DOI](https://doi.org/10.1145/38713.38742)
+- **[Foundational]** Georgakopoulos, D., Rusinkiewicz, M., Sheth, A. *On Serializability of Multidatabase Transactions Through Forced Local Conflicts.* ICDE, 1991. — [DBLP](https://dblp.org/rec/conf/icde/GeorgakopoulosRS91.html)
+- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Gray, J., Lamport, L. *Consensus on Transaction Commit.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132867)
+
+## 10. Worked Example
+
+Two autonomous systems $D_1, D_2$. Global txns $T_a$ and $T_b$ each touch one item in each: $T_a$ writes $x\in D_1$ and reads $p\in D_2$; $T_b$ writes $y\in D_1$ and reads $q\in D_2$. They share no item, so no *direct* conflict. But a **local** txn $L_1$ at $D_1$ reads $x$ then writes $y$, ordering $T_a <_1 L_1 <_1 T_b$; a local $L_2$ at $D_2$ orders $T_b <_2 L_2 <_2 T_a$. The global conflict graph has $T_a \to T_b$ (via $D_1$) and $T_b \to T_a$ (via $D_2$): a cycle, so the schedule is **not** globally serializable — yet each site sees only a locally serializable order and the coordinator, seeing just commit timestamps, cannot detect it.
+
+Ticket fix: each global txn increments a ticket row at every site it visits. Now $T_a$ and $T_b$ both write the $D_1$ ticket and the $D_2$ ticket, creating direct conflicts. Optimistic ticketing checks that ticket order agrees across sites; here $D_1$ says $T_a < T_b$ but $D_2$ says $T_b < T_a$, so validation **aborts** one txn — restoring global serializability at the cost of $O(k)$ extra writes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

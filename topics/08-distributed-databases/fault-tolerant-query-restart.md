@@ -48,12 +48,22 @@ Practice has strong *engineering* solutions (materialize-everything, lineage, AB
 - Fine-grained (sub-stage / operator-level) lineage with bounded space.
 
 ## 9. Key References
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. (FLP.)
-- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** J. Dean, S. Ghemawat. *MapReduce: Simplified Data Processing on Large Clusters.* OSDI, 2004.
-- **[SOTA]** M. Zaharia et al. *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing.* NSDI, 2012.
-- **[SOTA]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, S. Richter, K. Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* VLDB, 2017.
-- **[Foundational]** J. T. Daly. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006.
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. (FLP.) — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** J. Dean, S. Ghemawat. *MapReduce: Simplified Data Processing on Large Clusters.* OSDI, 2004. — [USENIX](https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters)
+- **[SOTA]** M. Zaharia et al. *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing.* NSDI, 2012. — [USENIX](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia)
+- **[SOTA]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, S. Richter, K. Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137777)
+- **[Foundational]** J. T. Daly. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
+
+## 10. Worked Example
+
+**Daly checkpoint interval.** A long ETL query runs $T = 10$ hours on a cluster with mean time between failures $M = 5$ h. A checkpoint costs $\delta = 6$ min $= 0.1$ h. Young/Daly's first-order optimum is
+
+$$\tau^* \approx \sqrt{2\,\delta\,M} = \sqrt{2 \cdot 0.1 \cdot 5} = 1\text{ h}.$$
+
+So checkpoint every ~1 hour. With no checkpointing, an expected failure at the $M=5$ h mark forces re-running from scratch: $\approx 5$ h of lost work. With $\tau^*=1$ h checkpoints, a failure loses only the work since the last checkpoint, expected $\approx \tau/2 = 0.5$ h, plus the $0.1$ h-per-checkpoint write overhead across the run.
+
+**DAG cascade.** Now consider a 4-stage lineage chain $S_1\!\to\!S_2\!\to\!S_3\!\to\!S_4$, none persisted, each $w=1$ unit of work. If $S_4$'s worker fails, the recomputation closure is $\{S_1,S_2,S_3,S_4\}$ = 4 units (full re-execution). Persisting only $S_3$'s output cuts the closure to $\{S_4\}$ = 1 unit. This is the materialization–recomputation tradeoff in miniature; choosing the persist set optimally over a general DAG is the NP-hard part.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -55,11 +55,23 @@ Active directions: epoch-based and decentralized group commit in multicore OLTP 
 
 ## 9. Key References
 
-- **[Foundational]** David DeWitt, Randy Katz, Frank Olken, Leonard Shapiro, Michael Stonebraker, David Wood. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984.
-- **[Foundational]** Philip Bernstein, Vassos Hadzilacos, Nathan Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[SOTA]** Goetz Graefe, Mark Lillibridge, Harumi Kuno, Joseph Tucek, Alistair Veitch. *Controlled Lock Violation.* SIGMOD, 2013.
-- **[SOTA]** Stephen Tu, Wenting Zheng, Eddie Kohler, Barbara Liskov, Samuel Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[Foundational]** Vassos Hadzilacos. *A Theory of Reliability in Database Systems.* JACM, 1988.
+- **[Foundational]** David DeWitt, Randy Katz, Frank Olken, Leonard Shapiro, Michael Stonebraker, David Wood. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/602259.602261)
+- **[Foundational]** Philip Bernstein, Vassos Hadzilacos, Nathan Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[SOTA]** Goetz Graefe, Mark Lillibridge, Harumi Kuno, Joseph Tucek, Alistair Veitch. *Controlled Lock Violation.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465325)
+- **[SOTA]** Stephen Tu, Wenting Zheng, Eddie Kohler, Barbara Liskov, Samuel Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[Foundational]** Vassos Hadzilacos. *A Theory of Reliability in Database Systems.* JACM, 1988. — [DOI](https://doi.org/10.1145/42267.42272)
+
+## 10. Worked Example
+
+Two transactions on the same row, flush latency $= 5$ ms, in-memory commit processing $= 50\ \mu$s.
+
+$T_1$: write $A$, append commit record, flush. $T_2$: wants to read $A$.
+
+**Strict 2PL (no ELR).** $T_1$ holds its write lock on $A$ until its commit record is *durable*. $T_2$ blocks on the lock for the full $\approx 5$ ms flush. Lock-hold time $\approx 5050\ \mu$s; $T_2$ starts at $t \approx 5$ ms.
+
+**Controlled lock violation.** $T_1$ appends its commit record to the in-memory log buffer, then *permits violation*: $T_2$ reads $A$ at $t \approx 50\ \mu$s, overlapping its own work with $T_1$'s 5 ms flush. But $T_2$ inherits $T_1$'s commit dependency: it may *not* externalize its own commit until $T_1$ is durable. Since $T_1 \le_s T_2$, the invariant $\le_d \supseteq \le_s$ forces $T_1$'s commit record to persist first.
+
+**Why the invariant matters.** If $T_2$ acked at $t = 60\ \mu$s and a crash struck at $t = 1$ ms (before $T_1$'s flush completed), $T_1$ would vanish while $T_2$ — which read $T_1$'s write — stays committed: a non-recoverable history. CLV forbids exactly this by holding $T_2$'s *external ack* behind $T_1$'s durable point, while still freeing the lock early.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

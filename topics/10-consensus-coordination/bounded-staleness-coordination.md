@@ -48,12 +48,22 @@ Active threads: (1) *learned/self-tuning staleness controllers* that adjust quor
 
 ## 9. Key References
 
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002.
-- **[SOTA]** P. Bailis, S. Venkataraman, M. Franklin, J. Hellerstein, I. Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[SOTA]** D. Terry, V. Prabhakaran, R. Kotla, M. Balakrishnan, M. Aguilera, H. Abu-Libdeh. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013.
-- **[Foundational]** P. Bailis, A. Fekete, M. Franklin, A. Ghodsi, J. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-Confluence).* VLDB, 2015.
-- **[Foundational]** S. Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[SOTA]** V. Balegas et al. *Putting Consistency Back into Eventual Consistency (Indigo / Explicit Consistency).* EuroSys, 2015.
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** P. Bailis, S. Venkataraman, M. Franklin, J. Hellerstein, I. Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2212351.2212359)
+- **[SOTA]** D. Terry, V. Prabhakaran, R. Kotla, M. Balakrishnan, M. Aguilera, H. Abu-Libdeh. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522731)
+- **[Foundational]** P. Bailis, A. Fekete, M. Franklin, A. Ghodsi, J. Hellerstein, I. Stoica. *Coordination Avoidance in Database Systems (I-Confluence).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
+- **[Foundational]** S. Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** V. Balegas et al. *Putting Consistency Back into Eventual Consistency (Indigo / Explicit Consistency).* EuroSys, 2015. — [DOI](https://doi.org/10.1145/2741948.2741972)
+
+## 10. Worked Example
+
+A Dynamo-style store with $N=3$ replicas and a partial quorum $R=W=1$ (so $R+W = 2 \le N$ — no overlap guaranteed). PBS asks: what is the chance a read sees the latest write?
+
+A write commits when *one* replica acks; the other two converge by anti-entropy after a delay. Suppose after a write completes, each remaining replica has independently applied it with probability $p(t)$, where $p$ grows from 0 to 1 over time. With $R=1$, a read hits one of the 3 replicas uniformly at random.
+
+At $t$ just after the write, only the 1 coordinating replica is fresh, so $P(\text{fresh read}) = 1/3 \approx 0.33$ — i.e. $\approx 67\%$ chance of stale data. At a later $t$ where $p(t) = 0.9$, the expected fresh fraction is $\tfrac{1 + 2(0.9)}{3} = \tfrac{2.8}{3} \approx 0.93$, so staleness drops to $\approx 7\%$.
+
+Tuning $(R,W)$ moves this continuously: choosing $R=2$ raises freshness with **no extra round-trip latency beyond waiting for the slower replica**, illustrating the version-bounded staleness knob — cheap and always-available, unlike a hard real-time bound which CAP forbids under partition.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

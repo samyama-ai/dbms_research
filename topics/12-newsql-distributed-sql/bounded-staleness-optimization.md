@@ -108,12 +108,20 @@ Groups: CMU, MIT, Berkeley, Microsoft (Cosmos DB), and Cockroach/Yugabyte teams.
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, P., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Ibaraki, T., Kameda, T. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
-- **[Foundational]** Terry, D., et al. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013.
-- **[SOTA]** Taft, R., et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020.
+- **[Foundational]** Selinger, P., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Ibaraki, T., Kameda, T. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+- **[Foundational]** Terry, D., et al. *Consistency-Based Service Level Agreements for Cloud Storage (Pileus).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522731)
+- **[SOTA]** Taft, R., et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+
+## 10. Worked Example
+
+A client in $eu$ issues a read-only query at $now = 100$ with staleness budget $\Delta = 5$ (so $\tau \ge 95$ allowed). Table `orders` has three replicas with (latency ms, safe-time): $r_1=(2,\,92)$, $r_2=(40,\,99)$, $r_3=(80,\,100)$.
+
+A *fresh* read ($\tau=100$) is served only by $r_3$, cost $80$ ms. With the budget, choose the largest safe-time $\le now$ that still lies in window and is local: pick $\tau = \mathrm{safe}_{r_1}=92$? No — $92 < 95$ violates $\tau \ge 95$. So $r_1$ cannot serve any in-window snapshot. Among replicas with $\mathrm{safe}_r \ge 95$: $r_2$ (safe $99$, cost $40$) and $r_3$ (cost $80$). Pick $\tau=99$ on $r_2$: latency $40$ ms versus $80$ ms fresh — a $2\times$ win within budget.
+
+If a join needs both `orders` (snapshot $\tau$) and `lineitem`, the shared-snapshot constraint forces `lineitem` to a replica with $\mathrm{safe}\ge 99$; if its only such replica costs $90$ ms, the planner must trade $r_2$'s saving against the join partner's cost — the joint optimization that is NP-hard via embedded join ordering.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -37,12 +37,24 @@ Threads: CXL-aware buffer managers and tiered B-trees with hardware-cache-consci
 - Online tiering/placement with competitive guarantees against measured CXL latency vectors.
 
 ## 9. Key References
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Frigo, M., Leiserson, C., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[SOTA]** Li, H., et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS, 2023.
-- **[SOTA]** Maruf, H. A., et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered Memory.* ASPLOS, 2023.
-- **[SOTA]** Wang, Q., et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022.
-- **[Survey]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Frigo, M., Leiserson, C., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[SOTA]** Li, H., et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2203.00241)
+- **[SOTA]** Maruf, H. A., et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered Memory.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2206.02878)
+- **[SOTA]** Wang, Q., et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
+- **[Survey]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://dl.acm.org/doi/10.1145/2339123.2339126)
+
+## 10. Worked Example
+
+A B-tree over $N = 10^9$ keys, fanout $B = 100$, so height $\log_B N = \log_{100}10^9 = 4.5 \approx 5$ levels. Two tiers: local DRAM at $\ell_0 = 100$ ns, far CXL-pooled memory at $\ell_2 = 500$ ns ($5\times$).
+
+**Naive (all far).** Each lookup probes one node per level: $5$ far fetches $\Rightarrow 5 \times 500 = 2500$ ns.
+
+**Tiered.** Pin the top of the tree locally. Local capacity $M_0$ holds the root plus level-2, i.e. $1 + 100 = 101$ nodes — comfortably the top $\log_B M_0 = \log_{100}(10^4) = 2$ levels. Far fetches drop to $\log_B N - \log_B M_0 = 5 - 2 = 3$, matching the section-4 bound. Latency:
+
+$$2\,(\text{local}) \times 100 + 3\,(\text{far}) \times 500 = 200 + 1500 = 1700\text{ ns},$$
+
+a $1.47\times$ speedup from pinning only $101$ nodes. Pinning one more level ($M_0 \approx 10^4$ nodes) cuts far fetches to $2$, giving $300 + 1000 = 1300$ ns. The lower bound says we can never beat $\Omega(\log_B N - \log_B M_0)$ far probes, so with this $M_0$, $3$ link crossings is optimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

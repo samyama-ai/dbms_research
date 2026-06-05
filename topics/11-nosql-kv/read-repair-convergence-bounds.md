@@ -37,12 +37,18 @@ Directions: tighter PBS-style models incorporating read-repair feedback and adap
 - End-to-end SLA compilers translating $k$-staleness targets into gossip-fanout and repair-schedule parameters.
 
 ## 9. Key References
-- **[Foundational]** Demers et al. *Epidemic Algorithms for Replicated Database Maintenance.* PODC, 1987.
-- **[Foundational]** Karp, Schindelhauer, Shenker, Vöcking. *Randomized Rumor Spreading.* FOCS, 2000.
-- **[SOTA]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012 (also CACM, 2014).
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[SOTA]** Giakkoupis. *Tight Bounds for Rumor Spreading in Graphs of a Given Conductance.* STACS, 2011.
-- **[Survey]** Eppstein, Goodrich, Uyeda, Varghese. *What's the Difference? Efficient Set Reconciliation without Prior Context.* SIGCOMM, 2011.
+- **[Foundational]** Demers et al. *Epidemic Algorithms for Replicated Database Maintenance.* PODC, 1987. — [DOI](https://doi.org/10.1145/41840.41841)
+- **[Foundational]** Karp, Schindelhauer, Shenker, Vöcking. *Randomized Rumor Spreading.* FOCS, 2000. — [DBLP](https://dblp.org/rec/conf/focs/KarpSSV00.html)
+- **[SOTA]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* PVLDB, 2012 (also CACM, 2014). — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Giakkoupis. *Tight Bounds for Rumor Spreading in Graphs of a Given Conductance.* STACS, 2011. — [DOI](https://doi.org/10.4230/LIPIcs.STACS.2011.57)
+- **[Survey]** Eppstein, Goodrich, Uyeda, Varghese. *What's the Difference? Efficient Set Reconciliation without Prior Context.* SIGCOMM, 2011. — [DOI](https://doi.org/10.1145/2018436.2018462)
+
+## 10. Worked Example
+
+Take $N=3$ replicas $\{A,B,C\}$ of one key. A write lands first on $A$; $B$ and $C$ are still stale. **Read-repair** triggers only when a client read touches the divergent set: each read picks a quorum and pushes the merged value back. Model reads as a coupon-collector over which replicas get repaired — to inform both $B$ and $C$ you expect $N\cdot H_{N-1}$-style waiting. Concretely, if reads arrive at rate $\rho$ and each repairs one missing replica uniformly, expected convergence time is $O(N/\rho)$; with $\rho=10$ reads/s and $N=3$, that is on the order of $\tfrac{N}{\rho}=0.3$ s for a *hot* key.
+
+Now a **cold** key read once per hour ($\rho \approx 3\times10^{-4}$/s): read-repair alone gives expected convergence $\approx N/\rho \approx 10^4$ s — hours of staleness. This is exactly why background **anti-entropy** is needed: push-pull gossip on $n$ nodes converges in $\approx \log_2 n + \ln n$ rounds independent of read demand, bounding the cold-key tail the demand-driven process cannot.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

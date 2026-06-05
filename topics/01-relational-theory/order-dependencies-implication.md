@@ -72,11 +72,25 @@ For the central case — **list-based OD implication** — the gap is essentiall
 
 ## 9. Key References
 
-- **[Foundational]** Ginsburg, S., Hull, R. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983.
-- **[SOTA]** Szlichta, J., Godfrey, P., Gryz, J. *Fundamentals of Order Dependencies.* PVLDB, 2012.
-- **[SOTA]** Szlichta, J., Godfrey, P., Gryz, J. et al. *Effective and Complete Discovery of Order Dependencies via Set-based Axiomatization (FASTOD).* PVLDB, 2017.
-- **[Foundational]** Golab, L., Karloff, H., Korn, F., Saha, A., Srivastava, D. *Sequential Dependencies.* PVLDB, 2009.
-- **[Survey]** Szlichta, J., Godfrey, P., Gryz, J., Zuzarte, C. *Expressiveness and Complexity of Order Dependencies.* PVLDB, 2013.
+- **[Foundational]** Ginsburg, S., Hull, R. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983. — [DOI](https://doi.org/10.1016/0304-3975(83)90084-1)
+- **[SOTA]** Szlichta, J., Godfrey, P., Gryz, J. *Fundamentals of Order Dependencies.* PVLDB, 2012. — [DOI](https://doi.org/10.14778/2350229.2350241)
+- **[SOTA]** Szlichta, J., Godfrey, P., Gryz, J. et al. *Effective and Complete Discovery of Order Dependencies via Set-based Axiomatization (FASTOD).* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067422)
+- **[Foundational]** Golab, L., Karloff, H., Korn, F., Saha, A., Srivastava, D. *Sequential Dependencies.* PVLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687693)
+- **[Survey]** Szlichta, J., Godfrey, P., Gryz, J., Zuzarte, C. *Expressiveness and Complexity of Order Dependencies.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2556549.2556568)
+
+## 10. Worked Example
+
+Relation $r(\text{Income}, \text{Tax})$ with a tax schedule:
+
+| Income | Tax  |
+|--------|------|
+| 30000  | 3000 |
+| 50000  | 7500 |
+| 80000  | 16000|
+
+**Check** the list-based OD $[\text{Income}] \mapsto [\text{Tax}]$: for every pair $s,t$ with $s \preceq_{\text{Income}} t$, is $s \preceq_{\text{Tax}} t$? Sorted by Income the Tax column reads $3000, 7500, 16000$ — strictly increasing, so the implication $s\preceq_{\text{Income}} t \Rightarrow s\preceq_{\text{Tax}} t$ holds on all $\binom{3}{2}=3$ pairs. The OD is **satisfied** (tax is monotone in income).
+
+Now add a row $(60000, 7000)$. The pair $(50000,7500)$ vs $(60000,7000)$ has $\text{Income}{:}\ 50000 \prec 60000$ but $\text{Tax}{:}\ 7500 \succ 7000$ — a violation. The OD now **fails**, and this single counterexample pair (polynomial-size witness) is exactly why the complement of OD-implication is in NP, giving the **coNP-complete** bound. Note the FD $\text{Income}\to\text{Tax}$ still holds (no two equal incomes), illustrating that ODs are strictly stronger: an OD constrains *order*, not just equality.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

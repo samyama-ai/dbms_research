@@ -55,12 +55,27 @@ Directions: (i) confidence-weighted joint repair where mined-constraint confiden
 
 ## 9. Key References
 
-- **[Foundational]** Kivinen, Mannila. *Approximate Inference of Functional Dependencies from Relations.* Theoretical Computer Science, 1995.
-- **[Foundational]** Kolahi, Lakshmanan. *On Approximating Optimum Repairs for Functional Dependency Violations.* ICDT, 2009.
-- **[SOTA]** Chiang, Miller. *A Unified Model for Data and Constraint Repair.* ICDE, 2011.
-- **[SOTA]** Chu, Ilyas, Papotti. *Discovering Denial Constraints.* VLDB, 2013.
-- **[SOTA]** Pena, de Almeida, Naumann. *Discovery of Approximate (and Exact) Denial Constraints.* VLDB, 2019.
-- **[Survey]** Abedjan, Golab, Naumann, Papenbrock. *Data Profiling.* Morgan & Claypool, 2018.
+- **[Foundational]** Kivinen, Mannila. *Approximate Inference of Functional Dependencies from Relations.* Theoretical Computer Science, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00028-U)
+- **[Foundational]** Kolahi, Lakshmanan. *On Approximating Optimum Repairs for Functional Dependency Violations.* ICDT, 2009. — [DOI](https://doi.org/10.1145/1514894.1514901)
+- **[SOTA]** Chiang, Miller. *A Unified Model for Data and Constraint Repair.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767833)
+- **[SOTA]** Chu, Ilyas, Papotti. *Discovering Denial Constraints.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536258.2536262)
+- **[SOTA]** Pena, de Almeida, Naumann. *Discovery of Approximate (and Exact) Denial Constraints.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3368289.3368293)
+- **[Survey]** Abedjan, Golab, Naumann, Papenbrock. *Data Profiling.* Morgan & Claypool, 2018. — [DOI](https://doi.org/10.1007/978-3-031-01865-7)
+
+## 10. Worked Example
+
+Mined FD $\phi:\ \text{zip}\to\text{city}$ over $D$ (4 tuples):
+
+| id | zip   | city    |
+|----|-------|---------|
+| 1  | 10001 | NYC     |
+| 2  | 10001 | NYC     |
+| 3  | 10001 | NYC     |
+| 4  | 10001 | Newark  |
+
+Tuple 4 violates $\phi$. Two repairs compete. **Data repair:** change $\text{city}_4$ to NYC — cost $\alpha\cdot 1$ (one cell edit). **Constraint repair:** drop or weaken $\phi$ — cost $\beta\cdot 1$.
+
+Which is right depends on the confidence of $\phi$. The G3 error (fraction of tuples to delete to satisfy $\phi$) is $1/4=0.25$, and empirical confidence $\approx 3/4$. With 3 of 4 tuples agreeing, $\phi$ looks *mostly* real, so if $\alpha < 3\beta$ the joint objective $\alpha\Delta(D,D')+\beta\Delta(\Sigma,\Sigma')$ favors editing the single outlier. But had the split been 2-2, confidence drops to $0.5$ and constraint repair (raise $\beta$ effectively cheaper) wins. The unresolved question (Section 6) is precisely how to calibrate $\alpha,\beta$ from such evidence.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

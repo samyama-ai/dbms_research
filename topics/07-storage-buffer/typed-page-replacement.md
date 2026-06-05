@@ -48,13 +48,21 @@ The gap is unusual: it is **not** a missing upper-vs-lower bound (generic weight
 
 ## 9. Key References
 
-- **[Foundational]** Pei Cao, Sandy Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symposium on Internet Technologies and Systems, 1997.
-- **[Foundational]** Neal E. Young. *On-Line File Caching (Landlord).* Algorithmica, 2002.
-- **[Foundational]** Elizabeth J. O'Neil, Patrick E. O'Neil, Gerhard Weikum. *The LRU-K Page Replacement Algorithm for Database Disk Buffering.* SIGMOD, 1993.
-- **[SOTA]** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018.
-- **[SOTA]** Nimrod Megiddo, Dharmendra S. Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003.
-- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Survey]** Goetz Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Pei Cao, Sandy Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symposium on Internet Technologies and Systems, 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
+- **[Foundational]** Neal E. Young. *On-Line File Caching (Landlord).* Algorithmica, 2002. — [DOI](https://doi.org/10.1007/s00453-001-0124-5)
+- **[Foundational]** Elizabeth J. O'Neil, Patrick E. O'Neil, Gerhard Weikum. *The LRU-K Page Replacement Algorithm for Database Disk Buffering.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170081)
+- **[SOTA]** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DBLP](https://dblp.org/rec/conf/icde/LeisHK018.html)
+- **[SOTA]** Nimrod Megiddo, Dharmendra S. Modha. *ARC: A Self-Tuning, Low Overhead Replacement Cache.* FAST, 2003. — [USENIX](https://www.usenix.org/conference/fast-03/arc-self-tuning-low-overhead-replacement-cache)
+- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Survey]** Goetz Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000028)
+
+## 10. Worked Example
+
+Take a B-tree with fan-out $F=100$ and height $4$: 1 root, 100 internal nodes, $10^4$ leaves, plus $10^6$ heap pages. Each point lookup touches a root-to-leaf path (4 index pages) then 1 heap page.
+
+**Pinning the top 2 levels** costs $1+100=101$ frames. Every lookup then guarantees the root and its child are resident, so the per-query *forced* I/O drops to the 2 lower index levels + heap = at most 3 misses, versus 5 under a cold cache — and crucially, a heap scan flooding the pool cannot evict those 101 pinned pages.
+
+**Weighted-caching view.** Set fetch weight $w$ by subtree coverage: root covers $10^4$ leaves, an internal node covers $100$. Under GreedyDual-Size, a page's eviction priority is $H + c/w$; with $w_{\text{root}}=10^4 \gg w_{\text{heap}}=1$, the root's credit is enormous, so it is evicted last — recovering the pinning policy automatically. With only $101$ of $\sim10^6$ frames spent, the geometric prior $\propto F^{\,\text{height}-d}$ makes pinning shallow nodes near-optimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -64,12 +64,22 @@ The positive-RA and *absorptive-recursion* corners are **closed**: provenance is
 
 ## 9. Key References
 
-- **[Foundational]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** Karvounarakis, G., Green, T.J. *Semiring-Annotated Data: Queries and Provenance.* SIGMOD Record, 2012.
-- **[SOTA]** Senellart, P., Jachiet, L., Maniu, S., Ramusat, Y. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2017.
-- **[SOTA]** Ramusat, Y., Maniu, S., Senellart, P. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT, 2021.
-- **[Survey]** Green, T.J., Tannen, V. *The Semiring Framework for Database Provenance.* PODS (tutorial), 2017.
+- **[Foundational]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1101.1110)
+- **[SOTA]** Karvounarakis, G., Green, T.J. *Semiring-Annotated Data: Queries and Provenance.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380778)
+- **[SOTA]** Senellart, P., Jachiet, L., Maniu, S., Ramusat, Y. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[SOTA]** Ramusat, Y., Maniu, S., Senellart, P. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT, 2021. — [HAL](https://inria.hal.science/hal-03140067)
+- **[Survey]** Green, T.J., Tannen, V. *The Semiring Framework for Database Provenance.* PODS (tutorial), 2017. — [DOI](https://doi.org/10.1145/3034786.3056125)
+
+## 10. Worked Example
+
+Take a graph $\text{Edge}(x,y)$ with two base tuples, annotated by provenance tokens $a,b$:
+$$\text{Edge}: \quad (1,2)\mapsto a,\qquad (2,1)\mapsto b.$$
+Compute transitive closure $\text{Path}$ via $\text{Path}(x,y) \leftarrow \text{Edge}(x,y)$; $\text{Path}(x,z)\leftarrow \text{Path}(x,y),\text{Edge}(y,z)$.
+
+In the **counting semiring** $\mathbb{N}$, the 2-cycle gives infinitely many derivations of $\text{Path}(1,2)$: $a,\ aba,\ ababa,\dots$, so its provenance is the divergent series $a + a^2b + a^3b^2 + \cdots$ — **not finitely representable** (section 5).
+
+In the **absorptive tropical semiring** (min-plus, where $a + ab = a$), each token has a cost; the least-fixpoint *collapses*. With costs $a=1, b=1$, the shortest derivation of $\text{Path}(1,2)$ is the direct edge, cost $1$; longer cyclic derivations are absorbed since $1 \le 1+1+1$. The fixpoint stabilizes after one round: $\{\text{Path}(1,2)=1,\ \text{Path}(2,1)=1,\ \text{Path}(1,1)=2,\ \text{Path}(2,2)=2\}$, computed in PTIME. This contrast — divergence in $\mathbb{N}$ vs. finite convergence under absorption — is exactly the boundary in section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

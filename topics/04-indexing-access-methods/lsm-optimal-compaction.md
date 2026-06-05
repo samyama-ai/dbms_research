@@ -45,12 +45,22 @@ Closed-form optimality exists **within** $(T, K, Z, \text{filter bits})$ familie
 - Workload-drift detection with bounded re-tuning cost.
 
 ## 9. Key References
-- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree-Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[SOTA]** S. Sarkar, et al. *Lethe: A Tunable Delete-Aware LSM Engine.* SIGMOD, 2020.
-- **[SOTA]** A. Huynh, et al. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022.
-- **[Survey]** C. Luo, M. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020.
+- **[Foundational]** P. O'Neil, E. Cheng, D. Gawlick, E. O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** N. Dayan, M. Athanassoulis, S. Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** N. Dayan, S. Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree-Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** S. Sarkar, et al. *Lethe: A Tunable Delete-Aware LSM Engine.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389757)
+- **[SOTA]** A. Huynh, et al. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2110.13801)
+- **[Survey]** C. Luo, M. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+
+## 10. Worked Example
+
+Take size ratio $T=4$, buffer $B=2$ entries, data $N=32$ entries, so $L=\log_T(N/B)=\log_4 16=2$ levels below the buffer.
+
+**Leveling** keeps one run per level: write amp $W=O(T\cdot L)=4\cdot 2=8$ (each entry is re-merged up to $T$ times per level). A point lookup probes $L=2$ runs, but every run's Bloom filter is checked — worst case $O(L)$ I/O.
+
+**Tiering** keeps up to $T$ runs per level before merging: write amp drops to $W=O(L)=2$, but a lookup now probes $T\cdot L=8$ runs.
+
+**Monkey's twist:** with a fixed filter budget, set per-level false-positive rates $p_i$ proportional to level size rather than uniform. With uniform $p=0.01$ across $L=2$ levels, expected wasted probes $\approx \sum p_i = 0.02$. Reallocating bits to make deeper (larger) levels have *lower* $p_i$ minimizes $\sum p_i$ subject to total bits — driving expected lookup I/O toward $O(1)$. The Fluid LSM continuum then tunes the merge greediness $(K,Z)$ to slide along the $W$-vs-lookup Pareto frontier between these two extremes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

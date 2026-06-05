@@ -55,11 +55,20 @@ Encoding-aware plan optimization is **NP-hard**, inheriting hardness from join-o
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Engineering Bulletin, 1995.
-- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[SOTA]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* PVLDB, 2011.
-- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Engineering Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[SOTA]** Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* PVLDB, 2011. — [DOI](https://doi.org/10.14778/2002938.2002940)
+- **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+
+## 10. Worked Example
+
+Query: `SELECT region, SUM(sales) FROM T GROUP BY region`, where `region` is dictionary-encoded (codes 0..49) and `sales` is FOR/bit-packed. Two candidate plans, both costed with encoding as a physical property (§2):
+
+- **Plan A (encoding-aware):** group-by hashes the integer *codes* directly, deferring the dictionary lookup to one final decode of $\le 50$ group keys. Cost $\approx z$ scan + $50$ decodes.
+- **Plan B (decode-first):** an enforcer decodes `region` to strings up front, then hashes wide string keys. Cost $\approx z$ scan + $n$ decodes + wider hashing.
+
+With $n = 10^7$ rows, Plan A does $\sim 50$ decodes vs Plan B's $\sim 10^7$ — a $10^5\times$ gap. The optimizer only finds Plan A if "dictionary-coded" is tracked as an *interesting encoding* and the group-by is modeled as encoding-preserving (the §6 property-tracking gap). Adding the encoding axis multiplies the property lattice by the number $E$ of interesting encodings, preserving the NP-hardness of plan search (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

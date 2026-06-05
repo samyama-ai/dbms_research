@@ -41,12 +41,22 @@ The makespan-scheduling gap (Graham's $2$ vs. NP-hardness) is essentially closed
 - Energy/contention-aware scheduling on many-core and NUMA hardware.
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Graham, R. L. *Bounds on Multiprocessing Timing Anomalies.* SIAM J. Applied Math, 1969.
-- **[Foundational]** Bernstein, P. A., Hadzilacos, V. & Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[SOTA]** Graefe, G. *Instant Recovery for Data Center Savings.* ACM SIGMOD Record, 2015 (and the instant-recovery line, Graefe, Guy, Sauer).
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[Survey]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS / VLDB-J line, 2017–2018.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H. & Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Graham, R. L. *Bounds on Multiprocessing Timing Anomalies.* SIAM J. Applied Math, 1969. — [DOI](https://doi.org/10.1137/0117039)
+- **[Foundational]** Bernstein, P. A., Hadzilacos, V. & Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[SOTA]** Graefe, G. *Instant Recovery for Data Center Savings.* ACM SIGMOD Record, 2015 (and the instant-recovery line, Graefe, Guy, Sauer). — [DOI](https://doi.org/10.1145/2814710.2814716)
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[Survey]** Sauer, C., Graefe, G. & Härder, T. *Instant Restore After a Media Failure.* ADBIS / VLDB-J line, 2017–2018. — [DOI](https://doi.org/10.1007/978-3-319-66917-5_21) · [arXiv](https://arxiv.org/abs/1702.08042)
+
+## 10. Worked Example
+
+A redo log holds 12 records touching pages $\{P_1,\dots,P_4\}$. Same-page records must replay in LSN order; disjoint pages are independent. Suppose the per-page chains are: $P_1$ has 6 records, $P_2$ has 3, $P_3$ has 2, $P_4$ has 1. Total work $C_1 = 12$; the critical path is the longest single-page chain, $C_\infty = 6$ (the hot page $P_1$).
+
+Parallelism is $C_1/C_\infty = 12/6 = 2$ — so even with $p=100$ cores, speedup caps near $2\times$. Greedy list scheduling on $p=4$ workers gives makespan
+
+$$C_p \le \frac{C_1}{p} + C_\infty = \frac{12}{4} + 6 = 9,$$
+
+versus serial $12$ — a modest gain throttled by the hot page, not by core count ($\max(C_1/p, C_\infty)=\max(3,6)=6$ is the floor). To go faster you must shrink $C_\infty$: switch $P_1$ to *logical/command* replay so its 6 physical writes become, say, 2 commutative key-level ops, dropping $C_\infty$ to $2$ and lifting parallelism to $6$. That is exactly the dependency-extraction-vs-overhead tradeoff at the frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

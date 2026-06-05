@@ -1,6 +1,7 @@
 # Reconfiguration Without Quorum Stalls
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/reconfiguration-without-stalls` · **Status:** open
+> **Verification note:** The SMART reference's author/title were corrected in §9 — the EuroSys 2006 paper is *The SMART Way to Migrate Replicated Stateful Services* by Lorch, Adya, Bolosky et al. (not Alvisi).
 
 ## 1. Problem Statement
 A replicated state machine must change its membership (add/remove replicas, move shards, replace failed nodes) while remaining **safe** (no two configurations decide conflicting values for the same slot) and **live** (commands keep committing). Classical reconfiguration either (a) stops the world — drains in-flight commands, installs the new configuration, resumes (Raft's joint-consensus and single-server change both involve careful sequencing), or (b) uses an auxiliary mechanism (Vertical Paxos, an external configuration master) that can itself stall.
@@ -35,11 +36,21 @@ Directions: decoupling configuration management from the data path (Matchmaker P
 - Reconfiguration that composes safely with flexible/weighted quorums and geo-placement.
 
 ## 9. Key References
-- **[Foundational]** Leslie Lamport, Dahlia Malkhi, Lidong Zhou. *Reconfiguring a State Machine.* SIGACT News / PODC, 2010.
-- **[Foundational]** Marcos K. Aguilera, Idit Keidar, Dahlia Malkhi, Alexander Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011.
-- **[SOTA]** Diego Ongaro, John Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** Michael Whittaker et al. *Matchmaker Paxos: A Reconfigurable Consensus Protocol.* JSys / 2020.
-- **[Foundational]** Lorenzo Alvisi et al. *SMART: A Technique for Smart Reconfiguration of Replicated State Machines.* EuroSys, 2006.
+- **[Foundational]** Leslie Lamport, Dahlia Malkhi, Lidong Zhou. *Reconfiguring a State Machine.* SIGACT News / PODC, 2010. — [DOI](https://doi.org/10.1145/1753171.1753191)
+- **[Foundational]** Marcos K. Aguilera, Idit Keidar, Dahlia Malkhi, Alexander Shraer. *Dynamic Atomic Storage Without Consensus (DynaStore).* JACM, 2011. — [DOI](https://doi.org/10.1145/1944345.1944348)
+- **[SOTA]** Diego Ongaro, John Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** Michael Whittaker et al. *Matchmaker Paxos: A Reconfigurable Consensus Protocol.* JSys / 2020. — [arXiv](https://arxiv.org/abs/2007.09468)
+- **[Foundational]** Jacob R. Lorch, Atul Adya, William J. Bolosky, Ronnie Chaiken, John R. Douceur, Jon Howell. *The SMART Way to Migrate Replicated Stateful Services.* EuroSys, 2006. — [DOI](https://doi.org/10.1145/1217935.1217946)
+
+## 10. Worked Example
+
+$\alpha$-bounded pipelining (Lamport-style stall-free activation). A Multi-Paxos log processes slots $s=1,2,\dots$ with pipeline depth $\alpha=3$ under config $C_0=\{a,b,c\}$. At slot $7$ the leader *decides* the next config $C_1=\{a,b,d\}$ (replacing crashed $c$ with $d$), as the command in slot $7$.
+
+Activation is **deferred by $\alpha$**: slots $7,8,9$ keep committing under $C_0$'s quorums (any 2 of $\{a,b,c\}$ — and $\{a,b\}$ is live), and $C_1$ activates only at slot $a^\* = 7+\alpha = 10$. So command processing never pauses: while $d$ catches up on state transfer, slots $7$–$9$ flow with **zero added rounds**.
+
+Why $\alpha$ matters: with $\alpha=0$ the leader would have to stop at slot $7$ until $C_1$ is installed and $d$ synced — a stall. With $\alpha=3$, three commands' worth of latency hides the handover.
+
+The open hazard: if the *trigger* was $c$ crashing and then $a$ also crashes during overlap, neither $C_0$ (needs 2 of $\{a,b,c\}$) nor $C_1$ (needs 2 of $\{a,b,d\}$) may form a live quorum — liveness can be lost exactly when reconfiguration is most needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

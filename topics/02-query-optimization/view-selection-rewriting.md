@@ -50,11 +50,21 @@ For the **OLAP submodular slice** the gap is essentially closed: greedy is optim
 - Verified semantic rewriting (machine-checked equivalence) to safely admit learned candidates.
 
 ## 9. Key References
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[SOTA]** Pottinger, Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB Journal, 2001.
-- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001.
-- **[SOTA]** Agrawal, Chaudhuri, Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000.
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [ACM](https://dl.acm.org/doi/10.1145/800105.803397)
+- **[Foundational]** Harinarayan, Rajaraman, Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [ACM](https://dl.acm.org/doi/10.1145/235968.233333)
+- **[SOTA]** Pottinger, Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100048)
+- **[Survey]** Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[SOTA]** Agrawal, Chaudhuri, Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000. — [PDF](https://www.vldb.org/conf/2000/P496.pdf)
+
+## 10. Worked Example
+
+**Greedy cube view selection (HRU).** A 2-dimensional cube has a lattice of 4 views with these row counts (= query cost to scan): `ALL`=1, `Part`=20, `Supplier`=80, `PartSupplier`(base)=600. Any view answers a query iff it is an ancestor; benefit of materializing $v$ = (rows saved per descendant that now uses $v$ instead of its cheapest materialized ancestor). The base `PartSupplier` is always materialized. Budget: pick **1** extra view.
+
+Compute marginal benefit over the baseline (everything reads the 600-row base):
+- `Part` (cost 20): serves `Part` and `ALL`, each saving $600-20=580$, total $\mathbf{1160}$.
+- `Supplier` (cost 80): serves `Supplier`+`ALL`, saving $(600-80)\cdot2 = \mathbf{1040}$.
+
+Greedy picks `Part` (1160). Because the benefit function is **monotone submodular**, greedy is within $1-1/e\approx0.63$ of the optimal subset (Nemhauser–Wolsey–Fisher; HRU). Here greedy is in fact optimal for $k=1$. Add per-view *maintenance* cost or SPJ views and submodularity is lost (§6), so the $0.63$ guarantee no longer holds — the open general case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

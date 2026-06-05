@@ -30,11 +30,23 @@ Directions: learning-augmented stratification using workload-prediction models w
 Provable regret bounds for online stratum redesign; minimax-optimal multi-column strata under bounded workload shift; unifying stratified design with sketches for high-cardinality group-by; budget-sharing across many tables in a schema.
 
 ## 9. Key References
-- **[Foundational]** Neyman. *On the Two Different Aspects of the Representative Method.* J. Royal Statistical Society, 1934.
-- **[Foundational]** Acharya, Gibbons, Poosala. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD 2000.
-- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB.* EuroSys 2013.
-- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016.
-- **[Foundational]** Feige. *A Threshold of ln n for Approximating Set Cover.* J. ACM, 1998.
+- **[Foundational]** Neyman. *On the Two Different Aspects of the Representative Method.* J. Royal Statistical Society, 1934. — [DOI](https://doi.org/10.2307/2342192)
+- **[Foundational]** Acharya, Gibbons, Poosala. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD 2000. — [DOI](https://doi.org/10.1145/342009.335450)
+- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB.* EuroSys 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DBLP](https://dblp.org/rec/conf/sigmod/DingHCC016.html)
+- **[Foundational]** Feige. *A Threshold of ln n for Approximating Set Cover.* J. ACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+
+## 10. Worked Example
+
+Suppose $T$ has $L=2$ strata with sizes $N_1=900$, $N_2=100$ and in-stratum standard deviations $\sigma_1=2$, $\sigma_2=20$ (stratum 2 is small but volatile). Budget $B=100$ sample rows.
+
+**Proportional allocation** ($n_\ell\propto N_\ell$) gives $n_1=90,\,n_2=10$. The variance of the total estimate is
+$$\textstyle\sum_\ell N_\ell^2\sigma_\ell^2/n_\ell = \tfrac{900^2\cdot4}{90}+\tfrac{100^2\cdot400}{10}=36{,}000+400{,}000=436{,}000.$$
+
+**Neyman allocation** ($n_\ell\propto N_\ell\sigma_\ell$): weights $900\cdot2=1800$ and $100\cdot20=2000$, sum $3800$, so $n_1=\lfloor100\cdot1800/3800\rfloor=47$, $n_2=53$. Variance:
+$$\tfrac{900^2\cdot4}{47}+\tfrac{100^2\cdot400}{53}\approx68{,}900+75{,}500=144{,}400.$$
+
+Neyman cuts variance by $3\times$ by shifting samples toward the high-$\sigma$ stratum — exactly $n_\ell\propto N_\ell\sigma_\ell$. The *open* part: had the workload predicate hit only stratum 2's rare subpopulation, even this design under-samples it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

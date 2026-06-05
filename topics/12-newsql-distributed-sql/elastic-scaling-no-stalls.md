@@ -40,11 +40,23 @@ Directions: disaggregated/shared-storage architectures (Aurora, Neon, AlloyDB) t
 - Disaggregated-storage designs where elasticity never touches transaction ownership.
 
 ## 9. Key References
-- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014.
-- **[SOTA]** Elmore, Arora, Taft, Pavlo, Agrawal, El Abbadi. *Squall: Fine-Grained Live Reconfiguration for Partitioned Main Memory Databases.* SIGMOD, 2015.
-- **[SOTA]** Elmore, Das, Agrawal, El Abbadi. *Zephyr: Live Migration in Shared Nothing Databases for Elastic Cloud Platforms.* SIGMOD, 2011.
-- **[SOTA]** Taft et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020.
-- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
+- **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
+- **[SOTA]** Elmore, Arora, Taft, Pavlo, Agrawal, El Abbadi. *Squall: Fine-Grained Live Reconfiguration for Partitioned Main Memory Databases.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2723726)
+- **[SOTA]** Elmore, Das, Agrawal, El Abbadi. *Zephyr: Live Migration in Shared Nothing Databases for Elastic Cloud Platforms.* SIGMOD, 2011. — [DOI](https://doi.org/10.1145/1989323.1989356)
+- **[SOTA]** Taft et al. *CockroachDB: The Resilient Geo-Distributed SQL Database.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3386134)
+- **[Foundational]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+
+## 10. Worked Example
+
+A 3-node cluster owns range $R_5 = [\texttt{k500}, \texttt{k600})$ on node $n_a$ (Raft leaseholder, epoch $e{=}7$). We add node $n_b$ and transfer ownership of $R_5$.
+
+Trace of a non-stalling lease handoff while transaction $T$ (reading `k540`, `k710`) is in flight:
+
+1. $n_b$ catches up via a Raft snapshot + log replay of $R_5$ ($O(|R_5|/B)$ time).
+2. $n_a$ proposes a single-server lease transfer through Raft; on commit the epoch bumps to $e{=}8$ and $n_b$ becomes leaseholder. One consensus decision — the $\Omega(1)$ critical-path round.
+3. $T$'s read of `k540` arrives at $n_a$ stamped with stale epoch $e{=}7$; $n_a$ rejects-and-forwards to $n_b$ rather than aborting. $T$ re-issues at $e{=}8$ and proceeds.
+
+The lease/epoch invariant holds throughout: exactly one valid leaseholder per epoch. The residual risk is `k710` on a *second* moving range — if both straddle $T$, worst-case the transaction record relocation can still force a retry, which is precisely why a provable zero-abort guarantee remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

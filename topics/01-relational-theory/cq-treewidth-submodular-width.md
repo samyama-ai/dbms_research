@@ -61,13 +61,19 @@ For **bounded-arity** CQs the frontier is *closed*: treewidth, via Grohe's dicho
 
 ## 9. Key References
 
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size bounds and query plans for relational joins (the AGM bound).* FOCS, 2008 / SIAM J. Computing, 2013.
-- **[Foundational]** M. Grohe. *The complexity of homomorphism and constraint satisfaction problems seen from the other side.* JACM, 2007.
-- **[SOTA]** D. Marx. *Tractable hypergraph properties for constraint satisfaction and conjunctive queries (submodular width).* JACM, 2013 (STOC 2010).
-- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case optimal join algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What do Shannon-type inequalities, submodular width, and disjunctive Datalog have to do with one another? (PANDA).* PODS, 2017.
-- **[SOTA]** C. R. Aberger, S. Tu, K. Olukotun, C. Ré. *EmptyHeaded: a relational engine for graph processing.* SIGMOD, 2017.
-- **[Survey]** D. Olteanu, M. Schleich. *Factorized databases.* SIGMOD Record, 2016.
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size bounds and query plans for relational joins (the AGM bound).* FOCS, 2008 / SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** M. Grohe. *The complexity of homomorphism and constraint satisfaction problems seen from the other side.* JACM, 2007. — [DOI](https://doi.org/10.1145/1206035.1206036)
+- **[SOTA]** D. Marx. *Tractable hypergraph properties for constraint satisfaction and conjunctive queries (submodular width).* JACM, 2013 (STOC 2010). — [DOI](https://doi.org/10.1145/2535926)
+- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case optimal join algorithms.* PODS, 2012 / JACM, 2018. — [DOI](https://doi.org/10.1145/2213556.2213565)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What do Shannon-type inequalities, submodular width, and disjunctive Datalog have to do with one another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** C. R. Aberger, S. Tu, K. Olukotun, C. Ré. *EmptyHeaded: a relational engine for graph processing.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915213)
+- **[Survey]** D. Olteanu, M. Schleich. *Factorized databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+
+## 10. Worked Example
+
+Take the **triangle** CQ $Q()\leftarrow R(x,y)\wedge S(y,z)\wedge T(z,x)$ with $|R|=|S|=|T|=N$. Its hypergraph has 3 vertices and 3 edges. A fractional edge cover assigns weight $x_e$ to each edge so every variable is covered ($\sum_{e\ni v}x_e\ge 1$); minimizing $\sum x_e$ gives $x_R=x_S=x_T=\tfrac12$, so $\rho^*=\tfrac32$. The **AGM bound** caps output at $N^{\rho^*}=N^{3/2}$, and a worst-case-optimal join (e.g. Leapfrog Triejoin) meets it in $\tilde O(N^{3/2})$ — versus the naive plan $(R\bowtie S)\bowtie T$ whose intermediate $R\bowtie S$ can blow up to $N^2$.
+
+Width measures: a single tree-decomposition node holding all of $\{x,y,z\}$ gives $\mathrm{fhw}=\rho^*=\tfrac32$. For the triangle, $\mathrm{subw}=\mathrm{fhw}=\tfrac32$, so PANDA matches WCOJ here. The gap between $\mathrm{subw}$ and $\mathrm{fhw}$ only appears for larger queries (e.g. length-$k$ cycles), where adaptively splitting the instance across *different* decompositions beats any single one — the heart of Marx's submodular-width result.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

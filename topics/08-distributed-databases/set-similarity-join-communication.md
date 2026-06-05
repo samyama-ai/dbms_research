@@ -50,12 +50,22 @@ Output-optimal MPC similarity/band joins (Yi, Tao, Hu — HKUST/CUHK); data-depe
 
 ## 9. Key References
 
-- **[Foundational]** R. Vernica, M. Carey, C. Li. *Efficient Parallel Set-Similarity Joins Using MapReduce.* SIGMOD 2010.
-- **[Foundational]** F. Afrati, A. Sarma, D. Menestrina, A. Parameswaran, J. Ullman. *Fuzzy Joins Using MapReduce.* ICDE 2012.
-- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC 1998 (LSH).
-- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity / Distance Joins.* PODS/ICDT (2019–2021).
-- **[Foundational]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013 (AGM / worst-case-optimal joins).
-- **[Lower bound]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing.* ITCS 2011.
+- **[Foundational]** R. Vernica, M. Carey, C. Li. *Efficient Parallel Set-Similarity Joins Using MapReduce.* SIGMOD 2010. — [DOI](https://doi.org/10.1145/1807167.1807222)
+- **[Foundational]** F. Afrati, A. Sarma, D. Menestrina, A. Parameswaran, J. Ullman. *Fuzzy Joins Using MapReduce.* ICDE 2012. — [DOI](https://doi.org/10.1109/ICDE.2012.66)
+- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC 1998 (LSH). — [DOI](https://doi.org/10.1145/276698.276876)
+- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity / Distance Joins.* PODS/ICDT (2019–2021). — [DOI](https://doi.org/10.1145/3311967)
+- **[Foundational]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013 (AGM / worst-case-optimal joins). — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[Lower bound]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing.* ITCS 2011. — [arXiv](https://arxiv.org/abs/0912.0250)
+
+## 10. Worked Example
+
+Jaccard self-join on three sets, threshold $\theta=0.5$: $r_1=\{a,b,c\}$, $r_2=\{a,b,d\}$, $r_3=\{x,y,z\}$.
+
+$J(r_1,r_2)=\frac{|\{a,b\}|}{|\{a,b,c,d\}|}=\frac{2}{4}=0.5\ge\theta$ — a match. $J(r_1,r_3)=0/6=0$, $J(r_2,r_3)=0$ — non-matches.
+
+A brute-force distributed scan compares all $\binom{3}{2}=3$ pairs. **MinHash-LSH** instead hashes each set with $b$ bands of $k$ rows so that the collision probability is $\approx J^k$ per row; tuning gives $\Pr[\text{bucket}]\!\ge\!p_1$ for $J\ge\theta$. With LSH exponent $\rho=\frac{\log 1/p_1}{\log 1/p_2}<1$, only candidate pairs landing in a shared bucket are shipped, so total communication is $\tilde O(N^{1+\rho}+\mathrm{OUT})$ rather than $\Theta(N^2)$. Here $r_1,r_2$ collide (shared $a,b$) and get verified; $r_3$ buckets alone.
+
+The lower bound bites the *exact* case: distinguishing $J=0.5$ from $J=0.49$ reduces to GAP-HAMMING, forcing $\Omega(N)$ communication even just to test emptiness — so no exact scheme beats $N+\mathrm{OUT}$ for all $\theta$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

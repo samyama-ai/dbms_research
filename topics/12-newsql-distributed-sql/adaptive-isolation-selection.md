@@ -110,12 +110,18 @@ thread.
 
 ## 9. Key References
 
-- **[Foundational]** Fekete. *Allocating Isolation Levels to Transactions.* PODS, 2005.
-- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[SOTA]** Beillahi, Bouajjani, Enea. *Robustness Against Transactional Causal Consistency / Snapshot Isolation.* CONCUR/CAV, 2019–2020.
-- **[SOTA]** Su, Crooks, Ding, Alvisi, Xie. *Bringing Modular Concurrency Control to the Next Level (Tebaldi).* SIGMOD, 2017.
-- **[SOTA]** Sivaramakrishnan, Kaki, Jagannathan. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015.
-- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015.
+- **[Foundational]** Fekete. *Allocating Isolation Levels to Transactions.* PODS, 2005. — [DOI](https://doi.org/10.1145/1065167.1065193)
+- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** Beillahi, Bouajjani, Enea. *Robustness Against Transactional Causal Consistency / Snapshot Isolation.* CONCUR/CAV, 2019–2020. — [arXiv](https://arxiv.org/abs/1905.08406)
+- **[SOTA]** Su, Crooks, Ding, Alvisi, Xie. *Bringing Modular Concurrency Control to the Next Level (Tebaldi).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064031)
+- **[SOTA]** Sivaramakrishnan, Kaki, Jagannathan. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015. — [DOI](https://doi.org/10.1145/2737924.2737981)
+- **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1402.2237)
+
+## 10. Worked Example
+
+Two templates over a bank table: $P$ (payment) reads `balance`, writes `balance`; $A$ (audit) reads `balance` and `limit`, writes `flag`. The static dependency graph has the SI-dangerous structure when a cycle contains two consecutive $rw$ anti-dependency edges meeting at a *pivot*. Suppose the SDG is $P \xrightarrow{rw} A \xrightarrow{rw} P$: a cycle with two consecutive anti-dependencies, so $A$ is a pivot and SI alone admits write-skew.
+
+Mixed-level fix (Fekete): promote the pivot. Run $A$ at serializable (or 2PL) and leave $P$ at SI. Cost model: SI commit $=1$ unit, serializable $=3$. With workload mix $90\%$ $P$, $10\%$ $A$, blanket-serializable cost $=3.0$; the safe mixed map costs $0.9\times1 + 0.1\times3 = 1.2$ per transaction — a $2.5\times$ saving while still serializable. Promoting $P$ instead would not break the cycle (the pivot must be promoted), illustrating why selection is not "strengthen the cheapest template."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

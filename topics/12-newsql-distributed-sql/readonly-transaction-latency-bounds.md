@@ -1,6 +1,7 @@
 # Read-only transaction latency lower bounds
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/readonly-transaction-latency-bounds` · **Status:** open
+> **Verification note:** The SNOW paper's authors are Lu, Hodsdon, Ngo, Mu, and Lloyd (OSDI 2016); the names "Kiwan, Cidon, Mahajan" in sections 2/7/9 are incorrect and the reference has been corrected.
 
 ## 1. Problem Statement
 
@@ -111,12 +112,20 @@ bounds intersect this problem.
 
 ## 9. Key References
 
-- **[Foundational]** Lu, Hodsdon, Kiwan, Cidon, Mahajan. *The SNOW Theorem and Latency-Optimal Read-Only Transactions.* OSDI, 2016.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Lloyd, Freedman, Kaminsky, Andersen. *Stronger Semantics for Low-Latency Geo-Replicated Storage (Eiger).* NSDI, 2013.
-- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
+- **[Foundational]** Lu, Hodsdon, Ngo, Mu, Lloyd. *The SNOW Theorem and Latency-Optimal Read-Only Transactions.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/lu)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Lloyd, Freedman, Kaminsky, Andersen. *Stronger Semantics for Low-Latency Geo-Replicated Storage (Eiger).* NSDI, 2013. — [USENIX](https://www.usenix.org/conference/nsdi13/technical-sessions/presentation/lloyd)
+- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+
+## 10. Worked Example
+
+Two shards hold $x$ (shard 1) and $y$ (shard 2), initially $x=y=0$. A read-write transaction $W$ does $x{:=}1,\,y{:=}1$ atomically (strictly serializable). A read-only transaction $R$ reads $\{x,y\}$ and wants all four SNOW properties.
+
+$R$ fires one parallel round: a single message to each shard, no second confirmation (**O**ne-response), and each shard replies immediately without blocking on $W$ (**N**on-blocking). Suppose $W$'s write to $x$ lands before $R$'s read on shard 1 but $W$'s write to $y$ lands *after* $R$'s read on shard 2. Then $R$ observes $x=1,\,y=0$.
+
+No serial order explains this: $R$ before $W$ requires $x=0$; $R$ after $W$ requires $y=1$. So $R$ is **not strictly serializable** (the fractured read). To repair it, a shard must either delay its reply until it knows $W$'s fate (drops **N**) or $R$ must run a second round to agree on a snapshot (drops **O**). This is exactly the SNOW wall: with a conflicting writer $W$ present, **S+N+O is unachievable** — at most three of the four hold.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

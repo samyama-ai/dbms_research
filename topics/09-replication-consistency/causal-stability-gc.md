@@ -55,12 +55,23 @@ Safety is well understood; the open gap is **quantitative and dynamic**: (1) no 
 
 ## 9. Key References
 
-- **[Foundational]** Wuu, G., Bernstein, A. *Efficient solutions to the replicated log and dictionary problems.* PODC, 1984.
-- **[SOTA]** Almeida, P. S., Shoker, A., Baquero, C. *Delta state replicated data types.* JPDC, 2018.
-- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-free Replicated Data Types.* SSS, 2011.
-- **[SOTA]** Du, J., Iorgulescu, C., Roy, A., Zwaenepoel, W. *GentleRain: Cheap and scalable causal consistency with physical clocks.* SoCC, 2014.
-- **[SOTA]** Akkoorath, D. D. et al. *Cure: Strong semantics meets high availability and low latency (Antidote).* ICDCS, 2016.
-- **[Foundational]** Chandy, K. M., Lamport, L. *Distributed snapshots: determining global states of distributed systems.* ACM TOCS, 1985.
+- **[Foundational]** Wuu, G., Bernstein, A. *Efficient solutions to the replicated log and dictionary problems.* PODC, 1984. — [ACM](https://dl.acm.org/doi/10.1145/800222.806750)
+- **[SOTA]** Almeida, P. S., Shoker, A., Baquero, C. *Delta state replicated data types.* JPDC, 2018. — [DOI](https://doi.org/10.1016/j.jpdc.2017.08.003)
+- **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[SOTA]** Du, J., Iorgulescu, C., Roy, A., Zwaenepoel, W. *GentleRain: Cheap and scalable causal consistency with physical clocks.* SoCC, 2014. — [ACM](https://dl.acm.org/doi/10.1145/2670979.2670983)
+- **[SOTA]** Akkoorath, D. D. et al. *Cure: Strong semantics meets high availability and low latency (Antidote).* ICDCS, 2016. — [DOI](https://doi.org/10.1109/ICDCS.2016.98)
+- **[Foundational]** Chandy, K. M., Lamport, L. *Distributed snapshots: determining global states of distributed systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+
+## 10. Worked Example
+
+Three replicas $R=\{A,B,C\}$. Replica $A$ writes key $x$, producing dot $(A,1)$; replica $B$ writes the same key, producing $(B,1)$. These two writes are concurrent (neither in the other's causal past). $A$ later deletes $x$, leaving a **tombstone** tagged with dependency on $(A,1)$.
+
+Version vectors after anti-entropy:
+- $V_A=[2,1,0]$, $V_B=[1,1,0]$, $V_C=[0,0,0]$ ($C$ partitioned).
+
+Is dot $(A,1)$ stable? Stable iff $V_k[A]\ge 1$ for **all** $k$. But $V_C[A]=0$, so **not stable** — the tombstone for $x$ cannot be reclaimed: if $C$ returns still holding a stale write of $x$, dropping the tombstone could resurrect $x$.
+
+The stable cut is $\min_k V_k = [\min(2,1,0),\,\min(1,1,0),\,0]=[0,0,0]$: nothing is reclaimable while $C$ lags. Once $C$ catches up to $V_C=[2,1,0]$, the cut advances to $[1,1,0]$, certifying $(A,1)$ and $(B,1)$ stable and freeing the tombstone. One straggler stalls the entire frontier — the liveness cost of clockless safety.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

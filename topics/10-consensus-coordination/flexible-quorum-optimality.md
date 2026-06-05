@@ -35,11 +35,21 @@ Directions: latency-aware quorum weighting (WHEAT-style), witness/learner replic
 - Extending the theory to weighted/Byzantine quorum systems.
 
 ## 9. Key References
-- **[Foundational]** Hector Garcia-Molina, Daniel Barbara. *How to Assign Votes in a Distributed System.* JACM, 1985.
-- **[SOTA]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016.
-- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019.
-- **[Foundational]** David Peleg, Avishai Wool. *The Availability of Quorum Systems.* Information and Computation, 1995.
-- **[SOTA]** João Sousa, Alysson Bessani. *Separating the WHEAT from the Chaff: Latency-Aware Quorums.* SRDS, 2015.
+- **[Foundational]** Hector Garcia-Molina, Daniel Barbara. *How to Assign Votes in a Distributed System.* JACM, 1985. — [DOI](https://doi.org/10.1145/4221.4223)
+- **[SOTA]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [arXiv](https://arxiv.org/abs/1608.06696)
+- **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019. — [DOI](https://doi.org/10.1109/TPDS.2019.2929793)
+- **[Foundational]** David Peleg, Avishai Wool. *The Availability of Quorum Systems.* Information and Computation, 1995. — [DOI](https://doi.org/10.1006/inco.1995.1169)
+- **[SOTA]** João Sousa, Alysson Bessani. *Separating the WHEAT from the Chaff: Latency-Aware Quorums.* SRDS, 2015. — [DOI](https://doi.org/10.1109/SRDS.2015.40)
+
+## 10. Worked Example
+
+Take $n=5$ acceptors $\{A,B,C,D,E\}$. Classic Paxos uses majority quorums of size 3 for both phases, so each write waits on 3 acceptors.
+
+Now apply Flexible Paxos with $|Q_2|=2$ (replication) and $|Q_1|=4$ (leader election). Check the size rule: $|Q_1|+|Q_2| = 4+2 = 6 > n = 5$, so cross-intersection holds — every 4-set and every 2-set share a node.
+
+Pick $Q_2=\{A,B\}$ as the fast write quorum. If the leader is co-located with $A$ and $B$ (say all in one region with $5$ ms RTT, while $C,D,E$ are $80$ ms away), commit latency drops from the majority cost $\max(5,80)=80$ ms (needs a 3rd, remote acceptor) to $\max(5,5)=5$ ms.
+
+The price: recovery now needs $|Q_1|=4$ acceptors, so the write path tolerates only $n-|Q_2| \le 3$ failures but a new leader must reach $4$ of $5$. This is exactly the Pareto trade — shrinking $Q_2$ from 3 to 2 cheapens every write but enlarges the recovery quorum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

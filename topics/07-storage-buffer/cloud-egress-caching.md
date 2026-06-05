@@ -63,12 +63,23 @@ Marked **empirically-open**. Generic generalized-caching theory supplies tight-u
 
 ## 9. Key References
 
-- **[Foundational]** Bansal, Buchbinder, Naor. *Randomized Competitive Algorithms for Generalized Caching.* SIAM J. Computing, 2012.
-- **[Foundational]** Cao, Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997.
-- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML, 2018.
-- **[SOTA]** Antoniadis, Coester, Eliáš, Polak, Simon. *Online Metric Algorithms with Untrusted Predictions.* ICML, 2020.
-- **[SOTA]** Dageville, Cruanes, Zukowski, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016.
-- **[Survey]** Karlsson, Mahalingam. *Do We Need Replacement Algorithms? Cost-Aware Caching Surveys.* (cost-aware caching literature), 2000s.
+- **[Foundational]** Bansal, Buchbinder, Naor. *Randomized Competitive Algorithms for Generalized Caching.* SIAM J. Computing, 2012. — [DOI](https://doi.org/10.1137/090779000)
+- **[Foundational]** Cao, Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
+- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML, 2018. — [DOI](https://doi.org/10.1145/3447579)
+- **[SOTA]** Antoniadis, Coester, Eliáš, Polak, Simon. *Online Metric Algorithms with Untrusted Predictions.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2003.02144)
+- **[SOTA]** Dageville, Cruanes, Zukowski, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2903741)
+- **[Survey]** Karlsson, Mahalingam. *Do We Need Replacement Algorithms? Cost-Aware Caching Surveys.* (cost-aware caching literature), 2000s. *(unverified)* — [DBLP search](https://dblp.org/search?q=cost-aware%20caching%20replacement)
+
+## 10. Worked Example
+
+Cache holds 1 object. Two objects compete, with S3-style pricing: GET fee $\$0.0004$ per 1000 requests $=\$4\times10^{-7}$/request, egress $\$0.09$/GB.
+
+- Object $X$: size $1\,$KB, accessed 100 times. Miss cost $c_X = 4\times10^{-7} + (10^{-6}\,\text{GB})(\$0.09) = 4.9\times10^{-7}$.
+- Object $Y$: size $1\,$GB, accessed 10 times. Miss cost $c_Y = 4\times10^{-7} + (1\,\text{GB})(\$0.09) = \$0.09000040$.
+
+A hit-rate-maximizing policy (LRU/LFU) favors the *frequently* accessed $X$, saving $100\times c_X \approx \$4.9\times10^{-5}$. But GreedyDual-Size-Cost ranks by $\text{cost}/\text{size}$ or total cost saved: caching $Y$ for its 10 accesses saves $10\times c_Y \approx \$0.90$ — over **18,000$\times$ more dollars** despite fewer hits.
+
+This is exactly why classic (Belady/LRU) hit-rate objectives are *wrong* under egress billing: the miss-cost vector $c_i$ is heterogeneous, the offline optimum is the min-cost-flow solution (not furthest-in-future), and generalized caching's $O(\log k)$ bound is the relevant guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

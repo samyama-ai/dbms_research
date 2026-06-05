@@ -42,13 +42,31 @@ For the core single-pair operators (sorted and hashed), bounds are **closed**: $
 
 ## 9. Key References
 
-- **[Foundational]** Dayal, Goodman, Katz. *An Extended Relational Algebra with Control over Duplicate Elimination.* PODS 1982.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA 2007.
-- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010.
-- **[SOTA]** Barbay, Kenyon. *Adaptive Intersection and t-Threshold Problems.* SODA 2002.
-- **[SOTA]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA 2000.
-- **[SOTA]** Lemire, Boytsov, Kurz et al. *Roaring Bitmaps / SIMD set intersection.* Software: Practice & Experience, 2016+.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases* (bag semantics chapters). Addison-Wesley, 1995.
+- **[Foundational]** Dayal, Goodman, Katz. *An Extended Relational Algebra with Control over Duplicate Elimination.* PODS 1982. — [DOI](https://doi.org/10.1145/588111.588132)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA 2007. — [DMTCS](https://dmtcs.episciences.org/3545)
+- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Barbay, Kenyon. *Adaptive Intersection and t-Threshold Problems.* SODA 2002. — [DBLP](https://dblp.org/rec/conf/soda/BarbayK02.html)
+- **[SOTA]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA 2000. — [DBLP](https://dblp.org/rec/conf/soda/DemaineLM00.html)
+- **[SOTA]** Lemire, Boytsov, Kurz et al. *Roaring Bitmaps / SIMD set intersection.* Software: Practice & Experience, 2016+. — [DOI](https://doi.org/10.1002/spe.2326)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases* (bag semantics chapters). Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Two bags over $U=\{a,b,c,d\}$ with multiplicities $m_A=\{a{:}3,\,b{:}1,\,c{:}2\}$ and
+$m_B=\{a{:}1,\,c{:}5,\,d{:}4\}$.
+
+- **`INTERSECT ALL`** ($\min$): $a{:}\min(3,1){=}1$, $c{:}\min(2,5){=}2$; $b,d$ drop (other side $0$). Result $\{a{:}1,\,c{:}2\}$.
+- **`UNION ALL`** (sum): $\{a{:}4,\,b{:}1,\,c{:}7,\,d{:}4\}$.
+- **`EXCEPT ALL`** $A\setminus B$ (truncated minus): $a{:}\max(0,3{-}1){=}2$, $b{:}1$, $c{:}\max(0,2{-}5){=}0$. Result $\{a{:}2,\,b{:}1\}$.
+
+Algorithm: hash the smaller bag $A$ (3 distinct keys) into a counter table, then probe $B$'s
+keys and apply the per-key arithmetic — $O(|A|+|B|)$ expected time, $O(\min)$ space, matching
+the section-4 upper bound.
+
+Set semantics differs: `INTERSECT` (`DISTINCT`) ignores counts, returning support
+$\{a,c\}$. Note idempotence fails for bags — $A \cup_{\text{bag}} A$ doubles every
+multiplicity rather than returning $A$ — which is exactly why multiset rewriting is subtler
+than Boolean set algebra.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

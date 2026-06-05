@@ -46,12 +46,23 @@ Directions: **composition with target dependencies** and with **mappings beyond 
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS 2004 / TODS, 2005.
-- **[Foundational]** A. Nash, P. Bernstein, S. Melnik. *Composition of mappings given by embedded dependencies.* PODS 2005 / TODS, 2007.
-- **[SOTA]** M. Arenas, J. Pérez, J. Reutter, C. Riveros. *Foundations of Schema Mapping Management.* PODS, 2010.
-- **[SOTA]** I. Feinerer, R. Pichler, E. Sallinger, V. Savenkov. *On the Undecidability of the Equivalence of Second-Order Tuple Generating Dependencies.* Information Systems, 2015.
-- **[Survey]** P. A. Bernstein, S. Melnik. *Model Management 2.0: Manipulating Richer Mappings.* SIGMOD, 2007.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005.
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS 2004 / TODS, 2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[Foundational]** A. Nash, P. Bernstein, S. Melnik. *Composition of mappings given by embedded dependencies.* PODS 2005 / TODS, 2007. — [DOI](https://doi.org/10.1145/1206049.1206053)
+- **[SOTA]** M. Arenas, J. Pérez, J. Reutter, C. Riveros. *Foundations of Schema Mapping Management.* PODS, 2010. — [DBLP](https://dblp.org/rec/conf/pods/ArenasPRR10.html)
+- **[SOTA]** I. Feinerer, R. Pichler, E. Sallinger, V. Savenkov. *On the Undecidability of the Equivalence of Second-Order Tuple Generating Dependencies.* Information Systems, 2015. — [DOI](https://doi.org/10.1016/j.is.2014.09.003)
+- **[Survey]** P. A. Bernstein, S. Melnik. *Model Management 2.0: Manipulating Richer Mappings.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247482)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+Let $\mathbf{S}_1$ have $\mathrm{Emp}(e)$, $\mathbf{S}_2$ have $\mathrm{Mgr}(e,m)$, $\mathbf{S}_3$ have $\mathrm{Self}(m)$.
+
+- $M_{12}$: $\;\mathrm{Emp}(e) \to \exists m\, \mathrm{Mgr}(e,m)\;$ (every employee gets some manager).
+- $M_{23}$: $\;\mathrm{Mgr}(e,m) \to \mathrm{Self}(m)\;$ (managers appear in $\mathrm{Self}$).
+
+Composing, the existential $m$ from step 1 must flow into step 3. No s-t TGD over $\{\mathrm{Emp}\}\to\{\mathrm{Self}\}$ captures this without naming the witness, but an **SO tgd** does:
+$$\exists f\, \forall e\, \big( \mathrm{Emp}(e) \to \mathrm{Self}(f(e)) \big).$$
+Here $f$ is the Skolem function "manager-of." On instance $I = \{\mathrm{Emp}(a)\}$: chase $M_{12}$ gives $\mathrm{Mgr}(a, N_1)$ (null $N_1$); chase $M_{23}$ gives $\mathrm{Self}(N_1)$. The SO tgd produces $\mathrm{Self}(f(a))$ — same up to renaming $f(a)\mapsto N_1$. This is the canonical witness that GLAV is *not* closed under composition: the function symbol $f$ is irremovable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

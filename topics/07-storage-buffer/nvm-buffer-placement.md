@@ -44,12 +44,22 @@ For the *single* NVM-cache tier the $\Theta(\log k)$ randomized bound is essenti
 - Benchmarks that separate placement quality from raw device latency, so policies generalize across NVM/CXL/future media.
 
 ## 9. Key References
-- **[Foundational]** Blelloch, Fineman, Gibbons, Gu, Shun. *Sorting with Asymmetric Read and Write Costs.* SPAA, 2015 (journal 2018).
-- **[Foundational]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[SOTA]** Zhou, Arulraj, Pavlo, Cohen. *Spitfire: A Three-Tier Buffer Manager for Volatile and Non-Volatile Memory.* SIGMOD, 2021.
-- **[SOTA]** Kimura. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015.
-- **[SOTA]** Benson, Makait, Rabl. *Viper: An Efficient Hybrid PMem-DRAM Key-Value Store.* VLDB, 2021.
-- **[Survey]** Oukid, Lehner et al. *Data Management on Non-Volatile Memory: A Perspective.* (DaMoN / tutorial line), 2017.
+- **[Foundational]** Blelloch, Fineman, Gibbons, Gu, Shun. *Sorting with Asymmetric Read and Write Costs.* SPAA, 2015 (journal 2018). — [arXiv](https://arxiv.org/abs/1603.03505)
+- **[Foundational]** Bansal, Buchbinder, Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[SOTA]** Zhou, Arulraj, Pavlo, Cohen. *Spitfire: A Three-Tier Buffer Manager for Volatile and Non-Volatile Memory.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452819)
+- **[SOTA]** Kimura. *FOEDUS: OLTP Engine for a Thousand Cores and NVRAM.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2746480)
+- **[SOTA]** Benson, Makait, Rabl. *Viper: An Efficient Hybrid PMem-DRAM Key-Value Store.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3461535.3461543)
+- **[Survey]** Oukid, Lehner et al. *Data Management on Non-Volatile Memory: A Perspective.* (DaMoN / tutorial line), 2017. — [DOI](https://doi.org/10.1007/s13222-018-0301-1)
+
+## 10. Worked Example
+
+DRAM ($T_0$, 1 frame), NVM ($T_1$, 1 frame), disk ($T_2$, unbounded). Costs per op: DRAM read/write $=1/1$; NVM read $r_1=2$, write $w_1=8$ (asymmetry $\omega=4$); disk read $=20$; migration DRAM↔NVM $=3$. Access trace on a single hot page $p$: **R, W, R, W, W** (read-heavy then write-heavy).
+
+**Policy A — keep $p$ in NVM** (no DRAM copy): cost $=r_1+w_1+r_1+w_1+w_1 = 2+8+2+8+8 = 28$.
+
+**Policy B — promote $p$ to DRAM after first read** (pay one migration, then serve from DRAM, write back once at end): $r_1$ (first read from NVM, 2) $+\,3$ (migrate to DRAM) $+\,1+1+1+1$ (DRAM R/W/W/W) $+\,8$ (one write-back to NVM at eviction) $= 2+3+4+8 = 17$.
+
+Policy B wins ($17 < 28$) because DRAM absorbs the **expensive NVM writes** ($w_1=8$ each): paying a fixed migration of 3 avoids three 8-cost writes. The crossover depends on $\omega$ — if NVM writes were cheap ($w_1=r_1=2$), Policy A would cost $10$ and migration wouldn't pay off. This write-asymmetry is exactly what classical $k$-competitive paging ignores.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

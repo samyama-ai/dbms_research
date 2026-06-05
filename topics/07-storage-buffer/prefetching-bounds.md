@@ -50,12 +50,22 @@ Offline is well-understood (optimal single-disk, approximable parallel). The **o
 A tight lookahead–stall tradeoff theory; learning-augmented prefetching with provable robustness; joint prefetch+eviction+placement guarantees in multi-tier hierarchies; bandwidth-aware online bounds; integration with query plans (semantic prefetching of index/scan pages from the optimizer's knowledge).
 
 ## 9. Key References
-- **[Foundational]** P. Cao, E. Felten, A. Karlin, K. Li. *A Study of Integrated Prefetching and Caching Strategies.* SIGMETRICS 1995.
-- **[Foundational]** T. Kimbrel, A. Karlin. *Near-Optimal Parallel Prefetching and Caching.* SIAM J. Comput., 2000.
-- **[SOTA]** S. Albers, N. Garg, S. Leonardi. *Minimizing Stall Time in Single and Parallel Disk Systems.* JACM, 2000.
-- **[SOTA]** H. A. Maruf, M. Chowdhury. *Effectively Prefetching Remote Memory with Leap.* USENIX ATC 2020.
-- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Survey]** S. Mittal. *A Survey of Recent Prefetching Techniques for Processor Caches.* ACM Computing Surveys, 2016.
+- **[Foundational]** P. Cao, E. Felten, A. Karlin, K. Li. *A Study of Integrated Prefetching and Caching Strategies.* SIGMETRICS 1995. — [DOI](https://doi.org/10.1145/223586.223608)
+- **[Foundational]** T. Kimbrel, A. Karlin. *Near-Optimal Parallel Prefetching and Caching.* SIAM J. Comput., 2000. — [DOI](https://doi.org/10.1137/S0097539797326976)
+- **[SOTA]** S. Albers, N. Garg, S. Leonardi. *Minimizing Stall Time in Single and Parallel Disk Systems.* JACM, 2000. — [DOI](https://doi.org/10.1145/355541.355542)
+- **[SOTA]** H. A. Maruf, M. Chowdhury. *Effectively Prefetching Remote Memory with Leap.* USENIX ATC 2020. — [USENIX](https://www.usenix.org/conference/atc20/presentation/al-maruf)
+- **[Foundational]** A. Aggarwal, J. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Survey]** S. Mittal. *A Survey of Recent Prefetching Techniques for Processor Caches.* ACM Computing Surveys, 2016. — [DOI](https://doi.org/10.1145/2907071)
+
+## 10. Worked Example
+
+Single disk, fetch latency $F=3$ time units, per-page compute $=1$ unit, cache $k=2$. Demand sequence $\langle A, B, C, A, B, C\rangle$, all initially absent.
+
+**Demand paging** (no prefetch): each first touch stalls $F=3$. Pages $A,B,C$ don't all fit in $k=2$, so after $A,B$ resident, $C$ evicts $A$; the second $A$ misses again, etc. Stall $\approx 6 \times 3 = 18$ before counting cache thrash.
+
+**Aggressive prefetch** (Cao et al.): start fetching $A$ at $t=0$; while $A$ fetches, also begin $B$. Compute on $A$ (1 unit) overlaps the in-flight fetch of $B$. Issuing each fetch $F=3$ units ahead of demand hides the full latency — once the pipeline fills, stall per page $\to 0$ for the prefetched stream, so total stall $\approx F$ (the unavoidable startup) $= 3$.
+
+This $18 \to 3$ gap is the latency-hiding win. The catch from section 5: with cache $k=2 < 3$ distinct pages and *zero useful lookahead*, an adversary reorders requests so no prefetch arrives in time — demand paging becomes optimal, and the online stall ratio degrades toward the $\Omega(k)$ paging bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,12 +42,22 @@ Active directions: (1) **Conditional MPC lower bounds** tying sorting/order-by t
 
 ## 9. Key References
 
-- **[Foundational]** Goodrich. *Communication-Efficient Parallel Sorting.* SIAM J. Computing, 1999.
-- **[Foundational]** Roughgarden, Vassilvitskii, Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* SPAA 2016 / JACM 2018.
-- **[SOTA]** Hu, Tao, et al. *Minimal MapReduce Algorithms.* SIGMOD 2013.
-- **[SOTA]** Tao, Lin, Xiao. *Minimal MPC / Output-Sensitive Sorting and Joins.* PODS, 2013–2020 line of work.
-- **[Foundational]** O'Malley. *TeraByte Sort on Apache Hadoop (TeraSort).* Technical report, 2008.
-- **[Survey]** Im, Moseley, Sun, et al. *Massively Parallel Computation: Algorithms and Lower Bounds.* (survey lectures / SIGMOD Record), ~2019–2023.
+- **[Foundational]** Goodrich. *Communication-Efficient Parallel Sorting.* SIAM J. Computing, 1999. — [ACM](https://dl.acm.org/doi/10.5555/333115.333120)
+- **[Foundational]** Roughgarden, Vassilvitskii, Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* SPAA 2016 / JACM 2018. — [DOI](https://doi.org/10.1145/3232536)
+- **[SOTA]** Tao, Lin, Xiao. *Minimal MapReduce Algorithms.* SIGMOD 2013. — [DOI](https://doi.org/10.1145/2463676.2463719)
+- **[SOTA]** Tao, Lin, Xiao. *Minimal MPC / Output-Sensitive Sorting and Joins.* PODS, 2013–2020 line of work. — [DBLP search](https://dblp.org/search?q=minimal+MPC+output-sensitive+sorting+joins)
+- **[Foundational]** O'Malley. *TeraByte Sort on Apache Hadoop (TeraSort).* Technical report, 2008. — [PDF](https://sortbenchmark.org/YahooHadoop.pdf)
+- **[Survey]** Im, Moseley, Sun, et al. *Massively Parallel Computation: Algorithms and Lower Bounds.* (survey lectures / SIGMOD Record), ~2019–2023. *(unverified)*
+
+## 10. Worked Example
+
+**Round count at $L=N^\epsilon$.** Sample-based MPC sort needs $r = \lceil \log_L N \rceil = \lceil 1/\epsilon \rceil$ rounds. Take $N = 10^{12}$ tuples on $p = 1000$ machines, each holding $L = N/p = 10^9$ words. Then
+
+$$\epsilon = \frac{\log L}{\log N} = \frac{\log 10^9}{\log 10^{12}} = \frac{9}{12} = 0.75,\qquad r = \lceil 1/\epsilon\rceil = \lceil 1.33\rceil = 2.$$
+
+So 2 rounds suffice — matching the TeraSort pipeline (sample-shuffle, then range-partition + local sort). **Splitter step:** to cut $N$ into $p=1000$ balanced buckets, sample $\Theta(p\log N) \approx 1000 \cdot 40 = 4\times10^4$ keys, sort them locally, and pick every $(s/p)$-th as a splitter; Chernoff bounds give each bucket size $\le (1+o(1))N/p$ w.h.p.
+
+The open part: this $O(1/\epsilon)$ upper bound is matched by a lower bound **only** in the restricted tuple-routing MPC model. In general MPC (machines compute arbitrary functions), no unconditional $\omega(1)$-round lower bound is known — the gap lives precisely here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

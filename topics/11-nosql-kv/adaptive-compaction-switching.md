@@ -57,12 +57,20 @@ Active directions: RL/learned policies that detect drift and re-tune online (Idr
 
 ## 9. Key References
 
-- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD 2018.
-- **[SOTA]** Andy Huynh, Harshal Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB 2022.
-- **[Foundational]** Manos Athanassoulis, Michael S. Kester, Lukas M. Maas, Radu Stoica, Stratos Idreos, Anastasia Ailamaki, Mark Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT 2016.
-- **[Foundational]** Anna R. Karlin, Mark S. Manasse, Lyle A. McGeoch, Susan Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental / MTS).* Algorithmica, 1994.
-- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
+- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Andy Huynh, Harshal Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB 2022. — [arXiv](https://arxiv.org/abs/2110.13801)
+- **[Foundational]** Manos Athanassoulis, Michael S. Kester, Lukas M. Maas, Radu Stoica, Stratos Idreos, Anastasia Ailamaki, Mark Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT 2016. — [PDF](https://openproceedings.org/2016/conf/edbt/paper-12.pdf)
+- **[Foundational]** Anna R. Karlin, Mark S. Manasse, Lyle A. McGeoch, Susan Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental / MTS).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
+- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+
+## 10. Worked Example
+
+A store runs **tiered** during a write-heavy ingest, then the workload flips read-heavy, making **leveled** preferable. Staying tiered costs an extra $r = 4$ units/s of read amplification; the one-time switch (full merge to leveled) costs $C = 30$ units. This is exactly **ski-rental**: "rent" (stay tiered, pay $r$/s) vs. "buy" (switch, pay $C$ once).
+
+The deterministic 2-competitive rule: switch once accumulated extra cost reaches $C$, i.e. at $t^\* = C/r = 30/4 = 7.5$s. If the read-heavy phase actually lasts only $5$s, the optimal offline choice was *never switch* (cost $5\times4 = 20 < 30$); our rule also never reaches $7.5$s, so it pays $20$ — optimal here. If the phase lasts forever, offline buys immediately ($30$); our rule pays $7.5\times4 = 30$ renting, then $30$ to buy $= 60 = 2\times30$, hitting the 2-competitive bound exactly.
+
+Separately, the *transition* itself is not free: re-sorting a tiered level of size $N_i$ into one leveled run costs $\Theta(N_i/B)$ I/Os, dominated by the largest level — the $\Omega(N/B)$ floor (Aggarwal–Vitter).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

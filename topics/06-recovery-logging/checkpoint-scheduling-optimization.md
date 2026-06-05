@@ -47,11 +47,19 @@ The single-knob, Poisson-failure case is closed (Young–Daly). The realistic ca
 - Unified treatment with instant recovery and with replication-bandwidth-limited durability.
 
 ## 9. Key References
-- **[Foundational]** Young, J. W. *A First Order Approximation to the Optimum Checkpoint Interval.* Communications of the ACM, 1974.
-- **[Foundational]** Daly, J. T. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006.
-- **[Foundational]** Mohan, C. et al. *ARIES (fuzzy checkpointing).* ACM TODS, 1992.
-- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992.
-- **[SOTA]** Pavlo, A. et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** Young, J. W. *A First Order Approximation to the Optimum Checkpoint Interval.* Communications of the ACM, 1974. — [DOI](https://doi.org/10.1145/361147.361115)
+- **[Foundational]** Daly, J. T. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
+- **[Foundational]** Mohan, C. et al. *ARIES (fuzzy checkpointing).* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** Pavlo, A. et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+Apply the **Young–Daly** rule. A checkpoint costs $C = 20\,\text{s}$ to flush, and the system's mean time between failures is $\mu = 5\,\text{hours} = 18{,}000\,\text{s}$. The first-order optimum interval is
+$$\tau^\star \approx \sqrt{2C\mu} = \sqrt{2\times 20\times 18{,}000} = \sqrt{720{,}000} \approx 849\,\text{s} \approx 14\,\text{min}.$$
+Checkpointing every $\sim$14 min minimizes wasted work. The expected overhead fraction is $\approx \sqrt{2C/\mu} = \sqrt{40/18{,}000} \approx 0.047$, i.e. about **4.7%** of useful work lost to checkpoint I/O plus re-execution.
+
+Contrast two naive choices: checkpointing every $60\,\text{s}$ pays $C/\tau = 20/60 = 33\%$ overhead in flush cost alone — far worse. Checkpointing every $2\,\text{hours} = 7200\,\text{s}$ risks replaying up to $\sim$1 hour of redo on a crash (expected lost work $\approx \tau/2 = 3600\,\text{s}$), blowing any RTO. The $\sqrt{2C\mu}$ point balances these. Databases then add the wrinkle that recovery time tracks *redo volume* $\int\text{write-rate}\,dt$, not wall-clock $\tau$, so a write burst tightens the effective interval — the empirically-open part.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -49,13 +49,32 @@ Upper bound is one-to-two wide-area RTTs; lower bounds prove $\ge1$ RTT generica
 - Energy/latency trade-offs and tail-latency (not just worst-case) lower bounds.
 
 ## 9. Key References
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** H. Attiya, J. Welch. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002.
-- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** I. Moraru, D. Andersen, M. Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** S. Lee et al. *Exploiting Commutativity For Practical Fast Replication (CURP).* NSDI, 2019.
-- **[Foundational]** C. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** H. Attiya, J. Welch. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994. — [DOI](https://doi.org/10.1145/176575.176576)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** I. Moraru, D. Andersen, M. Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2517350)
+- **[SOTA]** S. J. Park, J. Ousterhout. *Exploiting Commutativity For Practical Fast Replication (CURP).* NSDI, 2019. — [USENIX](https://www.usenix.org/conference/nsdi19/presentation/park)
+- **[Foundational]** C. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+
+## 10. Worked Example
+
+Three regions $\{1,2,3\}$ with one-way delays (ms): $d_{12}=30$, $d_{13}=40$, $d_{23}=70$.
+A write-read transaction is coordinated from region 1, tolerating $f=1$ crash, so it needs a
+majority quorum of size $\lceil(3+1)/2\rceil = 2$.
+
+**One round trip.** From region 1 the nearest quorum is $\{1,2\}$ (region 1 is local, region 2
+costs the round trip), so $\text{RTT} = 2d_{12} = 60$ ms.
+
+**Strictly-serializable commit (2 wide RTTs).** Paxos-replicate the prepare, then 2PC-commit:
+the critical path is $\approx 2 \times 60 = 120$ ms, matching the conjectured
+$L^* = \Theta(\text{WPR}\cdot\min_i\max_{j\in Q} d_{ij})$ with $\text{WPR}=2$.
+
+**Read-only with synchronized clocks.** A snapshot read at a leaseholder waits out the clock
+uncertainty $\varepsilon$ (TrueTime-style) instead of a round trip: if $\varepsilon = 7$ ms the
+read commits in $\approx 7$ ms locally — $\text{WPR}=0$ extra cross-region trips. The
+$60$-vs-$120$-vs-$7$ ms gap is precisely the open question of whether that second wide RTT is
+fundamental for read-write commits.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -47,11 +47,21 @@ Threads: adversarially-robust / "resizable" learned hashing with worst-case fall
 - Hardware-conscious (SIMD/​bucketized) variants preserving the guarantees.
 
 ## 9. Key References
-- **[Foundational]** Pagh, Rodler. *Cuckoo Hashing.* ESA, 2001 / J. Algorithms 2004.
-- **[Foundational]** Pătraşcu, Thorup. *The Power of Simple Tabulation Hashing.* STOC, 2011.
-- **[SOTA]** Athanassoulis, Kester, Maas, Stoica, Idreos, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[Survey]** Raman, Raman, Rao. *Succinct Indexable Dictionaries.* ACM TALG, 2007.
+- **[Foundational]** Pagh, Rodler. *Cuckoo Hashing.* ESA, 2001 / J. Algorithms 2004. — [DOI](https://doi.org/10.1007/3-540-44676-1_10)
+- **[Foundational]** Pătraşcu, Thorup. *The Power of Simple Tabulation Hashing.* STOC, 2011. — [arXiv](https://arxiv.org/abs/1011.5200)
+- **[SOTA]** Athanassoulis, Kester, Maas, Stoica, Idreos, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42)
+- **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[Survey]** Raman, Raman, Rao. *Succinct Indexable Dictionaries.* ACM TALG, 2007. — [DOI](https://doi.org/10.1145/1290672.1290680)
+
+## 10. Worked Example
+
+Consider $n = 8$ keys queried under Zipf skew, inserted into $m = 10$ chained slots. Suppose key $A$ is "hot" (query frequency $0.5$) and lands in a slot that, by bad luck, holds a chain of length 4; the other 7 keys sit in chains of length 1, each queried with total frequency $0.5/7 \approx 0.071$.
+
+Unweighted mean chain length is $1 + \alpha = 1 + 8/10 = 1.8$ probes — looks fine. But the **query-weighted** cost is
+$$0.5 \cdot 4 + 0.5 \cdot 1 = 2.5 \text{ probes},$$
+dominated entirely by the one hot key in a long chain. This is the skew effect from section 2: the mean understates real latency because queries concentrate on the tail of the load distribution.
+
+A frequency-aware fix moves $A$ to the head of its chain (or to its own short chain), cutting its cost to 1 probe and the weighted cost to $0.5\cdot1 + 0.5\cdot1 = 1.0$ — at the memory cost of tracking frequencies, exactly the Read-vs-Memory tension the RUM conjecture predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

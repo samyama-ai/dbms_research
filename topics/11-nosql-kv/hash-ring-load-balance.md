@@ -37,12 +37,22 @@ Active: minimal-memory schemes (AnchorHash, DxHash, **MementoHash**) pushing tow
 - Dynamic schemes with worst-case (not just expected) guarantees under continuous churn.
 
 ## 9. Key References
-- **[Foundational]** D. Karger, E. Lehman, T. Leighton, R. Panigrahy, M. Levine, D. Lewin. *Consistent Hashing and Random Trees.* STOC, 1997.
-- **[Foundational]** M. Mitzenmacher. *The Power of Two Choices in Randomized Load Balancing.* IEEE TPDS, 2001.
-- **[SOTA]** V. Mirrokni, M. Thorup, M. Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA, 2018.
-- **[SOTA]** B. Appleton, M. O'Reilly. *Multi-probe Consistent Hashing.* arXiv:1505.00062, 2015.
-- **[SOTA]** J. Lamping, E. Veach. *A Fast, Minimal Memory, Consistent Hash Algorithm (Jump Hash).* arXiv:1406.2294, 2014.
-- **[SOTA]** G. Mendelson, S. Vargaftik, K. Barabash, D. H. Lorenz, I. Keslassy, A. Orda. *AnchorHash: A Scalable Consistent Hash.* IEEE/ACM ToN, 2021.
+- **[Foundational]** D. Karger, E. Lehman, T. Leighton, R. Panigrahy, M. Levine, D. Lewin. *Consistent Hashing and Random Trees.* STOC, 1997. — [DOI](https://doi.org/10.1145/258533.258660)
+- **[Foundational]** M. Mitzenmacher. *The Power of Two Choices in Randomized Load Balancing.* IEEE TPDS, 2001. — [DOI](https://doi.org/10.1109/71.963420)
+- **[SOTA]** V. Mirrokni, M. Thorup, M. Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA, 2018. — [arXiv](https://arxiv.org/abs/1608.01350)
+- **[SOTA]** B. Appleton, M. O'Reilly. *Multi-probe Consistent Hashing.* arXiv:1505.00062, 2015. — [arXiv](https://arxiv.org/abs/1505.00062)
+- **[SOTA]** J. Lamping, E. Veach. *A Fast, Minimal Memory, Consistent Hash Algorithm (Jump Hash).* arXiv:1406.2294, 2014. — [arXiv](https://arxiv.org/abs/1406.2294)
+- **[SOTA]** G. Mendelson, S. Vargaftik, K. Barabash, D. H. Lorenz, I. Keslassy, A. Orda. *AnchorHash: A Scalable Consistent Hash.* IEEE/ACM ToN, 2021. — [arXiv](https://arxiv.org/abs/1812.09674)
+
+## 10. Worked Example
+
+Take $m=4$ servers, $n=1000$ keys, target balance $(1+\varepsilon)$ with $\varepsilon = 0.2$.
+
+**One point per server.** Loads track arc lengths of a random 4-way circle partition; the busiest arc can be far above the mean $n/m = 250$. The theory says $\max\text{load} = \Theta(\tfrac{n}{m}\log m)$, here $\propto 250\cdot\log 4$ — imbalance of order $2\times$ is common, so one node may hold $\sim 500$ keys.
+
+**Virtual nodes.** Plug into $\frac{\max\text{load}}{n/m} = 1 + O\!\big(\sqrt{\tfrac{\log m}{v}}\big)$. To hit $1+\varepsilon=1.2$ we need $\sqrt{\log m / v} \lesssim 0.2$, i.e. $v \gtrsim \tfrac{\log 4}{0.04} \approx \tfrac{1.386}{0.04} \approx 35$ points/server, matching $v=\Theta(\varepsilon^{-2}\log m)$. Total ring points $mv \approx 140$, and a server join/leave moves only $\approx n/m = 250$ keys ($1/m$ of the data).
+
+**Bounded-load CH** instead caps every server at $\lceil 1.2\cdot 250\rceil = 300$ keys, forwarding overflow clockwise, moving $O(1/\varepsilon^2)\approx 25$ keys per update — the balance/disruption tradeoff in action.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

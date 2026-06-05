@@ -40,12 +40,22 @@ Remote/disaggregated shuffle services are an active systems area: Apache Celebor
 - Shuffle designs exploiting CXL/RDMA disaggregated memory rather than object storage.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* Communications of the ACM, 1988.
-- **[Foundational]** M. Frigo, C. Leiserson, H. Prokop, S. Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[SOTA]** M. Shen et al. *Magnet: Push-based Shuffle Service for Large-scale Data Processing.* VLDB, 2020.
-- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020.
-- **[SOTA]** M. Perron et al. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020.
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* Communications of the ACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** M. Frigo, C. Leiserson, H. Prokop, S. Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[SOTA]** M. Shen et al. *Magnet: Push-based Shuffle Service for Large-scale Data Processing.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415558)
+- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1912.00937)
+- **[SOTA]** M. Perron et al. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1911.11727)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017. — [DOI](https://doi.org/10.1145/3125644)
+
+## 10. Worked Example
+
+Take $m = 1000$ mappers and $r = 1000$ reducers shuffling $N = 1\text{ TB}$ through S3. Suppose pricing is $\alpha = \$0.0004$ per 1000 PUT/GET requests and $\beta$ for bytes (egress free within-region).
+
+**Fine-grained** (each mapper writes one object per reducer): $\#\text{ops} = m\cdot r = 10^6$ writes $+ 10^6$ reads $= 2\times10^6$ ops. Cost $\approx 2000 \times \$0.0004 = \$0.80$, and each object is only $1\text{ TB}/10^6 = 1\text{ MB}$ — small, latency-bound objects.
+
+**Coarse merged** (push to one merge service per reducer, à la Magnet): $\#\text{ops} = \Theta(m + r) = 2000$ ops, a $1000\times$ request reduction, at the cost of one extra pass over the bytes ($N$ written twice).
+
+So the request term collapses from $\Theta(mr)=10^6$ to $\Theta(m+r)=2\times10^3$. If instead we scaled reducers from $1000$ to $1500$ mid-shuffle, a decoupled logical key space (say $2^{16}$ logical partitions) makes the reassignment $O(2^{16})$ metadata updates — independent of $N$ — rather than re-reading the 1 TB.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

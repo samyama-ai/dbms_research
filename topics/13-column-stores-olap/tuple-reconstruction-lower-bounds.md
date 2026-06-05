@@ -56,11 +56,19 @@ This connects to **AGM-style output-sensitive bounds** when reconstruction is a 
 
 ## 9. Key References
 
-- **[Foundational]** Abadi, Myers, DeWitt, Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[SOTA]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005.
+- **[Foundational]** Abadi, Myers, DeWitt, Madden. *Materialization Strategies in a Column-Oriented DBMS.* ICDE, 2007. — [PDF](http://www.cs.umd.edu/~abadi/papers/abadiicde2007.pdf)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000. — [DBLP](https://dblp.uni-trier.de/rec/conf/soda/DemaineLM00.xml)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.uni-trier.de/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+
+## 10. Worked Example
+
+Take $n=8$ rows, two columns. Predicate 1 on column A yields positions $P_A=\{1,3,4,7\}$; predicate 2 on column B yields $P_B=\{3,4,6,7\}$. The result is $P_A\cap P_B=\{3,4,7\}$, so $t=3$.
+
+**Aligned (co-sorted) case:** both lists arrive sorted on the same position order. A linear merge walks both in lockstep — $|P_A|+|P_B|=8$ comparisons, $O(\sum m_i)$. To fetch the 3 surviving rows from a third column $C$ stored in that same sort order, the positions $3,4,7$ are nearly contiguous, so with block size $B=4$ we touch ~$\lceil t/B\rceil = 1$ block: $O(t/B)$ I/Os.
+
+**Permuted case:** column $C$ is stored in a different physical order, so positions $3,4,7$ map to scattered offsets $\{29,2,17\}$. Each fetch is an independent random probe — $\Omega(t)=3$ I/Os, one per tuple, with no $B$ speedup. This is the unconditional aligned-vs-permuted separation: $O(t/B)$ vs $\Omega(t)$, here $1$ vs $3$ I/Os, widening as $t$ grows.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

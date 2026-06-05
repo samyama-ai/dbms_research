@@ -41,12 +41,25 @@ The discrete grant-allocation (which operators to fully fund vs spill) is **NP-h
 - Spilling for heterogeneous tiers (NVM/CXL as a spill target cheaper than disk; links to NVM and GPU buffer problems).
 
 ## 9. Key References
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Storm, Garcia-Arellano, Lightstone, et al. *Adaptive Self-Tuning Memory in DB2 (STMM).* VLDB, 2006.
-- **[SOTA]** Neumann, Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR, 2020.
-- **[SOTA]** Graefe. *Robust Query Processing.* (tutorial/survey line), 2011.
-- **[Foundational]** Ibaraki, Katoh. *Resource Allocation Problems: Algorithmic Approaches.* MIT Press, 1988.
-- **[Survey]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Storm, Garcia-Arellano, Lightstone, et al. *Adaptive Self-Tuning Memory in DB2 (STMM).* VLDB, 2006. — [PDF](https://www.vldb.org/conf/2006/p1081-storm.pdf)
+- **[SOTA]** Neumann, Freitag. *Umbra: A Disk-Based System with In-Memory Performance.* CIDR, 2020. — [DBLP](https://dblp.org/rec/conf/cidr/NeumannF20.html)
+- **[SOTA]** Graefe. *Robust Query Processing.* (tutorial/survey line), 2011. — [Dagstuhl 10381](https://www.dagstuhl.de/10381)
+- **[Foundational]** Ibaraki, Katoh. *Resource Allocation Problems: Algorithmic Approaches.* MIT Press, 1988. — [MIT Press](https://mitpress.mit.edu/9780262090278/resource-allocation-problems/)
+- **[Survey]** Sleator, Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+
+## 10. Worked Example
+
+Memory bound $M=100$ pages. Two hash joins compete; block size $B=10$. Each operator's spill I/O is a step function of its grant $g_i$: if $g_i\ge$ its build side it stays in memory (0 I/O); else it grace-partitions, costing $2\lceil\log_{g_i/B}(N_i/g_i)\rceil\cdot N_i/B$ I/Os.
+
+- $J_1$: build side $N_1=600$ pages. Fully fit needs $g_1=60$.
+- $J_2$: build side $N_2=800$ pages. Fully fit needs $g_2=80$.
+
+Both can't fit ($60+80=140>100$). Compare:
+- Fund $J_1$ ($g_1=60$), give $J_2$ the rest ($g_2=40$): $J_2$ spills, passes $=\lceil\log_{4}(800/40)\rceil=\lceil\log_4 20\rceil=3$, cost $\approx 2\cdot3\cdot80=480$ I/Os.
+- Fund $J_2$ ($g_2=80$), $g_1=20$: $J_1$ passes $=\lceil\log_2(600/20)\rceil=\lceil\log_2 30\rceil=5$, cost $\approx 2\cdot5\cdot60=600$.
+
+Funding the *larger* operator and spilling the smaller wins (480 < 600) — the marginal-value/knapsack intuition. A static even split (50/50) spills both and does worse.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

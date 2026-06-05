@@ -47,12 +47,20 @@ Active: tightening clock uncertainty (synchronized clocks in datacenters — Sun
 
 ## 9. Key References
 
-- **[Foundational]** Douglas B. Terry, Alan J. Demers, Karin Petersen, Mike J. Spreitzer, et al. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS 1994.
-- **[Foundational]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI 2012 (TrueTime).
-- **[SOTA]** Peter Bailis, Shivaram Venkataraman, Michael J. Franklin, Joseph M. Hellerstein, Ion Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB 2012.
-- **[SOTA]** Sandeep S. Kulkarni, Murat Demirbas, Deepak Madappa, Bharadwaj Avva, Marcelo Leone. *Logical Physical Clocks (Hybrid Logical Clocks).* OPODIS 2014.
-- **[Survey]** David Bermbach, Jörn Kuhlenkamp. *Consistency in Distributed Storage Systems: An Overview of Models, Metrics and Measurement Approaches.* NETYS 2013.
-- **[SOTA]** Microsoft Azure Cosmos DB Team. *Consistency Levels and the Bounded Staleness Guarantee (TLA+ specification).* Microsoft, 2018.
+- **[Foundational]** Douglas B. Terry, Alan J. Demers, Karin Petersen, Mike J. Spreitzer, et al. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS 1994. — [DBLP](https://dblp.org/rec/conf/pdis/TerryDPSTW94.html)
+- **[Foundational]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI 2012 (TrueTime). — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Peter Bailis, Shivaram Venkataraman, Michael J. Franklin, Joseph M. Hellerstein, Ion Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
+- **[SOTA]** Sandeep S. Kulkarni, Murat Demirbas, Deepak Madappa, Bharadwaj Avva, Marcelo Leone. *Logical Physical Clocks (Hybrid Logical Clocks).* OPODIS 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[Survey]** David Bermbach, Jörn Kuhlenkamp. *Consistency in Distributed Storage Systems: An Overview of Models, Metrics and Measurement Approaches.* NETYS 2013. — [DOI](https://doi.org/10.1007/978-3-642-40148-0_13)
+- **[SOTA]** Microsoft Azure Cosmos DB Team. *Consistency Levels and the Bounded Staleness Guarantee (TLA+ specification).* Microsoft, 2018. — [GitHub](https://github.com/Azure/azure-cosmos-tla)
+
+## 10. Worked Example
+
+A client requests a **t-bounded read** with $t = 100$ ms against a local follower replica. Clocks are NTP-synchronized with uncertainty $\varepsilon = 20$ ms.
+
+The read timestamp is $t_{\text{read}} = \text{now} - t = \text{now} - 100\text{ms}$. The follower serves locally **iff** its safe-time satisfies $T_{\text{safe}}(r) \ge t_{\text{read}}$ — i.e. its applied state is final up to at least $100$ ms ago. Suppose the leader committed at real time $T_0$; the follower learns of it after replication lag $\ell = 40$ ms. So at wall-clock $T_0 + 40$, the follower can certify staleness $\le 40$ ms — well within $100$ ms — and answers without contacting the leader.
+
+But the guarantee is only *enforceable* up to clock slop: "now" on the follower may be off by $\varepsilon = 20$ ms, so the worst-case bound it can promise is $t + \Theta(\varepsilon) = 120$ ms, not $100$ ms. You **cannot** enforce a $t$ tighter than $\varepsilon$ — the information-theoretic floor. The **k-bound** ($k = 5$ versions) is clock-free: the follower just checks its version-lag counter $\le 5$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

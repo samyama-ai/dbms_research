@@ -43,12 +43,20 @@ Groups: **Suciu / Khamis / Ngo (worst-case-optimal joins, where FDs/keys shrink 
 
 ## 9. Key References
 
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC 1977.
-- **[Foundational]** Aho, Sagiv, Ullman. *Equivalences Among Relational Expressions.* SIAM J. Computing, 1979.
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017.
-- **[SOTA]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** Aho, Sagiv, Ullman. *Equivalences Among Relational Expressions.* SIAM J. Computing, 1979. — [DOI](https://doi.org/10.1137/0208017)
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+Schema: $\text{Emp}(\underline{eid}, dept)$ with key $eid$, and $\text{Dept}(\underline{did}, name)$ with key $did$, plus the foreign key $\text{Emp}.dept \subseteq \text{Dept}.did$. Query (find employee ids that have a department record):
+
+$$Q(e) \,:\!-\, \text{Emp}(e, d),\ \text{Dept}(d, n).$$
+
+Without constraints the $\text{Dept}$ atom is *not* redundant (an employee might reference a non-existent department). With the FK + key, every $d$ from $\text{Emp}.dept$ is guaranteed a matching $\text{Dept}(d,n)$, so the join cannot eliminate rows. Chase the frozen body: the IND adds nothing new beyond what the FK guarantees, and since $n$ is not in the output and $did$ is a key, the $\text{Dept}$ atom is provably joined to exactly one tuple. Homomorphism check confirms $Q \equiv_\Sigma Q'(e)\,:\!-\,\text{Emp}(e,d)$ — a 2-atom query minimized to 1 atom. This is precisely the *join-elimination* rule optimizers apply: cost drops from one join to a single scan, but only the FK+key (not set-minimization alone) licenses it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

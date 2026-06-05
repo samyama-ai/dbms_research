@@ -55,12 +55,29 @@ Active directions: **learning the quality function** (submodularity-ratio / weak
 
 ## 9. Key References
 
-- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Math. Programming, 1978.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** X. L. Dong, B. Saha, D. Srivastava. *Less is More: Selecting Sources Wisely for Integration.* PVLDB, 2013.
-- **[SOTA]** T. Rekatsinas, X. L. Dong, D. Srivastava. *Characterizing and Selecting Fresh Data Sources.* SIGMOD, 2014.
-- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* Operations Research Letters, 2004.
-- **[Survey]** X. L. Dong, D. Srivastava. *Big Data Integration.* Morgan & Claypool (Synthesis Lectures), 2015.
+- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Math. Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** X. L. Dong, B. Saha, D. Srivastava. *Less is More: Selecting Sources Wisely for Integration.* PVLDB, 2013. — [PDF](http://www.vldb.org/pvldb/vol6/p37-dong.pdf)
+- **[SOTA]** T. Rekatsinas, X. L. Dong, D. Srivastava. *Characterizing and Selecting Fresh Data Sources.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610504)
+- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Survey]** X. L. Dong, D. Srivastava. *Big Data Integration.* Morgan & Claypool (Synthesis Lectures), 2015. — [DOI](https://doi.org/10.2200/S00578ED1V01Y201404DTM040)
+
+## 10. Worked Example
+
+Four sources cover a universe of 10 entities; budget $B = 6$.
+
+| Source | Entities covered | Cost |
+|--------|------------------|------|
+| $S_1$ | $\{1,2,3,4,5,6\}$ | 4 |
+| $S_2$ | $\{4,5,6,7,8\}$ | 3 |
+| $S_3$ | $\{7,8,9\}$ | 2 |
+| $S_4$ | $\{9,10\}$ | 2 |
+
+Gain $g(T) = |\bigcup_{S\in T} S|$ (monotone submodular). **Cost-benefit greedy** picks by marginal-gain-per-cost:
+- $S_1$: $6/4 = 1.50$; $S_2$: $5/3 \approx 1.67$; $S_3$: $3/2 = 1.50$; $S_4$: $2/2 = 1.0$. Pick $S_2$ (cost 3, covers $\{4,5,6,7,8\}$).
+- Remaining budget 3. Marginals: $S_1$ adds $\{1,2,3\}$, gain $3/4=0.75$; $S_3$ adds $\{9\}$, $1/2=0.5$; $S_4$ adds $\{9,10\}$, $2/2=1.0$. Pick $S_4$ (cost 2), now covering 7 entities, budget 1 left — nothing else fits.
+
+Greedy yields $\{S_2,S_4\}$, coverage 7. The budget-feasible optimum is $\{S_1,S_2\}$ (cost 7 — infeasible) or $\{S_1,S_3\}$ (cost 6, covers $\{1..9\}=9$). Sviridenko's partial-enumeration step (seeding with the best singleton/pair, then greedy) recovers the $(1-1/e)\approx 0.63$ guarantee that plain greedy misses here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -81,12 +81,22 @@ $2^{O(n)}$ DP.
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Krishnamurthy, Boral, Zaniolo. *Optimization of Nonrecursive Queries (IKKBZ).* VLDB, 1986.
-- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995.
-- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees without Cross Products (DPccp).* VLDB, 2006.
-- **[SOTA]** Moerkotte, Neumann. *Dynamic Programming Strikes Back (DPhyp).* SIGMOD, 2008.
-- **[Survey]** Moerkotte. *Building Query Compilers.* (lecture notes / draft book), ongoing.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Krishnamurthy, Boral, Zaniolo. *Optimization of Nonrecursive Queries (IKKBZ).* VLDB, 1986. — [PDF](https://www.vldb.org/conf/1986/P128.PDF)
+- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT, 1995. — [DOI](https://doi.org/10.1007/3-540-58907-4_6)
+- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees without Cross Products (DPccp).* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
+- **[SOTA]** Moerkotte, Neumann. *Dynamic Programming Strikes Back (DPhyp).* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376672)
+- **[Survey]** Moerkotte. *Building Query Compilers.* (lecture notes / draft book), ongoing. — [PDF](https://pi3.informatik.uni-mannheim.de/~moer/querycompiler.pdf)
+
+## 10. Worked Example
+
+Chain query $R_1\!-\!R_2\!-\!R_3$ with $|R_1|{=}10,|R_2|{=}100,|R_3|{=}1000$ and join selectivities $f_{12}{=}f_{23}{=}0.01$. Compare two left-deep orders under $C_{out}$ (sum of intermediate sizes; the final result is excluded as it is fixed).
+
+Order $(R_1\bowtie R_2)\bowtie R_3$: first join $|R_1\bowtie R_2| = 10\cdot100\cdot0.01 = 10$. Intermediate cost $= 10$.
+
+Order $(R_2\bowtie R_3)\bowtie R_1$: first join $|R_2\bowtie R_3| = 100\cdot1000\cdot0.01 = 1000$. Intermediate cost $= 1000$.
+
+The first order is $100\times$ cheaper — it builds the small intermediate first. IKKBZ formalizes this: each relation gets $\mathrm{rank}(R)=\frac{T(R)-1}{C(R)}$ where $T$ is the selectivity-weighted size multiplier; sorting by rank along the chain yields the optimum in $O(n^2)$ without enumerating all $n!/2$ left-deep trees. Here $R_1$'s low rank correctly places it first, matching the brute-force winner.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

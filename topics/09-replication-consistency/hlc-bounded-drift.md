@@ -38,12 +38,21 @@ Active: Demirbas/Kulkarni (Buffalo) on HLC theory and its use in distributed tra
 - Standardized "clock-bound" APIs with attested hardware uncertainty for cross-system external consistency.
 
 ## 9. Key References
-- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991.
-- **[Foundational]** Kulkarni, Demirbas, Madappa, Avva, Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Mattern. *Virtual Time and Global States of Distributed Systems.* 1989.
-- **[SOTA]** Almeida, Baquero, Fonte. *Interval Tree Clocks.* OPODIS, 2008.
+- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** Charron-Bost. *Concerning the Size of Logical Clocks in Distributed Systems.* Information Processing Letters, 1991. — [DOI](https://doi.org/10.1016/0020-0190(91)90055-M)
+- **[Foundational]** Kulkarni, Demirbas, Madappa, Avva, Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DBLP](https://dblp.org/rec/conf/opodis/KulkarniDMAL14.html)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[Foundational]** Mattern. *Virtual Time and Global States of Distributed Systems.* 1989. — [DBLP search](https://dblp.org/search?q=Mattern+Virtual+Time+and+Global+States+of+Distributed+Systems)
+- **[SOTA]** Almeida, Baquero, Fonte. *Interval Tree Clocks.* OPODIS, 2008. — [DOI](https://doi.org/10.1007/978-3-540-92221-6_18)
+
+## 10. Worked Example
+
+Two nodes $A$, $B$; HLC pair is $(l, c)$ where $l$ tracks physical time, $c$ is the counter. NTP skew $\epsilon$ keeps each node's $pt$ within bound. Trace a send/receive:
+
+1. At $A$, $pt_A = 10$. Local event: $l_A = \max(l_A, pt_A) = 10$, $c_A = 0$. Stamp $(10, 0)$. Send message $m$.
+2. At $B$, $pt_B = 8$ (its clock lags). Receive $m$ with stamp $(10,0)$. HLC rule: $l_B = \max(l_B^{old}, l_m, pt_B) = \max(7, 10, 8) = 10$. Since $l_B = l_m$, bump counter: $c_B = \max(c_m, c_B^{old}) + 1 = 1$. Stamp $(10, 1)$.
+
+Causality holds: $(10,0) < (10,1)$, so $\mathsf{ts}(\text{send}) < \mathsf{ts}(\text{recv})$. Drift stays bounded: $l_B = 10$ while $pt_B = 8$, a gap of $2 \le \epsilon$. The counter $c=1$ absorbed the case where logical order outpaced the lagging physical clock — and it resets to $0$ once $pt$ advances past $10$, so $c$ stays $O(1)$ rather than growing unboundedly like a Lamport clock under bursts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -103,11 +103,21 @@ open.
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM 1988.
-- **[SOTA]** Graefe. *A Generalized Join Algorithm.* BTW 2011.
-- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000.
-- **[SOTA]** Müller, Buchholz, et al. *Adaptive Aggregation on Modern Hardware.* (hash/sort runtime switching) — see also Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Graefe. *A Generalized Join Algorithm.* BTW 2011. — [DBLP](https://dblp.org/rec/conf/btw/Graefe11.html)
+- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[SOTA]** Müller, Buchholz, et al. *Adaptive Aggregation on Modern Hardware.* (hash/sort runtime switching) *(unverified; the canonical hash-as-sort switching paper is Müller, Sanders, Lacurie, Lehner, Färber. Cache-Efficient Aggregation: Hashing Is Sorting. SIGMOD 2015 — [DOI](https://doi.org/10.1145/2723372.2747644))* — see also Schuh, Chen, Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2882917)
+
+## 10. Worked Example
+
+Group-by-aggregate over $n=10^8$ rows. Cache holds $M=4{\times}10^6$ entries.
+
+**Case A — few groups.** $g=10^3$ distinct keys. The hash table (1000 slots) fits entirely in L2, so hash-aggregation runs at $\Theta(n)$ with essentially zero capacity misses: $\approx 10^8$ probes, all cache hits. Sort-aggregation would pay $\Theta(n\log n)\approx 10^8\times 27\approx 2.7{\times}10^9$ comparisons. **Hash wins.**
+
+**Case B — many groups, skew hidden in the suffix.** $g=5{\times}10^7$ distinct keys, $g\gg M$. Now every hash probe misses cache: $\approx 10^8$ random misses at $\sim 100$ cycles $=10^{10}$ cycles. Sort-aggregation stays cache-friendly with external-memory I/Os $\Theta(\tfrac{n}{B}\log_{M/B}\tfrac{n}{B})$. **Sort wins.**
+
+The trap: a policy that commits after sampling the first $10^6$ rows — which happen to contain only $200$ distinct keys — would pick hashing, then be ambushed when the remaining suffix explodes $g$ past $M$. This adversarial concealment of the $\ell_2$ moment $F_2=\sum_j f_j^2$ is exactly why a statistics-free online policy cannot guarantee small competitive ratio.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

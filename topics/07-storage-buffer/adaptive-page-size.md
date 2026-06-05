@@ -64,12 +64,23 @@ For a *fixed, known* workload the static optimum is computable exactly, so the g
 
 ## 9. Key References
 
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems (External-Memory / DAM model).* CACM, 1988.
-- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[SOTA]** Leis, Haubenschild, Alhomssi, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018.
-- **[SOTA]** Levandoski, Lomet, Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
-- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[Survey]** Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems (External-Memory / DAM model).* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[SOTA]** Leis, Haubenschild, Alhomssi, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00026)
+- **[SOTA]** Levandoski, Lomet, Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[Survey]** Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000028)
+
+## 10. Worked Example
+
+Take a device with per-I/O latency $\alpha = 100\,\mu s$ and per-byte transfer $\beta = 0.01\,\mu s$/byte (100 MB/s). Records are $r = 128$ bytes; the table has $N = 10^6$ records. Consider only the point-read amplification term $\rho_p(\alpha + \beta B)$ versus the scan/metadata term $\delta\,Nr/B$, with $\rho_p = 1$ and metadata weight $\delta = 0.05\,\mu s$/page.
+
+Try two candidate page sizes:
+
+- $B = 4{,}096$: read-amp cost $= 100 + 0.01\cdot 4096 = 140.96\,\mu s$; metadata $= 0.05 \cdot (10^6\cdot128)/4096 = 1562\,\mu s$.
+- $B = 65{,}536$: read-amp cost $= 100 + 0.01\cdot 65536 = 755.36\,\mu s$; metadata $= 0.05 \cdot (10^6\cdot128)/65536 \approx 97.7\,\mu s$.
+
+Balancing the two terms, the interior optimum sits near $B^\star = \sqrt{\delta N r/(\rho_p\beta)} = \sqrt{0.05\cdot1.28\times10^8/0.01} \approx 25{,}300$ bytes. So neither 4 KB nor 64 KB is optimal here; a $\sim$24 KB page minimizes the sum, illustrating the quasi-convex $B^\star$ governed by $\alpha/\beta$ and the access mix.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

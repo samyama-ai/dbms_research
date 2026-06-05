@@ -58,12 +58,22 @@ Integrity and completeness are **essentially closed**: $O(\log n)$ proofs match 
 
 ## 9. Key References
 
-- **[Foundational]** Blum, M., Evans, W., Gemmell, P., Kannan, S., Naor, M. *Checking the Correctness of Memories.* FOCS, 1991.
-- **[Foundational]** Li, F., Hadjieleftheriou, M., Kollios, G., Reyzin, L. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD/VLDB, 2006.
-- **[SOTA]** Arasu, A. et al. *Concerto: A High Concurrency Key-Value Store with Integrity.* SIGMOD, 2017.
-- **[Foundational]** Mazières, D., Shasha, D. *Building Secure File Systems out of Byzantine Storage (SUNDR / fork consistency).* PODC, 2002.
-- **[SOTA]** Melara, M. et al. *CONIKS: Bringing Key Transparency to End Users.* USENIX Security, 2015.
-- **[Survey]** Tamassia, R. *Authenticated Data Structures.* ESA, 2003.
+- **[Foundational]** Blum, M., Evans, W., Gemmell, P., Kannan, S., Naor, M. *Checking the Correctness of Memories.* FOCS, 1991. — [DBLP](https://dblp.org/rec/conf/focs/BlumEGKN91.html)
+- **[Foundational]** Li, F., Hadjieleftheriou, M., Kollios, G., Reyzin, L. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD/VLDB, 2006. — [DOI](https://doi.org/10.1145/1142473.1142488)
+- **[SOTA]** Arasu, A. et al. *Concerto: A High Concurrency Key-Value Store with Integrity.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064030)
+- **[Foundational]** Mazières, D., Shasha, D. *Building Secure File Systems out of Byzantine Storage (SUNDR / fork consistency).* PODC, 2002. — [DOI](https://doi.org/10.1145/571825.571840)
+- **[SOTA]** Melara, M. et al. *CONIKS: Bringing Key Transparency to End Users.* USENIX Security, 2015. — [USENIX](https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/melara)
+- **[Survey]** Tamassia, R. *Authenticated Data Structures.* ESA, 2003. — [DOI](https://doi.org/10.1007/978-3-540-39658-1_2)
+
+## 10. Worked Example
+
+A Merkle tree over $n=4$ sorted KV leaves $L_1{=}(k_1,v_1),\dots,L_4$. Hash each leaf, then combine: $a=H(H(L_1)\,\|\,H(L_2))$, $b=H(H(L_3)\,\|\,H(L_4))$, root $R=H(a\,\|\,b)$. The server signs $R$.
+
+**Membership proof for $k_3$.** Server returns $v_3$ plus the proof path $\pi=\{H(L_4),\,a\}$ — just $\log_2 4 = 2$ sibling hashes. Client recomputes $H(L_3)$, then $b'=H(H(L_3)\,\|\,H(L_4))$, then $R'=H(a\,\|\,b')$, and accepts iff $R'=R$. Cost: $O(\log n)$, matching the §5 memory-checking bound.
+
+**Completeness for range $[k_2,k_3]$.** Returning $v_2,v_3$ plus boundary proofs that $k_1<k_2$ and $k_3<k_4$ are the adjacent leaves shows nothing was omitted.
+
+**Freshness gap (§6).** If a writer commits $v_3'$, the new root is $R^{\text{new}}$. A rollback server replays the old signed $R$ with valid path $\pi$ — cryptographically perfect, yet stale. No proof in $\pi$ alone exposes this: detection needs client-side monotonic state or an external anchor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

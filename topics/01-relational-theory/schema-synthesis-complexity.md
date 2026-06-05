@@ -75,12 +75,24 @@ For **3NF**, the gap is closed: polynomial, lossless, dependency-preserving synt
 
 ## 9. Key References
 
-- **[Foundational]** Bernstein, P. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976.
-- **[Foundational]** Beeri, C., Bernstein, P. *Computational Problems Related to the Design of Normal Form Relational Schemas.* ACM TODS, 1979.
-- **[Foundational]** Lucchesi, C., Osborn, S. *Candidate Keys for Relations.* J. Comput. Syst. Sci., 1978.
-- **[SOTA]** Papenbrock, T., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016.
-- **[SOTA]** Kolahi, S., Libkin, L. *An Information-Theoretic Analysis of Worst-Case Redundancy in Database Design.* ACM TODS, 2010.
-- **[Survey]** Maier, D. *The Theory of Relational Databases.* Computer Science Press, 1983.
+- **[Foundational]** Bernstein, P. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320493.320489)
+- **[Foundational]** Beeri, C., Bernstein, P. *Computational Problems Related to the Design of Normal Form Relational Schemas.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320066)
+- **[Foundational]** Lucchesi, C., Osborn, S. *Candidate Keys for Relations.* J. Comput. Syst. Sci., 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
+- **[SOTA]** Papenbrock, T., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[SOTA]** Kolahi, S., Libkin, L. *An Information-Theoretic Analysis of Worst-Case Redundancy in Database Design.* ACM TODS, 2010. — [DOI](https://doi.org/10.1145/1670243.1670248)
+- **[Survey]** Maier, D. *The Theory of Relational Databases.* Computer Science Press, 1983. — [author PDF](https://web.cecs.pdx.edu/~maier/TheoryBook/TRD.html)
+
+## 10. Worked Example
+
+Schema $R(U)$ with $U=\{\text{Sno},\text{Sname},\text{City},\text{Pno},\text{Qty}\}$ and FDs
+$$\Sigma=\{\ \text{Sno}\to\text{Sname},\ \text{City};\quad \text{Sno},\text{Pno}\to\text{Qty}\ \}.$$
+The only key is $\{\text{Sno},\text{Pno}\}$ (its closure $\{\text{Sno},\text{Pno}\}^+ = U$).
+
+**Bernstein 3NF synthesis** on the minimal cover gives one relation per FD group:
+$$R_1(\underline{\text{Sno}},\text{Sname},\text{City}),\qquad R_2(\underline{\text{Sno},\text{Pno}},\text{Qty}).$$
+Losslessness check on the binary split: $R_1\cap R_2=\{\text{Sno}\}$ and $\text{Sno}\to R_1\in\Sigma^+$, so the join is lossless. Both FDs are preserved ($\text{Sno}\to\text{Sname},\text{City}$ lives in $R_1$; $\text{Sno},\text{Pno}\to\text{Qty}$ in $R_2$). Each $R_i$ is already in BCNF here, so 3NF and BCNF coincide.
+
+Contrast: had we added $\text{City}\to\text{Sno}$ (cyclic FDs), a dependency-preserving BCNF may fail to exist, forcing the section-6 trade-off; but the polynomial 3NF synthesis above still succeeds — illustrating why 3NF is the "closed" corner.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

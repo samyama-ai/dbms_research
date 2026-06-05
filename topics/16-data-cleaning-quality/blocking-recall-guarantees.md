@@ -57,12 +57,23 @@ Under a clean metric assumption the gap is essentially **closed** (LSH upper bou
 
 ## 9. Key References
 
-- **[Foundational]** Hernández, Stolfo. *The Merge/Purge Problem for Large Databases (Sorted Neighborhood).* SIGMOD, 1995.
-- **[Foundational]** McCallum, Nigam, Ungar. *Efficient Clustering of High-Dimensional Data Sets with Application to Reference Matching (Canopies).* KDD, 2000.
-- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality (LSH).* STOC, 1998.
-- **[SOTA]** Papadakis, Koutrika, Palpanas, Nejdl. *Meta-Blocking: Taking Entity Resolution to the Next Level.* IEEE TKDE, 2014.
-- **[SOTA]** Thirumuruganathan et al. *DeepBlocker: Deep Learning for Blocking in Entity Matching.* PVLDB, 2021.
-- **[Survey]** Christen. *Data Matching: Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection.* Springer, 2012.
+- **[Foundational]** Hernández, Stolfo. *The Merge/Purge Problem for Large Databases (Sorted Neighborhood).* SIGMOD, 1995. — [DOI](https://doi.org/10.1145/223784.223807)
+- **[Foundational]** McCallum, Nigam, Ungar. *Efficient Clustering of High-Dimensional Data Sets with Application to Reference Matching (Canopies).* KDD, 2000. — [DOI](https://doi.org/10.1145/347090.347123)
+- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality (LSH).* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876)
+- **[SOTA]** Papadakis, Koutrika, Palpanas, Nejdl. *Meta-Blocking: Taking Entity Resolution to the Next Level.* IEEE TKDE, 2014. — [DOI](https://doi.org/10.1109/TKDE.2013.54)
+- **[SOTA]** Thirumuruganathan et al. *DeepBlocker: Deep Learning for Blocking in Entity Matching.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476294)
+- **[Survey]** Christen. *Data Matching: Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection.* Springer, 2012. — [DOI](https://doi.org/10.1007/978-3-642-31164-2)
+
+## 10. Worked Example
+
+Take MinHash LSH for Jaccard similarity. Suppose true matching pairs have similarity $s \ge \tau = 0.8$, so a single MinHash agrees with probability $p_1 = 0.8$. We want recall $\ge 1-\delta = 0.95$.
+
+Use the AND-OR construction: $L$ bands of $k$ hashes each. A pair is a candidate iff some band matches all $k$ hashes. Recall probability is
+$$1-(1-p_1^{\,k})^{L}.$$
+
+Try $k = 3$, $L = 10$: $p_1^k = 0.8^3 = 0.512$, so recall $= 1-(1-0.512)^{10} = 1-0.488^{10} \approx 1 - 0.00072 = 0.9993 \ge 0.95$. Good.
+
+Now check false-positive control: a far pair at $s = 0.3$ has $p_2 = 0.3$, collision prob $1-(1-0.3^3)^{10} = 1-(0.973)^{10} \approx 0.238$. With $n=10^5$ records, the $\binom{n}{2}\approx 5\times 10^9$ pairs shrink to roughly $0.238 \times$ that for genuinely-far pairs — still large, so one tunes $k$ up. Raising $k$ shrinks both recall and candidates; the LSH exponent $\rho = \log p_1/\log p_2 = \log 0.8/\log 0.3 \approx 0.185$ gives total cost $\tilde O(n^{1.185})$, far below $n^2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

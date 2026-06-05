@@ -63,12 +63,12 @@ For finite domains and bounded-arity constraints the *combinatorial* side is wel
 
 ## 9. Key References
 
-- **[Foundational]** Wijsen. *Database Repairing Using Updates.* ACM TODS, 2005.
-- **[Foundational]** Bohannon, Fan, Flaster, Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017.
-- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013.
-- **[SOTA]** Mahdavi, Abedjan, et al. *Raha / Baran: Configuration-Free and Few-Shot Error Detection & Correction.* SIGMOD, 2019 / VLDB, 2020.
-- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019.
+- **[Foundational]** Wijsen. *Database Repairing Using Updates.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1093382.1093385)
+- **[Foundational]** Bohannon, Fan, Flaster, Rastogi. *A Cost-Based Model and Effective Heuristic for Repairing Constraints by Value Modification.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066175)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** Geerts, Mecca, Papotti, Santoro. *The LLUNATIC Data-Cleaning Framework.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536360.2536363)
+- **[SOTA]** Mahdavi, Abedjan, et al. *Raha / Baran: Configuration-Free and Few-Shot Error Detection & Correction.* SIGMOD, 2019 / VLDB, 2020. — [Raha DOI](https://doi.org/10.1145/3299869.3324956)
+- **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019. — [DOI](https://doi.org/10.1145/3310205)
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

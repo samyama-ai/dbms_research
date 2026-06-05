@@ -40,12 +40,20 @@ Directions: learned cost models predicting hot-key drift; reinforcement-learning
 - Skew handling that avoids data movement entirely (request delegation, key replication with reconciliation).
 
 ## 9. Key References
-- **[SOTA]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** Taft, Mansour, Serafini, Duggan, Elmore, Aboulnaga, Pavlo, Stonebraker. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing Systems.* VLDB, 2014.
-- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016.
-- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014.
-- **[Foundational]** Krauthgamer, Naor, Schwartz. *Partitioning Graphs into Balanced Components.* SODA, 2009.
-- **[Foundational]** Kallman et al., Stonebraker. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008.
+- **[SOTA]** Curino, Jones, Zhang, Madden. *Schism: a Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** Taft, Mansour, Serafini, Duggan, Elmore, Aboulnaga, Pavlo, Stonebraker. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing Systems.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735514)
+- **[SOTA]** Serafini, Taft, Elmore, Pavlo, Aboulnaga, Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[SOTA]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[Foundational]** Krauthgamer, Naor, Schwartz. *Partitioning Graphs into Balanced Components.* SODA, 2009. — [DOI](https://doi.org/10.1137/1.9781611973068.102)
+- **[Foundational]** Kallman et al., Stonebraker. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1454159.1454211)
+
+## 10. Worked Example
+
+Consider 6 keys $\{a,b,c,d,e,f\}$ and $k=2$ cores. Transactions (with frequencies) form a workload graph: $T_1=\{a,b\}\times 50$, $T_2=\{b,c\}\times 40$, $T_3=\{d,e\}\times 30$, $T_4=\{e,f\}\times 20$, plus a hot cross link $T_5=\{c,d\}\times 5$.
+
+Try partition $P_1=\{a,b,c\}$, $P_2=\{d,e,f\}$. Only $T_5$ is split, so $\mathrm{cut}=5$ (5 distributed txns/sec). Loads: $P_1$ touched by $50+40=90$ accesses, $P_2$ by $30+20=50$ — imbalance $\frac{90}{70}\approx1.29$, i.e. $\varepsilon=0.29$.
+
+Now inject Zipfian access skew: key $b$ alone gets $90\%$ of traffic. Single-threaded $P_1$ now saturates while $P_2$ idles. No min-cut helps — splitting $b$'s transactions across cores would raise $\mathrm{cut}$ from 5 toward 90. This is the static-vs-dynamic tension: Clay would migrate a "clump" around $b$ (e.g. replicate the hot key), trading $O(1)$ cut increase for restored balance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

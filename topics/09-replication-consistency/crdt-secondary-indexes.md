@@ -41,12 +41,22 @@ Convergent indexing inherits the **metadata lower bounds of causal CRDTs**: Burc
 - Convergent multi-CRDT joins with formal correctness, and benchmarks vs. coordination-based indexing.
 
 ## 9. Key References
-- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011.
-- **[Foundational]** Burckhardt, Gotsman, Yang, Zawirski. *Replicated Data Types: Specification, Verification, Optimality.* POPL, 2014.
-- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018.
-- **[SOTA]** Meiklejohn, Van Roy. *Lasp: A Language for Distributed, Coordination-Free Programming.* PPDP, 2015.
-- **[SOTA]** Kaki, Priya, Sivaramakrishnan, Jagannathan. *Mergeable Replicated Data Types.* OOPSLA, 2019.
-- **[Survey]** Preguiça. *Conflict-free Replicated Data Types: An Overview.* arXiv:1806.10254, 2018.
+- **[Foundational]** Shapiro, Preguiça, Baquero, Zawirski. *Conflict-free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
+- **[Foundational]** Burckhardt, Gotsman, Yang, Zawirski. *Replicated Data Types: Specification, Verification, Optimality.* POPL, 2014. — [DOI](https://doi.org/10.1145/2578855.2535848)
+- **[SOTA]** Almeida, Shoker, Baquero. *Delta State Replicated Data Types.* JPDC, 2018. — [DOI](https://doi.org/10.1016/j.jpdc.2017.08.003)
+- **[SOTA]** Meiklejohn, Van Roy. *Lasp: A Language for Distributed, Coordination-Free Programming.* PPDP, 2015. — [DOI](https://doi.org/10.1145/2790449.2790525)
+- **[SOTA]** Kaki, Priya, Sivaramakrishnan, Jagannathan. *Mergeable Replicated Data Types.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360580)
+- **[Survey]** Preguiça. *Conflict-free Replicated Data Types: An Overview.* arXiv:1806.10254, 2018. — [arXiv](https://arxiv.org/abs/1806.10254)
+
+## 10. Worked Example
+
+Primary: an OR-Map `user → region`. We want an equality index `region → {users}`. Two replicas start with `alice → EU` (tagged by dot $a_1$); the index holds `EU → {(alice, a_1)}`.
+
+Concurrently:
+- Replica 1 updates `alice → US` (new dot $a_2$, observing-remove of $a_1$): index becomes `US → {(alice, a_2)}`.
+- Replica 2 updates `alice → APAC` (new dot $a_3$, observing $a_1$): index becomes `APAC → {(alice, a_3)}`.
+
+Merge. The OR-Map's add-wins resolution keeps both live dots $\{a_2, a_3\}$ since neither observed the other; $a_1$ is removed by both. Index join gives `US → {(alice, a_2)}`, `APAC → {(alice, a_3)}` — and crucially **no** stale `EU` entry, because the homomorphism $\iota$ dropped $(EU, a_1)$ exactly when the primary dropped $a_1$. A query "users in EU" correctly returns $\emptyset$. Note the cost: each entry carries its dot ($O(u)$ metadata), illustrating the $\Omega(\text{causal context})$ lower bound — a tombstone-free index cannot resolve this concurrent re-tagging.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

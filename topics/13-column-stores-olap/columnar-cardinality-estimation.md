@@ -41,13 +41,25 @@ Active threads: **bounded-error learned estimators** that combine pessimistic AG
 - Exploiting **sort-order-induced** functional/soft dependencies for free.
 
 ## 9. Key References
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound).
-- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* PVLDB, 2020.
-- **[SOTA]** Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* PVLDB, 2021.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019.
-- **[Survey]** Leis et al. *How Good Are Query Optimizers, Really?* PVLDB, 2015.
-- **[Foundational]** Flajolet et al. *HyperLogLog.* AofA, 2007.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* PVLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[SOTA]** Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2006.08109)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Survey]** Leis et al. *How Good Are Query Optimizers, Really?* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** Flajolet et al. *HyperLogLog.* AofA, 2007. — [HAL](https://inria.hal.science/hal-00406166v1)
+
+## 10. Worked Example
+
+A table has $N=10{,}000$ rows. Two columns: `city` ($\sigma_{\text{city=NYC}}=0.10$) and `weather` ($\sigma_{\text{rain}}=0.20$). A query filters `city='NYC' AND weather='rain'`.
+
+**Independence estimate:** $\hat\sigma = 0.10 \times 0.20 = 0.02$, so $\hat n = 200$.
+
+But suppose NYC is rainy and these columns are correlated: the *true* conditional is $P(\text{rain}\mid\text{NYC})=0.5$, giving true $n = 10{,}000 \times 0.10 \times 0.5 = 500$.
+
+**q-error:** $\max(\hat n/n,\, n/\hat n) = \max(200/500,\,500/200) = 2.5$. A plan tuned for $200$ rows may pick the wrong build side or under-size a hash table.
+
+**AGM-style upper bound** for the join's worst case is computable and *guaranteed* not to under-estimate, but here would over-shoot. The columnar fix: if the table is *sorted by* `city`, all NYC rows cluster in a contiguous block, and a zone-map can store the joint min/max — exposing the correlation directly. This illustrates the open gap: single-column synopses (two marginals) lose the joint $P(\text{NYC},\text{rain})$, yielding unbounded q-error under adversarial correlation, while layout-aware joint stats recover it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

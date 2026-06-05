@@ -54,12 +54,22 @@ Directions: (i) **learned/ML-guided partitioners** predicting access patterns an
 
 ## 9. Key References
 
-- **[SOTA]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** A. Pavlo, C. Curino, S. Zdonik. *Skew-Aware Automatic Database Partitioning in Shared-Nothing, Parallel OLTP Systems (Horticulture).* SIGMOD, 2012.
-- **[SOTA]** M. Serafini, R. Taft, A. Elmore, A. Pavlo, A. Aboulnaga, M. Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016.
-- **[SOTA]** R. Taft et al. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing.* VLDB, 2014.
-- **[Foundational]** S. Arora, S. Rao, U. Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* Journal of the ACM, 2009.
-- **[Foundational]** J. Gray, P. Homan, R. Obermarck, H. Korth. *A Straw Man Analysis of the Probability of Waiting and Deadlock in a Database System.* IBM RJ, 1981.
+- **[SOTA]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** A. Pavlo, C. Curino, S. Zdonik. *Skew-Aware Automatic Database Partitioning in Shared-Nothing, Parallel OLTP Systems (Horticulture).* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213844)
+- **[SOTA]** M. Serafini, R. Taft, A. Elmore, A. Pavlo, A. Aboulnaga, M. Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[SOTA]** R. Taft et al. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735514)
+- **[Foundational]** S. Arora, S. Rao, U. Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* Journal of the ACM, 2009. — [DOI](https://doi.org/10.1145/1502793.1502794)
+- **[Foundational]** J. Gray, P. Homan, R. Obermarck, H. Korth. *A Straw Man Analysis of the Probability of Waiting and Deadlock in a Database System.* IBM RJ, 1981. — [DBLP search](https://dblp.org/search?q=Straw+Man+Analysis+Probability+Waiting+Deadlock+Database)
+
+## 10. Worked Example
+
+Six data items $V=\{a,b,c,d,e,f\}$, $k=2$ nodes, balance cap $3$ items each. Four transaction hyperedges (weight = frequency):
+
+- $t_1=\{a,b\}, w{=}10$; $t_2=\{b,c\}, w{=}8$; $t_3=\{d,e\}, w{=}9$; $t_4=\{e,f\}, w{=}7$; plus one cross link $t_5=\{c,d\}, w{=}2$.
+
+Consider the partition $P_1=\{a,b,c\}$, $P_2=\{d,e,f\}$. Each part has 3 items (balance satisfied). Which hyperedges are *cut* (span both parts)? Only $t_5=\{c,d\}$ crosses, so
+$$\mathrm{cut}(\Pi)=\sum_{t\text{ cut}} w_t = w_{t_5}=2.$$
+$t_1,t_2$ live wholly in $P_1$; $t_3,t_4$ wholly in $P_2$ — they run as cheap single-partition transactions. The naive split $\{a,b,d\},\{c,e,f\}$ would instead cut $t_2,t_3,t_5$ for cost $8{+}9{+}2=19$ — nearly $10\times$ worse. This is exactly what Schism's METIS step finds: cluster co-accessed tuples to push the few cross-partition (2PC) transactions to the lowest-weight edge. The minimization is NP-hard in general (section 5), but the structure here makes the optimum obvious.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

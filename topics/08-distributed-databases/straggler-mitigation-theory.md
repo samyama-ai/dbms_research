@@ -54,12 +54,24 @@ For **exponential / shifted-exponential** service the gap is essentially **close
 
 ## 9. Key References
 
-- **[Foundational]** Jeffrey Dean, Sanjay Ghemawat. *MapReduce: Simplified Data Processing on Large Clusters.* OSDI, 2004.
-- **[Foundational]** Matei Zaharia, Andy Konwinski, Anthony D. Joseph, Randy Katz, Ion Stoica. *Improving MapReduce Performance in Heterogeneous Environments (LATE).* OSDI, 2008.
-- **[SOTA]** Kangwook Lee, Maximilian Lam, Ramtin Pedarsani, Dimitris Papailiopoulos, Kannan Ramchandran. *Speeding Up Distributed Machine Learning Using Codes.* IEEE Trans. Information Theory, 2018 (ISIT 2016).
-- **[SOTA]** Gauri Joshi, Emina Soljanin, Gregory Wornell. *Efficient Redundancy Techniques for Latency Reduction in Cloud Systems.* ACM TOMPECS, 2017.
-- **[Survey]** Kristen Gardner, Mor Harchol-Balter, Alan Scheller-Wolf, et al. *Reducing Latency via Redundant Requests: Exact Analysis.* SIGMETRICS, 2015.
-- **[SOTA]** Ganesh Ananthanarayanan et al. *Effective Straggler Mitigation: Attack of the Clones (Dolly).* NSDI, 2013.
+- **[Foundational]** Jeffrey Dean, Sanjay Ghemawat. *MapReduce: Simplified Data Processing on Large Clusters.* OSDI, 2004. — [USENIX](https://www.usenix.org/conference/osdi-04/mapreduce-simplified-data-processing-large-clusters)
+- **[Foundational]** Matei Zaharia, Andy Konwinski, Anthony D. Joseph, Randy Katz, Ion Stoica. *Improving MapReduce Performance in Heterogeneous Environments (LATE).* OSDI, 2008. — [USENIX](https://www.usenix.org/conference/osdi-08/improving-mapreduce-performance-heterogeneous-environments)
+- **[SOTA]** Kangwook Lee, Maximilian Lam, Ramtin Pedarsani, Dimitris Papailiopoulos, Kannan Ramchandran. *Speeding Up Distributed Machine Learning Using Codes.* IEEE Trans. Information Theory, 2018 (ISIT 2016). — [arXiv](https://arxiv.org/abs/1512.02673)
+- **[SOTA]** Gauri Joshi, Emina Soljanin, Gregory Wornell. *Efficient Redundancy Techniques for Latency Reduction in Cloud Systems.* ACM TOMPECS, 2017. — [DOI](https://doi.org/10.1145/3055281)
+- **[Survey]** Kristen Gardner, Mor Harchol-Balter, Alan Scheller-Wolf, et al. *Reducing Latency via Redundant Requests: Exact Analysis.* SIGMETRICS, 2015. — [DOI](https://doi.org/10.1145/2745844.2745873)
+- **[SOTA]** Ganesh Ananthanarayanan et al. *Effective Straggler Mitigation: Attack of the Clones (Dolly).* NSDI, 2013. — [USENIX](https://www.usenix.org/conference/nsdi13/technical-sessions/presentation/ananthanarayanan)
+
+## 10. Worked Example
+
+Suppose a stage needs $k=8$ useful task-results, each task's runtime is exponential with rate $\mu = 1$ (mean 1 s), and runtimes are independent.
+
+**Uncoded, no redundancy ($n=k=8$):** the stage waits for all 8, so latency is the max of 8 i.i.d. exponentials:
+$$\mathbb{E}[T_{(8)}] = \frac{1}{\mu}H_8 = 1 + \tfrac12 + \cdots + \tfrac18 \approx 2.72\text{ s}.$$
+
+**MDS-coded with $n=10$ tasks ($r=2$):** any $k=8$ of the 10 encoded results reconstruct the answer, so we wait for the 8th of 10 to finish:
+$$\mathbb{E}[T_{(8:10)}] = \frac{1}{\mu}(H_{10} - H_{10-8}) = H_{10} - H_2 \approx 2.929 - 1.5 = 1.43\text{ s}.$$
+
+Adding 25% redundancy nearly halves expected latency, and tolerates any 2 stragglers — versus naive replication (each of 8 tasks duplicated, $r=8$) for a similar tail. This matches the $\frac{1}{\mu}(H_n - H_{n-k})$ upper bound of Section 4. The lower bound bites under Pareto (heavy-tailed) service: there $\mathbb{E}[T_{(8:10)}]$ does not shrink to a constant as $n$ grows, so no fixed $r$ tames the tail.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -51,11 +51,21 @@ Active directions: log-as-a-service architectures (Aurora, Socrates, Neon, Polar
 
 ## 9. Key References
 
-- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** Amos Fiat, Richard Karp, Michael Luby, Lyle McGeoch, Daniel Sleator, Neal Young. *Competitive Paging Algorithms.* J. Algorithms, 1991.
-- **[SOTA]** Alexandre Verbitski, Anurag Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Panagiotis Antonopoulos, Alex Budovski, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
+- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** Amos Fiat, Richard Karp, Michael Luby, Lyle McGeoch, Daniel Sleator, Neal Young. *Competitive Paging Algorithms.* J. Algorithms, 1991. — [arXiv](https://arxiv.org/abs/cs/0205038)
+- **[SOTA]** Alexandre Verbitski, Anurag Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Panagiotis Antonopoulos, Alex Budovski, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+
+## 10. Worked Example
+
+Three tiers: PM ($\ell_1=0.5\,\mu s$, $b_1=10\,\text{GB/s}$, $c_1=\$5$/GB, $K_1=8\,\text{GB}$), NVMe ($\ell_2=20\,\mu s$, $b_2=3\,\text{GB/s}$, $c_2=\$0.2$/GB), object store ($\ell_3=10\,\text{ms}$, $b_3=0.5\,\text{GB/s}$, $c_3=\$0.02$/GB). Workload: $40\,\text{GB}$ of log since checkpoint.
+
+**Commit latency.** Land the durable point on PM: commit acks at $\ell_1=0.5\,\mu s$ — beating an NVMe-only design's $20\,\mu s$ by $40\times$. The durability floor $\ge\min_i\ell_i$ is met exactly.
+
+**Recovery.** Keep the recent $8\,\text{GB}$ on PM, drain the cold $32\,\text{GB}$ to object store. Replay time $= 8/10 + 32/0.5 = 0.8 + 64 = 64.8\,s$ — dominated by the slow tier. Instead keeping all $40\,\text{GB}$ on NVMe gives $40/3 \approx 13.3\,s$: recovery-aware placement trades cost for the bandwidth floor $\text{bytes}/b_m$.
+
+**Cost.** PM-only for $40\,\text{GB} = \$200$; tiered ($8$ PM $+ 32$ object) $= \$40.64$ — near-cheapest-tier cost at near-PM commit latency, exposing the recovery-vs-cost tension.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

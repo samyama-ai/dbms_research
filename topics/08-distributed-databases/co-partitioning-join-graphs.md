@@ -35,11 +35,23 @@ Active in distributed-SQL systems (Citus, CockroachDB, Spanner) on automatic co-
 - Joint optimization of co-partitioning with replication, materialized views, and drifting workloads.
 
 ## 9. Key References
-- **[Foundational]** Zilio, Rao, Lightstone, Lohman et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004.
-- **[SOTA]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Replication and Partitioning.* VLDB, 2010.
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (acyclicity, chase, dependencies).
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database* (interleaved tables / co-location). OSDI, 2012.
-- **[Survey]** Özsu, Valduriez. *Principles of Distributed Database Systems* (4th ed.). Springer, 2020.
+- **[Foundational]** Zilio, Rao, Lightstone, Lohman et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004. — [ACM](https://dl.acm.org/doi/10.5555/1316689.1316783)
+- **[SOTA]** Curino, Jones, Zhang, Madden. *Schism: A Workload-Driven Approach to Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (acyclicity, chase, dependencies). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database* (interleaved tables / co-location). OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Survey]** Özsu, Valduriez. *Principles of Distributed Database Systems* (4th ed.). Springer, 2020. — [DOI](https://doi.org/10.1007/978-3-030-26253-2)
+
+## 10. Worked Example
+
+Schema: `Customer(cid)`, `Order(oid, cid, pid)`, `Product(pid)`. Each table gets **one** partition key.
+
+Workload:
+- $Q_1$: `Order ⋈ Customer` on `cid`.
+- $Q_2$: `Order ⋈ Product` on `pid`.
+
+Build attribute-equivalence classes via union-find over join edges: $Q_1$ forces `Order.cid ≡ Customer.cid`; $Q_2$ forces `Order.pid ≡ Product.pid`. Customer must be keyed by `cid`, Product by `pid` — fine. But `Order` is asked to co-partition by **both** `cid` (for $Q_1$) and `pid` (for $Q_2$), and a single-key table can pick only one. That is a **key conflict**: no perfect single-key co-partitioning exists; one query must shuffle.
+
+Two escapes: (1) partition `Order` by `cid` (localizes $Q_1$, weighted choice if $Q_1$ is hotter), shuffling $Q_2$; or (2) **replicate** `Product` ($r$-fold) to every node so $Q_2$ joins locally regardless of `Order`'s key — turning feasibility into the bounded-replication covering variant. With a tree-structured (acyclic) join graph and no such conflict, greedy union-find propagation would have achieved full locality in near-linear time.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

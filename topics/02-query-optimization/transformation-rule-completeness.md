@@ -48,12 +48,20 @@ This problem is **genuinely open** in a strong sense: for restricted fragments (
 
 ## 9. Key References
 
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977.
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995.
-- **[SOTA]** Chu, Weiss, Suciu, et al. *Cosette / HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017.
-- **[SOTA]** Begoli, Camacho-Rodríguez, Hyde, et al. *Apache Calcite: A Foundational Framework for Optimized Query Processing.* SIGMOD, 2018.
-- **[Survey]** Baader, Nipkow. *Term Rewriting and All That.* Cambridge University Press, 1998.
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977. — [ACM](https://dl.acm.org/doi/10.1145/800105.803397)
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
+- **[SOTA]** Chu, Weiss, Suciu, et al. *Cosette / HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI / CIDR, 2017. — [ACM](https://dl.acm.org/doi/10.1145/3062341.3062348)
+- **[SOTA]** Begoli, Camacho-Rodríguez, Hyde, et al. *Apache Calcite: A Foundational Framework for Optimized Query Processing.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1802.10233)
+- **[Survey]** Baader, Nipkow. *Term Rewriting and All That.* Cambridge University Press, 1998. — [Cambridge](https://www.cambridge.org/core/books/term-rewriting-and-all-that/71768055278D0DEF4FFC74722DE0D707)
+
+## 10. Worked Example
+
+Take the **join-only** fragment with a single rule, associativity $A\bowtie(B\bowtie C)\to(A\bowtie B)\bowtie C$ plus commutativity. Start from the left-deep tree $(A\bowtie B)\bowtie C$ over 3 relations. How many distinct trees does exhaustive application generate, and does the memo terminate?
+
+The number of binary trees on $n$ leaves is $C_{n-1}$ (Catalan), and leaf orderings give $n!$ labelings; for $n=3$: $C_2\cdot 3! = 2\cdot 6 = 12$ distinct expressions. Commutativity alone is **non-terminating** as a TRS — $A\bowtie B\to B\bowtie A\to A\bowtie B$ loops — so a normalizing rewriter never halts. Optimizers instead **memoize**: each logical group (e.g. $\{A,B\}$) is stored once, deduplicated by its relation set, so the 12 expressions collapse into $2^3-1=7$ memo groups (one per non-empty subset), and closure reaches fixpoint.
+
+**Completeness check:** every one of the 12 bushy trees is reachable from any other via commutativity+associativity, so $\to^*_{\mathcal R}$ is strongly connected on $[q]$ — complete for this fragment. Add a `GROUP BY` above the join and no published rule set guarantees this property (§3) — that is the open frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

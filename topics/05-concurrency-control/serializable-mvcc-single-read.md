@@ -43,12 +43,25 @@ Directions: deterministic/Calvin-style sequencing to make version visibility pre
 - Formal competitive analysis of validation overhead.
 
 ## 9. Key References
-- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD/TODS, 2008/2009.
-- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
-- **[SOTA]** Yabandeh, Gómez Ferro. *A Critique of Snapshot Isolation (Write-Snapshot Isolation).* EuroSys, 2012.
-- **[SOTA]** Faleiro, Abadi. *Rethinking Serializable Multiversion Concurrency Control (BOHM).* VLDB, 2015.
-- **[SOTA]** Tu, Zheng, Kohler, Liskov, Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
+- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+- **[Foundational]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD/TODS, 2008/2009. — [ACM](https://dl.acm.org/doi/10.1145/1376616.1376690)
+- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.4179)
+- **[SOTA]** Yabandeh, Gómez Ferro. *A Critique of Snapshot Isolation (Write-Snapshot Isolation).* EuroSys, 2012. — [ACM](https://dl.acm.org/doi/10.1145/2168836.2168853)
+- **[SOTA]** Faleiro, Abadi. *Rethinking Serializable Multiversion Concurrency Control (BOHM).* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)
+- **[SOTA]** Tu, Zheng, Kohler, Liskov, Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+
+## 10. Worked Example
+
+Classic **write skew** under snapshot isolation with two items $x=y=0$ and constraint "keep $x+y\ge 0$":
+
+- $T_1$: snapshot at $ts=10$ reads $x_0=0,\ y_0=0$; writes $x \leftarrow -1$; commits at $ts=12$.
+- $T_2$: snapshot at $ts=11$ reads $x_0=0,\ y_0=0$; writes $y \leftarrow -1$; commits at $ts=13$.
+
+Each read resolves to **exactly one version** ($x_0$, $y_0$) — single-version reads, no chain walk. Both pass SI's write-write check (they touch disjoint items). Final state $x=-1, y=-1$ violates $x+y\ge0$: not serializable.
+
+The $MVSG$ has two rw-antidependency edges: $T_1 \xrightarrow{rw} T_2$ (T_1 read $y_0$, T_2 overwrote $y$) and $T_2 \xrightarrow{rw} T_1$ — a cycle, with two consecutive rw edges = Fekete's **dangerous structure**.
+
+To break it while keeping single-version reads, SSI tracks per-transaction `inConflict`/`outConflict` flags and aborts one transaction when both fire — that bookkeeping is precisely the "extra validation cost" the open problem asks whether we can eliminate. This tiny instance shows why fixing the snapshot to "latest committed" forces *some* anti-dependency tracking.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

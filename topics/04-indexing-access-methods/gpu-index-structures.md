@@ -34,12 +34,20 @@ Active threads: warp-cooperative dynamic trees and hash tables (Owens group, UC 
 - Energy-aware index design and multi-GPU sharding with NVLink-aware traversal.
 
 ## 9. Key References
-- **[SOTA]** S. Ashkiani, M. Farach-Colton, J. D. Owens. *A Dynamic Hash Table for the GPU (SlabHash).* IPDPS, 2018.
-- **[SOTA]** M. A. Awad, S. Ashkiani, R. Johnson, M. Farach-Colton, J. D. Owens. *Engineering a High-Performance GPU B-Tree.* PPoPP, 2019.
-- **[SOTA]** Z. Yan, Y. Lin, L. Peng, W. Zhang. *Harmonia: A High Throughput B+tree for GPUs.* PPoPP, 2019.
-- **[SOTA]** A. Kipf, R. Marcus, A. van Renen, M. Stoian, A. Kemper, T. Kraska, T. Neumann. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD, 2020.
-- **[Foundational]** M. Pătrașcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[SOTA]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
+- **[SOTA]** S. Ashkiani, M. Farach-Colton, J. D. Owens. *A Dynamic Hash Table for the GPU (SlabHash).* IPDPS, 2018. — [arXiv](https://arxiv.org/abs/1710.11246)
+- **[SOTA]** M. A. Awad, S. Ashkiani, R. Johnson, M. Farach-Colton, J. D. Owens. *Engineering a High-Performance GPU B-Tree.* PPoPP, 2019. — [DOI](https://doi.org/10.1145/3293883.3295706)
+- **[SOTA]** Z. Yan, Y. Lin, L. Peng, W. Zhang. *Harmonia: A High Throughput B+tree for GPUs.* PPoPP, 2019. — [DOI](https://doi.org/10.1145/3293883.3295704)
+- **[SOTA]** A. Kipf, R. Marcus, A. van Renen, M. Stoian, A. Kemper, T. Kraska, T. Neumann. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/2004.14541)
+- **[Foundational]** M. Pătrașcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[SOTA]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+
+## 10. Worked Example
+
+Take $n = 10^9$ sorted 4-byte keys and a batch of $q = 10^8$ point lookups on a GPU with bandwidth $\beta = 1$ TB/s and coalescing width $B = 32$ keys (128-byte transaction).
+
+A B-tree of fanout $f = B = 32$ has height $\log_{32}(10^9) = \lceil 9/\log_{10}32 \rceil = \lceil 9/1.505 \rceil = 6$ levels. So each lookup touches $\approx 6$ memory transactions. Total distinct traffic if nothing is cached: $q \cdot 6 \cdot 128\text{ B} = 10^8 \cdot 768\text{ B} \approx 76.8$ GB, giving a bandwidth-floor time of $76.8\text{ GB} / 1\text{ TB/s} \approx 77$ ms.
+
+Now cache the top 3 levels (only $1 + 32 + 32^2 \approx 1057$ nodes $\approx 132$ KB, fits in L2). Each lookup now touches only $6 - 3 = 3$ uncached transactions: traffic drops to $\approx 38.4$ GB, floor $\approx 38$ ms — a $2\times$ win purely from the cached prefix, matching why Harmonia/GpuBTree report lookup throughput *exceeding* raw DRAM bandwidth.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

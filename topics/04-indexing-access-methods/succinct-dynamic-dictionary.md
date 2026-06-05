@@ -44,11 +44,19 @@ Directions: learned + succinct hybrids (PGM-index/​RMI with succinct error-bou
 - Engineering: closing the constant-factor gap to compact-but-not-succinct indexes.
 
 ## 9. Key References
-- **[Foundational]** Raman, Raman, Rao. *Succinct Indexable Dictionaries with Applications to Encoding k-ary Trees and Multisets.* SODA, 2002 / ACM TALG.
-- **[Foundational]** Pătraşcu, Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Foundational]** Pătraşcu, Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Comput., 2006.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index.* VLDB, 2020.
-- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge Univ. Press, 2016.
+- **[Foundational]** Raman, Raman, Rao. *Succinct Indexable Dictionaries with Applications to Encoding k-ary Trees and Multisets.* SODA, 2002 / ACM TALG. — [DBLP](https://dblp.org/rec/conf/soda/RamanRR02.html)
+- **[Foundational]** Pătraşcu, Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Foundational]** Pătraşcu, Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Comput., 2006. — [arXiv](https://arxiv.org/abs/cs/0502041)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge Univ. Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
+
+## 10. Worked Example
+
+Let $u=256$ ($8$-bit universe) and store $n=4$ keys $S=\{17, 64, 200, 255\}$. The information-theoretic floor is
+$$\mathcal{B}=\Big\lceil\log_2\binom{256}{4}\Big\rceil=\Big\lceil\log_2 174{,}792{,}640\Big\rceil=28\text{ bits}.$$
+A plain sorted array of $4$ keys uses $4\times 8 = 32$ bits — already within $\approx 14\%$ of optimal, but it is **static**: inserting key $100$ shifts the rank of $200$ and $255$ and needs an $O(n)$ shift.
+
+A *succinct* target is $\mathcal{B}+o(\mathcal{B})\approx 28+o(28)$ bits while still answering, e.g., $\text{pred}(150)=64$ and $\text{rank}(201)=3$ in $O(\log\log u)=O(3)$ probes, **and** absorbing the insert of $100$ in $O(\log n/\log\log n)$ time. RRR achieves the space and $O(1)$ rank/select but only statically; $y$-fast tries achieve the $O(\log\log u)$ predecessor but use $O(n\log u)=128$ bits (compact, not succinct). The open problem is hitting all three corners — $28+o(28)$ bits, fast predecessor, fast updates — simultaneously, which no single structure here does.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

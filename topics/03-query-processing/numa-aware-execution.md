@@ -110,11 +110,19 @@ locality–balance lower bound, robust to skew and to multi-tenant interference.
 
 ## 9. Key References
 
-- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014.
-- **[Foundational]** Li, Pandis, Müller, Raman, Lohman. *NUMA-Aware Algorithms: the Case of Data Shuffling.* CIDR 2013.
-- **[SOTA]** Psaroudakis, Scheuer, May, Sellami, Ailamaki. *Adaptive NUMA-Aware Data Placement and Task Scheduling for Analytical Workloads in Main-Memory Column-Stores.* VLDB 2016.
-- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM 1999.
-- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM 2009.
+- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+- **[Foundational]** Li, Pandis, Müller, Raman, Lohman. *NUMA-Aware Algorithms: the Case of Data Shuffling.* CIDR 2013. — [DBLP](https://dblp.org/rec/conf/cidr/LiPMRL13.html)
+- **[SOTA]** Psaroudakis, Scheuer, May, Sellami, Ailamaki. *Adaptive NUMA-Aware Data Placement and Task Scheduling for Analytical Workloads in Main-Memory Column-Stores.* VLDB 2016. — [DOI](https://doi.org/10.14778/3015274.3015275)
+- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM 1999. — [DOI](https://doi.org/10.1145/324133.324234)
+- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* JACM 2009. — [DOI](https://doi.org/10.1145/1502793.1502794)
+
+## 10. Worked Example
+
+A 2-socket box: local DRAM bandwidth $\beta = 100$ GB/s per socket, remote access at $d=0.5$ (i.e. remote is $2\times$ slower, effective $50$ GB/s). A hash join probes a 40 GB build-side hash table with 80 GB of probe tuples; we run 2 threads, one pinned per socket.
+
+*Naive placement:* put the whole hash table on socket 0. Socket-1's thread issues every probe across the interconnect: $40$ GB of remote hash-table reads. Its effective throughput is capped at $50$ GB/s, so socket 1 takes $\ge 40/50 = 0.8$ s on table traffic alone while socket 0 streams locally — the slower socket sets the makespan.
+
+*NUMA-aware placement:* radix-partition the table on the probe key so half lives on each socket, and route each morsel to the socket holding its partition. Now $\approx 0$ cross-socket table reads; both sockets read locally at $100$ GB/s, and the $40$ GB is split $20/20$, finishing in $\approx 20/100 = 0.2$ s — a $4\times$ win, matching the $\min_i \beta_i/(\text{local}_i+\sum \text{remote}_{ji})$ bound. The open part: when key skew sends $80\%$ of probes to one partition, locality forces that socket to idle the other or steal remotely — exactly the locality–balance tension.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

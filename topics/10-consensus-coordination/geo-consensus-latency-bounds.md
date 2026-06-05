@@ -35,12 +35,25 @@ Active directions: latency-optimal leader/quorum placement as an optimization ov
 - Exploiting programmable-network and accurate clock-sync primitives to approach the one-way floor with formal guarantees.
 
 ## 9. Key References
-- **[Foundational]** Leslie Lamport. *Lower Bounds for Asynchronous Consensus.* Distributed Computing / MSR-TR, 2003/2006.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013.
-- **[SOTA]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** Leslie Lamport. *Fast Paxos.* Distributed Computing, 2006.
-- **[Survey]** Daniel Abadi. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Leslie Lamport. *Lower Bounds for Asynchronous Consensus.* Distributed Computing / MSR-TR, 2003/2006. — [DOI](https://doi.org/10.1007/s00446-006-0155-x)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Iulian Moraru, David G. Andersen, Michael Kaminsky. *There Is More Consensus in Egalitarian Parliaments (EPaxos).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2517350)
+- **[SOTA]** James C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** Leslie Lamport. *Fast Paxos.* Distributed Computing, 2006. — [DOI](https://doi.org/10.1007/s00446-006-0005-x)
+- **[Survey]** Daniel Abadi. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+Five replicas, one per region, $n=5$, $f=2$, majority quorum size $3$. One-way delays (ms) from each site to the others:
+
+| from\to | US-E | US-W | EU | AP | SA |
+|---|---|---|---|---|---|
+| US-E | 0 | 30 | 40 | 90 | 60 |
+| EU | 40 | 70 | 0 | 100 | 80 |
+
+A client co-located with **US-E**, leader at **US-E**. Commit cost = client→leader ($0$) + leader's round trip to its $3$rd-nearest acceptor. From US-E the RTTs are: self $0$, US-W $60$, EU $80$, SA $120$, AP $180$. The cheapest majority is $\{$US-E, US-W, EU$\}$; the slowest member (EU) gives $L=\max(0,60,80)=80$ ms — one RTT to the nearest fast quorum, matching the 2-message-delay floor.
+
+Now move the leader to **EU** but keep the client at US-E. Cost adds the client↔leader RTT $40+40=80$ ms, *plus* EU's quorum RTT (3rd-nearest of $\{0,80,140,...\}\approx 140$ to reach US-W), for $\approx 80+140=220$ ms. Same $f$, same protocol — geography alone nearly triples latency, illustrating why per-client placement, not a single global leader, is the lever.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

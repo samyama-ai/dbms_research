@@ -62,13 +62,23 @@ For **self-join-free CQs** the picture is essentially **closed and tight**: free
 
 ## 9. Key References
 
-- **[Foundational]** Yannakakis, M. *Algorithms for Acyclic Database Schemes.* VLDB, 1981.
-- **[Foundational]** Bagan, G., Durand, A., Grandjean, E. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL, 2007.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008.
-- **[SOTA]** Ngo, H.Q., Ré, C., Rudra, A. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014.
-- **[SOTA]** Berkholz, C., Keppeler, J., Schweikardt, N. *Answering Conjunctive Queries under Updates.* PODS, 2017.
-- **[SOTA]** Carmeli, N., Kröll, M. *On the Enumeration Complexity of Unions of Conjunctive Queries.* PODS, 2018.
-- **[Survey]** Schweikardt, N., Segoufin, L., Vigny, A. *Enumeration for FO/CQ Queries: A Survey.* (Database theory enumeration surveys), 2020.
+- **[Foundational]** Yannakakis, M. *Algorithms for Acyclic Database Schemes.* VLDB, 1981. — [DBLP](https://dblp.org/rec/conf/vldb/Yannakakis81.html)
+- **[Foundational]** Bagan, G., Durand, A., Grandjean, E. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL, 2007. — [DOI](https://doi.org/10.1007/978-3-540-74915-8_18)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Ngo, H.Q., Ré, C., Rudra, A. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014. — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[SOTA]** Berkholz, C., Keppeler, J., Schweikardt, N. *Answering Conjunctive Queries under Updates.* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** Carmeli, N., Kröll, M. *On the Enumeration Complexity of Unions of Conjunctive Queries.* PODS, 2019. — [arXiv](https://arxiv.org/abs/1812.03831)
+- **[Survey]** Schweikardt, N., Segoufin, L., Vigny, A. *Enumeration for FO/CQ Queries: A Survey.* (Database theory enumeration surveys), 2020. — [DBLP search](https://dblp.org/search?q=Schweikardt+Segoufin+Vigny+enumeration)
+
+## 10. Worked Example
+
+Compare two CQs over $R(x,y)$ with $|R|=n$ tuples.
+
+**Free-connex (easy):** $Q_1(x,y)\leftarrow R(x,y)$ is just $R$ itself — output it in $O(1)$ delay after $O(n)$ load: in $\mathsf{CD}\circ\mathsf{Lin}$.
+
+**Acyclic, not free-connex (hard to enumerate):** $Q_2(x,z)\leftarrow R(x,y)\wedge R(y,z)$ — a 2-path with the *middle* variable $y$ projected away. Enumerating $(x,z)$ pairs with constant delay would let you read off, for the Boolean adjacency matrix $M$ of $R$, every nonzero entry of $M^2$ in time $\tilde O(n)$ — i.e. sparse Boolean matrix multiplication in near-linear time, refuting the **BMM conjecture**.
+
+**Cyclic (hard to even decide):** the triangle $Q_3()\leftarrow R(x,y)\wedge R(y,z)\wedge R(z,x)$. Its fractional edge cover number is $\rho^*=3/2$, so the AGM bound gives output $\le n^{3/2}$ and worst-case-optimal join evaluates it in $O(n^{3/2})$ — but linear-time detection would beat known triangle-detection lower bounds. This three-way split — $O(1)$ delay vs. BMM-hard vs. cyclic — is the dichotomy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # GPU-resident join and aggregation execution
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/gpu-query-execution` · **Status:** empirically-open
+> **Verification note:** The TQP reference conflates two real Microsoft papers — *Query Processing on Tensor Computation Runtimes* (PVLDB 15(11), 2022, the actual TQP system) and *The Tensor Data Platform: Towards an AI-centric Database System* (CIDR 2023); the linked DOI points to the former.
 
 ## 1. Problem Statement
 
@@ -121,12 +122,31 @@ bounds against the better of CPU-only and idealized in-HBM GPU execution.
 
 ## 9. Key References
 
-- **[Foundational]** B. He, K. Yang, R. Fang, M. Lu, N. Govindaraju, Q. Luo, P. Sander. *Relational Joins on Graphics Processors.* SIGMOD, 2008.
-- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD, 2020.
-- **[SOTA]** P. Sioulas, P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *Hardware-Conscious Hash-Joins on GPUs.* ICDE, 2019.
-- **[SOTA]** D. Yan et al. / Microsoft. *The Tensor Data Platform: Towards an Algebraically Defined GPU-Native Query Engine (TQP).* PVLDB / CIDR, 2022.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Survey]** B. Gowanlock et al. / S. Breß et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014.
+- **[Foundational]** B. He, K. Yang, R. Fang, M. Lu, N. Govindaraju, Q. Luo, P. Sander. *Relational Joins on Graphics Processors.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376670)
+- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380595) · [arXiv](https://arxiv.org/abs/2003.01178)
+- **[SOTA]** P. Sioulas, P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *Hardware-Conscious Hash-Joins on GPUs.* ICDE, 2019. — [DBLP](https://dblp.org/pid/233/6232.html)
+- **[SOTA]** D. Yan et al. / Microsoft. *The Tensor Data Platform: Towards an Algebraically Defined GPU-Native Query Engine (TQP).* PVLDB / CIDR, 2022. — [Query Processing on Tensor Computation Runtimes, PVLDB 15(11) 2022, DOI](https://doi.org/10.14778/3551793.3551833)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Survey]** B. Gowanlock et al. / S. Breß et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-45761-0_1) · [DBLP](https://dblp.org/rec/journals/tlsdkcs/BressHSBS14.html)
+
+## 10. Worked Example
+
+Should we offload a hash join $R \bowtie S$ to the GPU? Suppose $V_{\text{host}} = 8$ GB must
+cross PCIe at $\beta = 16$ GB/s, while HBM bandwidth is $B_{\text{hbm}} = 1600$ GB/s
+($100\times$ faster). The CPU runs the join in $T_{\text{cpu}} = 0.9$ s.
+
+Transfer time: $T_{\text{transfer}} = V_{\text{host}}/\beta = 8/16 = 0.5$ s.
+
+GPU compute (in HBM, $\sim$$100\times$ the link's effective rate for this data):
+$T_{\text{gpu-compute}} \approx 0.05$ s.
+
+Offload pays only if $T_{\text{transfer}} < T_{\text{cpu}} - T_{\text{gpu-compute}}$, i.e.
+$0.5 < 0.9 - 0.05 = 0.85$. True, so GPU wins: $0.5 + 0.05 = 0.55$ s vs. $0.9$ s.
+
+Now widen the join to $V_{\text{host}} = 16$ GB: $T_{\text{transfer}} = 1.0$ s, and
+$1.0 \not< 0.85$ — the PCIe link dominates and CPU-only is faster. This is the
+**transfer-vs-compute crossover**: the $\beta \ll B_{\text{hbm}}$ link, not raw GPU FLOPs,
+decides offload, which is why a naive single-scan offload never beats CPU.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

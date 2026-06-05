@@ -62,12 +62,20 @@ For the *generic* hiding problem the gap is **closed**: OptORAMa meets the $\Ome
 
 ## 9. Key References
 
-- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** Stefanov, van Dijk, Shi, et al. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013.
-- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Asharov, Komargodski, Lin, Nayak, Peserico, Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020.
-- **[SOTA]** Crooks, Burke, Cecchetti, et al. *Obladi: Oblivious Serializable Transactions in the Cloud.* OSDI, 2018.
-- **[SOTA]** Chan, Chung, Maggs, Shi. *Foundations of Differentially Oblivious Algorithms.* SODA, 2019.
+- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Stefanov, van Dijk, Shi, et al. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013. — [DOI](https://doi.org/10.1145/2508859.2516660)
+- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[SOTA]** Asharov, Komargodski, Lin, Nayak, Peserico, Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020. — [DOI](https://doi.org/10.1007/978-3-030-45724-2_14)
+- **[SOTA]** Crooks, Burke, Cecchetti, et al. *Obladi: Oblivious Serializable Transactions in the Cloud.* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/crooks)
+- **[SOTA]** Chan, Chung, Maggs, Shi. *Foundations of Differentially Oblivious Algorithms.* SODA, 2019. — [DOI](https://doi.org/10.1145/3555984)
+
+## 10. Worked Example
+
+Consider a tiny index with $N=4$ pages stored in an enclave-backed buffer. A query plan issues the logical read sequence $\langle p_3, p_3, p_1\rangle$. A non-oblivious buffer would touch physical frames $\langle 3, \text{(hit)}, 1\rangle$ — the repeat reveals reuse, and the address $3$ leaks the secret key bucket.
+
+Run a toy Path ORAM over a binary tree of $N=4$ leaves (height $\log_2 4 = 2$). Each logical access does: (1) look up the block's current leaf in the position map, (2) read the *entire root-to-leaf path* (3 buckets), (3) remap the block to a fresh random leaf, (4) write the path back. So both reads of $p_3$ fetch *different* random paths, and the access to $p_1$ is indistinguishable from them.
+
+Cost: each logical op costs $3$ bucket transfers vs. $1$ demand fetch — a $\log N$-type blowup, exactly the $\Omega(\log N)$ Larsen–Nielsen wall. Observer sees three length-3 path reads to random leaves: $I(\text{logical};\mathcal{A}\mid\text{length})\approx 0$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -47,12 +47,20 @@ The decomposed pieces (ski-rental timing, $(s,S)$ provisioning) are tight, but t
 
 ## 9. Key References
 
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992. (Checkpointing, buffer management.)
-- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018.
-- **[Foundational]** Anna Karlin, Mark Manasse, Larry Rudolph, Daniel Sleator. *Competitive Snoopy Caching.* Algorithmica, 1988. (Rent-or-buy / ski-rental.)
-- **[SOTA]** Matias Bjørling, et al. *ZNS: Avoiding the Block Interface Tax for Flash-based SSDs.* USENIX ATC, 2021.
-- **[Survey]** Goetz Graefe. *A Survey of B-Tree Logging and Recovery Techniques.* ACM TODS, 2012.
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992. (Checkpointing, buffer management.) — [ACM](https://dl.acm.org/doi/10.5555/573304)
+- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DBLP](https://dblp.org/rec/conf/icde/LeisHK018.html)
+- **[Foundational]** Anna Karlin, Mark Manasse, Larry Rudolph, Daniel Sleator. *Competitive Snoopy Caching.* Algorithmica, 1988. (Rent-or-buy / ski-rental.) — [DOI](https://doi.org/10.1007/BF01762111)
+- **[SOTA]** Matias Bjørling, et al. *ZNS: Avoiding the Block Interface Tax for Flash-based SSDs.* USENIX ATC, 2021. — [USENIX](https://www.usenix.org/conference/atc21/presentation/bjorling)
+- **[Survey]** Goetz Graefe. *A Survey of B-Tree Logging and Recovery Techniques.* ACM TODS, 2012. — [DOI](https://doi.org/10.1145/2109196.2109197)
+
+## 10. Worked Example
+
+**Per-page flush as ski-rental.** A dirty page $p$ is re-dirtied on average every $1/\lambda_p$ time units. *Flushing now* costs 1 physical write but is wasted if $p$ is re-dirtied before eviction (write amplification); *waiting* risks a synchronous stall if a free frame is needed. This is rent-or-buy: "rent" = keep deferring (risk stall later), "buy" = flush now (pay a write that may be wasted).
+
+Concretely, suppose flushing costs $B=1$ unit and each time step deferred risks a re-dirty (wasting the eventual flush). The deterministic break-even rule "flush once the page has been clean-eligible for $B$ steps" is **2-competitive**: $\text{ALG} \le 2\cdot\text{OPT}$. Randomizing the threshold over $[0,B]$ with density $\propto e^{t/B}$ improves this to $\frac{e}{e-1}\approx 1.58$.
+
+**Numbers.** With re-dirty rate $\lambda=0.1$/step and eviction expected in $5$ steps, residual-to-eviction $5 < 1/\lambda = 10$, so flushing is worthwhile (the page likely won't be re-dirtied first). If instead eviction is $20$ steps away ($> 10$), deferring coalesces an expected $\approx 2$ writes into one — halving WAF on that page.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

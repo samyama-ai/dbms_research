@@ -37,13 +37,31 @@ Threads: compositional crash-and-concurrency separation logics (Perennial line) 
 - High-fidelity persistency + replication models so the verified spec matches real durability ($W$).
 
 ## 9. Key References
-- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Pelley, S., Chen, P., Wenisch, T. *Memory Persistency.* ISCA, 2014.
-- **[SOTA]** Chen, H., Ziegler, D., Chajed, T., Chlipala, A., Kaashoek, M. F., Zeldovich, N. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015.
-- **[SOTA]** Chajed, T., Tassarotti, J., Kaashoek, M. F., Zeldovich, N. *Verifying Concurrent, Crash-Safe Systems with Perennial.* SOSP, 2019.
-- **[SOTA]** Hance, T., et al. *Storage Systems are Distributed Systems (So Verify Them That Way) — VeriBetrKV.* OSDI, 2020.
-- **[SOTA]** Hawblitzel, C., et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015.
-- **[Foundational]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
+- **[Foundational]** Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., Schwarz, P. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[Foundational]** Pelley, S., Chen, P., Wenisch, T. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712)
+- **[SOTA]** Chen, H., Ziegler, D., Chajed, T., Chlipala, A., Kaashoek, M. F., Zeldovich, N. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815402)
+- **[SOTA]** Chajed, T., Tassarotti, J., Kaashoek, M. F., Zeldovich, N. *Verifying Concurrent, Crash-Safe Systems with Perennial.* SOSP, 2019. — [DOI](https://doi.org/10.1145/3341301.3359632)
+- **[SOTA]** Hance, T., et al. *Storage Systems are Distributed Systems (So Verify Them That Way) — VeriBetrKV.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/hance)
+- **[SOTA]** Hawblitzel, C., et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815428)
+- **[Foundational]** Corbett, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+
+## 10. Worked Example
+
+Consider a tiny WAL with three records and a crash. The log (LSN : action) is:
+
+$$1:\langle T_1\,\text{begin}\rangle,\;\; 2:\langle T_1\,\text{write } x{=}5\rangle,\;\; 3:\langle T_1\,\text{commit}\rangle,\;\; 4:\langle T_2\,\text{write } y{=}9\rangle$$
+
+WAL invariant: a data page may persist only after its log record. Suppose the crash makes
+LSNs $1$–$3$ durable but **not** $4$, and the page holding $x$ never flushed. ARIES
+recovery runs three passes. *Analysis*: reconstructs that $T_1$ committed, $T_2$ did not.
+*Redo (repeating history)*: replays LSN $2$, so $x{=}5$ is restored — idempotent, since
+re-applying $x{=}5$ yields the same state. *Undo*: rolls back $T_2$'s uncommitted $y{=}9$
+(none durable here, so a no-op), writing a CLR to keep undo idempotent under a second crash.
+
+External-consistency check: the recovered set is exactly $\{T_1\}$, which is prefix-closed
+w.r.t. acknowledgments — $T_1$'s client got its commit ack and $x{=}5$ survives; $T_2$ was
+never acknowledged and leaves no trace. The proof obligation $\{P\}\,c\,\{Q\}\,\{Q_{\text{crash}}\}$
+is discharged by showing redo and undo are idempotent and recovery is monotone.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

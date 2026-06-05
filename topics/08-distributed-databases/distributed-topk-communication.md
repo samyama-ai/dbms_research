@@ -57,11 +57,27 @@ For **bytes**, the gap is data-dependent, not asymptotic: upper and worst-case l
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS / JCSS, 2001/2003.
-- **[SOTA]** Cao, Wang. *Efficient Top-K Query Calculation in Distributed Networks (TPUT).* PODC, 2004.
-- **[SOTA]** Michel, Triantafillou, Weikum. *KLEE: A Framework for Distributed Top-k Query Algorithms.* VLDB, 2005.
-- **[Survey]** Ilyas, Beskales, Soliman. *A Survey of Top-k Query Processing Techniques in Relational Database Systems.* ACM Computing Surveys, 2008.
-- **[Foundational]** Cormode, Muthukrishnan, Yi. *Algorithms for Distributed Functional Monitoring.* SODA / ACM TALG, 2008/2011.
+- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS / JCSS, 2001/2003. — [arXiv](https://arxiv.org/abs/cs/0204046)
+- **[SOTA]** Cao, Wang. *Efficient Top-K Query Calculation in Distributed Networks (TPUT).* PODC, 2004. — [DOI](https://doi.org/10.1145/1011767.1011798)
+- **[SOTA]** Michel, Triantafillou, Weikum. *KLEE: A Framework for Distributed Top-k Query Algorithms.* VLDB, 2005. — [PDF](https://www.vldb.org/archives/website/2005/program/paper/thu/p637-michel.pdf)
+- **[Survey]** Ilyas, Beskales, Soliman. *A Survey of Top-k Query Processing Techniques in Relational Database Systems.* ACM Computing Surveys, 2008. — [DOI](https://doi.org/10.1145/1391729.1391730)
+- **[Foundational]** Cormode, Muthukrishnan, Yi. *Algorithms for Distributed Functional Monitoring.* SODA / ACM TALG, 2008/2011. — [DOI](https://doi.org/10.1145/1921659.1921667)
+
+## 10. Worked Example
+
+Find the global top-$k=1$ over $m=3$ nodes, each holding a sorted list of (object, score). Scores combine by sum $f=s_1+s_2+s_3$.
+
+| node | sorted local scores |
+|------|---------------------|
+| 1 | $a{:}9,\ b{:}5,\ c{:}1$ |
+| 2 | $b{:}8,\ a{:}2,\ d{:}1$ |
+| 3 | $a{:}7,\ c{:}4,\ b{:}1$ |
+
+**TPUT, phase 1:** each node sends its top-1: $a{:}9$ (n1), $b{:}8$ (n2), $a{:}7$ (n3). Coordinator forms partial sums: $a = 9+7 = 16$, $b = 8$. The $k$-th (=1st) partial-sum lower bound is $T = 16$ (from $a$). The phase-1 threshold $\tau = T/m = 16/3 \approx 5.33$.
+
+**Phase 2:** nodes report every object with local score $\ge \tau$: n1 sends $a{:}9,b{:}5$; n2 sends $b{:}8$; n3 sends $a{:}7$. Now $a = 9+2{+}7 = 18$ (n2's $a{:}2 < \tau$, fetched in phase 3 if needed), $b = 5+8+1 = 14$. Object $a$ leads.
+
+**Phase 3:** confirm $a$'s exact score by random-access lookups, certifying $a$ as the global top-1 in **3 rounds** regardless of $m$ — versus shipping all 9 (object,score) entries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -55,12 +55,21 @@ The gap is not an upper-vs-lower asymptotic gap but a **modeling and generalizat
 
 ## 9. Key References
 
-- **[Foundational]** Abadi, D. *Consistency tradeoffs in modern distributed database system design: CAP is only part of the story.* IEEE Computer, 2012.
-- **[SOTA]** Bailis, P., Venkataraman, S., Hellerstein, J. M., Franklin, M. J., Stoica, I. *Probabilistically Bounded Staleness for practical partial quorums.* VLDB, 2012.
-- **[SOTA]** Terry, D. B., Prabhakaran, V., Kotla, R., Balakrishnan, M., Aguilera, M. K., Abu-Libdeh, H. *Consistency-based service level agreements for cloud storage (Pileus/Tuba).* SOSP, 2013.
-- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G. J., Zhang, B. *Automatic database management system tuning through large-scale machine learning (OtterTune).* SIGMOD, 2017.
-- **[Foundational]** Srinivas, N., Krause, A., Kakade, S., Seeger, M. *Gaussian process optimization in the bandit setting: no regret and experimental design.* ICML, 2010.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services.* ACM SIGACT News, 2002.
+- **[Foundational]** Abadi, D. *Consistency tradeoffs in modern distributed database system design: CAP is only part of the story.* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+- **[SOTA]** Bailis, P., Venkataraman, S., Hellerstein, J. M., Franklin, M. J., Stoica, I. *Probabilistically Bounded Staleness for practical partial quorums.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2212351.2212359)
+- **[SOTA]** Terry, D. B., Prabhakaran, V., Kotla, R., Balakrishnan, M., Aguilera, M. K., Abu-Libdeh, H. *Consistency-based service level agreements for cloud storage (Pileus/Tuba).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522731)
+- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G. J., Zhang, B. *Automatic database management system tuning through large-scale machine learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[Foundational]** Srinivas, N., Krause, A., Kakade, S., Seeger, M. *Gaussian process optimization in the bandit setting: no regret and experimental design.* ICML, 2010. — [arXiv](https://arxiv.org/abs/0912.3995)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+A Cassandra-style store with $N = 3$ replicas. Read/write knobs $(R, W)$ choose a PACELC point.
+
+- **Strong (QUORUM/QUORUM):** $R = W = 2$. Then $R + W = 4 > N = 3$, so reads always intersect the latest write — staleness $0$. A QUORUM read's tail latency is the $2$nd-fastest of $3$ replica responses, i.e. the median order statistic. With per-replica latencies drawn as $\{8, 12, 40\}$ ms, p-latency $= 12$ ms.
+- **Weak (ONE/ONE):** $R = W = 1$, $R + W = 2 \not> 3$ — a partial quorum. Read latency drops to the fastest replica, $8$ ms, but PBS now predicts a nonzero chance the read misses the freshest write. If write-to-read gap is short and inter-replica delay $\sim$ tens of ms, PBS might give "consistent within $\Delta = 10$ ms with prob. $0.94$."
+
+The tuner's job: pick the point minimizing \$ subject to SLOs. If the consistency-SLO is "staleness $\le 10$ ms w.p. $\ge 0.99$," ONE/ONE's $0.94$ fails it, forcing QUORUM. If the SLO is looser ($\ge 0.90$), ONE/ONE is feasible and cheaper/faster. PBS lets the optimizer evaluate this *without* running a load test, collapsing the search.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

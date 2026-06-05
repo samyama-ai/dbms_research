@@ -46,12 +46,20 @@ Open. Practical systems exceed B-trees on real write workloads, but there is **n
 - Range/string-key and multi-dimensional updatable learned indexes with guarantees.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index (fully-dynamic, provable worst-case bounds).* VLDB, 2020.
-- **[SOTA]** J. Wu, et al. *LIPP: Updatable Learned Index with Precise Positions.* VLDB, 2021.
-- **[SOTA]** C. Wongkham, et al. *GRE: Are Updatable Learned Indexes Ready? (benchmark).* VLDB, 2022.
-- **[SOTA]** Y. Dai, et al. *Bourbon: From WiscKey to Bourbon — Learned Index for Log-Structured Merge Trees.* OSDI, 2020.
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389711)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index (fully-dynamic, provable worst-case bounds).* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** J. Wu, et al. *LIPP: Updatable Learned Index with Precise Positions.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3457390.3457393)
+- **[SOTA]** C. Wongkham, et al. *GRE: Are Updatable Learned Indexes Ready? (benchmark).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551848)
+- **[SOTA]** Y. Dai, et al. *Bourbon: From WiscKey to Bourbon — Learned Index for Log-Structured Merge Trees.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/dai)
+
+## 10. Worked Example
+
+Suppose keys $1,2,\dots,10{,}000$ are sorted, and a learned index fits the linear model $\hat{p}(k)=k-1$ (key $k$ at position $k-1$), with measured max error $\varepsilon=0$: a lookup jumps directly, no last-mile search.
+
+Now insert key $5000.5$ (a float between $5000$ and $5001$). Its true position is $5000$, but the rank of every key $>5000.5$ shifts by $+1$. The model now under-predicts those positions by $1$, so $\varepsilon$ jumps from $0$ to $1$. After $m$ such inserts spread across the array, worst-case error grows to $\varepsilon=\Theta(m)$, and a lookup must binary-search a window of size $\Theta(m)$ — cost $\Theta(\log m)$ on top of the model.
+
+Dynamic PGM avoids this via Bentley–Saxe: keep $O(\log n)$ static models of sizes $2^0,2^1,\dots$; an insert costs $O(\log n)$ amortized to rebuild merged levels, and a query probes all $O(\log n)$ models, total $O(\log^2 n)$. With $n=10^4$, that is $\approx 14^2\approx 196$ comparisons worst-case — bounded, unlike the unbounded gapped-array drift, which is the empirical-vs-provable tension this problem highlights.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -113,11 +113,29 @@ learned/RL-tuned protocol selection. Groups: MIT (Madden, Devadas — Silo/TicTo
 
 ## 9. Key References
 
-- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016.
-- **[SOTA]** H. Lim, M. Kaminsky, D. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017.
-- **[Survey]** X. Yu, G. Bezerra, A. Pavlo, S. Devadas, M. Stonebraker. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* VLDB, 2014.
+- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/db/books/dbtext/bernstein87.html)
+- **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** X. Yu, A. Pavlo, D. Sanchez, S. Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
+- **[SOTA]** H. Lim, M. Kaminsky, D. Andersen. *Cicada: Dependably Fast Multi-Core In-Memory Transactions.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064015)
+- **[Survey]** X. Yu, G. Bezerra, A. Pavlo, S. Devadas, M. Stonebraker. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735511)
+
+## 10. Worked Example
+
+Apply the Universal Scalability Law to quantify a central bottleneck. Suppose a protocol
+has serial fraction $\alpha = 0.02$ and the *global timestamp counter* contributes coherence
+crosstalk $\beta = 0.0005$. Then
+
+$$X(p) = \frac{p}{1 + \alpha(p-1) + \beta\, p(p-1)}.$$
+
+At $p = 64$: denominator $= 1 + 0.02(63) + 0.0005(64)(63) = 1 + 1.26 + 2.016 = 4.276$, so
+$X \approx 14.97\times$. The peak is at $p^* \approx \sqrt{(1-\alpha)/\beta} = \sqrt{0.98/0.0005}
+\approx 44$ cores; beyond that, throughput *declines*. Removing the shared counter (TicToc's
+data-driven timestamps) drives $\beta \to 0$, giving $X(64) = 64/(1+1.26) \approx 28.3\times$
+— nearly double, and now monotonically increasing.
+
+This is the crux: the $\beta\,p(p-1)$ term — one cache line written by all cores — is what
+makes throughput peak and fall, independent of the actual data contention captured by
+$\alpha$. Eliminating protocol-induced shared writes is precisely "no central bottleneck."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

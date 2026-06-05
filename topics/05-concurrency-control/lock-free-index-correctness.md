@@ -52,13 +52,24 @@ Directions: (i) **mechanized concurrent-index proofs in Iris/separation logic**,
 
 ## 9. Key References
 
-- **[Foundational]** M. P. Herlihy, J. M. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[Foundational]** P. L. Lehman, S. B. Yao. *Efficient Locking for Concurrent Operations on B-Trees.* ACM TODS, 1981.
-- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
-- **[SOTA]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013.
-- **[SOTA]** Y. Mao, E. Kohler, R. T. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012.
-- **[Foundational]** A. Bouajjani, M. Emmi, C. Enea, J. Hamza. *Verifying Concurrent Programs against Sequential Specifications.* ESOP, 2013.
-- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
+- **[Foundational]** M. P. Herlihy, J. M. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** P. L. Lehman, S. B. Yao. *Efficient Locking for Concurrent Operations on B-Trees.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319663)
+- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[SOTA]** Y. Mao, E. Kohler, R. T. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012. — [DOI](https://doi.org/10.1145/2168836.2168855)
+- **[Foundational]** A. Bouajjani, M. Emmi, C. Enea, J. Hamza. *Verifying Concurrent Programs against Sequential Specifications.* ESOP, 2013. — [DOI](https://doi.org/10.1007/978-3-642-37036-6_17)
+- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+
+## 10. Worked Example
+
+Consider a Bw-Tree leaf with base page $P=\{10,20,30\}$ and mapping-table slot $M[P]$. Two threads race:
+
+- $T_1$: insert 15. Builds delta $d_1=\langle\text{ins }15\rangle$ pointing at $P$, then `CAS(M[P]: P \to d_1)$`.
+- $T_2$: insert 25. Builds delta $d_2=\langle\text{ins }25\rangle$ also pointing at $P$, then `CAS(M[P]: P \to d_2)$`.
+
+Both CAS expect the old value $P$; hardware serializes them, say $T_1$ wins. The slot now reads $d_1\!\to\!P$. $T_2$'s CAS expected $P$ but sees $d_1$, so it **fails**, re-reads $M[P]=d_1$, rebuilds $d_2'=\langle\text{ins }25\rangle\!\to\!d_1$, and retries `CAS(M[P]: d_1 \to d_2')$`, which succeeds.
+
+Logical state: $d_2'\!\to\!d_1\!\to\!P = \{10,15,20,25,30\}$. The two successful CAS instants are the **linearization points**; no update is lost. A scan reading $M[P]=d_1$ before $T_2$ retries sees a consistent prefix $\{10,15,20,30\}$ — linearizable, with $O(\text{chain length})$ read cost until consolidation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

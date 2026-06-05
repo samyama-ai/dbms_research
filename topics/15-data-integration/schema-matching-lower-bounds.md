@@ -41,12 +41,20 @@ A canonical generative model for schemas+instances; matching Fano/Le Cam lower b
 
 ## 9. Key References
 
-- **[Foundational]** Cover, Thomas. *Elements of Information Theory* (Fano's inequality). Wiley, 2006.
-- **[Foundational]** Cullina, Kiyavash. *Improved Achievability and Converse Bounds for Erdős–Rényi Graph Matching.* SIGMETRICS 2017.
-- **[SOTA]** Ding, Ma, Wu, Xu. *Efficient Random Graph Matching via Degree Profiles / Information-Theoretic Thresholds.* Probability Theory and Related Fields, 2021.
-- **[Survey]** Bernstein, Madhavan, Rahm. *Generic Schema Matching, Ten Years Later.* VLDB 2011.
-- **[Survey]** Rahm, Bernstein. *A Survey of Approaches to Automatic Schema Matching.* VLDB Journal, 2001.
-- **[SOTA]** Koutras et al. *Valentine: Evaluating Matching Techniques for Dataset Discovery.* ICDE 2021.
+- **[Foundational]** Cover, Thomas. *Elements of Information Theory* (Fano's inequality). Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+- **[Foundational]** Cullina, Kiyavash. *Improved Achievability and Converse Bounds for Erdős–Rényi Graph Matching.* SIGMETRICS 2016 (note: published 2016, not 2017). — [arXiv](https://arxiv.org/abs/1602.01042)
+- **[SOTA]** Ding, Ma, Wu, Xu. *Efficient Random Graph Matching via Degree Profiles / Information-Theoretic Thresholds.* Probability Theory and Related Fields, 2021. — [DOI](https://doi.org/10.1007/s00440-020-00997-4)
+- **[Survey]** Bernstein, Madhavan, Rahm. *Generic Schema Matching, Ten Years Later.* VLDB 2011. — [DOI](https://doi.org/10.14778/3402707.3402710)
+- **[Survey]** Rahm, Bernstein. *A Survey of Approaches to Automatic Schema Matching.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100057)
+- **[SOTA]** Koutras et al. *Valentine: Evaluating Matching Techniques for Dataset Discovery.* ICDE 2021. — [DBLP](https://dblp.org/rec/conf/icde/KoutrasSIPBFLBK21.html)
+
+## 10. Worked Example
+
+Suppose two schemas each have $n=2$ attributes drawn from latent concepts, and we must guess the alignment $\pi^\* \in \Pi$ with $|\Pi| = 2! = 2$ candidate bijections. The only signal is attribute names through a noisy channel. Fano's inequality lower-bounds any matcher's error:
+$$\Pr[\hat\pi \neq \pi^\*] \ \ge\ 1 - \frac{I(\pi^\*; X) + 1}{\log_2 |\Pi|}.$$
+With $\log_2|\Pi| = 1$ bit, if the names leak only $I(\pi^\*; X) = 0.3$ bits of mutual information, then $\Pr[\text{error}] \ge 1 - (0.3+1)/1 < 0$ — vacuous, the bound bites only when $|\Pi|$ is large.
+
+Scale to $n=20$: $|\Pi| = 20! \approx 10^{18}$, so $\log_2|\Pi| \approx 61$ bits. If observable signal carries $I \approx 20$ bits total, then $\Pr[\text{error}] \ge 1 - 21/61 \approx 0.66$ — **no matcher can be right more than ~34% of the time**, regardless of algorithm. This is exactly the kind of unconditional floor the problem seeks, but for a *realistic* name+value channel rather than this toy uniform-prior model.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,12 +42,26 @@ Hot directions: **semantic query operators over LLMs** with cost-based optimizat
 
 ## 9. Key References
 
-- **[Foundational]** Hellerstein, Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993.
-- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS 2001 / JCSS, 2003.
-- **[SOTA]** Lu, Chowdhery, Kandula, Chaudhuri. *Accelerating Machine Learning Inference with Probabilistic Predicates.* SIGMOD, 2018.
-- **[SOTA]** Kang, Emmons, Abuzaid, Bailis, Zaharia. *NoScope: Optimizing Neural Network Queries over Video at Scale.* VLDB, 2017.
-- **[SOTA]** Kang, Guibas, Bailis, Hashimoto, Zaharia. *Approximate Selection with Guarantees using Proxies (SUPG).* VLDB, 2020.
-- **[SOTA]** Patel, Madden, Cafarella et al. *Palimpzest / semantic-operator query optimization for LLMs.* CIDR, 2024–2025 *(frontier — verify)*.
+- **[Foundational]** Hellerstein, Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170036.170078)
+- **[Foundational]** Fagin, Lotem, Naor. *Optimal Aggregation Algorithms for Middleware.* PODS 2001 / JCSS, 2003. — [arXiv](https://arxiv.org/abs/cs/0204046)
+- **[SOTA]** Lu, Chowdhery, Kandula, Chaudhuri. *Accelerating Machine Learning Inference with Probabilistic Predicates.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183751)
+- **[SOTA]** Kang, Emmons, Abuzaid, Bailis, Zaharia. *NoScope: Optimizing Neural Network Queries over Video at Scale.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1703.02529)
+- **[SOTA]** Kang, Guibas, Bailis, Hashimoto, Zaharia. *Approximate Selection with Guarantees using Proxies (SUPG).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2004.00827)
+- **[SOTA]** Patel, Madden, Cafarella et al. *Palimpzest / semantic-operator query optimization for LLMs.* CIDR, 2024–2025 *(frontier — verify)*. — [arXiv](https://arxiv.org/abs/2405.14696)
+
+## 10. Worked Example
+
+Find the top-$k=1$ image by an expensive scorer $f$ (1 s/call). A cheap proxy $\hat f$ obeys $|\hat f - f|\le \epsilon=0.1$. Five images:
+
+| obj | $\hat f$ | bound $[\hat f-\epsilon,\hat f+\epsilon]$ |
+|-----|------|------|
+| A | 0.92 | [0.82, 1.02] |
+| B | 0.70 | [0.60, 0.80] |
+| C | 0.55 | [0.45, 0.65] |
+| D | 0.30 | [0.20, 0.40] |
+| E | 0.15 | [0.05, 0.25] |
+
+Probe in proxy order. Call $f(A)=0.85$ (confirmed lower bound $L=0.85$). Now prune any object whose **upper** bound $<L$: B's upper $0.80<0.85$, so are C, D, E. All four are pruned without an exact call. So only **1 exact call** instead of 5 — cost $O(k+|\text{band}|)$, where the uncertain band (intervals overlapping $L=0.85$) is empty here. Had $f(A)$ returned $0.78$, B's interval $[0.60,0.80]$ would overlap, forcing a second exact call on B to break the tie.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

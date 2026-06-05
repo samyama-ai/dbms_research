@@ -42,13 +42,21 @@ Filters: essentially **closed** (tight regret/competitive bounds). Joins: **empi
 
 ## 9. Key References
 
-- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000.
-- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD 1998.
-- **[SOTA]** Markl, Raman, Simmen, Lohman, Pirahesh. *Robust Query Processing through Progressive Optimization.* SIGMOD 2004.
-- **[SOTA]** Babu, Motwani, Munagala, Nishizawa, Widom. *Adaptive Ordering of Pipelined Stream Filters.* SIGMOD 2004.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Learning to Steer Query Optimizers.* SIGMOD 2021.
-- **[SOTA]** Armbrust et al. *Spark SQL / Adaptive Query Execution.* SIGMOD 2015 + Databricks AQE writeups.
-- **[Survey]** Deshpande, Ives, Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007.
+- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD 1998. — [DOI](https://doi.org/10.1145/276304.276315)
+- **[SOTA]** Markl, Raman, Simmen, Lohman, Pirahesh. *Robust Query Processing through Progressive Optimization.* SIGMOD 2004. — [DOI](https://doi.org/10.1145/1007568.1007642)
+- **[SOTA]** Babu, Motwani, Munagala, Nishizawa, Widom. *Adaptive Ordering of Pipelined Stream Filters.* SIGMOD 2004. — [DOI](https://doi.org/10.1145/1007568.1007615)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Learning to Steer Query Optimizers.* SIGMOD 2021. — [arXiv](https://arxiv.org/abs/2004.03814) — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** Armbrust et al. *Spark SQL / Adaptive Query Execution.* SIGMOD 2015 + Databricks AQE writeups. — [DOI](https://doi.org/10.1145/2723372.2742797)
+- **[Survey]** Deshpande, Ives, Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007. — [DOI](https://doi.org/10.1561/1900000001)
+
+## 10. Worked Example
+
+**Adaptive filter ordering.** A stream passes through two commutative filters $\sigma_1$ (cost $c_1=1$, selectivity $s_1$) and $\sigma_2$ (cost $c_2=1$, selectivity $s_2$). The optimal static order puts the more selective filter first. Suppose the optimizer assumed $s_1=0.1, s_2=0.9$ and chose order $\sigma_1\!\to\!\sigma_2$, expected cost per tuple $= c_1 + s_1 c_2 = 1 + 0.1 = 1.1$.
+
+At runtime the data is correlated and true selectivities are reversed: $s_1=0.9, s_2=0.1$. The committed static order now costs $1 + 0.9 = 1.9$ per tuple, whereas $\sigma_2\!\to\!\sigma_1$ would cost $1 + 0.1 = 1.1$. An eddy observing the first few hundred tuples flips the routing, recovering near $1.1$.
+
+For **filters this is closed** — online algorithms achieve $O(1)$-competitive cost. For **joins**, flipping build/probe sides mid-pipeline strands a built hash table (sunk cost); a metrical-task-system lower bound shows strict no-regression is then impossible, which is the open gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

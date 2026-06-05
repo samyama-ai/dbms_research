@@ -38,11 +38,17 @@ Jepsen-style adversarial testing continues to find clock-related anomalies *(fro
 - Co-design of commit protocols that degrade gracefully (bounded staleness) instead of crashing on skew.
 
 ## 9. Key References
-- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Kulkarni, Demirbas, Madappa, Avva, Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014.
-- **[Survey]** Kingsbury (Jepsen). *Analyses of distributed databases under clock skew and partition.* jepsen.io, 2016–2023.
+- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[SOTA]** Kulkarni, Demirbas, Madappa, Avva, Leone. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
+- **[Survey]** Kingsbury (Jepsen). *Analyses of distributed databases under clock skew and partition.* jepsen.io, 2016–2023. — [Jepsen](https://jepsen.io/analyses)
+
+## 10. Worked Example
+
+TrueTime with honest uncertainty $\varepsilon = 4$ ms. Transaction $T_i$ commits: it picks $\mathit{ts} = \mathit{TT.latest} = 100$ and commit-waits until $\mathit{TT.earliest} > 100$, i.e. $\approx 2\varepsilon = 8$ ms. A later $T_j$ that starts in real time after $T_i$ commits sees $\mathit{TT.latest} \ge 101 > 100$, so $c_j > c_i$ — external consistency holds.
+
+Now inject a *silent* fault: node $n$'s true error is $9$ ms but it still reports $\varepsilon = 4$. At true time $108$ its clock reads $99$ and it claims interval $[95,103]$. $T_i$ commits at $\mathit{ts}=103$ after a wait of only $8$ ms (true time $116$). A concurrent $T_j$ on a healthy node reads true time $110 < 116$ but is assigned $\mathit{ts}=110 < 103$? No — $110 > 103$, fine; the danger is the reverse: a transaction whose real time precedes $T_i$ can receive $\mathit{ts} > 103$, inverting commit order versus real time. The resulting $rw$/$ww$ inversion appears only as a cycle in the dependency-serialization graph — invisible to either node, exactly the undetectable-by-indistinguishability case the lower bound predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

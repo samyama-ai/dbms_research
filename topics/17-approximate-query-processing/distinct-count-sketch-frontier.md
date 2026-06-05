@@ -1,6 +1,7 @@
 # Distinct-Count Sketches Beyond HLL
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/distinct-count-sketch-frontier` · **Status:** empirically-open
+> **Verification note:** Błasiok's optimal-$F_0$ result appeared at SODA 2018 (Best Student Paper), not FOCS 2018 as stated in sections 3–5.
 
 ## 1. Problem Statement
 Cardinality estimation — counting distinct elements ($F_0$) in a multiset using sublinear space — is dominated in practice by **HyperLogLog (HLL)**, which achieves relative standard error $\approx 1.04/\sqrt{m}$ using $m$ registers of $\approx 6$ bits. The frontier problem: design distinct-count sketches that **strictly improve HLL's accuracy/space frontier** (better error per byte) while simultaneously supporting:
@@ -43,11 +44,21 @@ Otmar Ertl's UltraLogLog and ExaLogLog push HLL's bits-per-accuracy down with ma
 - Adversarially-robust and differentially-private distinct-count sketches at the optimal frontier.
 
 ## 9. Key References
-- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AOFA 2007.
-- **[Foundational]** Kane, D., Nelson, J., Woodruff, D. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010.
-- **[SOTA]** Heule, S., Nunkesser, M., Hall, A. *HyperLogLog in Practice (HLL++).* EDBT 2013.
-- **[SOTA]** Ertl, O. *UltraLogLog: A Practical and More Space-Efficient Alternative to HyperLogLog.* 2023 (arXiv:2308.16862).
-- **[SOTA]** Błasiok, J. *Optimal Streaming and Tracking Distinct Elements with High Probability.* FOCS 2018.
+- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AOFA 2007. — [HAL](https://hal.science/hal-00406166v2)
+- **[Foundational]** Kane, D., Nelson, J., Woodruff, D. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010. — [ACM](https://dl.acm.org/doi/10.1145/1807085.1807094)
+- **[SOTA]** Heule, S., Nunkesser, M., Hall, A. *HyperLogLog in Practice (HLL++).* EDBT 2013. — [ACM](https://dl.acm.org/doi/10.1145/2452376.2452456)
+- **[SOTA]** Ertl, O. *UltraLogLog: A Practical and More Space-Efficient Alternative to HyperLogLog.* 2023 (arXiv:2308.16862). — [arXiv](https://arxiv.org/abs/2308.16862)
+- **[SOTA]** Błasiok, J. *Optimal Streaming and Tracking Distinct Elements with High Probability.* SODA 2018. — [arXiv](https://arxiv.org/abs/1804.01642)
+
+## 10. Worked Example
+
+**KMV vs. HLL on a tiny stream.** Stream the multiset $\{a,b,a,c,b,a,d\}$, true $F_0=4$ (distinct: $a,b,c,d$). Hash each element uniformly into $[0,1]$; suppose the *distinct* values hash to $h(a)=0.12,\;h(b)=0.47,\;h(c)=0.31,\;h(d)=0.08$.
+
+**KMV with $k=2$:** keep the 2 smallest hashes $\{0.08,0.12\}$, so $u_{(2)}=0.12$. Estimate
+$$\hat n=\frac{k-1}{u_{(k)}}=\frac{1}{0.12}\approx 8.3.$$
+With only $k=2$ the relative error $\approx1/\sqrt k\approx 0.71$ is huge — but raising $k$ shrinks it as $1/\sqrt k$, and KMV supports **set union** for free: merging two KMV sketches just keeps the global $k$ smallest hashes.
+
+**HLL register intuition:** HLL instead tracks the max leading-zero count $\rho$ per bucket; seeing $h(d)=0.08$ ($\approx 0.000101_2$, 3 leading zeros after the point) suggests $n\gtrsim 2^{3}$. HLL needs $m\approx 1.04^2/\varepsilon^2$ registers for relative error $\varepsilon$; e.g. $\varepsilon=0.02$ needs $m\approx 2700$ registers ($\approx 2$ KB), versus the entropy floor that CPC/UltraLogLog approach more tightly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

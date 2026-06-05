@@ -53,11 +53,20 @@ Active directions: workload-aware and learned logging-mode selection in HTAP/in-
 
 ## 9. Key References
 
-- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method...* ACM TODS, 1992.
-- **[SOTA]** Nirmesh Malviya, Ariel Weisberg, Samuel Madden, Michael Stonebraker. *Rethinking Main Memory OLTP Recovery.* ICDE, 2014.
-- **[SOTA]** Wenting Zheng, Stephen Tu, Eddie Kohler, Barbara Liskov. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[Foundational]** Robert Kallman, Hideaki Kimura, Jonathan Natkins, et al. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008.
-- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
+- **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method...* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** Nirmesh Malviya, Ariel Weisberg, Samuel Madden, Michael Stonebraker. *Rethinking Main Memory OLTP Recovery.* ICDE, 2014. — [IEEE](https://ieeexplore.ieee.org/document/6816685/)
+- **[SOTA]** Wenting Zheng, Stephen Tu, Eddie Kohler, Barbara Liskov. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
+- **[Foundational]** Robert Kallman, Hideaki Kimura, Jonathan Natkins, et al. *H-Store: A High-Performance, Distributed Main Memory Transaction Processing System.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1454159.1454211)
+- **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+
+## 10. Worked Example
+
+Consider a single statement `UPDATE accounts SET active=false WHERE region='EU'` that touches $m=10{,}000$ rows, each dirtying $\delta=8$ bytes within $P=8\,\text{KB}$ pages, with row-record overhead $h=40$ bytes.
+
+- **Row (physiological) logging:** $\approx m(\delta+h) = 10{,}000 \times 48 = 480\,\text{KB}$ of log, but redo replays 10,000 cheap idempotent applies.
+- **Command logging:** records only the statement text $\approx 60$ bytes — a $\mathbf{8000\times}$ write-volume reduction — but recovery must re-execute the full scan + 10,000 updates (its original CPU cost), and is valid only if execution is deterministic.
+
+Now a point update `UPDATE accounts SET bal=bal-1 WHERE id=42` ($m=1$): row logging costs $48$ bytes; command logging costs $\approx 50$ bytes with re-execution overhead — no win. The adaptive rule: pick command logging when fan-out $m$ is large (here above $\sim |\text{op}|/(\delta+h)$), row logging otherwise. The high-fan-out statement saves $\sim 480\,\text{KB}$; the point update stays on row logging.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

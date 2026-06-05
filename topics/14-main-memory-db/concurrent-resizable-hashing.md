@@ -42,12 +42,26 @@ Directions: persistent-memory concurrent resizable hashing (Dash, CLEVEL, and su
 - Crash-consistent resizable hashing on PMEM/CXL with the same guarantees as volatile designs.
 
 ## 9. Key References
-- **[Foundational]** Shalev, Shavit. *Split-Ordered Lists: Lock-Free Extensible Hash Tables.* JACM, 2006.
-- **[SOTA]** Li, Andersen, Kaminsky, Freedman. *Algorithmic Improvements for Fast Concurrent Cuckoo Hashing (libcuckoo).* EuroSys, 2014.
-- **[SOTA]** David, Guerraoui, Tudor. *Asynchronized Concurrency: The Secret to Scaling Concurrent Search Data Structures (CLHT).* ASPLOS, 2015.
-- **[Foundational]** Fich, Hendler, Shavit. *On the Inherent Weakness of Conditional Synchronization Primitives / Linear Lower Bounds on Real-World Implementations of Concurrent Objects.* FOCS, 2005.
-- **[SOTA]** Liu, Zhang, Spear. *Dynamic-Sized Nonblocking Hash Tables.* PODC, 2014.
-- **[Foundational]** Fagin, Nievergelt, Pippenger, Strong. *Extendible Hashing — A Fast Access Method for Dynamic Files.* ACM TODS, 1979.
+- **[Foundational]** Shalev, Shavit. *Split-Ordered Lists: Lock-Free Extensible Hash Tables.* JACM, 2006. — [DOI](https://dl.acm.org/doi/10.1145/1147954.1147958)
+- **[SOTA]** Li, Andersen, Kaminsky, Freedman. *Algorithmic Improvements for Fast Concurrent Cuckoo Hashing (libcuckoo).* EuroSys, 2014. — [DOI](https://dl.acm.org/doi/10.1145/2592798.2592820)
+- **[SOTA]** David, Guerraoui, Tudor. *Asynchronized Concurrency: The Secret to Scaling Concurrent Search Data Structures (CLHT).* ASPLOS, 2015. — [DOI](https://dl.acm.org/doi/10.1145/2786763.2694359)
+- **[Foundational]** Fich, Hendler, Shavit. *On the Inherent Weakness of Conditional Synchronization Primitives / Linear Lower Bounds on Real-World Implementations of Concurrent Objects.* FOCS, 2005. — [IEEE](https://ieeexplore.ieee.org/document/1530711/)
+- **[SOTA]** Liu, Zhang, Spear. *Dynamic-Sized Nonblocking Hash Tables.* PODC, 2014. — [DOI](https://dl.acm.org/doi/10.1145/2611462.2611495)
+- **[Foundational]** Fagin, Nievergelt, Pippenger, Strong. *Extendible Hashing — A Fast Access Method for Dynamic Files.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320083.320092)
+
+## 10. Worked Example
+
+Split-ordered list with $m=2$ buckets, keys $\{1,3,2\}$ inserted. Hash = key itself; bucket = $h \bmod m$. The single underlying lock-free list is sorted by the **bit-reversed** 3-bit key:
+
+| key | binary | reversed | sort value |
+|-----|--------|----------|-----------|
+| 1 | 001 | 100 | 4 |
+| 3 | 011 | 110 | 6 |
+| 2 | 010 | 010 | 2 |
+
+List order (ascending reversed value): $2 \to 1 \to 3$. Bucket 0 (even keys) points at node 2; bucket 1 (odd keys) points at node 1.
+
+Now load factor crosses threshold, so grow to $m=4$. We do **not** rebuild: we lazily add bucket pointers 2 and 3. Bucket 2 ($h \bmod 4 = 2$) just needs a pointer into the existing list at the first reversed-key $\ge$ reverse(2) — it lands on node 2 already there. No node moves, no reader stalls; the new bucket is initialized with one CAS. This is the $O(1)$-amortized, non-blocking resize: growth costs only pointer insertion, charged across the inserts that triggered it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

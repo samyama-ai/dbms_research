@@ -42,12 +42,24 @@ Distribution-free recall certificates (conformal) that hold under deployment dri
 
 ## 9. Key References
 
-- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC 1998.
-- **[SOTA]** Andoni, Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC 2015.
-- **[SOTA]** Malkov, Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using HNSW.* IEEE TPAMI, 2020.
-- **[SOTA]** Thirumuruganathan, Li, Tang, et al. *Deep Learning for Blocking in Entity Matching (DeepBlocker).* VLDB 2021.
-- **[Survey]** Papadakis, Skoutas, Thanos, Palpanas. *Blocking and Filtering Techniques for Entity Resolution: A Survey.* ACM Computing Surveys, 2020.
-- **[Foundational]** Rubinstein. *Hardness of Approximate Nearest Neighbor Search (under SETH).* STOC 2018.
+- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC 1998. — [DOI](https://doi.org/10.1145/276698.276876)
+- **[SOTA]** Andoni, Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[SOTA]** Malkov, Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using HNSW.* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[SOTA]** Thirumuruganathan, Li, Tang, et al. *Deep Learning for Blocking in Entity Matching (DeepBlocker).* VLDB 2021. — [DOI](https://doi.org/10.14778/3476249.3476294)
+- **[Survey]** Papadakis, Skoutas, Thanos, Palpanas. *Blocking and Filtering Techniques for Entity Resolution: A Survey.* ACM Computing Surveys, 2020. — [DOI](https://doi.org/10.1145/3377455)
+- **[Foundational]** Rubinstein. *Hardness of Approximate Nearest Neighbor Search (under SETH).* STOC 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
+
+## 10. Worked Example
+
+Suppose true matches have Jaccard similarity $s \ge \tau = 0.8$ on their MinHash signatures, and we band with $k$ rows per band and $L$ bands. The per-pair retention (collision) probability is $P(s) = 1 - (1 - s^k)^L$.
+
+Pick $k=5,\ L=20$. For a true match at $s=0.8$:
+$$s^k = 0.8^5 = 0.3277,\quad P = 1 - (1 - 0.3277)^{20} = 1 - 0.6723^{20} \approx 1 - 0.00040 = 0.99960.$$
+So the per-pair miss (drop) probability is $\delta \approx 4\times 10^{-4}$ — well under a 1% recall-loss budget.
+
+Now check a non-match at $s=0.3$: $s^k = 0.3^5 = 0.00243$, so $P = 1 - (1-0.00243)^{20} \approx 1 - 0.9526 = 0.0474$. Only about 4.7% of dissimilar pairs collide, so the candidate set stays small and reduction ratio stays high.
+
+This is the $p_1$-vs-$p_2$ gap in action: the steep S-curve of $P(s)$ keeps matches ($s\ge0.8$) almost surely while discarding most non-matches — but the guarantee is *conditional* on every true match truly having $s \ge \tau$, which adversarial noise can violate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

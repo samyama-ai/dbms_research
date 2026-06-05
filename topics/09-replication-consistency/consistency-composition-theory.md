@@ -53,12 +53,24 @@ There is a clean positive result (linearizability composes) and clean negative r
 
 ## 9. Key References
 
-- **[Foundational]** Herlihy, M. P., Wing, J. M. *Linearizability: a correctness condition for concurrent objects.* ACM TOPLAS, 1990.
-- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014.
-- **[SOTA]** Cerone, A., Bernardi, G., Gotsman, A. *A framework for transactional consistency models with atomic visibility.* CONCUR, 2015.
-- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm strong enough: reasoning about consistency choices in distributed systems (CISE).* POPL, 2016.
-- **[Foundational]** Papadimitriou, C. H. *The serializability of concurrent database updates.* JACM, 1979.
-- **[SOTA]** Kingsbury, K., Alvaro, P. *Elle: inferring isolation anomalies from experimental observations.* VLDB, 2020.
+- **[Foundational]** Herlihy, M. P., Wing, J. M. *Linearizability: a correctness condition for concurrent objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Burckhardt, S. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
+- **[SOTA]** Cerone, A., Bernardi, G., Gotsman, A. *A framework for transactional consistency models with atomic visibility.* CONCUR, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.CONCUR.2015.58)
+- **[SOTA]** Gotsman, A., Yang, H., Ferreira, C., Najafzadeh, M., Shapiro, M. *'Cause I'm strong enough: reasoning about consistency choices in distributed systems (CISE).* POPL, 2016. — [DOI](https://doi.org/10.1145/2837614.2837625)
+- **[Foundational]** Papadimitriou, C. H. *The serializability of concurrent database updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[SOTA]** Kingsbury, K., Alvaro, P. *Elle: inferring isolation anomalies from experimental observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+
+## 10. Worked Example
+
+A client writes its profile to the **primary store** (causal+, read-your-writes), then immediately issues a read that is routed through a **stateless edge cache** sitting in front of the store.
+
+Trace:
+1. `put(profile, v2)` → primary accepts, session now expects to see $v2$.
+2. `get(profile)` → cache has a stale entry $v1$ (populated before the write) and returns it on a HIT.
+
+Although the primary alone guarantees read-your-writes (RYW), the *composite* drops it: the cache's visibility relation $\mathsf{vis}_{cache}$ is a strict subset of the store's and does **not** contain the session's own write. Formally RYW requires $\text{so} \subseteq \mathsf{vis}$ (session order in visibility); the cache violates this because it never observed the `put`.
+
+Per-layer labels: $\{\text{RYW}\} \times \{\text{none}\}$. Naive "meet of labels" reasoning would predict the weaker of the two (none), which happens to be right here — but the point is that the *wiring* (cache in front) is what forces the drop, not the cache's standalone label. Move the cache *behind* the write path (write-through) and RYW is restored: composition is wiring-sensitive, not just label-sensitive.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

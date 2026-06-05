@@ -51,12 +51,25 @@ The **pure-oracle** query complexity is **closed** ($\Theta(nk)$), and noisy thr
 
 ## 9. Key References
 
-- **[Foundational]** J. Wang, T. Kraska, M. J. Franklin, J. Feng. *CrowdER: Crowdsourcing Entity Resolution.* VLDB, 2012.
-- **[Foundational]** S. E. Whang, P. Lofgren, H. Garcia-Molina. *Question Selection for Crowd Entity Resolution.* VLDB, 2013.
-- **[SOTA]** N. Vesdapunt, K. Bellare, N. Dalvi. *Crowdsourcing Algorithms for Entity Resolution.* VLDB, 2014.
-- **[SOTA]** A. Mazumdar, B. Saha. *Clustering with Noisy Queries.* NeurIPS, 2017.
-- **[SOTA]** D. Firmani, B. Saha, D. Srivastava. *Online Entity Resolution Using an Oracle.* VLDB, 2016.
-- **[Survey]** A. Doan, et al. *Human-in-the-Loop Data Integration.* VLDB tutorial / Magellan papers, 2017–2018.
+- **[Foundational]** J. Wang, T. Kraska, M. J. Franklin, J. Feng. *CrowdER: Crowdsourcing Entity Resolution.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2350229.2350263)
+- **[Foundational]** S. E. Whang, P. Lofgren, H. Garcia-Molina. *Question Selection for Crowd Entity Resolution.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2536336.2536337)
+- **[SOTA]** N. Vesdapunt, K. Bellare, N. Dalvi. *Crowdsourcing Algorithms for Entity Resolution.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732977.2732982)
+- **[SOTA]** A. Mazumdar, B. Saha. *Clustering with Noisy Queries.* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1706.07510)
+- **[SOTA]** D. Firmani, B. Saha, D. Srivastava. *Online Entity Resolution Using an Oracle.* VLDB, 2016. — [DOI](https://doi.org/10.14778/2876473.2876474)
+- **[Survey]** A. Doan, et al. *Human-in-the-Loop Data Integration.* VLDB tutorial / Magellan papers, 2017–2018. — [DOI](https://doi.org/10.14778/3137765.3137833)
+
+## 10. Worked Example
+
+Five records $\{a,b,c,d,e\}$ with hidden ground-truth partition $\{a,b,c\},\{d,e\}$ ($k=2$ clusters). A perfect oracle answers "$x\equiv y$?". Naively, all $\binom{5}{2}=10$ pairs could be asked — but transitivity makes most free.
+
+**Benefit-first adaptive trace** (label highest-match-probability pairs first):
+
+1. Ask $a\equiv b$ → **yes**. Knowledge: $\{a,b\}$.
+2. Ask $b\equiv c$ → **yes**. By transitivity $a\equiv c$ is **free**. Knowledge: $\{a,b,c\}$.
+3. Ask $d\equiv e$ → **yes**. Knowledge: $\{d,e\}$.
+4. Ask $a\equiv d$ → **no**. By transitivity $a\not\equiv e,\ b\not\equiv d,\ b\not\equiv e,\ c\not\equiv d,\ c\not\equiv e$ are **all free** (a $-$ between any member of $\{a,b,c\}$ and any of $\{d,e\}$).
+
+Total: **4 questions** instead of 10. This matches the $\Theta(nk)$ bound: with $n=5,k=2$, $nk=10$, and the constant is small here because clusters are large. A bad (random) order — e.g. asking cross-cluster pairs early — wastes queries that transitivity cannot later collapse, illustrating the adaptivity advantage.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

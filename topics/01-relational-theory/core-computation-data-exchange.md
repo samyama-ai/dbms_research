@@ -1,6 +1,7 @@
 # Core Computation for Data Exchange
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/core-computation-data-exchange` · **Status:** solved-but-impractical
+> **Verification note:** The Gottlob–Nash core-computation result appeared as PODS 2006 and as a journal article in *Theory and Practice of Logic Programming* (TPLP) 8(5–6), 2008 — not JACM; the "JACM" venue label below is incorrect.
 
 ## 1. Problem Statement
 
@@ -43,12 +44,20 @@ Groups: **Kolaitis (UCSC)**, **ten Cate (ILLC Amsterdam)**, **Mecca / Papotti (B
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS 2005.
-- **[Foundational]** Fagin, Kolaitis, Popa. *Data Exchange: Getting to the Core.* PODS 2003 / TODS 2005.
-- **[SOTA]** Gottlob, Nash. *Efficient Core Computation in Data Exchange.* JACM, 2008.
-- **[SOTA]** Mecca, Papotti, Raunich, et al. *++Spicy / Core Schema Mappings.* SIGMOD 2009 / VLDB.
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC 1977.
-- **[Survey]** Arenas, Barceló, Libkin, Murlak. *Foundations of Data Exchange.* Cambridge Univ. Press, 2014.
+- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** Fagin, Kolaitis, Popa. *Data Exchange: Getting to the Core.* PODS 2003 / TODS 2005. — [DOI](https://doi.org/10.1145/1061318.1061323)
+- **[SOTA]** Gottlob, Nash. *Efficient Core Computation in Data Exchange.* JACM, 2008. — [DOI (PODS 2006)](https://doi.org/10.1145/1142351.1142358)
+- **[SOTA]** Mecca, Papotti, Raunich, et al. *++Spicy / Core Schema Mappings.* SIGMOD 2009 / VLDB. — [DOI](https://doi.org/10.1145/1559845.1559914)
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Survey]** Arenas, Barceló, Libkin, Murlak. *Foundations of Data Exchange.* Cambridge Univ. Press, 2014. — [DOI](https://doi.org/10.1017/CBO9781139060158)
+
+## 10. Worked Example
+
+Source $S=\{E(\text{alice},\text{bob})\}$; st-tgd $E(x,y)\to\exists z\,M(x,z)\wedge M(y,z)$. The chase fires once, inventing a labeled null $z_0$:
+$$J=\{M(\text{alice},z_0),\,M(\text{bob},z_0)\}.$$
+Now add a *redundant* trigger by also chasing a second copy with fresh null $z_1$, giving the (still universal) solution
+$$J'=\{M(\text{alice},z_0),M(\text{bob},z_0),\,M(\text{alice},z_1),M(\text{bob},z_1)\}.$$
+$J'$ has 4 tuples but is not minimal: the endomorphism $h(z_1)=z_0$, identity elsewhere, maps $J'\to J'$ with image $J$. No proper homomorphism shrinks $J$ further, so $J$ (2 tuples) is the **core**. Certain answers agree: for $Q()\leftarrow\exists u,v,w\,M(u,w)\wedge M(v,w)$, both $J$ and $J'$ yield *true*. Computing the core means finding that folding endomorphism — here trivial, but in general each fold needs a homomorphism search, which is why the PTIME bound carries a large exponent.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

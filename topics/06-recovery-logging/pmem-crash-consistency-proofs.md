@@ -48,11 +48,17 @@ Active: persistency-aware separation logics maturing (Spirea, Pierogi; Birkedal 
 
 ## 9. Key References
 
-- **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[SOTA]** Ian Neal, Ben Reeves, Ben Stoler, Andrew Quinn, Youngjin Kwon, Simon Peter, Baris Kasikci. *AGAMOTTO: How Persistent is your Persistent Memory Application?* OSDI, 2020.
-- **[SOTA]** Sihang Liu, Korakit Seemakhupt, Yizhou Wei, Thomas Wenisch, Aasheesh Kolli, Samira Khan. *Cross-Failure Bug Detection in Persistent Memory Programs (XFDetector).* ASPLOS, 2020.
-- **[SOTA]** Simon Friis Vindum, Lars Birkedal. *Spirea: A Mechanized Concurrent Separation Logic for Weak Persistent Memory.* OOPSLA, 2023.
-- **[SOTA]** Azalea Raad, John Wickerson, Gil Neiger, Viktor Vafeiadis. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020.
+- **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
+- **[SOTA]** Ian Neal, Ben Reeves, Ben Stoler, Andrew Quinn, Youngjin Kwon, Simon Peter, Baris Kasikci. *AGAMOTTO: How Persistent is your Persistent Memory Application?* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/neal) · [DBLP](https://dblp.org/rec/conf/osdi/NealRSQKPK20.html)
+- **[SOTA]** Sihang Liu, Korakit Seemakhupt, Yizhou Wei, Thomas Wenisch, Aasheesh Kolli, Samira Khan. *Cross-Failure Bug Detection in Persistent Memory Programs (XFDetector).* ASPLOS, 2020. — [DOI](https://doi.org/10.1145/3373376.3378452)
+- **[SOTA]** Simon Friis Vindum, Lars Birkedal. *Spirea: A Mechanized Concurrent Separation Logic for Weak Persistent Memory.* OOPSLA, 2023. — [DOI](https://doi.org/10.1145/3622820)
+- **[SOTA]** Azalea Raad, John Wickerson, Gil Neiger, Viktor Vafeiadis. *Persistency Semantics of the Intel-x86 Architecture (Px86).* POPL, 2020. — [DBLP](https://dblp.org/rec/journals/pacmpl/RaadWNV20.html)
+
+## 10. Worked Example
+
+Consider a persistent singly-linked stack push: allocate node $n$, write $n.\text{val}=7$, write $n.\text{next}=\text{head}$, then publish $\text{head}=n$. Recovery invariant $I$: every node reachable from $\text{head}$ has a valid `val` and `next`. Under out-of-order persistence the publishing store of $\text{head}$ may persist *before* $n.\text{next}$ — a crash then leaves $\text{head}\to n$ with $n.\text{next}$ garbage, violating $I$. The fix is a `CLWB(n.next)` + `SFENCE` *before* writing $\text{head}$, ordering the persists.
+
+Now count the crash-state explosion the verifier faces. With $k=4$ pending (un-persisted) stores and out-of-order persistence, the number of persisted subsets is $2^k = 16$. Add torn writes: the 8-byte `head` pointer, if mis-aligned across two cache lines, can persist as either half, multiplying states by a per-store split factor $s\approx 2$, giving $\sim 2^k \cdot s = 32$ states to check. For $k=40$ pending stores this is $>10^{12}$ — the exponential blow-up that forces heuristic checkers (Witcher, Jaaru) over exhaustive enumeration, and motivates *proofs* that quantify over all linearizations symbolically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

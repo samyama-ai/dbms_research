@@ -34,12 +34,12 @@ Active directions: robust/adversarial streaming so windowed sketches survive inp
 - Smooth-histogram-style general frameworks for non-smooth functionals (entropy, holistic aggregates).
 
 ## 9. Key References
-- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SODA, 2002 / SIAM J. Computing.
-- **[Foundational]** Braverman, V., Ostrovsky, R. *Smooth Histograms for Sliding Windows.* FOCS, 2007.
-- **[Foundational]** Gibbons, P., Tirthapura, S. *Distributed Streams Algorithms for Sliding Windows.* SPAA, 2002.
-- **[SOTA]** Cormode, G., Shkapenyuk, V., Srivastava, D., Xu, B. *Forward Decay: A Practical Time Decay Model for Streaming Systems.* ICDE, 2009.
-- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SODA, 2002 / SIAM J. Computing. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Foundational]** Braverman, V., Ostrovsky, R. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DOI](https://doi.org/10.1109/FOCS.2007.55)
+- **[Foundational]** Gibbons, P., Tirthapura, S. *Distributed Streams Algorithms for Sliding Windows.* SPAA, 2002. — [DOI](https://doi.org/10.1145/564870.564880)
+- **[SOTA]** Cormode, G., Shkapenyuk, V., Srivastava, D., Xu, B. *Forward Decay: A Practical Time Decay Model for Streaming Systems.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.65)
+- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

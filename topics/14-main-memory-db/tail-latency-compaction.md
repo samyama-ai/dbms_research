@@ -39,12 +39,20 @@ Threads: interference-aware schedulers using LLC/bandwidth partitioning (Intel R
 - Co-designing MVCC version pruning with the scheduler to bound grace-period-induced tails.
 
 ## 9. Key References
-- **[Foundational]** Dean, J., Barroso, L. A. *The Tail at Scale.* CACM, 2013.
-- **[Foundational]** Bacon, D., Cheng, P., Rajan, V. *A Real-Time Garbage Collector with Low Overhead and Consistent Utilization (Metronome).* POPL, 2003.
-- **[SOTA]** Balmau, O., et al. *SILK: Preventing Latency Spikes in Log-Structured Merge Key-Value Stores.* USENIX ATC, 2019.
-- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** Levandoski, J., Lomet, D., Sengupta, S. *The Bw-Tree: A B-Tree for New Hardware Platforms.* ICDE, 2013.
-- **[SOTA]** Neumann, T., Mühlbauer, T., Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
+- **[Foundational]** Dean, J., Barroso, L. A. *The Tail at Scale.* CACM, 2013. — [DOI](https://doi.org/10.1145/2408776.2408794)
+- **[Foundational]** Bacon, D., Cheng, P., Rajan, V. *A Real-Time Garbage Collector with Low Overhead and Consistent Utilization (Metronome).* POPL, 2003. — [DOI](https://doi.org/10.1145/604131.604155)
+- **[SOTA]** Balmau, O., et al. *SILK: Preventing Latency Spikes in Log-Structured Merge Key-Value Stores.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/balmau)
+- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** Levandoski, J., Lomet, D., Sengupta, S. *The Bw-Tree: A B-Tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** Neumann, T., Mühlbauer, T., Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+
+## 10. Worked Example
+
+Model the foreground as M/G/1 with mean service $S=10\,\mu s$. At arrival rate $\lambda=70{,}000$/s, utilization $\rho=\lambda S=0.70$. Mean queue wait scales as $W \approx \frac{\rho}{1-\rho}\cdot\frac{S}{?}$; using $W_q \approx \frac{\rho}{1-\rho}S = \frac{0.70}{0.30}\cdot10 \approx 23\,\mu s$.
+
+Now GC must keep up. Garbage is generated at $g$ requiring reclamation bandwidth equal to $20\%$ of a core. Reserving it pushes effective foreground utilization to $\rho'=0.70/0.80 = 0.875$, so $W_q' \approx \frac{0.875}{0.125}\cdot10 = 70\,\mu s$ — a $3\times$ tail-wait jump from the same arrival rate. This is the throughput-vs-tail tradeoff: as $\rho\to1$, $W_q\to\infty$.
+
+Add interference: a merge burst evicts a request's $256\,$KB working set. With memory bandwidth $B=20$ GB/s, the refill stall is $256\text{KB}/B \approx 12.8\,\mu s$ — an additive spike on top of the queueing tail, exactly the $\Omega(\text{footprint}/B)$ floor of section 5. SILK-style pacing schedules the burst into an idle gap to dodge the eviction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

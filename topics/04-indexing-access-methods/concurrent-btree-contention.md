@@ -44,12 +44,22 @@ Partially open. Practice strongly suggests synchronization can be made proportio
 - Energy/coherence-traffic models beyond step complexity.
 
 ## 9. Key References
-- **[Foundational]** P. Lehman, S. B. Yao. *Efficient Locking for Concurrent Operations on B-Trees.* ACM TODS, 1981.
-- **[Foundational]** C. Dwork, M. Herlihy, O. Waarts. *Contention in Shared Memory Algorithms.* JACM, 1997.
-- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013.
-- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic Lock Coupling.* IEEE Data Eng. Bull., 2019.
-- **[SOTA]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012.
+- **[Foundational]** P. Lehman, S. B. Yao. *Efficient Locking for Concurrent Operations on B-Trees.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319663)
+- **[Foundational]** C. Dwork, M. Herlihy, O. Waarts. *Contention in Shared Memory Algorithms.* JACM, 1997. — [DOI](https://doi.org/10.1145/268999.269000)
+- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic Lock Coupling.* IEEE Data Eng. Bull., 2019. — [PDF](http://sites.computer.org/debull/A19mar/p73.pdf)
+- **[SOTA]** Y. Mao, E. Kohler, R. Morris. *Cache Craftiness for Fast Multicore Key-Value Storage (Masstree).* EuroSys, 2012. — [DOI](https://doi.org/10.1145/2168836.2168855)
+
+## 10. Worked Example
+
+Consider a B$^\text{link}$-tree leaf $L$ holding keys $\{10,20,30\}$ with right-link to $L'$ (high-key $30$). Two threads run concurrently: $T_1$ inserts $25$, $T_2$ looks up $20$.
+
+*Lock-coupling (naive):* both latch root→internal→leaf; $T_2$ blocks on $T_1$'s leaf latch even though $20$ and $25$ don't conflict — synchronization cost scales with height $h=3$.
+
+*OLC / B$^\text{link}$:* $T_2$ reads $L$ optimistically, records version $v=7$, finds $20$, re-validates $v$ still $=7$ at exit — **zero latches, zero stalls**. $T_1$ latches only $L$, bumps $v\to 8$, inserts $25$. The two operations touch the *same node* but are non-conflicting, so contention is $O(1)$, not $\Theta(h)$.
+
+Now suppose $T_1$ instead triggers a split that rewrites the parent: $T_2$ may read stale $L$, but the right-link + high-key let it *follow the link* to find $25$ without restarting from root. Contention appears only on the genuinely shared parent cell — illustrating why the open gap is precisely the adversarial **split-cascade** case where many threads contend on rebalanced internal nodes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

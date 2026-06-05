@@ -103,11 +103,24 @@ boundary (Neumann/Freitag, TUM). Groups: TUM (Neumann/Kemper), Yale (Abadi), CMU
 
 ## 9. Key References
 
-- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[SOTA]** K. Ren, T. Faleiro, D. Abadi. *Low-Overhead Asynchronous Checkpointing in Main-Memory Database Systems.* SIGMOD, 2016.
-- **[Foundational]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011.
-- **[SOTA]** W. Zheng, S. Tu, E. Kohler, B. Liskov. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014.
-- **[Foundational]** C. Diaconu et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
+- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://dl.acm.org/doi/10.1145/214451.214456)
+- **[SOTA]** K. Ren, T. Diamond, D. Abadi, A. Thomson. *Low-Overhead Asynchronous Checkpointing in Main-Memory Database Systems.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915966)
+- **[Foundational]** A. Kemper, T. Neumann. *HyPer: A Hybrid OLTP&OLAP Main Memory Database System Based on Virtual Memory Snapshots.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767867)
+- **[SOTA]** W. Zheng, S. Tu, E. Kohler, B. Liskov. *Fast Databases with Fast Durability and Recovery Through Multicore Parallelism (SiloR).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/zheng_wenting)
+- **[Foundational]** C. Diaconu et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+
+## 10. Worked Example
+
+Three records $A,B,C$, all initially $0$. Take a virtual checkpoint at logical instant $t_0$ (after $T_1$ commits, before $T_2$). Transactions:
+
+- $T_1$ (commits at $t_0^-$): $A \leftarrow 1$.
+- $T_2$ (commits at $t_0^+$, during checkpoint): $B \leftarrow 2$.
+
+CALC keeps a per-record `live` value and a `stable` value plus one bit. At $t_0$ it logically freezes: the snapshot must contain $A=1, B=0, C=0$ (the prefix up to $t_0$).
+
+When $T_2$ writes $B$, the writer sees $B$'s stable value not yet saved, so it **copies the old value** $B_{\text{stable}}=0$ aside (one extra copy), then sets $B_{\text{live}}=2$. The checkpoint thread asynchronously flushes stable values $\{A{=}1, B{=}0, C{=}0\}$ — exactly the prefix, no quiesce.
+
+Cost accounting: only records written *during* the window get a second copy, so extra memory $=\Theta(W)$ where $W=1$ here (just $B$). Foreground tax is the one copy-aside per first post-$t_0$ write, matching the $O(1)$-per-record claim of section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

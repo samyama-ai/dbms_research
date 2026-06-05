@@ -55,12 +55,26 @@ Renewed interest comes from the **information-theoretic reformulation** of depen
 
 ## 9. Key References
 
-- **[Foundational]** C. Beeri, R. Fagin, J. H. Howard. *A complete axiomatization for functional and multivalued dependencies in database relations.* SIGMOD, 1977.
-- **[Foundational]** Y. Sagiv, S. F. Walecka. *Subset dependencies and a completeness result for a subclass of embedded multivalued dependencies.* JACM, 1982.
-- **[Foundational]** D. Maier, A. O. Mendelzon, Y. Sagiv. *Testing implications of data dependencies.* ACM TODS, 1979.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Chapters on dependencies and the chase.)
-- **[Survey]** F. Matúš. *Infinitely many information inequalities.* IEEE ISIT, 2007. (Entropy region non-finite-axiomatizability.)
-- **[SOTA]** B. Kenig, D. Suciu. *Integrity constraints revisited: from exact to approximate implication.* ICDT / Logical Methods in CS, 2020–2022.
+- **[Foundational]** C. Beeri, R. Fagin, J. H. Howard. *A complete axiomatization for functional and multivalued dependencies in database relations.* SIGMOD, 1977. — [DBLP search](https://dblp.org/search?q=A%20complete%20axiomatization%20for%20functional%20and%20multivalued%20dependencies)
+- **[Foundational]** Y. Sagiv, S. F. Walecka. *Subset dependencies and a completeness result for a subclass of embedded multivalued dependencies.* JACM, 1982. — [DBLP search](https://dblp.org/search?q=Subset%20dependencies%20completeness%20embedded%20multivalued%20Sagiv%20Walecka)
+- **[Foundational]** D. Maier, A. O. Mendelzon, Y. Sagiv. *Testing implications of data dependencies.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320107.320115)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (Chapters on dependencies and the chase.) — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Survey]** F. Matúš. *Infinitely many information inequalities.* IEEE ISIT, 2007. (Entropy region non-finite-axiomatizability.) — [DOI](https://doi.org/10.1109/ISIT.2007.4557201)
+- **[SOTA]** B. Kenig, D. Suciu. *Integrity constraints revisited: from exact to approximate implication.* ICDT / Logical Methods in CS, 2020–2022. — [arXiv](https://arxiv.org/abs/1812.09987)
+
+## 10. Worked Example
+
+A JD is *not* always equivalent to a pair of MVDs. Consider $U=\{A,B,C\}$ and the ternary JD $\sigma = \bowtie[AB, BC, AC]$ (the "triangle"). Test whether it holds on:
+
+| A | B | C |
+|---|---|---|
+| 1 | 1 | 2 |
+| 2 | 1 | 1 |
+| 1 | 2 | 1 |
+
+Projections: $\pi_{AB}=\{(1,1),(2,1),(1,2)\}$, $\pi_{BC}=\{(1,2),(1,1),(2,1)\}$, $\pi_{AC}=\{(1,2),(2,1),(1,1)\}$. Joining all three reconstructs the three originals **plus** the spurious tuple $(1,1,1)$: row 1 gives $A{=}1,B{=}1$; row 2 gives $B{=}1,C{=}1$; row 3 gives $A{=}1,C{=}1$ — all three pairwise projections contain the matching pairs, so $(1,1,1)\in \pi_{AB}\bowtie\pi_{BC}\bowtie\pi_{AC}$. Since the join strictly exceeds $r$, the JD $\sigma$ **fails** here.
+
+The chase test mirrors this: chasing $\sigma$'s tableau with no constraints leaves the spurious row, so $\emptyset \not\models \sigma$. Crucially, this triangle JD is provably not derivable from any fixed-arity (e.g., binary MVD-style) rule set — the phenomenon behind Petrov's non-axiomatizability result.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,12 +42,22 @@ Directions: (1) **FMM-aware CQ counting** — tight exponents for counting/Boole
 
 ## 9. Key References
 
-- **[Foundational]** Itai, Rodeh. *Finding a Minimum Circuit in a Graph.* SIAM J. Computing, 1978 (triangles via matrix multiplication).
-- **[Foundational]** Alon, Yuster, Zwick. *Finding and Counting Given Length Cycles.* Algorithmica, 1997 (sparse subgraph counting via FMM).
-- **[SOTA]** Alman, Duan, Vassilevska Williams, Xu, Xu, Zhou. *More Asymmetry Yields Faster Matrix Multiplication.* SODA 2025 *(frontier — verify exact venue/exponent)*.
-- **[SOTA]** Abo Khamis, Curtin, Moseley, Ngo, Nguyen, Olteanu, Schleich. *Functional Aggregate Queries with Additive Inequalities / FMM-aided evaluation.* (FAQ / counting line) PODS/SIGMOD, 2019–2021.
-- **[Survey]** Vassilevska Williams. *On Some Fine-Grained Questions in Algorithms and Complexity.* ICM 2018 (BMM/triangle hardness and FMM).
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Itai, Rodeh. *Finding a Minimum Circuit in a Graph.* SIAM J. Computing, 1978 (triangles via matrix multiplication). — [DOI](https://doi.org/10.1137/0207033)
+- **[Foundational]** Alon, Yuster, Zwick. *Finding and Counting Given Length Cycles.* Algorithmica, 1997 (sparse subgraph counting via FMM). — [DOI](https://doi.org/10.1007/BF02523189)
+- **[SOTA]** Alman, Duan, Vassilevska Williams, Xu, Xu, Zhou. *More Asymmetry Yields Faster Matrix Multiplication.* SODA 2025 *(frontier — verify exact venue/exponent)*. — [arXiv](https://arxiv.org/abs/2404.16349)
+- **[SOTA]** Abo Khamis, Curtin, Moseley, Ngo, Nguyen, Olteanu, Schleich. *Functional Aggregate Queries with Additive Inequalities / FMM-aided evaluation.* (FAQ / counting line) PODS/SIGMOD, 2019–2021. — [arXiv](https://arxiv.org/abs/1812.09526)
+- **[Survey]** Vassilevska Williams. *On Some Fine-Grained Questions in Algorithms and Complexity.* ICM 2018 (BMM/triangle hardness and FMM). — [DOI](https://doi.org/10.1142/9789813272880_0188)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+**Counting triangles** in a 4-vertex graph with edges $\{12, 23, 13, 34\}$ (a triangle $1$–$2$–$3$ plus a pendant edge $3$–$4$). The query is $\sum_{a,b,c} E(a,b)E(b,c)E(a,c)$ — a 3-cycle CQ.
+
+*Combinatorial / AGM view:* with $m=4$ edges, the listing bound is $\Theta(m^{3/2})=\Theta(8)$ probe-style operations to enumerate candidate paths and test closure.
+
+*FMM view:* form the symmetric adjacency matrix $A$ and compute $A^2$, then $\mathrm{tr}(A^3)=\sum_i (A^3)_{ii}$. Here $\mathrm{tr}(A^3)=6$, which counts each of the single triangle's $3!=6$ ordered traversals, so the number of triangles is $6/6 = 1$. Computing $A\cdot A$ costs $O(n^{\omega})=O(4^{2.3714})$ ring operations.
+
+The point: $\mathrm{tr}(A^3)$ *never enumerates* the triangle — it counts via an algebraic product, the FMM shortcut that beats combinatorial listing for the *counting* variant. But to actually *output* the triangle $\{1,2,3\}$ you still pay $\Omega(\mathrm{OUT})$; and at $n=4$ the galactic FMM constants make $O(n^\omega)$ slower in wall-clock than the naive $O(n^3)$ — exactly the "solved-but-impractical" tension.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,20 @@ For *binary* joins under one round, upper and lower bounds essentially match (Be
 - Topology- and heterogeneity-aware routing (RDMA, disaggregated memory).
 
 ## 9. Key References
-- **[Foundational]** Y. Xu, P. Kostamaa, X. Zhou, L. Chen. *Handling Data Skew in Parallel Joins in Shared-Nothing Systems.* SIGMOD, 2008. (PRPD.)
-- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Skew in Parallel Query Processing.* PODS, 2014.
-- **[SOTA]** O. Polychroniou, R. Sen, K. Ross. *Track Join: Distributed Joins with Minimal Network Traffic.* SIGMOD, 2014.
-- **[SOTA]** W. Rödiger et al. *Flow-Join: Adaptive Skew Handling for Distributed Joins over High-Speed Networks.* ICDE, 2016.
-- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982. (Heavy hitters.)
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
+- **[Foundational]** Y. Xu, P. Kostamaa, X. Zhou, L. Chen. *Handling Data Skew in Parallel Joins in Shared-Nothing Systems.* SIGMOD, 2008. (PRPD.) — [DOI](https://doi.org/10.1145/1376616.1376720)
+- **[SOTA]** P. Beame, P. Koutris, D. Suciu. *Skew in Parallel Query Processing.* PODS, 2014. — [arXiv](https://arxiv.org/abs/1401.1872)
+- **[SOTA]** O. Polychroniou, R. Sen, K. Ross. *Track Join: Distributed Joins with Minimal Network Traffic.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610521)
+- **[SOTA]** W. Rödiger et al. *Flow-Join: Adaptive Skew Handling for Distributed Joins over High-Speed Networks.* ICDE, 2016. — [DOI](https://doi.org/10.1109/ICDE.2016.7498324)
+- **[Foundational]** J. Misra, D. Gries. *Finding Repeated Elements.* Science of Computer Programming, 1982. (Heavy hitters.) — [DOI](https://doi.org/10.1016/0167-6423(82)90012-0)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+
+## 10. Worked Example
+
+Join $R \bowtie_A S$ on $p=4$ workers. Key multiplicities in $R$: key $k_0$ has $r_{k_0}=600$ rows; keys $k_1\dots k_{40}$ have 10 rows each (tail), so $N=600+400=1000$. The threshold for "heavy" is $\approx N/p = 250$.
+
+**Plain hash partition** (`worker = hash(key) mod 4`): all 600 rows of $k_0$ land on one worker, giving it load $\ge 600$ while the others share the 400 tail rows ($\approx 133$ each). Max load $= 600 \gg N/p = 250$ — a $2.4\times$ straggler.
+
+**Heavy-hitter routing.** A Misra–Gries pass with $1/\epsilon = 8$ counters flags $k_0$ as heavy. Route $k_0$ specially: broadcast the small $S$-side for $k_0$ and split $R$'s 600 rows evenly across all 4 workers (150 each). The tail keeps plain hashing (~100 each). New max load $\approx 150 + 100 = 250 \approx N/p$ — straggler removed, restoring the balls-in-bins optimum. The cost is one broadcast of $\sigma_{A=k_0}S$ instead of funneling 600 build rows to one node.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

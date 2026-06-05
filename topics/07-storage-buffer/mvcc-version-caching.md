@@ -61,12 +61,26 @@ Variants:
 
 ## 9. Key References
 
-- **[Foundational]** Bernstein, Goodman. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983.
-- **[SOTA]** Böttcher, Leis, Neumann, Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (Steam).* VLDB, 2019.
-- **[SOTA]** Diaconu, Freedman, Ismert, et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013.
-- **[Foundational]** Bansal, Buchbinder, Naor. *Randomized Competitive Algorithms for Generalized Caching.* SIAM J. Computing, 2012.
-- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML, 2018.
-- **[Survey]** Wu, Arulraj, Lin, Xian, Pavlo. *An Empirical Evaluation of In-Memory MVCC.* VLDB, 2017.
+- **[Foundational]** Bernstein, Goodman. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983. — [DOI](https://doi.org/10.1145/319996.319998)
+- **[SOTA]** Böttcher, Leis, Neumann, Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems (Steam).* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[SOTA]** Diaconu, Freedman, Ismert, et al. *Hekaton: SQL Server's Memory-Optimized OLTP Engine.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2463710)
+- **[Foundational]** Bansal, Buchbinder, Naor. *Randomized Competitive Algorithms for Generalized Caching.* SIAM J. Computing, 2012. — [DOI](https://doi.org/10.1137/090779000)
+- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML, 2018. — [PMLR](http://proceedings.mlr.press/v80/lykouris18a.html)
+- **[Survey]** Wu, Arulraj, Lin, Xian, Pavlo. *An Empirical Evaluation of In-Memory MVCC.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3067421.3067427)
+
+## 10. Worked Example
+
+Tuple key $t$ has a version chain (commit timestamps): $v_1[10,40),\ v_2[40,70),\ v_3[70,\infty)$. Three live transactions hold snapshots $s_a=35,\ s_b=55,\ s_c=90$. Visibility (version $v$ live iff $begin_v\le s<end_v$):
+
+- $v_1$ visible to $s_a$ (35) ✓
+- $v_2$ visible to $s_b$ (55) ✓
+- $v_3$ visible to $s_c$ (90) ✓
+
+So **all three** versions are live — none can be evicted without a future refetch, and none can be garbage-collected.
+
+**GC watermark:** $w=\min(s_a,s_b,s_c)=35$. A version is unconditionally dead iff $end_v\le w$. Here even $v_1$ has $end=40>35$, so GC collects nothing.
+
+Now $T_a$ commits, leaving snapshots $\{55,90\}$, so $w=55$. Recheck $v_1$: $end=40\le55$ → **dead**, GC-eligible, and a *version-aware* buffer manager should evict it first (zero live readers), unlike LRU which might still hold $v_1$ as "recently used" while evicting the still-live $v_2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

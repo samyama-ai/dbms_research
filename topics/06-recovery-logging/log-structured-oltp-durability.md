@@ -36,12 +36,18 @@ Active: separating durability log from index (FASTER/Bw-tree lineage), key–val
 (i) A four-way RUM+Recovery lower bound and matching design. (ii) Bounded *tail*-latency point queries under ongoing compaction. (iii) Recovery-window-aware compaction scheduling. (iv) Co-design with persistent memory / CXL to shrink the unindexed tail. (v) Unifying deterministic log-replication (Calvin) durability with single-node LSM recovery.
 
 ## 9. Key References
-- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D., O'Neil, E. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[Foundational]** Rosenblum, M., Ousterhout, J. *The Design and Implementation of a Log-Structured File System.* ACM TOCS, 1992.
-- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** Chandramouli, B., Prasaad, G., Kossmann, D., Levandoski, J., Hunter, J., Barnett, M. *FASTER: A Concurrent Key-Value Store with In-Place Updates.* SIGMOD, 2018.
-- **[SOTA]** Lu, L., Pillai, T., Gopalakrishnan, H., Arpaci-Dusseau, A., Arpaci-Dusseau, R. *WiscKey: Separating Keys from Values in SSD-Conscious Storage.* FAST, 2016.
-- **[Survey]** Athanassoulis, M., Kester, M., Maas, L., Stoica, R., Idreos, S., Ailamaki, A., Callaghan, M. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
+- **[Foundational]** O'Neil, P., Cheng, E., Gawlick, D., O'Neil, E. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DBLP](https://dblp.org/rec/journals/acta/ONeilCGO96.html)
+- **[Foundational]** Rosenblum, M., Ousterhout, J. *The Design and Implementation of a Log-Structured File System.* ACM TOCS, 1992. — [DOI](https://dl.acm.org/doi/10.1145/146941.146943)
+- **[SOTA]** Dayan, N., Athanassoulis, M., Idreos, S. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://dl.acm.org/doi/10.1145/3035918.3064054)
+- **[SOTA]** Chandramouli, B., Prasaad, G., Kossmann, D., Levandoski, J., Hunter, J., Barnett, M. *FASTER: A Concurrent Key-Value Store with In-Place Updates.* SIGMOD, 2018. — [DOI](https://dl.acm.org/doi/10.1145/3183713.3196898)
+- **[SOTA]** Lu, L., Pillai, T., Gopalakrishnan, H., Arpaci-Dusseau, A., Arpaci-Dusseau, R. *WiscKey: Separating Keys from Values in SSD-Conscious Storage.* FAST, 2016. — [DBLP](https://dblp.org/rec/conf/fast/LuPAA16.html)
+- **[Survey]** Athanassoulis, M., Kester, M., Maas, L., Stoica, R., Idreos, S., Ailamaki, A., Callaghan, M. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+
+## 10. Worked Example
+
+Take an LSM with $N/B = 10^6$ data blocks and size ratio $T = 10$, so there are $L = \log_{10} 10^6 = 6$ levels. A point lookup that misses the memtable probes a Bloom filter per level; with naive uniform bit allocation ($\approx 10$ bits/key, false-positive rate $\epsilon \approx 0.01$ each), worst-case extra I/Os $\approx L\cdot\epsilon = 6\cdot 0.01 = 0.06$, plus the one true hit. Write amplification is $O(T\cdot L) = 10\cdot 6 = 60$: a key is rewritten up to 60 times migrating to the bottom level.
+
+Now the recovery axis. Suppose the memtable holds $64$ MB of unflushed records and replay bandwidth is $512$ MB/s. Recovery time is $T_{\text{rec}} = 64/512 = 0.125$ s — independent of the $L=6$ levels, because flushed levels are already durable and indexed. Halving the flush threshold to $32$ MB cuts $T_{\text{rec}}$ to $0.0625$ s but raises write amplification (more frequent flushes ⇒ more compaction). This is the exact (write-amp ↔ recovery-window) trade the problem says lacks a tight four-way bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*
