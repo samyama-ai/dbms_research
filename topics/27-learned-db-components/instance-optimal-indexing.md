@@ -1,6 +1,6 @@
 # Instance-Optimal Indexing Formalization
 
-> **Topic:** Learned Database Components · **ID:** `27-learned-db-components/instance-optimal-indexing` · **Status:** partially solved
+> **Topic:** Learned Database Components · **ID:** `27-learned-db-components/instance-optimal-indexing` · **Status:** partially-solved
 
 ## 1. Problem Statement
 
