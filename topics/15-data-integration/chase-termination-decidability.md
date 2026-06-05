@@ -1,0 +1,69 @@
+# Chase Termination Decidability Gap
+
+> **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/chase-termination-decidability` · **Status:** open
+
+## 1. Problem Statement
+
+The **chase** is the workhorse of data exchange and dependency reasoning: given an instance $D$ and a set $\Sigma$ of TGDs/EGDs, it repeatedly enforces unsatisfied dependencies by adding facts (introducing fresh nulls for existentials), producing a universal solution. The **chase-termination problem** asks whether this process halts.
+
+Several distinct decision problems must be separated:
+
+- **CT$_{\forall}$ (all-instances):** does the chase terminate for **every** input instance $D$?
+- **CT$_{\exists}$ / data-dependent:** does it terminate for a **given** instance $D$?
+- per **chase variant**: *oblivious*, *semi-oblivious (Skolem)*, *restricted (standard)*, *core* chase — each with possibly different termination behavior.
+
+The open problem: **close the gap** between known *sufficient* acyclicity conditions (which guarantee termination) and the exact **(semi-)decidability frontier** — i.e., characterize precisely which $(\Sigma)$ or $(\Sigma, D)$ pairs admit a terminating chase, and determine the exact complexity/decidability status of each variant.
+
+## 2. Mathematical Foundations
+
+A TGD fires when a homomorphism from its body into the instance has no extension to its head. The **oblivious** chase fires on every trigger; the **restricted** chase fires only when the head is not already (homomorphically) satisfied; the **core** chase computes the core after each round.
+
+Sufficient termination conditions form a hierarchy of **acyclicity** notions analyzing the *dependency graph* of how nulls propagate:
+$$\text{weak acyclicity} \subsetneq \text{safety} \subsetneq \text{super-weak acyclicity} \subsetneq \text{(model-faithful / acyclic GRD)} \dots$$
+**Weak acyclicity** (Fagin–Kolaitis–Miller–Popa) forbids cycles through "existential" positions in the position dependency graph, guaranteeing a **polynomial-size** chase. Richer notions (**inductive restriction, super-weak acyclicity** of Marnette; **MFA/MSA** — model-faithful/model-summarizing acyclicity of Grau et al.) capture strictly more terminating sets but are all merely **sufficient**, never exact.
+
+## 3. State of the Art (SOTA)
+
+- **Theory-SOTA.** Marnette (PODS 2009) introduced super-weak acyclicity and Skolem (semi-oblivious) chase analysis. **Grahne–Onet** and **Gogacz–Marcinkowski** delivered the deepest undecidability results: Gogacz & Marcinkowski (LICS 2014) proved **all-instance termination of the chase is undecidable**. Grau et al. (JAIR 2013) systematized MFA/MSA. Calautti–Gottlob–Pieris studied data-dependent termination.
+- **Systems-SOTA.** **RDFox** uses MFA-style checks for safe materialization; **LLunatic** (Geerts–Mecca–Papotti–Santoro) implements core/restricted chase for data exchange and cleaning; **Graal**, **VLog/Rulewerk** (TU Dresden) implement the restricted/Skolem chase with acyclicity front-ends.
+
+## 4. Upper Bound
+
+When a sufficient acyclicity condition holds (weakly acyclic, safe, super-weakly acyclic, MFA), the chase terminates and produces a universal solution of **polynomial size in data** (combined: exponential). Checking weak acyclicity itself is **PTime**; checking MFA/MSA is decidable but can be **2ExpTime**. For the **semi-oblivious / Skolem** chase, *all-instance* termination is **decidable** for restricted classes (e.g., single-head, or guarded) and reducible to monadic emptiness in those cases.
+
+## 5. Lower Bound
+
+The general results are **negative**:
+
+- **CT$_{\forall}$ for the restricted (standard) chase is undecidable** (Gogacz–Marcinkowski, LICS 2014; Grahne–Onet).
+- All-instance termination of the **oblivious** and **semi-oblivious** chase is also undecidable in general (reductions from the halting/Turing-machine tiling problems via TGD encodings).
+- Even **data-dependent** termination (given $D$) is undecidable in general.
+
+These rely on encoding Turing-machine computations in null-propagation, making the frontier inherently $\Pi^0_1$/$\Sigma^0_1$ in the arithmetical hierarchy rather than within PTime/NP.
+
+## 6. The Gap
+
+The gap is **genuinely open and partly provably unbridgeable**: a *complete* decidable characterization of restricted-chase termination cannot exist (undecidability). The real research question is therefore **where exactly** the decidable/undecidable boundary lies for **structured fragments** (guarded, sticky, single-head, linear) and **which chase variant** is easiest. Notably, restricted vs. semi-oblivious termination differ (one may halt while the other diverges), and the precise relationship — and the exact arithmetical-hierarchy level of each CT problem per fragment — is incompletely mapped.
+
+## 7. Current Research (as of June 2026)
+
+Active threads: **fairness and order-dependence** of the restricted chase (does a *fair* strategy terminating imply *all* strategies terminate?) — partial answers by Grahne–Onet and by Gogacz–Marcinkowski–Pieris. *(frontier — verify)* Recent ICDT/PODS 2025 work refines **bounded-derivation-depth** and **"chase-step counting"** semi-decision procedures, and explores **restricted-chase termination for guarded and frontier-guarded TGDs** as a decidable island. *(frontier — verify)* The VLog/Rulewerk and RDFox teams pursue *runtime* termination guards and incremental rematerialization.
+
+## 8. Future Work
+
+- Exact decidability classification per chase variant for guarded/sticky/linear fragments.
+- Resolve the **fairness conjecture** for the restricted chase fully.
+- Practical *anytime* chase with provable progress and early non-termination detection.
+- Unifying TGD+EGD termination (EGDs can both accelerate and break termination).
+
+## 9. Key References
+
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data exchange: semantics and query answering.* TCS, 2005. (Weak acyclicity.)
+- **[Foundational]** B. Marnette. *Generalized schema-mappings: from termination to tractability.* PODS, 2009. (Super-weak acyclicity, Skolem chase.)
+- **[SOTA]** T. Gogacz, J. Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP/LICS, 2014.
+- **[SOTA]** B. C. Grau, I. Horrocks, M. Krötzsch, C. Kupke, D. Magka, B. Motik, Z. Wang. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013. (MFA/MSA.)
+- **[SOTA]** F. Geerts, G. Mecca, P. Papotti, D. Santoro. *That's All Folks! LLUNATIC Goes Open Source.* VLDB, 2014. (Chase engine.)
+- **[Survey]** M. Calautti, G. Gottlob, A. Pieris. *Chase Termination for Guarded Existential Rules.* PODS, 2015.
+
+---
+*Part of the [DBMS Research catalog](../../README.md).*

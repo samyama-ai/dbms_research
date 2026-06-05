@@ -1,0 +1,59 @@
+# Verifiable Private Outsourced Queries
+
+> **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/verifiable-private-outsourced-queries` · **Status:** partially-solved
+
+## 1. Problem Statement
+
+When a database is **outsourced** to an untrusted server, a client wants two guarantees at once. **Verifiability:** the returned answer is *correct* (every returned tuple really satisfies the query and is authentic) and *complete* (no qualifying tuple was omitted) — i.e., the server cannot cheat or drop rows. **Privacy:** the query, the data, and the **access pattern** stay hidden from the server. These goals interact badly: classic **authenticated data structures** (Merkle trees, signature chains) prove completeness by revealing *boundary* records and the *traversal path* — exactly the access-pattern information that encrypted/oblivious schemes try to hide. The problem is to design protocols that provide **verifiable correctness and completeness while preserving data and access-pattern privacy**, at practical cost.
+
+Variants:
+- **Correctness-only (decision):** verify each returned tuple is authentic (easier — signatures suffice).
+- **Completeness (the hard part):** prove no qualifying tuple was withheld, without revealing neighbors.
+- **Full (correctness + completeness + access-pattern privacy):** the open frontier; *partially solved* for restricted query classes.
+
+## 2. Mathematical Foundations
+
+Verifiability rests on **authenticated data structures (ADS)**: a Merkle-hash tree (or authenticated B-tree / Merkle B+-tree) lets the client check membership and range-completeness against a signed digest, with a **verification object (VO)** whose soundness reduces to collision-resistance of the hash. Completeness for range queries uses *boundary* (immediately-out-of-range) records to prove nothing was skipped — these boundaries are the privacy leak. Privacy is layered via **ORAM** (hiding access pattern, with the $\Omega(\log n)$ Larsen–Nielsen bound), **searchable/structured encryption** (hiding values, with defined leakage $\mathcal{L}$), or **zero-knowledge / SNARK** proofs that a committed computation was performed correctly without revealing inputs. The combined object is a protocol where the server returns (answer, VO, $\pi$) such that a verifier accepts iff the answer is correct & complete w.r.t. the signed commitment, while the server's view is simulatable from the leakage profile (ideally DP or zero). Soundness is computational (CRHF / knowledge-of-exponent / SNARK assumptions); privacy is simulation-based.
+
+## 3. State of the Art (SOTA)
+
+- **Theory-SOTA:** **Verifiable computation / SNARKs** (Parno–Howell–Gentry–Raykova *Pinocchio*, S&P 2013; Groth16) prove arbitrary query computation correctness in zero-knowledge — handling correctness+completeness+privacy in principle, but with heavy prover cost. **vSQL** (Zhang et al., S&P 2017) verifies SQL queries over outsourced data using interactive proofs (CMT/GKR) and polynomial commitments, with sublinear verification.
+- **Systems-SOTA:** Authenticated B-tree / **Merkle B+-tree** range-query ADS (Li, Hadjieleftheriou, Kollios, Reyzin, SIGMOD 2006) is the canonical *verifiable* (not private) baseline. **IntegriDB** (Zhang, Katz, Papamanthou, CCS 2015) supports verifiable rich SQL (joins, aggregates) via authenticated structures. **vSQL** and zk-SNARK-backed ledgers/databases push toward combined verifiability + privacy. Combining ADS completeness with ORAM/SE access-pattern hiding is done only for restricted (range, point) queries.
+
+## 4. Upper Bound
+
+Authenticated range queries achieve **VO size and verification time $O(\log n + k)$** for a result of size $k$ (Merkle B+-tree), with $O(1)$ signed digest, in the CRHF model. SNARK-based verification (Pinocchio/Groth16) gives **$O(1)$ proof size and $O(1)$ verification** independent of computation size, at the cost of prover work quasi-linear in the circuit. vSQL verifies SQL with verification polylogarithmic in data size and proof sublinear, under polynomial-commitment assumptions. Adding ORAM for access-pattern privacy multiplies access cost by $O(\log n)$–$\mathrm{polylog}(n)$; DP-leakage relaxations reduce this toward $o(\log n)$ at $(\varepsilon,\delta)$ cost.
+
+## 5. Lower Bound
+
+Privacy side: hiding access patterns inherits the **$\Omega(\log n)$ ORAM bandwidth lower bound** (Larsen–Nielsen, CRYPTO 2018, cell-probe model). Verifiability side: any sound completeness proof must, information-theoretically, commit to a structure of size $\Omega(n)$ and a VO of size $\Omega(\log n + k)$ for range completeness (boundary witnesses). SNARK proof size can be $O(1)$, but **prover time is superlinear** and relies on non-falsifiable / knowledge assumptions (Gentry–Wichs: no succinct non-interactive arguments for all of NP from falsifiable assumptions, STOC 2011). The conflict is fundamental: completeness witnesses reveal boundary information unless wrapped in ORAM/ZK, paying the above costs.
+
+## 6. The Gap
+
+**Partially solved.** Verifiability alone (ADS) and privacy alone (ORAM/SE) are each mature; general-purpose ZK verifiable computation (SNARKs) covers both *in principle* but is **impractically expensive** for large databases and rich queries, and ADS-completeness leaks boundaries unless ORAM-wrapped. The open gap: **practical** protocols giving correctness + completeness + access-pattern privacy for **joins and aggregates** (not just point/range) at sub-SNARK cost with bounded (ideally DP) leakage. Closing it needs either cheaper specialized proofs for SQL operators or ADS variants whose completeness witnesses are themselves access-pattern-private.
+
+## 7. Current Research (as of June 2026)
+
+- zk-SNARK / **zk-rollup-style verifiable databases** with incremental/updatable commitments for SQL workloads, lowering prover cost via lookup arguments and folding schemes (Nova-style) *(frontier — verify)*.
+- Combining **structured encryption** completeness proofs with DP-bounded boundary leakage rather than full ORAM *(frontier — verify)*.
+- Verifiable + private **outsourced joins/aggregates** via authenticated set operations and polynomial commitments.
+- Groups: Papamanthou/Katz/Zhang (authenticated structures, vSQL, IntegriDB), the SNARK-systems community (Setty/Walfish — Spartan/lasso), and structured-encryption researchers (Kamara–Moataz).
+
+## 8. Future Work
+
+- Practical verifiable-and-private joins/aggregates at sub-SNARK cost.
+- ADS whose completeness witnesses are access-pattern-private by construction.
+- DP-bounded (rather than zero) leakage for completeness boundaries with proven trade-offs.
+- Verifiability under updates (authenticated, private, dynamic) with forward/backward privacy.
+
+## 9. Key References
+
+- **[Foundational]** Li, Hadjieleftheriou, Kollios, Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006.
+- **[Foundational]** Parno, Howell, Gentry, Raykova. *Pinocchio: Nearly Practical Verifiable Computation.* IEEE S&P, 2013.
+- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
+- **[SOTA]** Zhang, Katz, Papamanthou. *IntegriDB: Verifiable SQL for Outsourced Databases.* CCS, 2015.
+- **[SOTA]** Zhang, Genkin, Katz, Papadopoulos, Papamanthou. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017.
+- **[Foundational]** Gentry, Wichs. *Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions.* STOC, 2011.
+
+---
+*Part of the [DBMS Research catalog](../../README.md).*
