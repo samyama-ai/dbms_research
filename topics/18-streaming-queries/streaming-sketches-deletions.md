@@ -90,7 +90,7 @@ Counters:
 
 Estimate $\hat a = \min(\text{row1}[h_1(a)],\ \text{row2}[h_2(a)]) = \min(6,3) = 3$ — exact here, because row 2 avoids the $a/b$ collision; the $\min$ discards the inflated estimate $6$. The error bound is $\hat a \le a + \epsilon\|x\|_1$ with $\|x\|_1 = 3+3 = 6$.
 
-Now add **hard expiry**: drop $b$ because it is older than window $w$. There is no linear operation on these counters that removes only $b$'s contribution from col0 without knowing $b$'s value and age — illustrating section 9's core tension: linearity gives deletions for free but cannot, by itself, perform age-based hard expiry.
+Now add **hard expiry**: drop $b$ because it is older than window $w$. There is no linear operation on these counters that removes only $b$'s contribution from col0 without knowing $b$'s value and age — illustrating the core tension (Section 6): linearity gives deletions for free but cannot, by itself, perform age-based hard expiry.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

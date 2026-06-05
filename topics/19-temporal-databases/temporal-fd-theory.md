@@ -54,7 +54,7 @@ Active threads: integrating TFDs with SQL:2011 bitemporal semantics so that decl
 ## 9. Key References
 
 - **[Foundational]** Codd, E.F. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
-- **[Foundational]** Wijsen, J. *Temporal FDs on Complex Objects / Design of Temporal Relational Databases Based on Dynamic and Temporal Functional Dependencies.* IEEE TKDE, 1999. — [Temporal FDs on Complex Objects, ACM TODS 24(1) 1999, DOI](https://doi.org/10.1145/310701.310715)
+- **[Foundational]** Wijsen, J. *Temporal FDs on Complex Objects.* ACM TODS 24(1), 1999. — [DOI](https://doi.org/10.1145/310701.310715)
 - **[Foundational]** Vianu, V. *Dynamic Functional Dependencies and Database Aging.* JACM, 1987. — [DOI](https://doi.org/10.1145/7531.7918)
 - **[Foundational]** Jensen, C.S., Snodgrass, R.T., Soo, M.D. *Unifying Temporal Data Models via a Conceptual Model.* Information Systems, 1994. — [DOI](https://doi.org/10.1016/0306-4379(94)90013-2)
 - **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (chase, dependency theory). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
