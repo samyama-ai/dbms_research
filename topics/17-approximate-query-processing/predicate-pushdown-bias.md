@@ -1,6 +1,7 @@
 # Bias Correction for Predicate Pushdown
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/predicate-pushdown-bias` · **Status:** open
+> **Verification note:** In §3, "AQP++" (Peng, Zhang, Wang, Pei, SIGMOD 2018 — aggregate precomputation) is a distinct work from VerdictDB (Park, Mozafari et al., SIGMOD 2018, "variational subsampling"); they should not be attributed jointly to "Park et al."
 
 ## 1. Problem Statement
 

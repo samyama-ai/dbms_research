@@ -14,13 +14,13 @@ The problem: **Characterize exactly which queries/computations admit a coordinat
 
 ## 2. Mathematical Foundations
 
-A computation is **confluent** if it produces the same output for every nondeterministic message ordering. CALM (Hellerstein, conjectured 2010; proved by Ameloot, Neven, Van den Bussche, PODS 2013) ties confluence to **monotonicity** in a precise model: a query is *coordination-free* iff it is expressible in monotone (negation-free) first-order logic / monotone Datalog, equivalently computable by a **coordination-free relational transducer network**. The proof uses Hanf-locality and the theory of relational transducers; oblivious vs. non-oblivious transducer networks separate exactly the monotone queries.
+A computation is **confluent** if it produces the same output for every nondeterministic message ordering. CALM (Hellerstein, conjectured 2010; proved by Ameloot, Neven, Van den Bussche, PODS 2011 / JACM 2013) ties confluence to **monotonicity** in a precise model: a query is *coordination-free* iff it is expressible in monotone (negation-free) first-order logic / monotone Datalog, equivalently computable by a **coordination-free relational transducer network**. The proof uses Hanf-locality and the theory of relational transducers; oblivious vs. non-oblivious transducer networks separate exactly the monotone queries.
 
 Monotone queries are closed under union/join/projection/recursion (positive Datalog), capturing $\Sigma_1$ (existential) positive fragments. Negation/aggregation/counting introduce non-monotonicity. Deciding monotonicity of a relational-calculus query is **undecidable** in general (it subsumes query satisfiability/equivalence, undecidable for full FO), though **semantic monotonicity for conjunctive queries and unions of CQs is decidable**, and *syntactic* monotonicity (negation-free) is trivially checkable. Finer models (Ameloot et al., LICS/JACM follow-ups) refine CALM with bounded data/policies and "win-move"-style games.
 
 ## 3. State of the Art (SOTA)
 
-- **Theory SOTA:** CALM proved by Ameloot–Neven–Van den Bussche (PODS 2013, JACM 2015); refinements for richer policy classes and for *consistency levels* by Ameloot, Ketsman, Neven, Zinn. Connection to "coordination complexity" and the **MPC/massively-parallel-communication** rounds model (Koutris, Suciu) frames how many rounds/coordination a query needs.
+- **Theory SOTA:** CALM proved by Ameloot–Neven–Van den Bussche (PODS 2011, JACM 2013); refinements for richer policy classes and for *consistency levels* by Ameloot, Ketsman, Neven, Zinn. Connection to "coordination complexity" and the **MPC/massively-parallel-communication** rounds model (Koutris, Suciu) frames how many rounds/coordination a query needs.
 - **Systems SOTA:** Bloom/Bloom^L and the Hydro stack (Hellerstein, Alvaro, UC Berkeley) operationalize CALM with lattice-based monotone state and a monotonicity analyzer; Anna (Wu et al., ICDE 2018) is a coordination-free KVS built on monotone lattices; LVars/LVish (Kuper, Newton) provide deterministic coordination-free parallelism.
 
 ## 4. Upper Bound
@@ -47,7 +47,7 @@ The Hydro project (Hellerstein, Alvaro, Cheung; UC Berkeley) pushes CALM into a 
 
 ## 9. Key References
 
-- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational transducers for declarative networking (CALM).* PODS 2013 / JACM, 2015. — [DOI](https://doi.org/10.1145/2450142.2450151)
+- **[Foundational]** T. Ameloot, F. Neven, J. Van den Bussche. *Relational transducers for declarative networking (CALM).* PODS 2011 / JACM, 2013. — [DOI](https://doi.org/10.1145/2450142.2450151)
 - **[Foundational]** J. M. Hellerstein. *The Declarative Imperative (CALM conjecture).* SIGMOD Record, 2010. — [DOI](https://doi.org/10.1145/1860702.1860704)
 - **[Survey]** J. M. Hellerstein, P. Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
 - **[SOTA]** P. Alvaro, N. Conway, J. M. Hellerstein, W. Marczak. *Consistency Analysis in Bloom: a CALM and Collected Approach.* CIDR, 2011. — [DBLP](https://dblp.org/rec/conf/cidr/AlvaroCHM11.html)

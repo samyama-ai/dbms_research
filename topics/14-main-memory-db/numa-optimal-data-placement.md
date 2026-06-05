@@ -63,7 +63,7 @@ $$\text{cost}_A = 10(1)+8(1)+1(3)=21.$$
 **Placement B:** node 0 $=\{P_1,P_3\}$, node 1 $=\{P_2,P_4\}$. Now $P_1P_2$ and $P_3P_4$ both cross sockets:
 $$\text{cost}_B = 10(3)+8(3)+1(1)=55.$$
 
-Placement A wins by keeping the two heavy edges local — exactly the capacitated min-cut the heuristics target. With only 4 vertices we could enumerate all $\binom{4}{2}/1=3$ balanced cuts, but at $n$ partitions the search is $\binom{n}{n/2}$, and the decision form is NP-hard (§5), forcing the multilevel heuristics of §4.
+Placement A wins by keeping the two heavy edges local — exactly the capacitated min-cut the heuristics target. With only 4 vertices we could enumerate all $\binom{4}{2}/2=3$ balanced cuts, but at $n$ partitions the search is $\binom{n}{n/2}$, and the decision form is NP-hard (§5), forcing the multilevel heuristics of §4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

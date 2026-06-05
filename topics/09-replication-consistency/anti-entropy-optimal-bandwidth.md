@@ -16,11 +16,11 @@ The problem: **Minimize the communication required to reconcile two (or many) re
 
 Exact set reconciliation has an information-theoretic lower bound of $\Omega(d \log(u/d))$ bits where $u$ is the universe size: each side must learn $\approx d$ elements drawn from a universe of $u$, and $\log\binom{u}{d}\approx d\log(u/d)$ bits are needed. Matching upper bounds come from **characteristic polynomial / algebraic** methods: encode each set as $\prod_i (x - a_i)$ over a finite field; the ratio of characteristic polynomials reveals the difference, and **interpolation from $d$ evaluation points** recovers $A\triangle B$ — the basis of CPISync (Minsky, Trachtenberg, Zippel). This is essentially **Reed–Solomon / syndrome decoding**: differences are "errors" to be decoded.
 
-**Invertible Bloom Lookup Tables (IBLTs)** (Eppstein, Goodrich, Uyeda, Varghese) give a randomized $O(d)$-space sketch that "peels" to list $A\triangle B$ with high probability when sized $\approx 1.5d$ cells. **Rateless IBLTs / Rateless set reconciliation** (Lei Yang et al., NSDI 2024) stream sketch symbols until decoding succeeds, achieving $(1+o(1))d$ overhead *without knowing $d$ in advance* — near-optimal. Min-wise hashing / MinHash estimates $|A\triangle B|$ to size the sketch.
+**Invertible Bloom Lookup Tables (IBLTs)** (Eppstein, Goodrich, Uyeda, Varghese) give a randomized $O(d)$-space sketch that "peels" to list $A\triangle B$ with high probability when sized $\approx 1.5d$ cells. **Rateless IBLTs / Rateless set reconciliation** (Lei Yang et al., SIGCOMM 2024) stream sketch symbols until decoding succeeds, achieving $(1+o(1))d$ overhead *without knowing $d$ in advance* — near-optimal. Min-wise hashing / MinHash estimates $|A\triangle B|$ to size the sketch.
 
 ## 3. State of the Art (SOTA)
 
-- **Theory SOTA:** CPISync — $O(d)$ transmitted symbols, $O(d^3)$ (or $O(d^2)$ with fast interpolation) compute, one round when $d$ is known. IBLT — $O(d)$ communication, $O(d)$ decode, single round, small constant failure probability. Rateless IBLT (2024) — order-optimal communication with no prior $d$ estimate.
+- **Theory SOTA:** CPISync — $O(d)$ transmitted symbols, $O(d^3)$ (or $O(d^2)$ with fast interpolation) compute, one round when $d$ is known. IBLT — $O(d)$ communication, $O(d)$ decode, single round, small constant failure probability. Rateless IBLT (SIGCOMM 2024) — order-optimal communication with no prior $d$ estimate.
 - **Systems SOTA:** Merkle-tree anti-entropy (Cassandra, DynamoDB, Riak): $O(d \log u)$ via recursive hash-tree descent, robust and widely deployed. Range-based Merkle/Prolly trees (Dolt, Bup) and set-difference via IBLT in blockchain mempool sync (Erlay for Bitcoin, 2019) and large-scale ledger gossip.
 
 ## 4. Upper Bound
@@ -37,7 +37,7 @@ In bits, the gap is essentially **closed** in the order sense: lower bound $\Ome
 
 ## 7. Current Research (as of June 2026)
 
-Rateless IBLT (MIT — Yang, Balakrishnan; NSDI 2024) and its extensions to structured and weighted reconciliation are active *(frontier — verify)*. Prolly-tree / range-based reconciliation for content-addressed and "local-first" sync (Dolt, Willow protocol, Iroh) is a fast-moving systems frontier *(frontier — verify)*. Blockchain/mempool relay (Erlay successors) drives practical IBLT tuning. Multi-party gossip-bandwidth optimization and reconciliation-aware sketches remain open theoretically.
+Rateless IBLT (MIT/Hebrew U. — Yang, Gilad, Alizadeh; SIGCOMM 2024) and its extensions to structured and weighted reconciliation are active *(frontier — verify)*. Prolly-tree / range-based reconciliation for content-addressed and "local-first" sync (Dolt, Willow protocol, Iroh) is a fast-moving systems frontier *(frontier — verify)*. Blockchain/mempool relay (Erlay successors) drives practical IBLT tuning. Multi-party gossip-bandwidth optimization and reconciliation-aware sketches remain open theoretically.
 
 ## 8. Future Work
 
@@ -49,7 +49,7 @@ Rateless IBLT (MIT — Yang, Balakrishnan; NSDI 2024) and its extensions to stru
 
 - **[Foundational]** Y. Minsky, A. Trachtenberg, R. Zippel. *Set Reconciliation with Nearly Optimal Communication Complexity.* IEEE Trans. Information Theory, 2003. — [DOI](https://doi.org/10.1109/TIT.2003.815784)
 - **[Foundational]** D. Eppstein, M. Goodrich, F. Uyeda, G. Varghese. *What's the Difference? Efficient Set Reconciliation without Prior Context (IBLT).* SIGCOMM, 2011. — [DOI](https://doi.org/10.1145/2018436.2018462)
-- **[SOTA]** L. Yang, Y. Gilad, M. Alizadeh, H. Balakrishnan. *Practical Rateless Set Reconciliation.* SIGCOMM/NSDI, 2024. — [arXiv](https://arxiv.org/abs/2402.02668)
+- **[SOTA]** L. Yang, Y. Gilad, M. Alizadeh. *Practical Rateless Set Reconciliation.* ACM SIGCOMM, 2024. — [arXiv](https://arxiv.org/abs/2402.02668)
 - **[SOTA]** G. Naumenko, et al. *Erlay: Efficient Transaction Relay for Bitcoin.* ACM CCS, 2019. — [DOI](https://doi.org/10.1145/3319535.3354237)
 - **[Foundational]** A. Demers, et al. *Epidemic Algorithms for Replicated Database Maintenance.* PODC, 1987. — [DOI](https://doi.org/10.1145/41840.41841)
 

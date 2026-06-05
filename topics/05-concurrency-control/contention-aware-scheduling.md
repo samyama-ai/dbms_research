@@ -52,7 +52,7 @@ Active directions: **learned and adaptive CC** (Polyjuice, CormCC-style hybrids)
 
 - **[SOTA]** Prasaad, G.; Cheung, A.; Suciu, D. *Handling Highly Contended OLTP Workloads Using Fast Dynamic Partitioning (Strife).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389764)
 - **[SOTA]** Yan, C.; Cheung, A. *Leveraging Lock Contention to Improve OLTP Application Performance (Quro).* PVLDB, 2016. — [DOI](https://doi.org/10.14778/2876473.2876479)
-- **[SOTA]** Wang, Z.; Mu, S.; Cui, Y.; Yi, H.; Chen, H.; Li, J. *Scaling Multicore Databases via Constrained Parallel Execution (IC3).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882958)
+- **[SOTA]** Wang, Z.; Mu, S.; Cui, Y.; Yi, H.; Chen, H.; Li, J. *Scaling Multicore Databases via Constrained Parallel Execution (IC3).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882934)
 - **[SOTA]** Wang, J.; Ding, D.; Wang, H.; Christensen, C.; Wang, Z.; Chen, H.; Li, J. *Polyjuice: High-Performance Transactions via Learned Concurrency Control.* OSDI, 2021. — [USENIX](https://www.usenix.org/conference/osdi21/presentation/wang-jiachen)
 - **[Foundational]** Garey, M. R.; Johnson, D. S. *Computers and Intractability: A Guide to the Theory of NP-Completeness.* W. H. Freeman, 1979. — [DBLP](https://dblp.org/rec/books/fm/GareyJ79.html)
 

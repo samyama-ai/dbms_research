@@ -46,7 +46,7 @@ Active directions: learned trajectory embeddings (t2vec, TrajCL, contrastive/sel
 - **[Foundational]** Bringmann. *Why Walking the Dog Takes Time: Fréchet Distance Has No Strongly Subquadratic Algorithms Unless SETH Fails.* FOCS, 2014. — [arXiv](https://arxiv.org/abs/1404.1448)
 - **[Foundational]** Abboud, Backurs, Williams. *Tight Hardness Results for LCS and Other Sequence Similarity Measures.* FOCS, 2015. — [DBLP](https://dblp.org/rec/conf/focs/AbboudBW15.html)
 - **[SOTA]** Driemel, Silvestri. *Locality-Sensitive Hashing of Curves.* SoCG, 2017. — [arXiv](https://arxiv.org/abs/1703.04040)
-- **[SOTA]** Shang, Chen, Wei, Jensen, et al. *DITA: Distributed In-Memory Trajectory Analytics.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183743)
+- **[SOTA]** Shang, Li, Bao. *DITA: Distributed In-Memory Trajectory Analytics.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183743)
 - **[Survey]** Su, Liu, Zheng, et al. *A Survey of Trajectory Distance Measures and Performance Evaluation.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00574-9)
 
 ## 10. Worked Example

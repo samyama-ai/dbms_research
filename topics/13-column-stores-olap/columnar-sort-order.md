@@ -45,7 +45,7 @@ Active work: **learned and workload-aware clustering** (choosing sort/cluster ke
 - **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
 - **[SOTA]** Lemire, Boytsov. *Decoding Billions of Integers per Second through Vectorization.* Software: Practice and Experience, 2015. — [arXiv](https://arxiv.org/abs/1209.2137)
 - **[Foundational]** Gaede, Günther. *Multidimensional Access Methods* (space-filling curves / Z-order, Hilbert). ACM Computing Surveys, 1998. — [DOI](https://doi.org/10.1145/280277.280279)
-- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
 
 ## 10. Worked Example
 

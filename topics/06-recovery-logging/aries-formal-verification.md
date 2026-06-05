@@ -63,7 +63,7 @@ A re-crash during undo shows why CLRs are necessary. Transaction $T_1$ writes lo
 | LSN | record | prevLSN | page | content |
 |-----|--------|---------|------|---------|
 | 10 | update | — | P1 | A: 5→9 |
-| 20 | update | 10 | P1 | A: 9→9 becomes... B: 0→7 |
+| 20 | update | 10 | P1 | B: 0→7 |
 
 Rollback of LSN 20 writes a **CLR** at LSN 30 (undo of 20, sets `UndoNxtLSN=10`) and applies it to P1, bumping `pageLSN`. Suppose the system **crashes again** before undoing LSN 10.
 

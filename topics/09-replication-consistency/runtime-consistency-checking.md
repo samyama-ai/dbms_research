@@ -19,7 +19,7 @@ Checking reduces to acyclicity of a derived relation: SI/serializability checkin
 
 ## 3. State of the Art (SOTA)
 - **Theory-SOTA:** Gibbons–Korach showed linearizability checking is NP-complete in general but polynomial under bounded concurrency/uniqueness. Biswas–Enea (OOPSLA 2019) gave polynomial algorithms for serializability/SI/causal under data-independence assumptions.
-- **Systems-SOTA:** **Jepsen/Knossos** and **Elle** (Kingsbury–Alvaro, VLDB 2020) infer SI/serializability violations from real systems via dependency-graph cycle detection using versioned registers; **Anna/COBRA** (Tan et al., OSDI 2020) verifies serializability at scale using SMT + hardware acceleration. Online monitors: **MonkeyDB** and runtime-verification engines for causal/read-atomic.
+- **Systems-SOTA:** **Jepsen/Knossos** and **Elle** (Kingsbury–Alvaro, VLDB 2020) infer SI/serializability violations from real systems via dependency-graph cycle detection using versioned registers; **COBRA** (Tan et al., OSDI 2020) verifies serializability at scale using SMT + GPU acceleration. Online monitors: **MonkeyDB** and runtime-verification engines for causal/read-atomic.
 
 ## 4. Upper Bound
 Linearizability of a register history with unique values: $O(n\log n)$ per the Wing–Gong/Lowe automaton when concurrency is bounded. Elle's serializability check via cycle detection on the recovered dependency graph runs in near-linear time $\tilde{O}(n+m)$ in the graph size when writes are version-traceable (RAM model). Causal/PRAM consistency with version info is checkable in polynomial time (Biswas–Enea). Online sliding-window monitors run in $O(\log w)$ amortized per event under a window of $w$ live operations.

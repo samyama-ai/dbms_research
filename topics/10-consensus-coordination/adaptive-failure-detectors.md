@@ -36,8 +36,8 @@ Directions: learning-augmented / predictor-based timeouts; bandit and online-lea
 - **[Foundational]** Tushar Deepak Chandra, Sam Toueg. *Unreliable Failure Detectors for Reliable Distributed Systems.* JACM, 1996. — [DOI](https://doi.org/10.1145/226643.226647)
 - **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [DOI](https://doi.org/10.1145/234533.234549)
 - **[SOTA]** Wei Chen, Sam Toueg, Marcos K. Aguilera. *On the Quality of Service of Failure Detectors.* IEEE TC, 2002. — [DOI](https://doi.org/10.1109/TC.2002.1004595)
-- **[SOTA]** Naohiro Hayashibara, Xavier Défago, Rami Yared, Takuya Katayama. *The φ Accrual Failure Detector.* SRDS, 2004. — [DOI](https://doi.org/10.5555/1032662.1034350)
-- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.5555/647883.738420)
+- **[SOTA]** Naohiro Hayashibara, Xavier Défago, Rami Yared, Takuya Katayama. *The φ Accrual Failure Detector.* SRDS, 2004. — [DOI](https://doi.org/10.1109/RELDIS.2004.1353004)
+- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.1109/DSN.2002.1028914)
 
 ## 10. Worked Example
 

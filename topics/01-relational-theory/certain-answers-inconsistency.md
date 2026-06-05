@@ -1,6 +1,7 @@
 # Certain Answers Over Inconsistent Databases
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/certain-answers-inconsistency` · **Status:** partially-solved
+> **Verification note:** In the worked example, $\sharp\mathrm{CERTAINTY}(Q_2)$ as defined in §1 counts repairs satisfying $Q_2$ (here $1$); the "$1/2$" is the fraction of repairs, not the count.
 
 ## 1. Problem Statement
 

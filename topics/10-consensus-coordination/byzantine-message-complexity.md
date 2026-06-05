@@ -1,6 +1,7 @@
 # Byzantine Consensus Message Complexity
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/byzantine-message-complexity` · **Status:** open
+> **Verification note:** In Section 5, "$\ge f+1$ rounds of certificate intersection" is imprecise — quorum-certificate intersection guarantees $\ge f+1$ honest *replicas*, not a round count; the round/latency floor is a separate (constant) bound.
 
 ## 1. Problem Statement
 Byzantine fault-tolerant (BFT) consensus tolerates $f$ arbitrarily-faulty replicas out of $n$ with **optimal resilience** $n=3f+1$ under partial synchrony. A central efficiency metric is **communication / message complexity**: the total number (and bit-size) of messages to decide one value (or one block in a chain). PBFT's normal-case all-to-all pattern costs $O(n^2)$ messages per decision; HotStuff achieved **linear** $O(n)$ per-phase authenticator complexity by routing through a leader with threshold signatures — but at the cost of an extra round.

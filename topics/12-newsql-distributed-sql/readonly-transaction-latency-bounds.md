@@ -29,7 +29,7 @@ serializable (linearizable transactions). A ROT protocol is a distributed algori
 cost is measured in **communication rounds** (message delays) and whether any step's
 termination depends on another operation (blocking).
 
-The key formal tool is the **SNOW theorem** (Lu, Hodsdon, Kiwan, Cidon, Mahajan; OSDI
+The key formal tool is the **SNOW theorem** (Lu, Hodsdon, Ngo, Mu, Lloyd; OSDI
 2016): the four properties **S**trict serializability, **N**on-blocking reads, **O**ne-
 response (one round / one version per read), and **W**rite transactions that conflict — at
 most **three of the four** can hold simultaneously; no protocol achieves all four. This is
@@ -97,7 +97,7 @@ clock-bounded models *(frontier — verify)*; "SNOW-optimal" protocol engineerin
 attains three properties with minimal latency at scale; and exploiting **contention-
 adaptive** fast paths that achieve four-property behavior *when no conflicting write is
 concurrent* and degrade gracefully otherwise *(frontier — verify)*. Researchers around the
-original SNOW authors (Mahajan, Cidon, Lu) and the broader distributed-transactions
+original SNOW authors (Lu, Mu, Lloyd) and the broader distributed-transactions
 community (e.g., NYU, MIT, Cornell groups) remain active; HLC-based follower-read freshness
 bounds intersect this problem.
 

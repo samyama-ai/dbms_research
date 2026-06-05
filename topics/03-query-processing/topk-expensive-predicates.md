@@ -47,7 +47,7 @@ Hot directions: **semantic query operators over LLMs** with cost-based optimizat
 - **[SOTA]** Lu, Chowdhery, Kandula, Chaudhuri. *Accelerating Machine Learning Inference with Probabilistic Predicates.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183751)
 - **[SOTA]** Kang, Emmons, Abuzaid, Bailis, Zaharia. *NoScope: Optimizing Neural Network Queries over Video at Scale.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1703.02529)
 - **[SOTA]** Kang, Guibas, Bailis, Hashimoto, Zaharia. *Approximate Selection with Guarantees using Proxies (SUPG).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2004.00827)
-- **[SOTA]** Patel, Madden, Cafarella et al. *Palimpzest / semantic-operator query optimization for LLMs.* CIDR, 2024–2025 *(frontier — verify)*. — [arXiv](https://arxiv.org/abs/2405.14696)
+- **[SOTA]** Liu, Russo, Cafarella, Madden et al. *Palimpzest: Optimizing AI-Powered Analytics with Declarative Query Processing.* CIDR, 2025 *(frontier — verify)*. — [arXiv](https://arxiv.org/abs/2405.14696)
 
 ## 10. Worked Example
 

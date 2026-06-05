@@ -62,7 +62,7 @@ Cardinality estimation feeds output sizes; with worst-case bounds the **AGM/frac
 
 - **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
 - **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
-- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006. — [DOI](https://doi.org/10.5555/1182635.1164207)
+- **[SOTA]** Moerkotte, Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm (DPccp).* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
 - **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS / JACM, 2013/2017. — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
 - **[SOTA]** Pu et al. *Low Latency Geo-distributed Data Analytics (Iridium).* SIGCOMM, 2015. — [DOI](https://doi.org/10.1145/2785956.2787505)
 

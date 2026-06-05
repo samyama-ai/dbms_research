@@ -37,7 +37,7 @@ Directions: memory-pressure-aware RocksDB state backends and incremental compact
 ## 9. Key References
 - **[Foundational]** T. Urhan, M. Franklin. *XJoin: A Reactively-Scheduled Pipelined Join Operator.* IEEE Data Eng. Bulletin, 2000. — [DBLP](https://dblp.org/rec/journals/debu/UrhanF00.html)
 - **[SOTA]** Y. Tao, M. L. Yiu, D. Papadias, M. Hadjieleftheriou, N. Mamoulis. *RPJ: Producing Fast Join Results on Streams through Rate-based Optimization.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066200)
-- **[Foundational]** M. A. Hammad, W. G. Aref, A. K. Elmagarmid. *Hash-Merge Join for Streaming.* (Stream join scheduling.) 2003. *(unverified)*
+- **[Foundational]** M. F. Mokbel, M. Lu, W. G. Aref. *Hash-Merge Join: A Non-blocking Join Algorithm for Producing Fast and Early Join Results.* ICDE, 2004. — [ACM](https://dl.acm.org/doi/10.5555/977401.978115)
 - **[SOTA]** A. Das, J. Gehrke, M. Riedewald. *Approximate Join Processing over Data Streams.* SIGMOD, 2003. — [DOI](https://doi.org/10.1145/872757.872765)
 - **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge Univ. Press, 1998. — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
 

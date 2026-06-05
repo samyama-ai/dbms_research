@@ -26,7 +26,7 @@ $$
 ## 3. State of the Art (SOTA)
 
 - **Theory-SOTA.** Grohe (2007) for bounded-arity tw dichotomy; **Marx (2010, JACM 2013)** for the submodular-width FPT characterization; AGM (2008) for tight size bounds; Ngo, Porat, Ré, Rudra (2012) **worst-case-optimal joins (NPRR/Leapfrog Triejoin)**; **PANDA** (Abo Khamis, Ngo, Suciu, PODS 2017) for subw-optimal evaluation. Enumeration with constant delay characterized by **free-connex acyclicity** (Bagan, Durand, Grandjean 2007).
-- **Systems-SOTA.** Worst-case-optimal join engines: **LogicBlob/EmptyHeaded** (Aberger, Ré et al., *SIGMOD* 2017), **Umbra/Tributary**, factorized databases **FDB / FAQ** (Olteanu, Schleich), and Leapfrog Triejoin in commercial/graph engines (RelationalAI). DuckDB and others adopt WCOJ for cyclic joins.
+- **Systems-SOTA.** Worst-case-optimal join engines: **LogicBlox/EmptyHeaded** (Aberger, Ré et al., *SIGMOD* 2016), **Umbra/Tributary**, factorized databases **FDB / FAQ** (Olteanu, Schleich), and Leapfrog Triejoin in commercial/graph engines (RelationalAI). DuckDB and others adopt WCOJ for cyclic joins.
 
 ## 4. Upper Bound
 

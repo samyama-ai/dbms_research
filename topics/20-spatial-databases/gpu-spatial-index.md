@@ -54,12 +54,12 @@ Consider 4 points on a $4\times4$ grid, indexed by 2-bit-per-axis **Z-order (Mor
 |-------|---------|------------------|-----------|
 | A | $(0,0)$ | $00,00$ | $0000=0$ |
 | B | $(1,0)$ | $01,00$ | $0001=1$ |
-| C | $(0,1)$ | $00,01$ | $0100=4$ |
+| C | $(0,1)$ | $00,01$ | $0010=2$ |
 | D | $(3,3)$ | $11,11$ | $1111=15$ |
 
-Sorting by $z$ gives order $A(0),B(1),C(4),D(15)$ — contiguous in memory, so a warp reading them is **coalesced**. A range query for the box $x\in[0,1],y\in[0,1]$ covers Morton interval $[0,5]$, which is *one* contiguous run capturing $A,B,C$ (and correctly excludes $D$ at $z=15$). One contiguous interval = zero divergence: every thread in the warp does identical work.
+Sorting by $z$ gives order $A(0),B(1),C(2),D(15)$ — contiguous in memory, so a warp reading them is **coalesced**. A range query for the box $x\in[0,1],y\in[0,1]$ covers Morton interval $[0,3]$, which is *one* contiguous run capturing $A,B,C$ (and correctly excludes $D$ at $z=15$). One contiguous interval = zero divergence: every thread in the warp does identical work.
 
-As a contrast, the geometrically adjacent cells $(1,1)$ and $(2,0)$ have Morton codes $z=0011=3$ and $z=0010=2$, yet the also-adjacent cell $(2,1)$ has $z=0110=6$ — the curve "jumps" by 4. So a wider query box can split into **several disjoint Morton runs**, each a separate coalesced segment. This is the **dilation/locality** term of Section 2: a geometrically simple query can fragment into up to $O(n^{1-1/d})$ runs, the unavoidable SFC penalty that pushes warp work above the ideal single-run case.
+As a contrast, the geometrically adjacent cells $(1,1)$ and $(2,1)$ have Morton codes $z=0011=3$ and $z=0110=6$ — the curve "jumps" by 3 across a column boundary even though the cells touch. So a wider query box can split into **several disjoint Morton runs**, each a separate coalesced segment. This is the **dilation/locality** term of Section 2: a geometrically simple query can fragment into up to $O(n^{1-1/d})$ runs, the unavoidable SFC penalty that pushes warp work above the ideal single-run case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -23,11 +23,11 @@ Key alternatives:
 The set-operation requirement is the crux: HLL has no unbiased intersection; KMV/Theta do, trading some space.
 
 ## 3. State of the Art (SOTA)
-- **Theory-SOTA:** Kane–Nelson–Woodruff optimal $F_0$; Błasiok's optimal streaming $F_0$ with optimal space *and* update time (FOCS 2018).
+- **Theory-SOTA:** Kane–Nelson–Woodruff optimal $F_0$; Błasiok's optimal streaming $F_0$ with optimal space *and* update time (SODA 2018).
 - **Systems-SOTA:** **HLL++** (Heule–Nunkesser–Hall, EDBT 2013, Google) with sparse/dense modes and bias correction; **Apache DataSketches CPC and Theta**; and recent **UltraLogLog / ExaLogLog** (Ertl, 2023–2024) improving HLL's memory-efficiency frontier by storing more state per register more compactly. *(frontier — verify exact constants of ExaLogLog vs. CPC.)*
 
 ## 4. Upper Bound
-Optimal $F_0$: $O(\tfrac1{\varepsilon^2}+\log n)$ bits with $O(1)$ update (Błasiok, FOCS 2018) — the theory ceiling. Practical mergeable sketches: HLL at $1.04/\sqrt m$ error in $\approx 6m$ bits; CPC and UltraLogLog reach the same error in measurably fewer bits (closer to the entropy bound). Theta/KMV add unbiased set operations at $\approx 1/\sqrt k$ error.
+Optimal $F_0$: $O(\tfrac1{\varepsilon^2}+\log n)$ bits with $O(1)$ update (Błasiok, SODA 2018) — the theory ceiling. Practical mergeable sketches: HLL at $1.04/\sqrt m$ error in $\approx 6m$ bits; CPC and UltraLogLog reach the same error in measurably fewer bits (closer to the entropy bound). Theta/KMV add unbiased set operations at $\approx 1/\sqrt k$ error.
 
 ## 5. Lower Bound
 $\Omega(\tfrac1{\varepsilon^2}+\log n)$ bits for $F_0$ to relative error $\varepsilon$ (Kane–Nelson–Woodruff; Gap-Hamming communication lower bound of Indyk–Woodruff / Chakrabarti–Regev). For **intersection** cardinality from independent sketches, error grows unboundedly as overlap $\to 0$ (set-disjointness $\Omega(n)$ bits for exact answers), so predicate/intersection support is fundamentally harder than plain cardinality.

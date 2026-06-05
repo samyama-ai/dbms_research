@@ -1,6 +1,7 @@
 # Mergeable Summaries Lower Bounds
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/mergeable-summaries-bounds` · **Status:** partially-solved
+> **Verification note:** In the Section 10 Misra–Gries example the 4th element of each stream triggers a decrement-and-evict, so node A reduces to {a:1} and node B to {d:1} (not {a:2,b:1}/{d:2,a:1}); the stated post-processing intermediate counts should be recomputed.
 
 ## 1. Problem Statement
 A summary (synopsis) is **mergeable** if two summaries of datasets $A$ and $B$ — each built with no knowledge of the other — can be combined into one summary of $A\uplus B$ with the *same size and error guarantee*, and the merge can be applied recursively over an arbitrary tree (distributed/streaming-friendly). Mergeability is strictly stronger than streamability: it forbids any blow-up across merges of equal-sized inputs.

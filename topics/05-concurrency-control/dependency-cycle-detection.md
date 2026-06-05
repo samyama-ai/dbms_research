@@ -42,7 +42,7 @@ Active: scalable certification (TicToc/Sundial lineage) and decentralized valida
 - **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
 - **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1208.4179)
 - **[SOTA]** Revilak, O'Neil, O'Neil. *Precisely Serializable Snapshot Isolation (PSSI).* ICDE, 2011. — [DBLP](https://dblp.org/search?q=Precisely%20Serializable%20Snapshot%20Isolation)
-- **[SOTA]** Bender, Fineman, Gilbert, Tarjan. *A New Approach to Incremental Cycle Detection and Related Problems.* ACM TALG, 2016. — [arXiv](https://arxiv.org/abs/1105.2397)
+- **[SOTA]** Bender, Fineman, Gilbert, Tarjan. *A New Approach to Incremental Cycle Detection and Related Problems.* ACM TALG, 2016. — [arXiv](https://arxiv.org/abs/1112.0784)
 - **[SOTA]** Yu, Pavlo, Sanchez, Devadas. *TicToc: Time Traveling Optimistic Concurrency Control.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882935)
 - **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1511.06773)
 

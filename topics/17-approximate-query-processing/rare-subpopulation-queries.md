@@ -30,7 +30,7 @@ Budgeted coverage of exponentially many selective conjunctions; provable guarant
 ## 9. Key References
 - **[Foundational]** Chaudhuri, Das, Datar, Motwani, Narasayya. *Overcoming Limitations of Sampling for Aggregation Queries.* ICDE 2001. — [DBLP](https://dblp.org/rec/conf/icde/ChaudhuriDMN01.html)
 - **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS 2000. — [DOI](https://doi.org/10.1145/335168.335230)
-- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915249)
+- **[SOTA]** Ding, Huang, Chaudhuri, Chakrabarti, Wang. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915249)
 - **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
 - **[Foundational]** Metwally, Agrawal, El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (SpaceSaving).* ICDT 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
 

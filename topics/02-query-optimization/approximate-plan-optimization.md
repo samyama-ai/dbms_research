@@ -25,7 +25,7 @@ The hard part is **error propagation through joins and group-bys**: sample-over-
 
 ## 4. Upper Bound
 
-Per-operator, sketch space/accuracy bounds are *tight*: distinct count in $O(\varepsilon^{-2}\log\log n + \log n)$ bits (optimal), quantiles in $O(\varepsilon^{-1}\log\log\delta^{-1})$ (KLL, optimal). For **plan selection**, given a fixed family of synopses and an additive error model, choosing minimum-cost sample sizes per stratum is a convex/knapsack-like program solvable in poly time (BlinkDB's formulation). Online aggregation gives anytime $O(1/\sqrt{n})$-shrinking confidence intervals as $n$ tuples are processed.
+Per-operator, sketch space/accuracy bounds are *tight*: distinct count in $O(\varepsilon^{-2} + \log n)$ bits (Kane–Nelson–Woodruff, optimal), quantiles in $O(\varepsilon^{-1}\log\log\delta^{-1})$ (KLL, optimal). For **plan selection**, given a fixed family of synopses and an additive error model, choosing minimum-cost sample sizes per stratum is a convex/knapsack-like program solvable in poly time (BlinkDB's formulation). Online aggregation gives anytime $O(1/\sqrt{n})$-shrinking confidence intervals as $n$ tuples are processed.
 
 ## 5. Lower Bound
 

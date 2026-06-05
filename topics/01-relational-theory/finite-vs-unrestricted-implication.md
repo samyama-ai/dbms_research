@@ -1,6 +1,7 @@
 # Finite vs. Unrestricted Implication
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/finite-vs-unrestricted-implication` · **Status:** partially-solved
+> **Verification note:** The §10 worked example is garbled — the canonical FD+IND separation uses FD $A\to B$ with IND $R[A]\subseteq R[B]$ (forcing $R[B]\subseteq R[A]$ only on finite models, via $A\mapsto B$ injective on $\pi_A R$), and a valid infinite counterexample is tuples $(n{+}1,n)$; as written, the stated $B\to A$ "injectivity" step and the $(n,n{+}1)$ instance do not satisfy the premise IND.
 
 ## 1. Problem Statement
 

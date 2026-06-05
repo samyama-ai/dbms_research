@@ -20,7 +20,7 @@ Key impossibility background: with $n$ replicas, **Byzantine reliable broadcast 
 
 ## 3. State of the Art (SOTA)
 
-- **Byzantine causal broadcast for CRDTs:** Kleppmann & Howard, *Byzantine Eventual Consistency and the fundamental limits of resilient replicated systems* (2020) — shows BEC is achievable and characterizes its limits; introduces the framework most current work cites.
+- **Byzantine causal broadcast for CRDTs:** Kleppmann & Howard, *Byzantine Eventual Consistency and the Fundamental Limits of Peer-to-Peer Databases* (2020) — shows BEC is achievable and characterizes its limits; introduces the framework most current work cites.
 - **Practical local-first:** Kleppmann's **secure-scuttlebutt / Automerge** lineage — hash-DAG ops give integrity + equivocation detection; Matrix's event DAG is a deployed Byzantine-ish causal store.
 - **Theory-SOTA:** Hash-chained CRDTs with **dependency cones** give SEC among honest replicas without consensus; **$3f+1$** only re-enters if you also want to *bound counter values* (e.g. a Byzantine-tolerant counter cannot be made tight without quorum certification).
 - **Systems-SOTA:** Blockchains achieve a strong (totally ordered) form at high cost; the open niche is *coordination-free* BEC matching CRDT performance.
@@ -56,7 +56,7 @@ SEC-among-honest is solved for **mergeable** datatypes via hash-DAGs; genuinely 
 
 ## 9. Key References
 
-- **[SOTA]** Kleppmann, M., Howard, H. *Byzantine Eventual Consistency and the fundamental limits of resilient replicated systems.* arXiv:2012.00472, 2020. — [arXiv](https://arxiv.org/abs/2012.00472)
+- **[SOTA]** Kleppmann, M., Howard, H. *Byzantine Eventual Consistency and the Fundamental Limits of Peer-to-Peer Databases.* arXiv:2012.00472, 2020. — [arXiv](https://arxiv.org/abs/2012.00472)
 - **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-free Replicated Data Types.* SSS, 2011. — [DOI](https://doi.org/10.1007/978-3-642-24550-3_29)
 - **[Foundational]** Bracha, G., Toueg, S. *Asynchronous consensus and broadcast protocols.* JACM, 1985. — [DOI](https://doi.org/10.1145/4221.214134)
 - **[Foundational]** Castro, M., Liskov, B. *Practical Byzantine Fault Tolerance.* OSDI, 1999. — [ACM](https://dl.acm.org/doi/10.5555/296806.296824)

@@ -51,7 +51,7 @@ Theory gives sound mechanisms; what's missing is **quantitative**: (1) tight hit
 
 ## 9. Key References
 
-- **[Foundational]** Terry, D. B., Demers, A. J., Petersen, K., Spreitzer, M., Theimer, M., Welch, B. *Session guarantees for weakly consistent replicated data.* PDIS, 1994. — [DOI](https://doi.org/10.5555/645792.668302)
+- **[Foundational]** Terry, D. B., Demers, A. J., Petersen, K., Spreitzer, M., Theimer, M., Welch, B. *Session guarantees for weakly consistent replicated data.* PDIS, 1994. — [DOI](https://doi.org/10.1109/PDIS.1994.331722)
 - **[SOTA]** Zawirski, M., Preguiça, N., Duarte, S., Bieniusa, A., Balegas, V., Shapiro, M. *Write fast, read in the past: causal consistency for client-side applications (SwiftCloud).* Middleware, 2015. — [DOI](https://doi.org/10.1145/2814576.2814733)
 - **[SOTA]** Lloyd, W., Freedman, M. J., Kaminsky, M., Andersen, D. G. *Don't settle for eventual: scalable causal consistency for wide-area storage with COPS.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043593)
 - **[Survey]** Bermbach, D., Tai, S. *Eventual consistency: how soon is eventual?* / *Benchmarking edge consistency.* (consistency benchmarking line), 2011–2014. — [DOI](https://doi.org/10.1145/2093185.2093186)

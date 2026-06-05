@@ -23,7 +23,7 @@ Key tools: the layout problem reduces to a **clustering / space-filling-curve** 
 ## 3. State of the Art (SOTA)
 
 - **Systems-SOTA:** Zone maps are ubiquitous — Netezza (zone maps, 2003), PostgreSQL BRIN, Snowflake micro-partitions with pruning, Apache Parquet/ORC page+stripe statistics, ClickHouse sparse primary indexes, Amazon Redshift zone maps. *Multi-dimensional clustering*: Snowflake clustering keys, Databricks Delta **Z-Ordering** and the newer **Liquid Clustering** *(frontier — verify)*, Amazon Redshift interleaved sort keys (Z-order based).
-- **Theory-SOTA:** The clustering-for-skipping problem was formalized by Sun, Kandula, et al. as **workload-driven partitioning** ("Fine-grained partitioning for aggressive data skipping", SIGMOD 2014) using a feature-based partitioning that provably reduces scanned blocks for a given workload via a reduction to balanced graph/cluster partitioning.
+- **Theory-SOTA:** The clustering-for-skipping problem was formalized by Sun, Franklin, et al. as **workload-driven partitioning** ("Fine-grained partitioning for aggressive data skipping", SIGMOD 2014) using a feature-based partitioning that provably reduces scanned blocks for a given workload via a reduction to balanced graph/cluster partitioning.
 
 ## 4. Upper Bound
 

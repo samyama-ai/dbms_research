@@ -47,7 +47,7 @@ Active directions: (i) schema evolution in lakehouse table formats — Iceberg/D
 - **[SOTA]** Curino, C., Moon, H. J., Zaniolo, C. *Graceful Database Schema Evolution: the PRISM Workbench.* VLDB, 2008. (and PRISM++, ICDE 2013) — [DOI](https://doi.org/10.14778/1453856.1453939)
 - **[Foundational]** Arenas, M., Pérez, J., Riveros, C. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620589)
 - **[Survey]** Roddick, J. F. *A Survey of Schema Versioning Issues for Database Systems.* Information and Software Technology, 1995. — [DOI](https://doi.org/10.1016/0950-5849(95)91494-K)
-- **[SOTA]** Störl, U., Klettke, M., Scherzinger, S. *NoSQL Schema Evolution and Big Data Migration at Scale.* IEEE Big Data, 2016. — [DBLP](https://dblp.org/rec/conf/bigdataconf/KlettkeSSS16.html)
+- **[SOTA]** Klettke, M., Störl, U., Shenavai, M., Scherzinger, S. *NoSQL Schema Evolution and Big Data Migration at Scale.* IEEE Big Data, 2016. — [DBLP](https://dblp.org/rec/conf/bigdataconf/KlettkeSSS16.html)
 
 ## 10. Worked Example
 

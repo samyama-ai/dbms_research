@@ -31,7 +31,7 @@ Approximate (LSH-based) similarity join: total communication $\tilde O\big(N^{1+
 
 ## 5. Lower Bound
 
-For *exact* similarity/band joins, a **communication-complexity** reduction from $\mathrm{DISJ}$/GAP-HAMMING yields $\Omega(N)$ total communication even for emptiness, and for full enumeration the trivial $\Omega(\mathrm{OUT})$ holds; for theta/band joins on $p$ servers the *replication* lower bound $\Omega(\sqrt{N^2/p})$ load (Beame–Koutris–Suciu skew/theta arguments) is matched at one round. For approximate join, distinguishing close vs far pairs inherits the **GAP-HAMMING** $\Omega(N)$ bound, and the LSH exponent $\rho$ has a matching cell-probe/locality lower bound (O'Donnell–Wu–Zhou) showing $\rho \ge 1/(2c-1)$ for $c$-approximate near-neighbor — bounding any LSH-based distributed scheme.
+For *exact* similarity/band joins, a **communication-complexity** reduction from $\mathrm{DISJ}$/GAP-HAMMING yields $\Omega(N)$ total communication even for emptiness, and for full enumeration the trivial $\Omega(\mathrm{OUT})$ holds; for theta/band joins on $p$ servers the *replication* lower bound $\Omega(\sqrt{N^2/p})$ load (Beame–Koutris–Suciu skew/theta arguments) is matched at one round. For approximate join, distinguishing close vs far pairs inherits the **GAP-HAMMING** $\Omega(N)$ bound, and the LSH exponent $\rho$ has a matching locality lower bound (O'Donnell–Wu–Zhou, ITCS 2011) showing $\rho \ge 1/c$ for $c$-approximate near-neighbor in Hamming/$\ell_1$ (the data-*dependent* refinement $\rho \ge 1/(2c-1)$ is due to Andoni–Razenshteyn) — bounding any LSH-based distributed scheme.
 
 ## 6. The Gap
 

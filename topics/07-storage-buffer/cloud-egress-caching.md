@@ -65,7 +65,7 @@ Marked **empirically-open**. Generic generalized-caching theory supplies tight-u
 
 - **[Foundational]** Bansal, Buchbinder, Naor. *Randomized Competitive Algorithms for Generalized Caching.* SIAM J. Computing, 2012. — [DOI](https://doi.org/10.1137/090779000)
 - **[Foundational]** Cao, Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
-- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML, 2018. — [DOI](https://doi.org/10.1145/3447579)
+- **[SOTA]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (orig. ICML 2018). — [DOI](https://doi.org/10.1145/3447579)
 - **[SOTA]** Antoniadis, Coester, Eliáš, Polak, Simon. *Online Metric Algorithms with Untrusted Predictions.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2003.02144)
 - **[SOTA]** Dageville, Cruanes, Zukowski, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2903741)
 - **[Survey]** Karlsson, Mahalingam. *Do We Need Replacement Algorithms? Cost-Aware Caching Surveys.* (cost-aware caching literature), 2000s. *(unverified)* — [DBLP search](https://dblp.org/search?q=cost-aware%20caching%20replacement)

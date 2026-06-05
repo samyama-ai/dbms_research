@@ -1,6 +1,7 @@
 # Hash Ring Load Balance Theory
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/hash-ring-load-balance` · **Status:** partially-solved
+> **Verification note:** Consistent Hashing with Bounded Loads (Mirrokni–Thorup–Zadimoghaddam) is SODA 2018 / arXiv 2016, not NeurIPS — the "NeurIPS/SODA 2018" in section 3 is imprecise (the reference list correctly says SODA 2018).
 
 ## 1. Problem Statement
 Consistent hashing places $m$ servers and $n$ keys on a ring; each key goes to the next server clockwise. With one point per server, server loads are highly imbalanced — the maximum load is $\Theta(\frac{n}{m}\log m)$ in expectation. The standard fix is **virtual nodes**: place $v$ points per server. The question: what is the *minimum* number of virtual nodes $v$ (and which placement scheme) needed to guarantee load balance within a factor $(1+\varepsilon)$ of the average, while keeping **bounded memory/metadata** ($O(mv)$ ring points) and **bounded churn** (few keys moved when a server joins/leaves)?

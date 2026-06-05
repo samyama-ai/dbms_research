@@ -18,7 +18,7 @@ The optimality region of $p$ is $R_p = \{\mathbf s : c_p(\mathbf s) \le c_{p'}(\
 
 - If every $c_p$ were **linear** (or more generally if the family were such that pairwise differences are sign-stable), $R_p$ would be a convex polytope and the diagram a polyhedral subdivision — the **lower envelope** of $|\mathcal P|$ functions, with complexity governed by **Davenport–Schinzel** bounds: for $d=1$, the lower envelope of $n$ well-behaved curves has near-linear complexity $\lambda_s(n)$.
 - Real cost functions are **non-linear and non-convex** (multiplicative selectivities, $\min$/case splits across join methods, memory-threshold discontinuities), so $R_p$ can be non-convex and disconnected, and the number of cells can be large.
-- **Plan Bouquet** (Dutta–Haritsa) replaces single-point estimation with a *cost-budgeted isosurface* traversal, yielding a **provable worst-case multiplicative regret bound** of $4$ (and $4\cdot \rho$-style guarantees) relative to an oracle, independent of selectivity error — a geometric, not statistical, robustness guarantee.
+- **Plan Bouquet** (Dutt–Haritsa) replaces single-point estimation with a *cost-budgeted isosurface* traversal, yielding a **provable worst-case multiplicative regret bound** of $4$ (and $4\cdot \rho$-style guarantees) relative to an oracle, independent of selectivity error — a geometric, not statistical, robustness guarantee.
 
 ## 3. State of the Art (SOTA)
 - **Picasso** (Reddy–Haritsa, VLDB 2005) is the tool that empirically produced plan/cost/reduced diagrams across commercial optimizers, documenting their complexity.

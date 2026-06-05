@@ -20,7 +20,7 @@ Verification is an instance of checking algebraic laws over a (possibly infinite
 
 ## 3. State of the Art (SOTA)
 
-- **Theory SOTA:** Gomes, Kleppmann, Mulligan, Beresford's Isabelle/HOL framework (OOPSLA 2017) gives the first mechanized, reusable proof of SEC, verifying RGA and OR-Set. The "small-model"/reduction approach (Nagar & Jagannathan, CONCUR 2019; *Liu et al.*) reduces convergence/consistency checking to bounded queries.
+- **Theory SOTA:** Gomes, Kleppmann, Mulligan, Beresford's Isabelle/HOL framework (OOPSLA 2017) gives the first mechanized, reusable proof of SEC, verifying RGA and OR-Set. The "small-model"/reduction approach (Nagar & Jagannathan, CAV 2019; *Liu et al.*) reduces convergence/consistency checking to bounded queries.
 - **Systems SOTA:** automated tools — *VeriFx* (De Porre, Boix et al., 2023) compiles CRDT specs to SMT proof obligations and verifies commutativity/SEC; *Katara* (Laddad, Hellerstein et al., 2022) synthesizes verified CRDTs from sequential specs; *Hamsaz/Hampa* synthesizes coordination for replicated objects. Maven-style property testing (Jepsen-style) catches violations empirically.
 
 ## 4. Upper Bound

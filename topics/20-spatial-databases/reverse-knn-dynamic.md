@@ -49,7 +49,7 @@ Active directions: graph-index (HNSW-style) approximate RkNN with empirical reca
 - **[Foundational]** Korn, Muthukrishnan. *Influence Sets Based on Reverse Nearest Neighbor Queries.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/335191.335415)
 - **[Foundational]** Stanoi, Agrawal, El Abbadi. *Reverse Nearest Neighbor Queries for Dynamic Databases.* DMKD Workshop, 2000. — [DBLP search](https://dblp.org/search?q=Reverse+Nearest+Neighbor+Queries+for+Dynamic+Databases)
 - **[SOTA]** Tao, Papadias, Lian. *Reverse kNN Search in Arbitrary Dimensionality (TPL).* VLDB, 2004. — [PDF](https://www.vldb.org/conf/2004/RS20P1.PDF)
-- **[SOTA]** Cheema, Lin, Zhang, Wang, Zhang. *Influence Zone: Efficiently Processing Reverse k Nearest Neighbors Queries.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767873)
+- **[SOTA]** Cheema, Lin, W. Zhang, Y. Zhang. *Influence Zone: Efficiently Processing Reverse k Nearest Neighbors Queries.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767904)
 - **[Foundational]** Andoni, Indyk, Patrascu. *On the Optimality of the Dimensionality Reduction Method / Lower Bounds for Nearest Neighbor.* FOCS, 2006. — [DOI](https://doi.org/10.1109/FOCS.2006.56)
 - **[Survey]** Yang, Cheema, Lin, Zhang. *Reverse k Nearest Neighbors Queries and Spatial Reverse Top-k Queries.* VLDB Journal, 2017. — [DOI](https://doi.org/10.1007/s00778-016-0445-2)
 

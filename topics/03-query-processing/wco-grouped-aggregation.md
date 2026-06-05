@@ -57,7 +57,7 @@ Active directions: **factorized databases and FAQ for ML** (Olteanu's group, Oxf
 
 Query: `SELECT R.a, SUM(T.v) FROM R(a,b) JOIN S(b,c) JOIN T(c,v) GROUP BY R.a`. Tiny instance: $R=\{(a_1,b_1),(a_2,b_1)\}$, $S=\{(b_1,c_1),(b_1,c_2)\}$, $T=\{(c_1,10),(c_2,20)\}$.
 
-**Naive:** materialize the 3-way join. It has $2\times2\times1 = 4$ tuples, then group/sum. Here the join (4 rows) already exceeds the 3-row output.
+**Naive:** materialize the 3-way join. It has $2\times2\times1 = 4$ tuples, then group/sum. Here the join (4 rows) already exceeds the 2-row output.
 
 **InsideOut / eager aggregation:** eliminate bound variables inside-out. First aggregate $T$ over $c$ irrelevant to grouping — but $c$ joins through $S$, so eliminate $v$'s carrier by pushing SUM: precompute per-$c$ contribution $\sigma(c_1)=10,\sigma(c_2)=20$. Eliminate $c$ via $S$: per-$b$ total $\beta(b_1)=\sigma(c_1)+\sigma(c_2)=30$. Eliminate $b$ via $R$: each $(a_i,b_1)$ inherits $\beta(b_1)=30$. Result: $a_1\!\to\!30,\ a_2\!\to\!30$.
 

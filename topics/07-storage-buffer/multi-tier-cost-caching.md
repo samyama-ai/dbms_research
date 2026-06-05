@@ -1,6 +1,7 @@
 # Cost-Aware Caching Across DRAM/SSD/Object Tiers
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/multi-tier-cost-caching` · **Status:** partially-solved
+> **Verification note:** Bansal–Buchbinder–Naor's general-caching bound is $O(\log^2 k)$ randomized ($O(\log k)$ only for the bit/fault models); the tight $O(\log k)$ for general caching is due to Adamaszek–Englert et al. (2018).
 
 ## 1. Problem Statement
 Modern data systems span a **deep storage hierarchy**: DRAM (fast, expensive, small), local NVMe **SSD** (medium), and remote **object storage** (S3-class: high latency, per-request and per-byte egress *dollar* cost, effectively unbounded). A cache manager must decide what to keep in each tier to jointly optimize **hit rate** (latency) and **cost** — both the dollar cost of object-store requests/egress and the byte-movement (write-amplification, SSD endurance) cost of promotion/demotion.
@@ -50,7 +51,7 @@ A competitive theory for monetized multi-tier caching with write-amplification; 
 ## 9. Key References
 - **[Foundational]** N. Young. *On-Line File Caching (Landlord).* SODA 1998 / Algorithmica. — [arXiv](https://arxiv.org/abs/cs/0205033)
 - **[Foundational]** P. Cao, S. Irani. *Cost-Aware WWW Proxy Caching Algorithms (GreedyDual-Size).* USENIX Symp. Internet Tech., 1997. — [USENIX](https://www.usenix.org/conference/usits-97/cost-aware-www-proxy-caching-algorithms)
-- **[SOTA]** B. Berger, B. Berg, T. Zhang, et al. *The CacheLib Caching Engine: Design and Experiences at Scale.* USENIX OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/berg)
+- **[SOTA]** B. Berg, D. S. Berger, S. McAllister, et al. *The CacheLib Caching Engine: Design and Experiences at Scale.* USENIX OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/berg)
 - **[SOTA]** D. Berger, R. Sitaraman, M. Harchol-Balter. *AdaptSize: Orchestrating the Hot Object Memory Cache in a Content Delivery Network.* USENIX NSDI 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/berger)
 - **[SOTA]** J. Yang, Y. Zhang, et al. *FIFO Queues Are All You Need for Cache Eviction (S3-FIFO).* ACM SOSP 2023. — [PDF](https://yazhuozhang.com/assets/publication/sosp23-s3fifo.pdf)
 - **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *Randomized Competitive Algorithms for Generalized Caching.* STOC 2008. — [DOI](https://doi.org/10.1137/090779000)

@@ -48,7 +48,7 @@ For **steady / Poisson** loads the problem is essentially *solved*: self-clockin
 - **[Foundational]** D. Gawlick, D. Kinkade. *Varieties of Concurrency Control in IMS/VS Fast Path.* IEEE Data Eng. Bull., 1985. — [DBLP](https://dblp.org/db/journals/debu/debu8.html)
 - **[SOTA]** S. Tu, W. Zheng, E. Kohler, B. Liskov, S. Madden. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
 - **[SOTA]** R. Johnson, I. Pandis, R. Stoica, M. Athanassoulis, A. Ailamaki. *Aether: A Scalable Approach to Logging.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920928)
-- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992 (group commit, ch. on logging). — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993 (group commit, ch. on logging). — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
 
 ## 10. Worked Example
 

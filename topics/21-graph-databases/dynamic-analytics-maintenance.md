@@ -56,7 +56,7 @@ Active groups: Saranurak/Nanongkai (expander-based dynamic algorithms), Dhulipal
 - **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and strengthening hardness for dynamic problems via the online matrix-vector multiplication conjecture.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1511.06773)
 - **[SOTA]** Chuzhoy, Gao, Li, Nanongkai, Peng, Saranurak. *A deterministic algorithm for balanced cut with applications to dynamic connectivity.* FOCS, 2020. — [arXiv](https://arxiv.org/abs/1910.08025)
 - **[SOTA]** Sariyüce, Gedik, Jacques-Silva, Wu, Çatalyürek. *Streaming algorithms for k-core decomposition.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536336.2536344)
-- **[SOTA]** Vora, Gupta, et al. *KickStarter: Fast and accurate computations on streaming graphs via trimmed approximations.* ASPLOS, 2017. — [DOI](https://doi.org/10.1145/3093337.3037748)
+- **[SOTA]** Vora, Gupta, et al. *KickStarter: Fast and accurate computations on streaming graphs via trimmed approximations.* ASPLOS, 2017. — [DOI](https://doi.org/10.1145/3037697.3037748)
 - **[SOTA]** Dhulipala, Blelloch, Shun. *Low-latency graph streaming using compressed purely-functional trees (Aspen).* PLDI, 2019. — [arXiv](https://arxiv.org/abs/1904.08380)
 - **[Survey]** Bergamini, Meyerhenke. *Approximating betweenness centrality in fully dynamic networks.* Internet Mathematics, 2016. — [arXiv](https://arxiv.org/abs/1510.07971)
 

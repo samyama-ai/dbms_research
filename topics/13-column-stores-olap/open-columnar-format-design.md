@@ -18,7 +18,7 @@ Wide-schema metadata is itself a scaling problem: a footer listing statistics fo
 
 ## 3. State of the Art (SOTA)
 - **Format-SOTA:** Apache Parquet and ORC (row-groups + footer stats + page-level encodings); Apache Arrow (in-memory + Arrow IPC/Feather). These are the incumbents but predate object storage at scale.
-- **Next-gen (2023–2026):** **Lance** (columnar for ML/random access), **Nimble** (Meta, formerly Alpha — wide-schema, modular encodings), **Vortex** (Spiral — cascading lightweight encodings + late materialization), **BtrBlocks** (Kuschewski et al., SIGMOD 2023 — automatic cascade of lightweight encodings tuned for decompression speed), and **FastLanes** (Afroozeh & Boncz, VLDB 2023 — SIMD-friendly bit-packing/encoding layout). The "format wars" paper (Zeng, Madden et al., VLDB 2023) benchmarks Parquet/ORC and exposes their object-store and wide-schema weaknesses.
+- **Next-gen (2023–2026):** **Lance** (columnar for ML/random access), **Nimble** (Meta, formerly Alpha — wide-schema, modular encodings), **Vortex** (Spiral — cascading lightweight encodings + late materialization), **BtrBlocks** (Kuschewski et al., SIGMOD 2023 — automatic cascade of lightweight encodings tuned for decompression speed), and **FastLanes** (Afroozeh & Boncz, VLDB 2023 — SIMD-friendly bit-packing/encoding layout). The "format wars" paper (Zeng, Pavlo, Zhang et al., VLDB 2023) benchmarks Parquet/ORC and exposes their object-store and wide-schema weaknesses.
 
 ## 4. Upper Bound
 With ideal clustering and per-block statistics, data read approaches the **information-theoretic minimum**: only blocks overlapping the predicate, i.e. $O(\text{selectivity}\cdot n)$ bytes plus metadata. Lightweight cascaded encodings (BtrBlocks, FastLanes) reach within a small factor of general-purpose compressors (zstd) on size while decoding at multiple GB/s/core — near memory bandwidth — by staying branch-free and SIMD-parallel. Request count can be driven to $O(\\#\text{relevant column-chunks})$ via range coalescing. These are practical, model-as-roofline upper bounds, not proven optima.
@@ -42,7 +42,7 @@ Active: BtrBlocks/FastLanes encoding cascades (Boncz/CWI, Neumann/TUM lineage); 
 - **[Foundational]** Melnik, Gubarev, Long, Romer, et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB 2010. — [DOI](https://doi.org/10.14778/1920841.1920886)
 - **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD 2023. — [DOI](https://doi.org/10.1145/3589263)
 - **[SOTA]** Afroozeh, Boncz. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
-- **[SOTA]** Zeng, Hao, Lee, Madden, et al. *An Empirical Evaluation of Columnar Storage Formats.* VLDB 2023. — [arXiv](https://arxiv.org/abs/2304.05028)
+- **[SOTA]** Zeng, Hui, Shen, Pavlo, McKinney, Zhang. *An Empirical Evaluation of Columnar Storage Formats.* VLDB 2023. — [arXiv](https://arxiv.org/abs/2304.05028)
 - **[Foundational]** Abadi, Boncz, Harizopoulos, et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
 
 ## 10. Worked Example

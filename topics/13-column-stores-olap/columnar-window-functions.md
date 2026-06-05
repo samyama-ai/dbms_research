@@ -49,7 +49,7 @@ Per-window asymptotics are essentially **closed** (sorting + $O(1)$-amortized sl
 - **[SOTA]** Tangwongsan, Hirzel, Schneider, Wu. *General Incremental Sliding-Window Aggregation (FlatFAT).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
 - **[SOTA]** Tangwongsan, Hirzel, Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017. — [DOI](https://doi.org/10.1145/3093742.3093925)
 - **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979 (interesting orders). — [DOI](https://doi.org/10.1145/582095.582099)
-- **[Foundational]** Bellamkonda et al. *Adaptive and Big Data Scale Parallel Execution of Window Functions* / Oracle window optimizations. PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536235)
+- **[Foundational]** Bellamkonda et al. *Adaptive and Big Data Scale Parallel Execution in Oracle* (window-function parallelization). PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536235)
 - **[Survey]** Abadi, Boncz, Harizopoulos et al. *The Design and Implementation of Modern Column-Oriented Database Systems.* FnT Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
 
 ## 10. Worked Example

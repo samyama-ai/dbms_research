@@ -11,7 +11,7 @@ $$\mathrm{Var}(\hat\theta)=\sum_{\ell=1}^{L} N_\ell^2\,\frac{\sigma_\ell^2}{n_\e
 with $N_\ell=|H_\ell|$ and $\sigma_\ell^2$ the in-stratum variance. For a **fixed** stratification, minimizing this under $\sum n_\ell=B$ yields **Neyman allocation** $n_\ell \propto N_\ell\sigma_\ell$ (Lagrange/KKT — a convex program). Choosing the strata themselves is the hard part: it interacts with the *predicate* distribution, since selective predicates concentrate error in few strata. BlinkDB frames it as an **error-latency-profile** optimization over column-set "templates." Multi-query robustness ties to **minimax** design and to **submodular** coverage of query templates, enabling greedy $(1-1/e)$ guarantees for template selection. Skew makes per-group `COUNT` error sensitive to the smallest $N_\ell$ — linking to the rare-subpopulation problem.
 
 ## 3. State of the Art (SOTA)
-- **Systems-SOTA:** **BlinkDB** (Agarwal et al., EuroSys 2013) — multi-dimensional stratified samples per column-set template, allocation by an optimization over a parameterized error-latency profile; **AQP++/Sample+Seek** (Ding, Huang, Chaudhuri, Chakkappen, Zhou, SIGMOD 2016) — combine a measure-augmented sample with an index to bound error for range/point predicates; **STRAT / congressional sampling** (Acharya, Gibbons, Poosala, SIGMOD 2000) — hybrid uniform+per-group allocation for group-by robustness.
+- **Systems-SOTA:** **BlinkDB** (Agarwal et al., EuroSys 2013) — multi-dimensional stratified samples per column-set template, allocation by an optimization over a parameterized error-latency profile; **AQP++/Sample+Seek** (Ding, Huang, Chaudhuri, Chakrabarti, Wang, SIGMOD 2016) — combine a measure-augmented sample with an index to bound error for range/point predicates; **STRAT / congressional sampling** (Acharya, Gibbons, Poosala, SIGMOD 2000) — hybrid uniform+per-group allocation for group-by robustness.
 - **Theory-SOTA:** Neyman/optimal allocation (Neyman 1934) is exact for fixed strata; learning-augmented and submodular template-selection bounds are the current theory frontier.
 
 ## 4. Upper Bound
@@ -33,7 +33,7 @@ Provable regret bounds for online stratum redesign; minimax-optimal multi-column
 - **[Foundational]** Neyman. *On the Two Different Aspects of the Representative Method.* J. Royal Statistical Society, 1934. — [DOI](https://doi.org/10.2307/2342192)
 - **[Foundational]** Acharya, Gibbons, Poosala. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD 2000. — [DOI](https://doi.org/10.1145/342009.335450)
 - **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB.* EuroSys 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
-- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DBLP](https://dblp.org/rec/conf/sigmod/DingHCC016.html)
+- **[SOTA]** Ding, Huang, Chaudhuri, Chakrabarti, Wang. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DBLP](https://dblp.org/rec/conf/sigmod/DingHCC016.html)
 - **[Foundational]** Feige. *A Threshold of ln n for Approximating Set Cover.* J. ACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
 
 ## 10. Worked Example

@@ -40,7 +40,7 @@ Active directions: **learned/RL and bandit** index tuners with formal regret bou
 - **[Foundational]** Uriel Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
 - **[SOTA]** Maxim Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
 - **[Survey]** Surajit Chaudhuri, Vivek Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
-- **[SOTA]** Hai Lan, Zhifeng Bao, Yuwei Peng. *A Survey on Advancing the DBMS Query Optimizer / Learned Index Selection.* (learned index-selection survey), 2021. — [arXiv](https://arxiv.org/abs/2101.01507)
+- **[Survey]** Hai Lan, Zhifeng Bao, Yuwei Peng. *A Survey on Advancing the DBMS Query Optimizer: Cardinality Estimation, Cost Model, and Plan Enumeration.* Data Science and Engineering, 2021. — [arXiv](https://arxiv.org/abs/2101.01507)
 
 ## 10. Worked Example
 

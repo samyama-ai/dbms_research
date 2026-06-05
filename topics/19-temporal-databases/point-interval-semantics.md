@@ -94,7 +94,7 @@ point-faithfulness silently matters *(frontier — verify)*.
 - **[Foundational]** R. Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP](https://dblp.org/db/books/collections/snodgrass95.html)
 - **[Foundational]** M. Böhlen, C. Jensen, R. Snodgrass. *Evaluating and Enhancing the
   Completeness of TSQL2.* (and related TODS work on snapshot reducibility), 1996. — [DBLP search](https://dblp.org/search?q=Evaluating%20and%20Enhancing%20the%20Completeness%20of%20TSQL2)
-- **[Foundational]** D. Toman. *Point-Based Temporal Extensions of SQL.* DOOD, 1997. — [DOI](https://doi.org/10.1007/3-540-63792-3_11)
+- **[Foundational]** D. Toman. *A Point-Based Temporal Extension of SQL.* DOOD, 1997. — [DOI](https://doi.org/10.1007/3-540-63792-3_11)
 - **[SOTA]** A. Dignös, M. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213886)
 - **[Foundational]** P. Kanellakis, G. Kuper, P. Revesz. *Constraint Query Languages.* JCSS, 1995. — [DOI](https://doi.org/10.1006/jcss.1995.1051)
 - **[Survey]** C. Jensen, R. Snodgrass. *Temporal Database Entries* in the Encyclopedia of

@@ -1,6 +1,7 @@
 # Index maintenance under schema/data drift
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/index-under-drift` · **Status:** empirically-open
+> **Verification note:** In §10, if all 500 inserts truly fall in $[0,100)$ they all rank below key 700, giving true rank $\approx1200$ and error $\approx500$ (not 189); the quoted 189 assumes the inserts are spread across $[0,900)$ rather than concentrated in $[0,100)$.
 
 ## 1. Problem Statement
 **Learned and adaptive indexes** replace or augment B-trees with models that map a key to its position (or to a page), trading branch traversals for model inference. Their accuracy depends on the **key distribution** $F$. The problem: keep such an index **accurate and cheap as the data drifts** — inserts/deletes shift $F$ (data drift) or the schema/key semantics change (schema drift) — without full rebuilds. Concretely, bound the **prediction error** (last-mile search window) and amortized **maintenance cost** under a stream of updates while query latency stays competitive. Variants: the **detection** variant (decide when drift has degraded the model enough to act), the **repair/retrain** variant (minimize cost to restore an error target), and the **stability-vs-accuracy** variant (trade model freshness against rebuild cost). It is *empirically open*: many systems exist, but there is no agreed theory predicting when a learned index beats a B-tree under drift, nor an optimal maintenance policy.

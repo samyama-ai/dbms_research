@@ -43,7 +43,7 @@ A principled object-store cost model (latency + request price + cold start) and 
 - **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [ACM](https://dl.acm.org/doi/10.1145/48529.48535)
 - **[SOTA]** Yu, Zhang, Sarwat. *Spatial Data Management in Apache Spark: The GeoSpark Perspective.* GeoInformatica, 2019. — [DOI](https://doi.org/10.1007/s10707-018-0330-9)
 - **[SOTA]** Müller et al. (OGC). *GeoParquet Specification.* Open Geospatial Consortium / community standard, 2023–2024. — [spec](https://geoparquet.org/) · [GitHub](https://github.com/opengeospatial/geoparquet)
-- **[SOTA]** Perron, Castro Fernandez, DeWitt, Madden. *Starling / Lambada: Serverless Query Processing on Object Storage.* SIGMOD / CIDR, 2020. — [ACM](https://dl.acm.org/doi/10.1145/3318464.3380609) · [arXiv](https://arxiv.org/abs/1911.11727)
+- **[SOTA]** Perron, Castro Fernandez, DeWitt, Madden. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020. — [ACM](https://dl.acm.org/doi/10.1145/3318464.3380609) · [arXiv](https://arxiv.org/abs/1911.11727)
 
 ## 10. Worked Example
 

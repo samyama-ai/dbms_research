@@ -29,7 +29,7 @@ Foundations:
 ## 3. State of the Art (SOTA)
 
 - **Snodgrass — *Developing Time-Oriented Database Applications in SQL* (1999)** and the TSQL2 effort: temporal keys, coalescing semantics, and a temporal-BCNF proposal.
-- **Jensen, Snodgrass, Su (IS 1994)** and the **"glossary of temporal database concepts"** establishing valid/transaction time vocabulary.
+- **Jensen, Snodgrass, Soo (IS 1994)** and the **"glossary of temporal database concepts"** establishing valid/transaction time vocabulary.
 - **Arenas, Libkin — *An Information-Theoretic Approach to Normal Forms* (PODS 2003 / JACM 2005):** the non-temporal benchmark a temporal theory must reduce to.
 - Systems: **SQL:2011** standardizes application-time and system-time period tables (bitemporal) but specifies *no* normalization theory; vendors (Oracle Flashback/Temporal Validity, IBM Db2 Temporal, MariaDB/SQL Server system-versioning) leave redundancy management to coalescing utilities and triggers.
 

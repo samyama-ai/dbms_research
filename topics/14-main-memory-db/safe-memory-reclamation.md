@@ -114,7 +114,7 @@ fast EBR variants.
 - **[Foundational]** M. Michael. *Hazard Pointers: Safe Memory Reclamation for Lock-Free Objects.* IEEE TPDS, 2004. — [DOI](https://doi.org/10.1109/TPDS.2004.8)
 - **[Foundational]** K. Fraser. *Practical Lock-Freedom.* PhD thesis / RCU lineage (McKenney), 2004. — [Cambridge TR](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.html)
 - **[SOTA]** R. Nikolaev, B. Ravindran. *Hyaline: Fast and Transparent Lock-Free Memory Reclamation.* PODC / DISC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331575)
-- **[SOTA]** G. Sheffer, E. Petrank. *Wait-Free / Version-Based Reclamation (VBR, Crystalline).* PPoPP, 2021–2023. — [DOI](https://doi.org/10.1145/3409964.3461817)
+- **[SOTA]** G. Sheffi, M. Herlihy, E. Petrank. *VBR: Version Based Reclamation.* SPAA, 2021. — [DOI](https://doi.org/10.1145/3409964.3461817)
 - **[Survey]** P. Singh, T. A. Brown, et al. *A Survey of Concurrent Memory Reclamation Techniques.* (comparative study), 2020s. *(unverified)*
 
 ## 10. Worked Example

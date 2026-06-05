@@ -27,7 +27,7 @@ Key tools:
 
 ## 3. State of the Art (SOTA)
 
-**Theory-SOTA.** The Koutris–Wijsen attack-graph machinery (PODS 2015; JACM 2017) gives an *effective* FO-rewriting whenever one exists for self-join-free CQs under one key per relation; extensions cover certain foreign keys and some self-joins (Koutris–Wijsen 2020; Figueira et al. 2023). Counting trichotomy completed by Calautti–Console–Pieris (ICDT/PODS 2019–2022) with approximate-counting (FPRAS) results for tractable-to-approximate cases.
+**Theory-SOTA.** The Koutris–Wijsen attack-graph machinery (PODS 2015; TODS 2017) gives an *effective* FO-rewriting whenever one exists for self-join-free CQs under one key per relation; extensions cover certain foreign keys and some self-joins (Koutris–Wijsen 2020; Figueira et al. 2023). Counting trichotomy completed by Calautti–Console–Pieris (ICDT/PODS 2019–2022) with approximate-counting (FPRAS) results for tractable-to-approximate cases.
 
 **Systems-SOTA.** CAvSAT (Dixit–Kolaitis, SIGMOD 2019) reduces CQA to SAT/MaxSAT and scales general CQA via modern solvers. LinCQA (Fan et al., 2023) compiles linear FO-rewritings. Probabilistic/ML approaches — HoloClean (Rekatsinas et al., VLDB 2017) and follow-ons — answer queries over a probabilistic clean instance via inference rather than enumeration.
 
@@ -66,7 +66,7 @@ For self-join-free CQs under single keys the decision problem is **closed** (exa
 ## 9. Key References
 
 - **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303983)
-- **[Foundational]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* ACM TODS / JACM, 2017. — [DOI](https://doi.org/10.1145/3068334)
+- **[Foundational]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries Under Primary Key Constraints.* ACM TODS, 2017. — [DOI](https://doi.org/10.1145/3068334)
 - **[SOTA]** Dixit, Kolaitis. *A SAT-Based System for Consistent Query Answering (CAvSAT).* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1905.02828)
 - **[SOTA]** Calautti, Console, Pieris. *Counting Database Repairs under Primary Keys Revisited.* PODS, 2019. — [DOI](https://doi.org/10.1145/3294052.3319703)
 - **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631)

@@ -63,7 +63,7 @@ Take $N = 1{,}000{,}000$ tuples, $p = 4$ reducers, and `SELECT key, SUM(v) GROUP
 
 **Naive hash partitioning:** $H$ maps to one reducer, giving it load $\ge 700{,}000$ while the others share $300{,}000$ — makespan $\approx 700{,}000$, far above the balanced share $N/p = 250{,}000$.
 
-**Two-phase + salting (SUM is algebraic):** Salt $H$ into 4 sub-keys $H{:}0..H{:}3$ by random suffix. Each mapper combiner pre-aggregates locally, so $H$'s $700{,}000$ tuples collapse to one partial $\texttt{SUM}$ per (mapper, salt) pair. With $\le 4$ partials per salt bucket, each reducer sees $\approx 175{,}000$ light-key tuples plus $O(p)$ partial states. Phase 2 re-sums the 4 salt partials: $\texttt{SUM}(H) = \sum_{s=0}^{3}\texttt{SUM}(H{:}s)$.
+**Two-phase + salting (SUM is algebraic):** Salt $H$ into 4 sub-keys $H{:}0..H{:}3$ by random suffix. Each mapper combiner pre-aggregates locally, so $H$'s $700{,}000$ tuples collapse to one partial $\texttt{SUM}$ per (mapper, salt) pair. With $\le 4$ partials per salt bucket, each reducer sees $\approx 75{,}000$ light-key tuples ($300{,}000/p$) plus $O(p)$ partial states. Phase 2 re-sums the 4 salt partials: $\texttt{SUM}(H) = \sum_{s=0}^{3}\texttt{SUM}(H{:}s)$.
 
 Max load drops from $700{,}000$ to $\approx N/p + O(p) = 250{,}000 + O(4)$ — matching the $O(N/p + p)$ upper bound of Section 4. Had the aggregate been `MEDIAN` (holistic), salting could not collapse $H$, so $\Omega(700{,}000)$ would still flow to one reducer.
 

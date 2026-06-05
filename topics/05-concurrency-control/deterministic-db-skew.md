@@ -45,7 +45,7 @@ Directions: exploiting **operation commutativity** (counters, sets) so hot-key u
 
 ## 9. Key References
 
-- **[Foundational]** Thomson, A.; Diaconu, T.; Ren, K.; Shah, P.; Abadi, D.; et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Foundational]** Thomson, A.; Diamond, T.; Weng, S.-C.; Ren, K.; Shao, P.; Abadi, D.; et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
 - **[SOTA]** Faleiro, J.; Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* PVLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)
 - **[SOTA]** Lu, Y.; Yu, X.; Cao, L.; Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
 - **[SOTA]** Qadah, T.; Sadoghi, M. *QueCC: A Queue-Oriented, Control-Free Concurrency Architecture.* Middleware, 2018. — [DOI](https://doi.org/10.1145/3274808.3274810)

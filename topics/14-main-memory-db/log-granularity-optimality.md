@@ -18,8 +18,8 @@ $$\min_{x} \;\; \alpha \sum_i b_i(x_i) \;+\; \beta\, \mathbb{E}\Big[\textstyle\s
 subject to recoverability constraints linking choices across operations (e.g., a logical update is replayable only if the index structures it touches are themselves recoverable, inducing dependency constraints $x_i \preceq x_j$). These cross-operation dependencies make the feasible set non-product, distinguishing the problem from independent per-item selection. Determinism requirements connect this to the theory of *deterministic transaction execution* (Calvin/H-Store): if the schedule is a total order fixed in advance, command logging needs only that order plus inputs — an information-theoretic lower bound of $\log_2 |\text{inputs}|$ bits per transaction.
 
 ## 3. State of the Art (SOTA)
-- **Systems-SOTA.** H-Store/VoltDB introduced **command logging** (Malviya, Weber, Madden, Stonebraker, *Rethinking Main-Memory OLTP Recovery*, ICDE 2014), showing command logging slashes log volume but raises recovery time vs. physiological ARIES-style logging. SiloR (Zheng et al., OSDI 2014) achieves high-throughput value (logical/physiological) logging with parallel recovery. Hekaton (SQL Server) uses logical logging tightly coupled to MVCC.
-- **Hybrid.** *Adaptive logging* (Yao, Chen, Jagadish, et al., SIGMOD 2016) interpolates between command and ARIES logging, dynamically picking granularity to balance runtime cost against recovery time — the closest direct attack on this problem.
+- **Systems-SOTA.** H-Store/VoltDB introduced **command logging** (Malviya, Weisberg, Madden, Stonebraker, *Rethinking Main-Memory OLTP Recovery*, ICDE 2014), showing command logging slashes log volume but raises recovery time vs. physiological ARIES-style logging. SiloR (Zheng et al., OSDI 2014) achieves high-throughput value (logical/physiological) logging with parallel recovery. Hekaton (SQL Server) uses logical logging tightly coupled to MVCC.
+- **Hybrid.** *Adaptive logging* (Yao, Agrawal, Chen, Ooi, Wu, SIGMOD 2016) interpolates between command and ARIES logging, dynamically picking granularity to balance runtime cost against recovery time — the closest direct attack on this problem.
 
 No system provably solves the joint-minimization optimization; choices are heuristic.
 
@@ -44,7 +44,7 @@ Active directions: learned/adaptive logging policies that predict per-transactio
 ## 9. Key References
 - **[SOTA]** Malviya, Weisberg, Madden, Stonebraker. *Rethinking Main-Memory OLTP Recovery.* ICDE, 2014. — [DOI](https://doi.org/10.1109/ICDE.2014.6816685)
 - **[SOTA]** Zheng, Tu, Kohler, Liskov. *Fast Databases with Fast Durability and Recovery through Multicore Parallelism (SiloR).* OSDI, 2014. — [DBLP](https://dblp.org/rec/conf/osdi/ZhengTKL14.html)
-- **[SOTA]** Yao, Chen, Jagadish, et al. *Adaptive Logging: Optimizing Logging and Recovery Costs in Distributed In-Memory Databases.* SIGMOD, 2016. — [arXiv](https://arxiv.org/abs/1503.03653)
+- **[SOTA]** Yao, C., Agrawal, D., Chen, G., Ooi, B.C., Wu, S. *Adaptive Logging: Optimizing Logging and Recovery Costs in Distributed In-Memory Databases.* SIGMOD, 2016. — [arXiv](https://arxiv.org/abs/1503.03653)
 - **[Foundational]** Mohan, Haderle, Lindsay, Pirahesh, Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
 - **[Foundational]** Thomson, Diamond, Weng, Ren, Shao, Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
 

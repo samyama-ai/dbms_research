@@ -24,7 +24,7 @@ Lower-bound machinery: communication complexity (set-disjointness) for streaming
 
 ## 3. State of the Art (SOTA)
 - **Theory-SOTA:** sublinear-time estimators for triangles (Eden et al. FOCS 2015), arbitrary $k$-cliques and general subgraphs (Eden–Ron–Seshadhri; Assadi–Kapralov–Khanna ITCS 2019 "arboricity" framework) achieving query complexity parameterized by edges, arboricity, and the target count.
-- **Systems-SOTA:** WanderJoin (Li–Wu–Das–Haritsa, SIGMOD 2016) for online aggregation joins; Arya/EmptyHeaded-style worst-case-optimal exact counting for moderate graphs; sampling subgraph counters such as **MOTIVO** (Bressan–Leucci–Panconesi, color-coding + succinct sampling, KDD/VLDB 2019) and the GPU/streaming triangle/butterfly counters; **graphlet** estimators (PGD, ESCAPE — Pinar–Seshadhri–Vishal, WWW 2017, exact via orbit equations up to 5-vertex). For aggregates, sampling-based AQP engines extended to property graphs.
+- **Systems-SOTA:** WanderJoin (Li–Wu–Yi–Zhao, SIGMOD 2016) for online aggregation joins; Arya/EmptyHeaded-style worst-case-optimal exact counting for moderate graphs; sampling subgraph counters such as **MOTIVO** (Bressan–Leucci–Panconesi, color-coding + succinct sampling, KDD/VLDB 2019) and the GPU/streaming triangle/butterfly counters; **graphlet** estimators (PGD, ESCAPE — Pinar–Seshadhri–Vishal, WWW 2017, exact via orbit equations up to 5-vertex). For aggregates, sampling-based AQP engines extended to property graphs.
 
 ## 4. Upper Bound
 - Triangles: $\tilde{O}\!\left(\frac{n}{t^{1/3}}+\frac{m^{3/2}}{t}\right)$ queries for an $(\varepsilon,\delta)$-estimate (Eden–Levi–Ron–Seshadhri 2015), in the adjacency-list query model.

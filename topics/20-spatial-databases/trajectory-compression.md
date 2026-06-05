@@ -48,7 +48,7 @@ Active threads: error-bounded online simplification with workload-aware budgets;
 - **[Foundational]** Imai, Iri. *Polygonal Approximations of a Curve — Formulations and Algorithms.* In *Computational Morphology*, 1988. — [DOI](https://doi.org/10.1016/B978-0-444-70467-2.50011-4)
 - **[Foundational]** Agarwal, Har-Peled, Mustafa, Wang. *Near-Linear Time Approximation Algorithms for Curve Simplification.* Algorithmica, 2005. — [DOI](https://doi.org/10.1007/s00453-005-1165-y)
 - **[SOTA]** Muckell et al. *SQUISH-E: An Online Approach for Compressing Trajectories.* GeoInformatica, 2014. — [DOI](https://doi.org/10.1007/s10707-013-0184-0)
-- **[SOTA]** Lin, Jensen, et al. *One-Pass Error-Bounded Trajectory Simplification (OPERB).* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.05597)
+- **[SOTA]** Lin, Ma, Zhang, Wo, Huai. *One-Pass Error-Bounded Trajectory Simplification (OPERB).* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.05597)
 - **[Survey]** Zheng. *Trajectory Data Mining: An Overview.* ACM TIST, 2015. — [DOI](https://doi.org/10.1145/2743025)
 
 ## 10. Worked Example

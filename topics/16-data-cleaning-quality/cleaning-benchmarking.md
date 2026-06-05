@@ -24,7 +24,7 @@ It is meta-level: success is measured by how well the benchmark forecasts field 
 ## 3. State of the Art (SOTA)
 
 - **BART** (Arocena, Glavic, Mecca, Miller, Papotti, Santoro, VLDB 2015) — principled error-generation engine that injects detectable errors w.r.t. constraints with controllable hardness; the closest thing to a faithful synthetic-error standard.
-- **CleanML** (Li, Rekatsinas, Chu et al., ICDE 2021) — benchmark studying cleaning's *downstream ML impact* with leakage-controlled protocols; shows cleaning effects are inconsistent and metric-dependent.
+- **CleanML** (Li, Rao, Blase, Zhang, Chu, Zhang, ICDE 2021) — benchmark studying cleaning's *downstream ML impact* with leakage-controlled protocols; shows cleaning effects are inconsistent and metric-dependent.
 - **Error-detection benchmarks** — the Abedjan et al. (VLDB 2016) "Detecting Data Errors: Where are we and what needs to be done?" study; Raha/REIN error-detection suites compiling many real dirty datasets.
 - **Dedup/ER** — the Magellan benchmark datasets and DeepMatcher/EM tasks; Leipzig ER benchmark.
 - **dirty-data corpora** — collections of real dirty datasets with curated ground truth (Tax, restaurants, hospital, flights, etc.) reused across papers.
@@ -64,7 +64,7 @@ It is meta-level: success is measured by how well the benchmark forecasts field 
 
 - **[Foundational]** Demšar. *Statistical Comparisons of Classifiers over Multiple Data Sets.* JMLR, 2006. — [JMLR](https://jmlr.org/papers/v7/demsar06a.html)
 - **[SOTA]** Arocena, Glavic, Mecca, Miller, Papotti, Santoro. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850578.2850579)
-- **[SOTA]** Li, Rekatsinas, Chu, et al. *CleanML: A Study for Evaluating the Impact of Data Cleaning on ML Classification Tasks.* ICDE, 2021. — [DOI](https://doi.org/10.1109/ICDE51399.2021.00009)
+- **[SOTA]** Li, Rao, Blase, Zhang, Chu, Zhang. *CleanML: A Study for Evaluating the Impact of Data Cleaning on ML Classification Tasks.* ICDE, 2021. — [DOI](https://doi.org/10.1109/ICDE51399.2021.00009)
 - **[SOTA]** Abedjan, Chu, Deng, Fernandez, Ilyas, Ouzzani, Papotti, Stonebraker, Tang. *Detecting Data Errors: Where Are We and What Needs to Be Done?* VLDB, 2016. — [DOI](https://doi.org/10.14778/2994509.2994518)
 - **[SOTA]** Ghorbani, Zou. *Data Shapley: Equitable Valuation of Data for Machine Learning.* ICML, 2019. — [arXiv](https://arxiv.org/abs/1904.02868)
 - **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books / Morgan & Claypool, 2019. — [DOI](https://doi.org/10.1145/3310205)

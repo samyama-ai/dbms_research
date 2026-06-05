@@ -107,7 +107,7 @@ Groups: Yale (Abadi, Faleiro), MIT, CMU (Pavlo), and deterministic-DB startups (
 
 ## 9. Key References
 
-- **[Foundational]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[Foundational]** Thomson, A., Diamond, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
 - **[Survey]** Abadi, D., Faleiro, J. *An Overview of Deterministic Database Systems.* CACM, 2018. — [DOI](https://doi.org/10.1145/3181853)
 - **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
 - **[SOTA]** Faleiro, J., Abadi, D. *Rethinking Serializable Multiversion Concurrency Control (Bohm).* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1412.2324)

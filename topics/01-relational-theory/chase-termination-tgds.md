@@ -24,7 +24,7 @@ The general problem is **undecidable** for all standard chase variants (Deutsch�
 
 - **Weak acyclicity** (Fagin–Kolaitis–Miller–Popa 2005) — the foundational, polynomial-time-checkable condition.
 - **Stratification / safety / super-weak acyclicity** (Deutsch–Nash–Remmel; Meier; Marnette 2009).
-- **Acyclic graph of rule dependencies (aGRD)** and the **MFA/MSA** (model-faithful / model-summarizing acyclicity) criteria (Cuial–Grau–Horrocks–Motik–Krötzsch–Zhou, 2013), which are among the most general checkable conditions, used in RDFox.
+- **Acyclic graph of rule dependencies (aGRD)** and the **MFA/MSA** (model-faithful / model-summarizing acyclicity) criteria (Cuenca Grau–Horrocks–Krötzsch–Kupke–Magka–Motik–Wang, 2013), which are among the most general checkable conditions, used in RDFox.
 
 ## 4. Upper Bound
 When a recognized acyclicity condition holds, the chase terminates and the universal model has size polynomial in $|I|$ for fixed $\Sigma$: $O(|I|^{w})$ where $w$ depends on the dependency width. Weak acyclicity, safety, and super-weak acyclicity are all **PTIME-decidable** as properties of $\Sigma$ (data-independent checks on the position/dependency graph). MFA recognition is decidable but **2EXPTIME**-complete in general. Within these classes, certain-answer evaluation for conjunctive queries is in PTIME (data complexity).

@@ -66,7 +66,7 @@ For a *fixed, known* workload the static optimum is computable exactly, so the g
 
 - **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems (External-Memory / DAM model).* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
 - **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
-- **[SOTA]** Leis, Haubenschild, Alhomssi, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00026)
+- **[SOTA]** Leis, Haubenschild, Kemper, Neumann. *LeanStore: In-Memory Data Management Beyond Main Memory.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00026)
 - **[SOTA]** Levandoski, Lomet, Sengupta. *The Bw-Tree: A B-tree for New Hardware Platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
 - **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
 - **[Survey]** Graefe. *Modern B-Tree Techniques.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000028)

@@ -25,7 +25,7 @@ For snapshot-reducible SPJ temporal views, $\Delta V$ is computable in time $O(|
 
 ## 5. Lower Bound
 
-Incremental maintenance is provably hard for the hardest views: maintaining the result of a Boolean **conjunctive query under single-tuple updates** cannot be done in $O(n^{1/2-\epsilon})$ time per update for some queries (the triangle/3-path family) unless the **Online Matrix–Vector (OMv) conjecture** fails (Berkholz–Keppmann–Schweikardt, *PODS 2017*); temporal SPJ inherits this since it generalizes the static query at each snapshot. Self-maintainability is *not always achievable*: there exist temporal views (e.g. with temporal aggregation over retracted valid-time) that require base access on deletion (info-theoretic: the view does not retain enough state), matching the classical Gupta–Mumick characterization. Thus a fully incremental, self-maintainable solution for arbitrary bitemporal aggregate views is impossible.
+Incremental maintenance is provably hard for the hardest views: maintaining the result of a Boolean **conjunctive query under single-tuple updates** cannot be done in $O(n^{1/2-\epsilon})$ time per update for some queries (the triangle/3-path family) unless the **Online Matrix–Vector (OMv) conjecture** fails (Berkholz–Keppeler–Schweikardt, *PODS 2017*); temporal SPJ inherits this since it generalizes the static query at each snapshot. Self-maintainability is *not always achievable*: there exist temporal views (e.g. with temporal aggregation over retracted valid-time) that require base access on deletion (info-theoretic: the view does not retain enough state), matching the classical Gupta–Mumick characterization. Thus a fully incremental, self-maintainable solution for arbitrary bitemporal aggregate views is impossible.
 
 ## 6. The Gap
 
@@ -48,7 +48,7 @@ For **SPJ and coalesced bitemporal views** the gap is essentially closed: lifted
 - **[Foundational]** A. Gupta, I. S. Mumick, V. S. Subrahmanian. *Maintaining Views Incrementally.* ACM SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170066)
 - **[SOTA]** C. Koch, Y. Ahmad, O. Kennedy, M. Nikolic, A. Nötzli, D. Lupei, A. Shaikhha. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 23(2), 2014. — [DOI](https://doi.org/10.1007/s00778-013-0348-4)
 - **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment* / *Overlap Interval Partition Join.* ACM SIGMOD, 2012 / 2014. — [DOI](https://doi.org/10.1145/2213836.2213886)
-- **[SOTA]** C. Berkholz, J. Keppmann (Gerhardt), N. Schweikardt. *Answering Conjunctive Queries under Updates.* ACM PODS, 2017. — [arXiv](https://arxiv.org/abs/1702.06370) · [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** C. Berkholz, J. Keppeler, N. Schweikardt. *Answering Conjunctive Queries under Updates.* ACM PODS, 2017. — [arXiv](https://arxiv.org/abs/1702.06370) · [DOI](https://doi.org/10.1145/3034786.3034789)
 - **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
 - **[SOTA]** M. Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [arXiv](https://arxiv.org/abs/2203.16684) · [DOI](https://doi.org/10.14778/3587136.3587137)
 

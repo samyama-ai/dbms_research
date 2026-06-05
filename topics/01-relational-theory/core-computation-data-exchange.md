@@ -1,7 +1,6 @@
 # Core Computation for Data Exchange
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/core-computation-data-exchange` · **Status:** solved-but-impractical
-> **Verification note:** The Gottlob–Nash core-computation result appeared as PODS 2006 and as a journal article in *Theory and Practice of Logic Programming* (TPLP) 8(5–6), 2008 — not JACM; the "JACM" venue label below is incorrect.
 
 ## 1. Problem Statement
 
@@ -46,7 +45,7 @@ Groups: **Kolaitis (UCSC)**, **ten Cate (ILLC Amsterdam)**, **Mecca / Papotti (B
 
 - **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
 - **[Foundational]** Fagin, Kolaitis, Popa. *Data Exchange: Getting to the Core.* PODS 2003 / TODS 2005. — [DOI](https://doi.org/10.1145/1061318.1061323)
-- **[SOTA]** Gottlob, Nash. *Efficient Core Computation in Data Exchange.* JACM, 2008. — [DOI (PODS 2006)](https://doi.org/10.1145/1142351.1142358)
+- **[SOTA]** Gottlob, Nash. *Efficient Core Computation in Data Exchange.* JACM 55(2), 2008. — [DOI](https://doi.org/10.1145/1346330.1346334) (conf. version PODS 2006: [DOI](https://doi.org/10.1145/1142351.1142358))
 - **[SOTA]** Mecca, Papotti, Raunich, et al. *++Spicy / Core Schema Mappings.* SIGMOD 2009 / VLDB. — [DOI](https://doi.org/10.1145/1559845.1559914)
 - **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC 1977. — [DOI](https://doi.org/10.1145/800105.803397)
 - **[Survey]** Arenas, Barceló, Libkin, Murlak. *Foundations of Data Exchange.* Cambridge Univ. Press, 2014. — [DOI](https://doi.org/10.1017/CBO9781139060158)

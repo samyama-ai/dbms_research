@@ -50,7 +50,7 @@ Active directions: partial-partition-tolerant membership and "directed reachabil
 
 - **[Foundational]** Tushar Chandra, Vassos Hadzilacos, Sam Toueg. *The Weakest Failure Detector for Solving Consensus.* JACM, 1996. — [DOI](https://doi.org/10.1145/234533.234549)
 - **[Foundational]** Seth Gilbert, Nancy Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
-- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.5555/647883.738420)
+- **[SOTA]** Abhinandan Das, Indranil Gupta, Ashish Motivala. *SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol.* DSN, 2002. — [DOI](https://doi.org/10.1109/DSN.2002.1028914)
 - **[SOTA]** Armon Dadgar, James Phillips, Jon Currey. *Lifeguard: Local Health Awareness for More Accurate Failure Detection.* DSN Workshops, 2018. — [arXiv](https://arxiv.org/abs/1707.00788)
 - **[Survey]** Peng Huang, Chuanxiong Guo, Lidong Zhou, et al. *Gray Failure: The Achilles' Heel of Cloud-Scale Systems.* HotOS, 2017. — [DOI](https://doi.org/10.1145/3102980.3103005)
 - **[Foundational]** Kenneth Birman, Thomas Joseph. *Exploiting Virtual Synchrony in Distributed Systems.* SOSP, 1987. — [DOI](https://doi.org/10.1145/37499.37515)

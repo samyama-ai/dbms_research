@@ -56,7 +56,7 @@ Three sources report a country's capital over $|\Phi|=100$ objects. Per-source e
 
 Observed shared-*false* counts: $|\bar\Phi_f(S_1,S_2)| = 12$, while $|\bar\Phi_f(S_1,S_3)| = 1$ and $|\bar\Phi_f(S_2,S_3)| = 1$.
 
-For the pair $(S_1,S_2)$, seeing 12 identical mistakes when independence predicts $\approx 1$ is a $\sim$Poisson tail of $e^{-1}1^{12}/12! \approx 10^{-12}$ — overwhelming evidence of copying. Bayes' rule drives the posterior copying probability $c\to 1$. The fusion loop then discounts the second source's vote by $(1-c)\approx 0$, so $S_1,S_2$ count as essentially *one* witness rather than two.
+For the pair $(S_1,S_2)$, seeing 12 identical mistakes when independence predicts $\approx 1$ is a $\sim$Poisson tail of $e^{-1}1^{12}/12! \approx 10^{-9}$ — overwhelming evidence of copying. Bayes' rule drives the posterior copying probability $c\to 1$. The fusion loop then discounts the second source's vote by $(1-c)\approx 0$, so $S_1,S_2$ count as essentially *one* witness rather than two.
 
 Direction ($S_1\!\to\!S_2$ vs. $S_2\!\to\!S_1$) needs the accuracy asymmetry: the less-accurate source is inferred to be the copier. With only 12 shared errors, if both are equally accurate the direction is statistically indistinguishable — the identifiability floor of Section 5.
 

@@ -54,7 +54,7 @@ There is **no canonical model**, so "the" upper/lower bounds depend on which for
 - Reconciling RDF (SHACL) and property-graph constraint theories.
 
 ## 9. Key References
-- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
+- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research Report RJ909, 1971. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
 - **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
 - **[SOTA]** Angles, R., Bonifati, A., Dumbrava, S., Fletcher, G., Hidders, J., et al. *PG-Schema: Schemas for Property Graphs.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2211.10962) · [DOI](https://doi.org/10.1145/3589778)
 - **[SOTA]** Angles, R., et al. *PG-Keys: Keys for Property Graphs.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3457561)

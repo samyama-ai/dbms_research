@@ -28,12 +28,12 @@ Implication is governed by a **chase** over pattern-FD pairs; redundancy is info
 - **PG-Schema / PG-Keys** provide constraints but not a *normalization* (redundancy-elimination) theory.
 
 ## 4. Upper Bound
-- **GFD/GED implication:** decidable; **coNP-complete** for GFD implication, with sound-and-complete finite axiomatizations (Fan et al.). Satisfiability for GEDs decidable, **coNP**/higher depending on fragment.
+- **GFD/GED implication:** decidable; **NP-complete** for GFD implication (and **coNP-complete** for GFD satisfiability), with sound-and-complete finite axiomatizations (Fan et al.). Satisfiability for GEDs decidable, **coNP**/higher depending on fragment.
 - **Validation:** in **PTIME data complexity** for fixed patterns; **NP-complete combined** (subgraph matching).
 - **Normalization:** no general algorithm with proven guarantees; relational analogues give EXPTIME-worst-case BCNF decomposition, but the graph lifting is undefined/open.
 
 ## 5. Lower Bound
-- **GFD implication:** **coNP-hard** (Fan, Wu, Xu) — strictly harder than relational FD implication (which is PTIME), due to pattern quantification.
+- **GFD implication:** **NP-complete** (Fan, Wu, Xu; satisfiability is coNP-complete) — strictly harder than relational FD implication (which is PTIME), due to pattern quantification.
 - **Validation:** **NP-hard** combined (subgraph isomorphism).
 - **General GED/embedded-dependency implication:** can become **undecidable** for unrestricted tgd-style graph dependencies (inheriting Beeri–Vardi undecidability).
 - **Normalization lower bounds:** undefined — there is no agreed normal form against which to prove hardness, which is itself the open gap.

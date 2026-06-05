@@ -45,7 +45,7 @@ Directions: persistent-memory concurrent resizable hashing (Dash, CLEVEL, and su
 - **[Foundational]** Shalev, Shavit. *Split-Ordered Lists: Lock-Free Extensible Hash Tables.* JACM, 2006. — [DOI](https://dl.acm.org/doi/10.1145/1147954.1147958)
 - **[SOTA]** Li, Andersen, Kaminsky, Freedman. *Algorithmic Improvements for Fast Concurrent Cuckoo Hashing (libcuckoo).* EuroSys, 2014. — [DOI](https://dl.acm.org/doi/10.1145/2592798.2592820)
 - **[SOTA]** David, Guerraoui, Tudor. *Asynchronized Concurrency: The Secret to Scaling Concurrent Search Data Structures (CLHT).* ASPLOS, 2015. — [DOI](https://dl.acm.org/doi/10.1145/2786763.2694359)
-- **[Foundational]** Fich, Hendler, Shavit. *On the Inherent Weakness of Conditional Synchronization Primitives / Linear Lower Bounds on Real-World Implementations of Concurrent Objects.* FOCS, 2005. — [IEEE](https://ieeexplore.ieee.org/document/1530711/)
+- **[Foundational]** Fich, Hendler, Shavit. *Linear Lower Bounds on Real-World Implementations of Concurrent Objects.* FOCS, 2005. — [IEEE](https://ieeexplore.ieee.org/document/1530711/)
 - **[SOTA]** Liu, Zhang, Spear. *Dynamic-Sized Nonblocking Hash Tables.* PODC, 2014. — [DOI](https://dl.acm.org/doi/10.1145/2611462.2611495)
 - **[Foundational]** Fagin, Nievergelt, Pippenger, Strong. *Extendible Hashing — A Fast Access Method for Dynamic Files.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320083.320092)
 

@@ -1,6 +1,7 @@
 # Learned cost models with reliability guarantees
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/learned-cost-models` · **Status:** empirically-open
+> **Verification note:** the Sec. 2 generalization bound is written as $\tilde O(\sqrt{\mathfrak{R}_n(\mathcal F)/n})$; the standard Rademacher bound is gen-error $\lesssim \mathfrak{R}_n(\mathcal F)+\sqrt{\log(1/\delta)/n}$ (the $\sqrt{\cdot/n}$ wrapper is non-standard), so treat the expression as schematic.
 
 ## 1. Problem Statement
 A query optimizer compares candidate physical plans using a **cost model** $\hat c(p)$ that predicts execution cost (latency, CPU, I/O). Classical cost models are hand-tuned analytic formulas over cardinality estimates; they are systematically biased and brittle. A **learned cost model** replaces (part of) $\hat c$ with a model trained on observed plan executions.

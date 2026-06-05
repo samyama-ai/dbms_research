@@ -28,7 +28,7 @@ $I$-valid, convergent, and coordination-free execution exists **iff** $T$ is $I$
 w.r.t. $I$. This decouples "needs coordination" from "is a write conflict."
 
 A complementary lens is the **CALM theorem** (Hellerstein; Ameloot–Neven–Van den Bussche,
-PODS 2013): a query/program is computable by a **coordination-free**, monotone, eventually
+PODS 2011): a query/program is computable by a **coordination-free**, monotone, eventually
 consistent distributed program **iff it is expressible in monotone logic** (a
 $\textsf{Datalog}^{\neg}$ / monotonicity condition). Non-monotonicity (aggregation,
 negation, set difference) is exactly what forces coordination.
@@ -44,7 +44,7 @@ between commuting operations; the residual coordination requirement is governed 
 **Theory SOTA.** I-confluence (Bailis–Fekete–Franklin–Ghodsi–Hellerstein–Stoica, VLDB
 2015) gives the exact condition for coordination-free invariant preservation and analyzes
 standard SQL constraints (foreign keys, uniqueness, check constraints). CALM
-(Ameloot–Neven–Van den Bussche, PODS 2013; Hellerstein–Alvaro CACM 2020) gives the
+(Ameloot–Neven–Van den Bussche, PODS 2011; Hellerstein–Alvaro CACM 2020) gives the
 monotonicity characterization. The **RedBlue consistency** framework (Li et al., OSDI 2012)
 classifies operations into commutative "blue" (async) and "red" (coordinated) ops and
 shifts as much as possible to blue.
@@ -110,7 +110,7 @@ statically certify the coordination level per operation *(frontier — verify)*.
 ## 9. Key References
 
 - **[Foundational]** Bailis, Fekete, Franklin, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735509)
-- **[Foundational]** Ameloot, Neven, Van den Bussche. *Relational Transducers for Declarative Networking (CALM).* PODS, 2013 / J. ACM. — [arXiv](https://arxiv.org/abs/1012.2858)
+- **[Foundational]** Ameloot, Neven, Van den Bussche. *Relational Transducers for Declarative Networking (CALM).* PODS, 2011 / J. ACM. — [arXiv](https://arxiv.org/abs/1012.2858)
 - **[SOTA]** Li, Porto, Clement, Gehrke, Preguiça, Rodrigues. *Making Geo-Replicated Systems Fast as Possible, Consistent when Necessary (RedBlue).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/li)
 - **[SOTA]** Sivaramakrishnan, Kaki, Jagannathan. *Declarative Programming over Eventually Consistent Data Stores (Quelea).* PLDI, 2015. — [DOI](https://doi.org/10.1145/2737924.2737981)
 - **[Survey]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)

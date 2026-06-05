@@ -63,7 +63,7 @@ Run pivot correlation clustering (Ailon–Charikar–Newman, 3-approx): pick piv
 
 $$C_1=\{\text{author},\text{writer},\text{author}_{S_3}\},\ C_2=\{\text{title},\text{name},\text{booktitle}\},\ C_3=\{\text{price},\text{cost}\},\ C_4=\{\text{isbn}\}.$$
 
-The mediated schema has 4 concepts. A pairwise matcher would compare $\binom{8}{2}=28$ attribute pairs; holistic blocking on shared values cuts candidate pairs sub-quadratically.
+The mediated schema has 4 concepts. A pairwise matcher would compare $\binom{9}{2}=36$ attribute pairs; holistic blocking on shared values cuts candidate pairs sub-quadratically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

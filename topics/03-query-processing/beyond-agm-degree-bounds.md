@@ -1,6 +1,7 @@
 # Beyond-AGM bounds with functional dependencies
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/beyond-agm-degree-bounds` · **Status:** partially-solved
+> **Verification note:** "PANDA" is the algorithm's name; the parenthetical "Proof-Assisted eNtropic Degree-Aware" expansion in §3 is not an official acronym from the paper and should be treated as a mnemonic, not a citation.
 
 ## 1. Problem Statement
 

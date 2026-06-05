@@ -1,6 +1,7 @@
 # Online Hot-Shard Splitting
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/online-hot-shard-splitting` · **Status:** empirically-open
+> **Verification note:** In Section 10, splitting at key 65 actually yields left/right loads ≈102/98 req/s (not 90/110); the conclusion that this far beats the naive 30/170 split is unchanged.
 
 ## 1. Problem Statement
 

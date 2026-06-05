@@ -13,7 +13,7 @@ The problems: (i) give a denotational **semantics** under which selection, join,
 
 ## 2. Mathematical Foundations
 
-Model a temporal database over a discrete time domain $\mathbb{T}=\{0,1,\dots,t_{\max}\}$ with a distinguished moving point $\textsf{now}(t)=t$. A now-relative interval is a *parametric* interval $I(t)=[a,\min(b,t))$ or $[a,t)$; its semantics is the function $t\mapsto I(t)$ from evaluation time to a ground interval (Clifford–Dyreson–Snodgrass–Jensen–Umeslawski, *VLDB J. 1997*).
+Model a temporal database over a discrete time domain $\mathbb{T}=\{0,1,\dots,t_{\max}\}$ with a distinguished moving point $\textsf{now}(t)=t$. A now-relative interval is a *parametric* interval $I(t)=[a,\min(b,t))$ or $[a,t)$; its semantics is the function $t\mapsto I(t)$ from evaluation time to a ground interval (Clifford–Dyreson–Isakowitz–Jensen–Snodgrass, *ACM TODS 1997*).
 
 Indeterminacy is captured by a *probabilistic temporal element*: each endpoint $e$ carries a mass function $p_e:\mathbb{T}\to[0,1]$, $\sum p_e=1$, and a *plausibility* threshold (Dyreson–Snodgrass, *ACM TODS 1998*). A fact holds at $t$ with probability $\Pr[a\le t < b]=\big(\sum_{x\le t}p_a(x)\big)\big(\sum_{y>t}p_b(y)\big)$ under endpoint independence; correlation requires a joint mass over $\mathbb{T}^2$.
 
@@ -21,7 +21,7 @@ Two semantic regimes coexist: **certain answers** (true for every binding of `NO
 
 ## 3. State of the Art (SOTA)
 
-- **Semantics:** The Clifford et al. *VLDB Journal* (1997) treatment of `NOW` and the Dyreson–Snodgrass indeterminacy model (*TODS* 1998) remain the canonical references; both are folded into the consensus glossary (Jensen–Dyreson et al., 1998).
+- **Semantics:** The Clifford et al. *ACM TODS* (1997) treatment of `NOW` and the Dyreson–Snodgrass indeterminacy model (*TODS* 1998) remain the canonical references; both are folded into the consensus glossary (Jensen–Dyreson et al., 1998).
 - **Systems:** SQL:2011 application-time/system-time periods deliberately exclude a moving `NOW` symbol; engines emulate it with `9999-12-31` sentinels or with `MAXVALUE` open ranges (MariaDB, DB2, Oracle Flashback, SQL Server temporal tables). Probabilistic/indeterminate time has **no production engine support**; research prototypes (TimeDB, TSQL2 prototypes, MayBMS-style probabilistic DBs for the indeterminacy slice) are the SOTA.
 - **Indexing:** GiST/SP-GiST range and `tstzrange` GiST in PostgreSQL handle open-ended ranges via $+\infty$ sentinels; no index natively reasons about a moving diagonal or endpoint distributions.
 

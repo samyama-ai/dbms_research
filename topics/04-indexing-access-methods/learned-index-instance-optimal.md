@@ -46,7 +46,7 @@ Open. The gap is between (a) **worst-case-optimal-within-a-model-class** results
 - **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
 - **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
 - **[SOTA]** A. Galakatos, M. Markovitch, C. Binnig, R. Fonseca, T. Kraska. *FITing-Tree.* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1801.10207)
-- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1911.13014)
+- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2006.12804)
 
 ## 10. Worked Example
 

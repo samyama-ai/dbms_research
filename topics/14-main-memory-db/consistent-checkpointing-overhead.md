@@ -48,7 +48,7 @@ expected recovery work $\propto 1/f$. Hardware-assisted variants exploit page-pr
 **Systems SOTA.** Hyper's *virtual memory snapshots* use `fork()` + copy-on-write page
 faults to obtain an OS-consistent snapshot at hardware granularity (Kemper/Neumann,
 ICDE 2011). SiloR (Zheng et al., OSDI 2014) pairs value logging with periodic
-checkpoints and parallel recovery. **CALC** (Ren, Faleiro, Abadi, SIGMOD 2016) gives a
+checkpoints and parallel recovery. **CALC** (Ren, Diamond, Abadi, Thomson, SIGMOD 2016) gives a
 *low-overhead asynchronous consistent* checkpoint that captures a virtual point-in-time
 without quiescing, with small constant per-record state. Microsoft Hekaton uses a
 continuous, append-only checkpoint stream over its MVCC log. PMem/CXL variants push the

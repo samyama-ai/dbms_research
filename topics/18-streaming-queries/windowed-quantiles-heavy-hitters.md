@@ -19,7 +19,7 @@ Variants: **counting/estimation** (frequency/rank), **decision** (is item $x$ a 
 Stream $\sigma = a_1, a_2, \dots$ over universe $[m]$; window $W_t$ of size $N$ (count-based) or duration. Frequency vector $\mathbf{f}\in\mathbb{N}^m$ restricted to $W_t$.
 
 - **Rank / $\epsilon$-approximate quantile:** an item $x$ with $|\mathrm{rank}(x) - \phi N| \le \epsilon N$.
-- **Mergeability** (Agarwal et al. 2013): a summary class is *mergeable* if $\mathrm{merge}(S(A), S(B))$ has the same error guarantee as $S(A\cup B)$, enabling distributed/parallel construction. The **KLL sketch** (Karnin–Lang–Liviu 2016) is fully mergeable with optimal space $O(\tfrac{1}{\epsilon}\log\log\tfrac{1}{\delta})$ for rank error $\epsilon$ w.p. $1-\delta$.
+- **Mergeability** (Agarwal et al. 2013): a summary class is *mergeable* if $\mathrm{merge}(S(A), S(B))$ has the same error guarantee as $S(A\cup B)$, enabling distributed/parallel construction. The **KLL sketch** (Karnin–Lang–Liberty 2016) is fully mergeable with optimal space $O(\tfrac{1}{\epsilon}\log\log\tfrac{1}{\delta})$ for rank error $\epsilon$ w.p. $1-\delta$.
 - **Heavy hitters in $\ell_1$:** Misra–Gries / SpaceSaving give deterministic $O(1/\epsilon)$ counters; **Count-Min** (Cormode–Muthukrishnan 2005) gives $O(\tfrac{1}{\epsilon}\log\tfrac1\delta)$ space with $\ell_1$ error $\epsilon\|\mathbf f\|_1$.
 - **Sliding windows:** the **Exponential Histogram** (Datar–Gionis–Indyk–Motwani 2002) maintains $\epsilon$-approximate counts over windows in $O(\tfrac1\epsilon \log^2 N)$ bits; **smooth histograms** (Braverman–Ostrovsky 2007) extend this to a broad class of functions including frequency moments.
 
@@ -37,7 +37,7 @@ Stream $\sigma = a_1, a_2, \dots$ over universe $[m]$; window $W_t$ of size $N$ 
 
 ## 5. Lower Bound
 
-- **Quantiles:** $\Omega(\tfrac1\epsilon \log\log\tfrac1\delta)$ for randomized rank approximation (Karnin–Lang–Liviu 2016); $\Omega(\tfrac1\epsilon\log\tfrac1\epsilon)$ for deterministic comparison-based summaries — proven via communication-complexity / encoding arguments.
+- **Quantiles:** $\Omega(\tfrac1\epsilon \log\log\tfrac1\delta)$ for randomized rank approximation (Karnin–Lang–Liberty 2016); $\Omega(\tfrac1\epsilon\log\tfrac1\epsilon)$ for deterministic comparison-based summaries — proven via communication-complexity / encoding arguments.
 - **Sliding windows:** any algorithm exactly maintaining a count over a window of size $N$ needs $\Omega(N)$ bits; approximation is *necessary* (Datar et al. 2002), and $\Omega(\tfrac1\epsilon\log^2 N)$-style bits are required for $\epsilon$-counts.
 - **Heavy hitters:** $\Omega(1/\epsilon)$ space via a reduction from INDEX/set-disjointness in communication complexity.
 

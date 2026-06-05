@@ -50,7 +50,7 @@ The **reachable-set equivalence is essentially settled** for join enumeration: o
 ## 9. Key References
 
 - **[Foundational]** Graefe, McKenna. *The Volcano Optimizer Generator: Extensibility and Efficient Search.* ICDE, 1993. — [DOI](https://doi.org/10.1109/ICDE.1993.344061)
-- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95.html)
+- **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
 - **[SOTA]** DeHaan, Tompa. *Optimal Top-Down Join Enumeration.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247567)
 - **[SOTA]** Fender, Moerkotte. *Counter Strike: Generic Top-Down Join Enumeration for Hypergraphs.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2556549.2556565)
 - **[SOTA]** Soliman et al. *Orca: A Modular Query Optimizer Architecture for Big Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2595637)

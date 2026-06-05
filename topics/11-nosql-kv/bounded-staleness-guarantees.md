@@ -1,6 +1,7 @@
 # Bounded-Staleness Read Guarantees
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/bounded-staleness-guarantees` · **Status:** partially-solved
+> **Verification note:** Sec 2 defines $\varepsilon$ as the full uncertainty width (latest−earliest), but the "commit-wait of $2\varepsilon$" uses Spanner's convention where $\varepsilon$ is the half-width; under the file's own definition the commit-wait is $\approx\varepsilon$.
 
 ## 1. Problem Statement
 

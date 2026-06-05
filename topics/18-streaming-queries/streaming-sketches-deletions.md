@@ -85,7 +85,7 @@ Take a tiny Count-Min sketch with $d=2$ rows, $w=3$ columns, hash functions $h_1
 Suppose $h_1(a)=0,h_2(a)=1$ and $h_1(b)=0,h_2(b)=2$ (so $a,b$ collide in row 1, col 0). After all updates the true count of $a$ is $5-2=3$.
 
 Counters:
-- Row 1: col0 $= (5{-}2)+3 = 6$, col1 $=0$, col2 $=3$.
+- Row 1: col0 $= (5{-}2)+3 = 6$, col1 $=0$, col2 $=0$.
 - Row 2: col0 $=0$, col1 $=(5{-}2)=3$, col2 $=3$.
 
 Estimate $\hat a = \min(\text{row1}[h_1(a)],\ \text{row2}[h_2(a)]) = \min(6,3) = 3$ — exact here, because row 2 avoids the $a/b$ collision; the $\min$ discards the inflated estimate $6$. The error bound is $\hat a \le a + \epsilon\|x\|_1$ with $\|x\|_1 = 3+3 = 6$.

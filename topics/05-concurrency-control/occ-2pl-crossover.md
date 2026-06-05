@@ -45,7 +45,7 @@ Active: RL/contextual-bandit concurrency control (Polyjuice lineage), per-record
 - **[Foundational]** Gray, Homan, Korth, Obermarck. *A Straw Man Analysis of the Probability of Waiting and Deadlock.* IBM RJ, 1981. — [DBLP search](https://dblp.org/search?q=Straw+Man+Analysis+Probability+Waiting+Deadlock)
 - **[SOTA]** Yu, Bezerra, Pavlo, Devadas, Stonebraker. *Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735511)
 - **[SOTA]** Wang, Kimura. *Mostly-Optimistic Concurrency Control for Highly Contended Dynamic Workloads (MOCC).* VLDB, 2016. — [DOI](https://doi.org/10.14778/3015274.3015276)
-- **[SOTA]** Wang, Ding, Mao, Liu, et al. *Polyjuice: High-Performance Transactions via Learned Concurrency Control.* OSDI, 2021. — [arXiv](https://arxiv.org/abs/2105.10329)
+- **[SOTA]** Wang, Ding, Wang, Christensen, Wang, Chen, Li. *Polyjuice: High-Performance Transactions via Learned Concurrency Control.* OSDI, 2021. — [arXiv](https://arxiv.org/abs/2105.10329)
 - **[Survey]** Thomasian. *Concurrency Control: Methods, Performance, and Analysis.* ACM Computing Surveys, 1998. — [DOI](https://doi.org/10.1145/274440.274443)
 
 ## 10. Worked Example

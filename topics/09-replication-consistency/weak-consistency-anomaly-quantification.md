@@ -11,7 +11,7 @@ Variants:
 - **Verification (decision):** does a recorded history actually contain a violation of a target model (checking), and how many — a counting variant.
 
 ## 2. Mathematical Foundations
-A history is a set of operations with real-time and session orders; an **anomaly** is a violation of a consistency axiom on the *visibility*/arbitration relations (Burckhardt's framework). Checking a history against, e.g., serializability or causal consistency reduces to **acyclicity of a dependency graph** (Adya's *Direct Serialization Graphs*, 1999). The state-of-art checker **Elle** (Kingsbury & Alvisi, VLDB 2020) recovers dependency edges from "list-append" datatypes and detects the Adya G0/G1/G2 anomalies; checking general serializability is **NP-complete** (Papadimitriou 1979), but Elle exploits structure to scale.
+A history is a set of operations with real-time and session orders; an **anomaly** is a violation of a consistency axiom on the *visibility*/arbitration relations (Burckhardt's framework). Checking a history against, e.g., serializability or causal consistency reduces to **acyclicity of a dependency graph** (Adya's *Direct Serialization Graphs*, 1999). The state-of-art checker **Elle** (Kingsbury & Alvaro, VLDB 2020) recovers dependency edges from "list-append" datatypes and detects the Adya G0/G1/G2 anomalies; checking general serializability is **NP-complete** (Papadimitriou 1979), but Elle exploits structure to scale.
 
 For *prediction*, the seminal model is **Probabilistically Bounded Staleness (PBS)** (Bailis, Venkataraman, Franklin, Hellerstein, Stoica, VLDB 2012): for Dynamo-style quorums with $N$ replicas, read quorum $R$, write quorum $W$, it computes $P(\text{stale read})$ as a function of read-after-write delay $t$ and the message-latency distribution via a "WARS" model (write/ack/read/response latencies), giving $t$-visibility and $k$-staleness curves
 $$P_{\text{consistent}}(t) = 1 - P\big(\text{fewer than } W{+}R{-}N \text{ acked replicas overlap within } t\big).$$
@@ -46,7 +46,7 @@ This is **empirically open**, not theoretically closed. We can (a) *detect* anom
 - **[Foundational]** Bailis, Venkataraman, Franklin, Hellerstein, Stoica. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1204.6082)
 - **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
 - **[Foundational]** Adya. *Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions.* PhD thesis, MIT, 1999. — [MIT PDF](http://pmg.csail.mit.edu/papers/adya-phd.pdf)
-- **[SOTA]** Kingsbury, Alvisi. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554)
+- **[SOTA]** Kingsbury, Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554)
 - **[SOTA]** Golab, Li, Shah. *Analyzing Consistency Properties for Fun and Profit* (Δ/k-atomicity). PODC, 2011. — [DOI](https://doi.org/10.1145/1993806.1993834)
 - **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
 

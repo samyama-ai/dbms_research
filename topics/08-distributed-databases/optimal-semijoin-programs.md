@@ -39,7 +39,7 @@ Work on **Yannakakis-style optimization inside modern engines** (e.g., "free joi
 - **[Foundational]** Bernstein, Goodman. *Power of Natural Semijoins.* SIAM J. Computing, 1981. — [DOI](https://doi.org/10.1137/0210059)
 - **[Foundational]** Beeri, Fagin, Maier, Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322389)
 - **[SOTA]** Gottlob, Greco, Scarcello. *Treewidth and Hypertree Width* (in *Tractability*, Cambridge), 2014. — [Cambridge](https://www.cambridge.org/core/books/abs/tractability/treewidth-and-hypertree-width/F8ECF2227A2453C619F535CCBCE26198)
-- **[SOTA]** Yang, Wang, Suciu et al. *Predicate Transfer / Robust Predicate Pushdown.* (CIDR/VLDB), 2024. — [arXiv](https://arxiv.org/abs/2307.15255)
+- **[SOTA]** Yang, Zhao, Yu, Koutris. *Predicate Transfer: Efficient Pre-Filtering on Multi-Join Queries.* CIDR, 2024. — [arXiv](https://arxiv.org/abs/2307.15255)
 
 ## 10. Worked Example
 

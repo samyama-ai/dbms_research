@@ -49,7 +49,7 @@ Active directions: **incremental/differential mapping maintenance** scaling with
 - **[SOTA]** C. Curino, H. J. Moon, C. Zaniolo. *Graceful database schema evolution: The PRISM workbench.* VLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453939)
 - **[SOTA]** C. Curino, H. J. Moon, A. Deutsch, C. Zaniolo. *Automating the database schema evolution process (PRISM++).* VLDB Journal, 2013. — [DOI](https://doi.org/10.1007/s00778-012-0302-x)
 - **[Foundational]** P. Bernstein, S. Melnik. *Model management 2.0: Manipulating richer mappings.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247482)
-- **[Survey]** P. Kolaitis. *Schema mappings and data examples.* (Tutorial/survey lineage), EDBT/ICDT, 2014. — [DOI](https://doi.org/10.1145/2452376.2452393)
+- **[Survey]** B. ten Cate, P. Kolaitis, W.-C. Tan. *Schema mappings and data examples.* (Tutorial), EDBT/ICDT, 2013. — [DOI](https://doi.org/10.1145/2452376.2452479)
 
 ## 10. Worked Example
 

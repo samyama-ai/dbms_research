@@ -53,7 +53,7 @@ Lines of work: **stream slicing & general window aggregation sharing** (Traub, G
 - **[Foundational]** Arvind Arasu, Shivnath Babu, Jennifer Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
 - **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
 - **[SOTA]** Edmon Begoli, Tyler Akidau, Fabian Hueske, Julian Hyde, et al. *One SQL to Rule Them All.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314040)
-- **[SOTA]** Jonas Traub et al. *Efficient Window Aggregation with General Stream Slicing.* ICDE/EDBT, 2018. — [DBLP](https://dblp.org/rec/conf/edbt/TraubGCBKRM19.html)
+- **[SOTA]** Jonas Traub et al. *Efficient Window Aggregation with General Stream Slicing.* EDBT, 2019. — [DBLP](https://dblp.org/rec/conf/edbt/TraubGCBKRM19.html)
 - **[SOTA]** Mihai Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
 
 ## 10. Worked Example

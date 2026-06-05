@@ -64,7 +64,7 @@ Candidate splits (contiguous):
 
 DP picks the first, SSE $=0.5$, in $O(n^2 B)$ time (Jagadish et al.). The optimum cleanly separates the two modes $\{1\}$ and $\{8,9\}$.
 
-**In 2-D** the same data laid on a $2\times 2$ grid cannot always be cut by axis-aligned rectangles into $B$ low-variance buckets without conflict: a checkerboard pattern $\begin{smallmatrix}1&9\\9&1\end{smallmatrix}$ has every $1\times 2$ or $2\times 1$ rectangle straddling a $1$ and a $9$ (SSE $16$ each). Choosing the best $B$-rectangle partition over arbitrary rectangles is exactly the NP-hard problem of Section 5 (Muthukrishnan–Poosala–Suel), so 2-D restricts to grid/hierarchical families with approximation guarantees.
+**In 2-D** the same data laid on a $2\times 2$ grid cannot always be cut by axis-aligned rectangles into $B$ low-variance buckets without conflict: a checkerboard pattern $\begin{smallmatrix}1&9\\9&1\end{smallmatrix}$ has every $1\times 2$ or $2\times 1$ rectangle straddling a $1$ and a $9$ (bucket mean $5$, SSE $=(1-5)^2+(9-5)^2=32$ each). Choosing the best $B$-rectangle partition over arbitrary rectangles is exactly the NP-hard problem of Section 5 (Muthukrishnan–Poosala–Suel), so 2-D restricts to grid/hierarchical families with approximation guarantees.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

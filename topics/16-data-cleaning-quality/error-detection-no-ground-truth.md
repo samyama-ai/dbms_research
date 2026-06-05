@@ -1,6 +1,7 @@
 # Error Detection Without Ground Truth
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/error-detection-no-ground-truth` · **Status:** empirically-open
+> **Verification note:** In §10 the stated pairwise agreements (0.82/0.78/0.74) and the recovered accuracies (0.90/0.85/0.80) are not mutually consistent under the given formula — those accuracies imply agreements 0.78/0.74/0.71, and the stated agreements imply accuracies ≈0.93/0.87/0.82; the numbers are illustrative.
 
 ## 1. Problem Statement
 

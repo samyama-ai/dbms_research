@@ -64,10 +64,10 @@ Directions: (i) **mechanized concurrent-index proofs in Iris/separation logic**,
 
 Consider a Bw-Tree leaf with base page $P=\{10,20,30\}$ and mapping-table slot $M[P]$. Two threads race:
 
-- $T_1$: insert 15. Builds delta $d_1=\langle\text{ins }15\rangle$ pointing at $P$, then `CAS(M[P]: P \to d_1)$`.
-- $T_2$: insert 25. Builds delta $d_2=\langle\text{ins }25\rangle$ also pointing at $P$, then `CAS(M[P]: P \to d_2)$`.
+- $T_1$: insert 15. Builds delta $d_1=\langle\text{ins }15\rangle$ pointing at $P$, then $\mathrm{CAS}(M[P]: P \to d_1)$.
+- $T_2$: insert 25. Builds delta $d_2=\langle\text{ins }25\rangle$ also pointing at $P$, then $\mathrm{CAS}(M[P]: P \to d_2)$.
 
-Both CAS expect the old value $P$; hardware serializes them, say $T_1$ wins. The slot now reads $d_1\!\to\!P$. $T_2$'s CAS expected $P$ but sees $d_1$, so it **fails**, re-reads $M[P]=d_1$, rebuilds $d_2'=\langle\text{ins }25\rangle\!\to\!d_1$, and retries `CAS(M[P]: d_1 \to d_2')$`, which succeeds.
+Both CAS expect the old value $P$; hardware serializes them, say $T_1$ wins. The slot now reads $d_1\!\to\!P$. $T_2$'s CAS expected $P$ but sees $d_1$, so it **fails**, re-reads $M[P]=d_1$, rebuilds $d_2'=\langle\text{ins }25\rangle\!\to\!d_1$, and retries $\mathrm{CAS}(M[P]: d_1 \to d_2')$, which succeeds.
 
 Logical state: $d_2'\!\to\!d_1\!\to\!P = \{10,15,20,25,30\}$. The two successful CAS instants are the **linearization points**; no update is lost. A scan reading $M[P]=d_1$ before $T_2$ retries sees a consistent prefix $\{10,15,20,30\}$ — linearizable, with $O(\text{chain length})$ read cost until consolidation.
 

@@ -40,7 +40,7 @@ The single-shard, sticky case is **closed**. Genuinely open in practice: how to 
 - Cache-coherent session tokens standardized across CDN APIs.
 
 ## 9. Key References
-- **[Foundational]** Terry, Demers, Petersen, Spreitzer, Theimer, Welch. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994. — [DOI](https://doi.org/10.5555/645792.668302)
+- **[Foundational]** Terry, Demers, Petersen, Spreitzer, Theimer, Welch. *Session Guarantees for Weakly Consistent Replicated Data.* PDIS, 1994. — [ACM DL](https://dl.acm.org/doi/10.5555/645792.668302)
 - **[Foundational]** Burckhardt. *Principles of Eventual Consistency.* Foundations and Trends in Programming Languages, 2014. — [DOI](https://doi.org/10.1561/2500000011)
 - **[SOTA]** Bailis, Davidson, Fekete, Ghodsi, Hellerstein, Stoica. *Highly Available Transactions: Virtues and Limitations.* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1302.0309)
 - **[SOTA]** Bailis, Ghodsi, Hellerstein, Stoica. *Bolt-on Causal Consistency.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465279)

@@ -24,7 +24,7 @@ Core machinery:
 
 ## 3. State of the Art (SOTA)
 
-- **Fuxman & Miller (ICDE 2005, "ConQuer")**: FO-rewritable fragment $C_{forest}$, first practical CQA system.
+- **Fuxman & Miller (SIGMOD 2005, "ConQuer")**: FO-rewritable fragment $C_{forest}$, first practical CQA system.
 - **Wijsen (TODS 2012)**: attack-graph characterization of FO-rewritability for sjf-CQ under primary keys.
 - **Koutris & Wijsen (PODS 2015; TODS 2017)**: the **trichotomy** (FO / $\mathsf{L}$ / $\mathsf{coNP}$) for sjf-CQ + primary keys — the deepest classification to date.
 - **Koutris, Wijsen et al.**: extensions to **foreign keys**, **multiple keys**, and **set semantics**; counting (**#CERTAINTY**) dichotomy ($\mathsf{FP}$ vs. $\\#\mathsf{P}$-complete).

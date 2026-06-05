@@ -52,14 +52,14 @@ Active: worst-case-optimal *distributed* join algorithms and their integration i
 Query: `SELECT * FROM items WHERE color='red'`. The index (partitioned by `color`) lookup returns $N=6$ primary keys $K=\{k_3,k_8,k_{11},k_{14},k_{20},k_{27}\}$. Base rows are partitioned across $m=3$ data shards by $\text{shard}(k)=k \bmod 3$:
 
 - Shard 0: $k_3, k_{27}$
-- Shard 1: $k_8, k_{11}, k_{14}, k_{20}$
-- Shard 2: (none)
+- Shard 1: (none)
+- Shard 2: $k_8, k_{11}, k_{14}, k_{20}$
 
 **Naïve point-gets:** 6 messages, up to 6 round-trips if serial.
 
-**Semijoin-reduce plan:** group $K$ by shard, send one batched fetch per *non-empty* shard. That is 2 messages (shards 0 and 1; shard 2 pruned via cardinality), in 2 rounds, communicating $O(N+|OUT|)$ bytes — matching the MPC two-round optimum with per-shard load $\Theta(N/m)=2$.
+**Semijoin-reduce plan:** group $K$ by shard, send one batched fetch per *non-empty* shard. That is 2 messages (shards 0 and 2; shard 1 pruned via cardinality), in 2 rounds, communicating $O(N+|OUT|)$ bytes — matching the MPC two-round optimum with per-shard load $\Theta(N/m)=2$.
 
-**Skew:** shard 1 holds 4 of 6 keys ($2\times$ the balanced share $N/m=2$). The lower bound says one round cannot beat load $\Omega(N/p)$; the hot shard's load $=4$ is what forces either an extra round or replication. This is exactly the open skew regime in §6.
+**Skew:** shard 2 holds 4 of 6 keys ($2\times$ the balanced share $N/m=2$). The lower bound says one round cannot beat load $\Omega(N/p)$; the hot shard's load $=4$ is what forces either an extra round or replication. This is exactly the open skew regime in §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

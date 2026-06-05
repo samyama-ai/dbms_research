@@ -52,7 +52,7 @@ For static and standard dynamic settings in both internal and external memory, *
 - **[Foundational]** Edelsbrunner, H. *Dynamic Data Structures for Orthogonal Intersection Queries.* TR, TU Graz, 1980. (interval tree) — [PDF](https://pub.ista.ac.at/~edels/Papers/1980-01-R-OrthogonalIntersectionQueries.pdf)
 - **[Foundational]** McCreight, E. *Priority Search Trees.* SIAM J. Computing, 1985. — [DOI](https://doi.org/10.1137/0214021)
 - **[Foundational]** Arge, L., Vitter, J. S. *Optimal External Memory Interval Management.* SIAM J. Computing, 2003. — [DOI](https://doi.org/10.1137/S009753970240481X)
-- **[SOTA]** Behrend, A., Dignós, A., Gamper, J., et al. *Period Index: A Learned 2D Hash Index for Range and Duration Queries.* SSTD, 2019. — [DBLP search](https://dblp.org/search?q=Period%20Index%20Behrend%20Dignos%20Gamper%20duration)
+- **[SOTA]** Behrend, A., Dignós, A., Gamper, J., et al. *Period Index: A Learned 2D Hash Index for Range and Duration Queries.* SSTD, 2019. — [DOI](https://doi.org/10.1145/3340964.3340965)
 - **[SOTA]** Kaufmann, M. et al. *Timeline Index.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465293)
 - **[Foundational]** Chazelle, B. *Filtering Search: A New Approach to Query-Answering.* SIAM J. Computing, 1986. (range-reporting lower/upper bounds) — [DOI](https://doi.org/10.1137/0215051)
 

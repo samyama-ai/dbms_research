@@ -27,7 +27,7 @@ so $X \to 1/(\text{per-txn work})$ as $E$ grows but with $\mathbb{E}[L]$ growing
 
 ## 3. State of the Art (SOTA)
 
-**Systems-SOTA.** **Silo** (Tu, Zheng, Kohler, Liskov, Madden, SOSP 2013) introduced epoch-based group commit and epoch-bounded memory reclamation: a global epoch advances ~every 40 ms, decoupling the serialization point from per-transaction timestamp contention, enabling 700K+ TPS on multicore. **Cicada** (SIGMOD 2017) and **TicToc** (Yu, Xia, Pavlo, Sanchez, Devadas, SIGMOD 2016 — data-driven timestamps) refine the idea by avoiding a centralized timestamp entirely. In the distributed setting, **epoch-based deterministic/2PC-avoiding designs** and **Eris/Aria** (Lu, Yu, Madden, OSDI/VLDB 2020 — Aria is deterministic, batch/epoch executed) push epoching across nodes. RCU/EBR memory reclamation (McKenney) is the systems-theory ancestor.
+**Systems-SOTA.** **Silo** (Tu, Zheng, Kohler, Liskov, Madden, SOSP 2013) introduced epoch-based group commit and epoch-bounded memory reclamation: a global epoch advances ~every 40 ms, decoupling the serialization point from per-transaction timestamp contention, enabling 700K+ TPS on multicore. **Cicada** (SIGMOD 2017) and **TicToc** (Yu, Pavlo, Sanchez, Devadas, SIGMOD 2016 — data-driven timestamps) refine the idea by avoiding a centralized timestamp entirely. In the distributed setting, **epoch-based deterministic/2PC-avoiding designs** and **Eris/Aria** (Lu, Yu, Madden, OSDI/VLDB 2020 — Aria is deterministic, batch/epoch executed) push epoching across nodes. RCU/EBR memory reclamation (McKenney) is the systems-theory ancestor.
 
 **Theory-SOTA.** Treatments are largely queueing-theoretic and empirical; no canonical closed-form optimal epoch-length theorem exists.
 

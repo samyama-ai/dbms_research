@@ -23,7 +23,7 @@ Key result: combining order *and* grouping properties (groupings can be inferred
 ## 3. State of the Art (SOTA)
 - **Selinger et al. (System R, SIGMOD 1979)** introduced interesting orders and the DP-over-orders enumeration still used by virtually every cost-based optimizer.
 - **Simmen, Shekita, Malkemus (SIGMOD 1996)** gave FD-based order propagation ("Fundamental Techniques for Order Optimization") — the canonical method in DB2/commercial systems.
-- **Neumann & Moerkotte (ICDE 2004)** "A Combined Framework for Grouping and Order Optimization" unified orders and groupings with precomputed FSMs; this is the systems SOTA, shipping conceptually in HyPer/Umbra-style optimizers.
+- **Neumann & Moerkotte (VLDB 2004)** "A Combined Framework for Grouping and Order Optimization" unified orders and groupings with precomputed FSMs; this is the systems SOTA, shipping conceptually in HyPer/Umbra-style optimizers.
 - Cascades/Volcano (Graefe) handle this via **required/derived physical properties** and *enforcers* (sort, partition) — the dominant framework in SQL Server, Greenplum/Orca, CockroachDB, Calcite.
 
 ## 4. Upper Bound
@@ -49,7 +49,7 @@ For the **inference and propagation** subproblem the gap is essentially **closed
 ## 9. Key References
 - **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
 - **[Foundational]** Simmen, Shekita, Malkemus. *Fundamental Techniques for Order Optimization.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/233269.233320)
-- **[SOTA]** Neumann, Moerkotte. *A Combined Framework for Grouping and Order Optimization.* VLDB/ICDE, 2004. — [DBLP](https://dblp.org/rec/conf/vldb/NeumannM04.html)
+- **[SOTA]** Neumann, Moerkotte. *A Combined Framework for Grouping and Order Optimization.* VLDB, 2004. — [DBLP](https://dblp.org/rec/conf/vldb/NeumannM04.html)
 - **[Foundational]** Graefe. *The Cascades Framework for Query Optimization.* IEEE Data Eng. Bulletin, 1995. — [DBLP](https://dblp.org/rec/journals/debu/Graefe95a.html)
 - **[Survey]** Moerkotte. *Building Query Compilers* (manuscript), chapters on order and grouping optimization. *(unverified)*
 

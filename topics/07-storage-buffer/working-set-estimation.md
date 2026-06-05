@@ -67,7 +67,7 @@ For the **stationary, single-MRC** problem the gap is essentially **closed**: su
 - **[SOTA]** Waldspurger, Park, Garthwaite, Ahmad. *Efficient MRC Construction with SHARDS.* FAST, 2015. — [USENIX](https://www.usenix.org/conference/fast15/technical-sessions/presentation/waldspurger)
 - **[SOTA]** Wires, Ingram, Drudi, Harvey, Warfield. *Characterizing Storage Workloads with Counter Stacks.* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/wires)
 - **[Foundational]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
-- **[SOTA]** Hu, Wang, Luo, et al. *Fast Miss Ratio Curve Modeling with Average Eviction Time (AET).* USENIX ATC, 2018. — [DOI](https://doi.org/10.1145/3185751)
+- **[SOTA]** Hu, Wang, Zhou, Luo, et al. *Fast Miss Ratio Curve Modeling for Storage Cache.* ACM Trans. Storage, 2018. — [DOI](https://doi.org/10.1145/3185751)
 
 ## 10. Worked Example
 

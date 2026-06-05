@@ -56,7 +56,7 @@ Active threads: output-optimal multi-round joins (Hu, Yi, Tao, HKUST); MPC lower
 - **[Foundational]** P. Koutris, P. Beame, D. Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT 2016. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2016.8), [arXiv](https://arxiv.org/abs/1604.01848)
 - **[SOTA]** X. Hu, K. Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS 2019. — [arXiv](https://arxiv.org/abs/1903.09717)
 - **[SOTA]** X. Hu. *Cover or Pack: New Upper and Lower Bounds for Massively Parallel Joins.* PODS 2021. — [DOI](https://doi.org/10.1145/3452021.3458319)
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
 
 ## 10. Worked Example
 

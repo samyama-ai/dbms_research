@@ -60,7 +60,7 @@ Active directions: RL/learned policies that detect drift and re-tune online (Idr
 - **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
 - **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
 - **[SOTA]** Andy Huynh, Harshal Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees under Workload Uncertainty.* VLDB 2022. — [arXiv](https://arxiv.org/abs/2110.13801)
-- **[Foundational]** Manos Athanassoulis, Michael S. Kester, Lukas M. Maas, Radu Stoica, Stratos Idreos, Anastasia Ailamaki, Mark Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT 2016. — [PDF](https://openproceedings.org/2016/conf/edbt/paper-12.pdf)
+- **[Foundational]** Manos Athanassoulis, Michael S. Kester, Lukas M. Maas, Radu Stoica, Stratos Idreos, Anastasia Ailamaki, Mark Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42)
 - **[Foundational]** Anna R. Karlin, Mark S. Manasse, Lyle A. McGeoch, Susan Owicki. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental / MTS).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
 - **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
 

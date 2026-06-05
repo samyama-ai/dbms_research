@@ -56,7 +56,7 @@ Let $u=256$ ($8$-bit universe) and store $n=4$ keys $S=\{17, 64, 200, 255\}$. Th
 $$\mathcal{B}=\Big\lceil\log_2\binom{256}{4}\Big\rceil=\Big\lceil\log_2 174{,}792{,}640\Big\rceil=28\text{ bits}.$$
 A plain sorted array of $4$ keys uses $4\times 8 = 32$ bits — already within $\approx 14\%$ of optimal, but it is **static**: inserting key $100$ shifts the rank of $200$ and $255$ and needs an $O(n)$ shift.
 
-A *succinct* target is $\mathcal{B}+o(\mathcal{B})\approx 28+o(28)$ bits while still answering, e.g., $\text{pred}(150)=64$ and $\text{rank}(201)=3$ in $O(\log\log u)=O(3)$ probes, **and** absorbing the insert of $100$ in $O(\log n/\log\log n)$ time. RRR achieves the space and $O(1)$ rank/select but only statically; $y$-fast tries achieve the $O(\log\log u)$ predecessor but use $O(n\log u)=128$ bits (compact, not succinct). The open problem is hitting all three corners — $28+o(28)$ bits, fast predecessor, fast updates — simultaneously, which no single structure here does.
+A *succinct* target is $\mathcal{B}+o(\mathcal{B})\approx 28+o(28)$ bits while still answering, e.g., $\text{pred}(150)=64$ and $\text{rank}(201)=3$ in $O(\log\log u)=O(3)$ probes, **and** absorbing the insert of $100$ in $O(\log n/\log\log n)$ time. RRR achieves the space and $O(1)$ rank/select but only statically; $y$-fast tries achieve the $O(\log\log u)$ predecessor but use $\Theta(n\log u)=128$ bits *(the $O(n)$-word trie plus per-key hash/pointer overhead, several words per key)* — compact, not succinct. The open problem is hitting all three corners — $28+o(28)$ bits, fast predecessor, fast updates — simultaneously, which no single structure here does.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

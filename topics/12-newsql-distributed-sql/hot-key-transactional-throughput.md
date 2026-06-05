@@ -113,7 +113,7 @@ engineering teams.
 
 - **[Foundational]** O'Neil, P. *The Escrow Transactional Method.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7265)
 - **[Foundational]** Eswaran, K., Gray, J., Lorie, R., Traiger, I. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
-- **[SOTA]** Thomson, A., Diaconu, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+- **[SOTA]** Thomson, A., Diamond, T., Ren, K., et al. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
 - **[SOTA]** Corbett, J., Dean, J., et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
 - **[SOTA]** Lu, Y., Yu, X., Cao, L., Madden, S. *Aria: A Fast and Practical Deterministic OLTP Database.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407808)
 - **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)

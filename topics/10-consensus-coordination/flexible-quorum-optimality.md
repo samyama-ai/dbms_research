@@ -26,7 +26,7 @@ The cross-intersection condition is necessary: if some $Q_1\cap Q_2=\varnothing$
 **Partially solved.** The *correctness* frontier (cross-intersection) is fully characterized, and the homogeneous availability frontier (non-dominated coteries) is classical. The open part is the **joint latency × availability Pareto frontier under heterogeneous $(p_i, D_{ij})$**: no tractable algorithm is known to enumerate or even approximate the full frontier when both per-node failure heterogeneity and asymmetric delays interact, especially combined with leader placement and read leases. Closing the gap means an efficient (or approximation) characterization of Pareto-optimal flexible-quorum assignments over both axes.
 
 ## 7. Current Research (as of June 2026)
-Directions: latency-aware quorum weighting (WHEAT-style), witness/learner replicas to cheapen quorums, and read-lease geography co-optimized with write quorums. Heather Howard's FPaxos line and geo-Paxos variants (WPaxos, Atlas-style $f$-aware quorums) remain active at Cambridge, SUNY Buffalo, and IMDEA. *(frontier — verify)* Recent work claims near-optimal heterogeneous quorum placement via integer-programming / learned cost models over live latency and failure telemetry, but a tight tractability characterization of the joint frontier is unresolved.
+Directions: latency-aware quorum weighting (WHEAT-style), witness/learner replicas to cheapen quorums, and read-lease geography co-optimized with write quorums. Heidi Howard's FPaxos line and geo-Paxos variants (WPaxos, Atlas-style $f$-aware quorums) remain active at Cambridge, SUNY Buffalo, and IMDEA. *(frontier — verify)* Recent work claims near-optimal heterogeneous quorum placement via integer-programming / learned cost models over live latency and failure telemetry, but a tight tractability characterization of the joint frontier is unresolved.
 
 ## 8. Future Work
 - An efficient algorithm (or hardness proof) for the joint latency/availability Pareto frontier under heterogeneous $(p_i, D_{ij})$.
@@ -39,7 +39,7 @@ Directions: latency-aware quorum weighting (WHEAT-style), witness/learner replic
 - **[SOTA]** Heidi Howard, Dahlia Malkhi, Alexander Spiegelman. *Flexible Paxos: Quorum Intersection Revisited.* OPODIS, 2016. — [arXiv](https://arxiv.org/abs/1608.06696)
 - **[SOTA]** Ailidani Ailijiang, Aleksey Charapko, Murat Demirbas, Tevfik Kosar. *WPaxos: Wide Area Network Flexible Consensus.* IEEE TPDS, 2019. — [DOI](https://doi.org/10.1109/TPDS.2019.2929793)
 - **[Foundational]** David Peleg, Avishai Wool. *The Availability of Quorum Systems.* Information and Computation, 1995. — [DOI](https://doi.org/10.1006/inco.1995.1169)
-- **[SOTA]** João Sousa, Alysson Bessani. *Separating the WHEAT from the Chaff: Latency-Aware Quorums.* SRDS, 2015. — [DOI](https://doi.org/10.1109/SRDS.2015.40)
+- **[SOTA]** João Sousa, Alysson Bessani. *Separating the WHEAT from the Chaff: An Empirical Design for Geo-Replicated State Machines.* SRDS, 2015. — [DOI](https://doi.org/10.1109/SRDS.2015.40)
 
 ## 10. Worked Example
 

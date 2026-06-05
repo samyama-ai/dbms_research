@@ -48,7 +48,7 @@ Threads: interference-aware schedulers using LLC/bandwidth partitioning (Intel R
 
 ## 10. Worked Example
 
-Model the foreground as M/G/1 with mean service $S=10\,\mu s$. At arrival rate $\lambda=70{,}000$/s, utilization $\rho=\lambda S=0.70$. Mean queue wait scales as $W \approx \frac{\rho}{1-\rho}\cdot\frac{S}{?}$; using $W_q \approx \frac{\rho}{1-\rho}S = \frac{0.70}{0.30}\cdot10 \approx 23\,\mu s$.
+Model the foreground as M/G/1 with mean service $S=10\,\mu s$. At arrival rate $\lambda=70{,}000$/s, utilization $\rho=\lambda S=0.70$. Mean queue wait (M/M/1 approximation) is $W_q \approx \frac{\rho}{1-\rho}S = \frac{0.70}{0.30}\cdot10 \approx 23\,\mu s$.
 
 Now GC must keep up. Garbage is generated at $g$ requiring reclamation bandwidth equal to $20\%$ of a core. Reserving it pushes effective foreground utilization to $\rho'=0.70/0.80 = 0.875$, so $W_q' \approx \frac{0.875}{0.125}\cdot10 = 70\,\mu s$ — a $3\times$ tail-wait jump from the same arrival rate. This is the throughput-vs-tail tradeoff: as $\rho\to1$, $W_q\to\infty$.
 

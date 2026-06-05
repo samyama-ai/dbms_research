@@ -19,7 +19,7 @@ Adaptive settings use **adaptive submodularity** (Golovin–Krause), where greed
 
 ## 3. State of the Art (SOTA)
 - **CrowdER / CrowdDB** (Wang et al., VLDB 2012; Franklin et al., SIGMOD 2011): hybrid human-machine ER and crowd-enabled query operators.
-- **Corleone / Falcon** (Das et al., SIGMOD 2016): crowdsourced end-to-end ER with machine-learned blocking, scaling crowd cost via active learning.
+- **Corleone / Falcon** (Gokhale, Das et al., SIGMOD 2014 / 2017): crowdsourced end-to-end ER with machine-learned blocking, scaling crowd cost via active learning.
 - **Transitive-relation crowdsourcing** (Wang et al., SIGMOD 2013; Vesdapunt et al., VLDB 2014): exploit transitivity to cut questions, with near-optimal expected-question results.
 - **Waldo / quality-aware task assignment** and budget-allocation work (Karger–Oh–Shah, NeurIPS 2011) give order-optimal worker-reliability/budget tradeoffs.
 

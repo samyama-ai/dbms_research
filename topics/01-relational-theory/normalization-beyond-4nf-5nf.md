@@ -1,6 +1,7 @@
 # Normalization Beyond Fourth/Fifth Normal Form
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/normalization-beyond-4nf-5nf` · **Status:** open
+> **Verification note:** JD/FD-JD implication is NP-complete (Maier–Sagiv–Yannakakis, JACM 1981); the "NP-hard"/"co-NP-hard" phrasings in §4–§5 refer to the same problem and should be read as NP-complete (MVD⇒JD is separately NP-hard, Fischer–Tsou).
 
 ## 1. Problem Statement
 

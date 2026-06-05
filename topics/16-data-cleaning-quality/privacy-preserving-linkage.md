@@ -67,7 +67,7 @@ Status is **partially-solved**: there is a well-characterized **Pareto frontier*
 - **[Foundational]** Schnell, Bachteler, Reiher. *Privacy-Preserving Record Linkage Using Bloom Filters.* BMC Medical Informatics and Decision Making, 2009. — [DOI](https://doi.org/10.1186/1472-6947-9-41)
 - **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
 - **[SOTA]** Chen, Laine, Rindal. *Fast Private Set Intersection from Homomorphic Encryption.* ACM CCS, 2017. — [DOI](https://doi.org/10.1145/3133956.3134061)
-- **[SOTA]** Christen, Ranbaduge, Vatsalan, et al. *Pattern-Mining Based Cryptanalysis of Bloom Filters for PPRL.* (PAKDD/IEEE), 2018. — [DOI](https://doi.org/10.1007/978-3-319-93040-4_42)
+- **[SOTA]** Christen, Vidanage, Ranbaduge, Schnell. *Pattern-Mining Based Cryptanalysis of Bloom Filters for Privacy-Preserving Record Linkage.* PAKDD, 2018. — [DOI](https://doi.org/10.1007/978-3-319-93040-4_42)
 - **[Survey]** Vatsalan, Christen, Verykios. *A Taxonomy of Privacy-Preserving Record Linkage Techniques.* Information Systems, 2013. — [DOI](https://doi.org/10.1016/j.is.2012.11.005)
 - **[Survey]** Gkoulalas-Divanis, Vatsalan, Karapiperis, Kantarcioglu. *Modern Privacy-Preserving Record Linkage Techniques: An Overview.* IEEE TIFS, 2021. — [DOI](https://doi.org/10.1109/TIFS.2021.3114026)
 
@@ -78,7 +78,7 @@ Two hospitals want to match patient "SMITH" vs. "SMYTH" without revealing names.
 Pad and split into bigrams: `SMITH` → {`SM`, `MI`, `IT`, `TH`}; `SMYTH` → {`SM`, `MY`, `YT`, `TH`}. Each bigram sets 2 bits (toy hashes shown):
 
 - A (SMITH): bits {1,3, 4,6, 7,9, 10,12} → 8 set bits.
-- B (SMYTH): bits {1,3, 5,8, 9,11, 10,12} → set bits {1,3,5,8,9,10,11,12}, 8 set bits.
+- B (SMYTH): bits {1,3, 5,8, 13,11, 10,12} → set bits {1,3,5,8,10,11,12,13}, 8 set bits.
 
 Shared bigrams `SM` and `TH` set {1,3} and {10,12} in both. Intersection of set bits $|A\cap B| = \{1,3,10,12\}$, so $|A\cap B|=4$.
 

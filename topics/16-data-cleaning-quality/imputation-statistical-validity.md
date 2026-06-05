@@ -54,11 +54,11 @@ Under **MNAR**, the estimand is **non-identifiable** in general (Rubin 1976; Man
 
 ## 10. Worked Example
 
-Suppose true incomes are $X=\{20, 40, 60, 80, 100\}$ (in $k) with mean $\theta=60$ and sample variance $s^2=1000$. The last two values are MCAR-missing, leaving observed $\{20, 40, 60\}$ with observed mean $40$.
+Suppose true incomes are $X=\{20, 40, 60, 80, 100\}$ (in \$k) with mean $\theta=60$ and sample variance $s^2=1000$. The last two values are MCAR-missing, leaving observed $\{20, 40, 60\}$ with observed mean $40$.
 
 **Single conditional-mean imputation** fills both gaps with the observed mean $40$, giving the completed set $\{20,40,60,40,40\}$. The mean is $40$ (biased low here because missingness happened to drop high values), and the *estimated* variance shrinks to $\frac{1}{4}\sum(x_i-40)^2 = \frac{1}{4}(400+0+400+0+0)=200$ — a $5\times$ understatement of the true $1000$. Standard errors are correspondingly too small.
 
-**Multiple imputation** draws $m=2$ completions from the posterior predictive, e.g. $\{75,95\}$ and $\{85,70\}$. Per-draw means: $\hat\theta_1=58, \hat\theta_2=58$. Rubin's between-variance $B=\frac{1}{m-1}\sum(\hat\theta_j-\bar\theta)^2>0$ now feeds total variance $T=\bar W+(1+\tfrac1m)B$, restoring honest (wider) confidence intervals. The point estimate $\bar\theta=58$ is also far closer to the true $60$ than the single-imputation $40$.
+**Multiple imputation** draws $m=2$ completions from the posterior predictive, e.g. $\{75,95\}$ and $\{85,70\}$. Per-draw means: $\hat\theta_1=58, \hat\theta_2=55$. Rubin's between-variance $B=\frac{1}{m-1}\sum(\hat\theta_j-\bar\theta)^2>0$ now feeds total variance $T=\bar W+(1+\tfrac1m)B$, restoring honest (wider) confidence intervals. The point estimate $\bar\theta=56.5$ is also far closer to the true $60$ than the single-imputation $40$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

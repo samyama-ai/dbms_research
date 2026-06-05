@@ -59,7 +59,7 @@ The per-block constant-depth problem is **closed** (poly DP). The **global, shar
 - **[SOTA]** Kuschewski, Sauerwein, Alhomssi, Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
 - **[Foundational]** Abadi, Madden, Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
 - **[Foundational]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006. — [DOI](https://doi.org/10.1109/ICDE.2006.150)
-- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Static Symbol Table String Compression.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
+- **[SOTA]** Boncz, Neumann, Leis. *FSST: Fast Random Access String Compression.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
 - **[Survey]** Abadi, Boncz, Harizopoulos, Idreos, Madden. *The Design and Implementation of Modern Column-Oriented Database Systems.* Foundations and Trends in Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
 
 ## 10. Worked Example

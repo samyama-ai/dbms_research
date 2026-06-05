@@ -47,7 +47,7 @@ For the core single-pair operators (sorted and hashed), bounds are **closed**: $
 - **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
 - **[SOTA]** Barbay, Kenyon. *Adaptive Intersection and t-Threshold Problems.* SODA 2002. — [DBLP](https://dblp.org/rec/conf/soda/BarbayK02.html)
 - **[SOTA]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA 2000. — [DBLP](https://dblp.org/rec/conf/soda/DemaineLM00.html)
-- **[SOTA]** Lemire, Boytsov, Kurz et al. *Roaring Bitmaps / SIMD set intersection.* Software: Practice & Experience, 2016+. — [DOI](https://doi.org/10.1002/spe.2326)
+- **[SOTA]** Lemire, Boytsov, Kurz. *SIMD Compression and the Intersection of Sorted Integers.* Software: Practice & Experience, 2016. — [DOI](https://doi.org/10.1002/spe.2326)
 - **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases* (bag semantics chapters). Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
 
 ## 10. Worked Example

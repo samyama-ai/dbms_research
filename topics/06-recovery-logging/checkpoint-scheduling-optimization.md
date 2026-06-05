@@ -50,7 +50,7 @@ The single-knob, Poisson-failure case is closed (Young–Daly). The realistic ca
 - **[Foundational]** Young, J. W. *A First Order Approximation to the Optimum Checkpoint Interval.* Communications of the ACM, 1974. — [DOI](https://doi.org/10.1145/361147.361115)
 - **[Foundational]** Daly, J. T. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
 - **[Foundational]** Mohan, C. et al. *ARIES (fuzzy checkpointing).* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
-- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1992. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[Foundational]** Gray, J. & Reuter, A. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
 - **[SOTA]** Pavlo, A. et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
 
 ## 10. Worked Example

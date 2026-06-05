@@ -42,7 +42,7 @@ With DCPMM discontinued, the frontier has moved to **CXL memory pools / CXL-atta
 - **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
 - **[SOTA]** Deukyeon Hwang, Wook-Hee Kim, Youjip Won, Beomseok Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST & FAIR).* USENIX FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang)
 - **[SOTA]** Se Kwon Lee, Jayashree Mohan, Sanidhya Kashyap, Taesoo Kim, Vijay Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [DOI](https://doi.org/10.1145/3341301.3359635)
-- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-Free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3164135.3164147)
+- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-Free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3164135.3164147)
 - **[Survey]** Steven Swanson et al. (NVSL). *An Empirical Guide to the Behavior and Use of Scalable Persistent Memory.* USENIX FAST, 2020. — [USENIX](https://www.usenix.org/conference/fast20/presentation/yang)
 
 ## 10. Worked Example

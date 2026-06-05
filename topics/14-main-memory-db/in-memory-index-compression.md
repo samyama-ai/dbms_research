@@ -51,7 +51,7 @@ Static and approximate cases are essentially *closed* (filters and PGM/SuRF hit 
 - **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
 - **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043)
 - **[Foundational]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree: ARTful Indexing for Main-Memory Databases.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
-- **[Survey]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.5555/3092586)
+- **[Survey]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
 
 ## 10. Worked Example
 

@@ -20,7 +20,7 @@ A sample is **uniform of size $k$** if every $k$-subset of $R$ is equally likely
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** $\ell_p$-samplers (Monemizadeh–Woodruff, Jowhari–Sağlam–Tardos, SODA 2011) maintain perfect/near-perfect samples under fully dynamic (turnstile) updates in $\mathrm{polylog}(n)$ space — the strongest delete-robust result.
+- **Theory-SOTA:** $\ell_p$-samplers (Monemizadeh–Woodruff, Jowhari–Sağlam–Tardos, PODS 2011) maintain perfect/near-perfect samples under fully dynamic (turnstile) updates in $\mathrm{polylog}(n)$ space — the strongest delete-robust result.
 - **Systems-SOTA:** *random pairing* (Gemulla et al.) is the practical standard for bounded-size uniform samples under insert/delete and ships in sampling middleware. *VarOpt* and *priority sampling* for weighted maintenance. Materialized-view-style **incremental sample maintenance** in BlinkDB/VerdictDB-class systems refreshes stratified samples lazily. Distinct-value maintenance uses **HyperLogLog** / KMV sketches, which are insert-mergeable but *not* delete-friendly without sliding-window or invertible variants.
 
 ## 4. Upper Bound

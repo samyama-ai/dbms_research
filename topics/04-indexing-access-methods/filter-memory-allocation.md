@@ -17,7 +17,7 @@ So $\ln p$ is (approximately) **linear** in bits-per-element $b=m/n$: $\ln p \ap
 ## 3. State of the Art (SOTA)
 - **Monkey** (Dayan, Athanassoulis, Idreos; SIGMOD 2017) solved the classic allocation analytically and showed the optimal allocation is *non-uniform*, cutting lookup cost asymptotically.
 - **Dostoevsky** (SIGMOD 2018) and **the design continuum / Cosine** work generalized to the merge-policy/filter co-design space.
-- **Systems-SOTA:** RocksDB ships ribbon filters (space-near-optimal) and per-level bits-per-key tuning; **SuRF**, **Chucky** (cuckoo-based, Dayan & Twitter 2021), and **ElasticBF** (adaptive per-SSTable allocation) push the runtime-adaptive frontier.
+- **Systems-SOTA:** RocksDB ships ribbon filters (space-near-optimal) and per-level bits-per-key tuning; **SuRF**, **Chucky** (cuckoo-based, Dayan & Twitto 2021), and **ElasticBF** (adaptive per-SSTable allocation) push the runtime-adaptive frontier.
 
 ## 4. Upper Bound
 For the fixed-workload, point-lookup-only objective with the linear $\ln p$ model, the optimum is computable in $O(L)$ closed form ($L$ = number of levels) via Lagrange multipliers (Monkey). With arbitrary convex per-run FPR curves, the continuous knapsack is solvable to $\varepsilon$-accuracy in polynomial time by greedy marginal allocation (convex separable resource allocation). Model: RAM / I/O cost model with known access weights.
@@ -49,7 +49,7 @@ Two LSM levels, each $n=10^6$ keys, equal lookup weight $w_1=w_2=1$. Budget $M=2
 
 **Uniform split** ($b_1=b_2=12$): $p=e^{-12\cdot0.4805}=e^{-5.77}\approx 3.1\times10^{-3}$ each. Expected FP I/Os per lookup $=p_1+p_2\approx 6.2\times10^{-3}$.
 
-**Monkey optimum:** KKT requires equalizing the marginal FP-reduction per bit. Since both levels have equal $n$ and $w$ here, the symmetric point $b_1=b_2=12$ is already optimal *for two equal levels* — the interesting case is unequal sizes. Make level 2 hold $4\times$ the keys ($n_2=4n_1$) under the same $24$ Mbit. Equalizing marginals (each term $\propto n_i e^{-b_i\ln^2 2}$) gives $b_1-b_2=\frac{\ln 4}{\ln^2 2}=\frac{1.386}{0.4805}\approx 2.9$ bits: the **deeper, larger level gets fewer bits/element**. Plugging the budget constraint $n_1 b_1+n_2 b_2=24\text{M}$ yields $b_1\approx 14.3$, $b_2\approx 11.4$, cutting total expected FP I/Os below the uniform allocation — the Monkey insight that optimal filter memory is non-uniform across levels.
+**Monkey optimum:** KKT requires equalizing the marginal FP-reduction per bit. Since both levels have equal $n$ and $w$ here, the symmetric point $b_1=b_2=12$ is already optimal *for two equal levels* — the interesting case is unequal sizes. Make level 2 hold $4\times$ the keys ($n_2=4n_1$) under the same $24$ Mbit. Equalizing marginals (each term $\propto n_i e^{-b_i\ln^2 2}$) gives $b_1-b_2=\frac{\ln 4}{\ln^2 2}=\frac{1.386}{0.4805}\approx 2.9$ bits: the **deeper, larger level gets fewer bits/element**. Plugging the budget constraint $n_1 b_1+n_2 b_2=24\text{M}$ (now $n_1+n_2=5\times10^6$ keys, so the average is $4.8$ bits/element) yields $b_1\approx 7.1$, $b_2\approx 4.2$, cutting total expected FP I/Os below the uniform allocation — the Monkey insight that optimal filter memory is non-uniform across levels.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

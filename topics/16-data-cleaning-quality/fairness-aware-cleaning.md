@@ -65,7 +65,7 @@ Young field; empirically driven.
 - **[Foundational]** Hardt, Price, Srebro. *Equality of Opportunity in Supervised Learning.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1610.02413)
 - **[Foundational]** Kleinberg, Mullainathan, Raghavan. *Inherent Trade-Offs in the Fair Determination of Risk Scores.* ITCS, 2017. — [arXiv](https://arxiv.org/abs/1609.05807)
 - **[Foundational]** Rubin. *Inference and Missing Data.* Biometrika, 1976. — [DOI](https://doi.org/10.1093/biomet/63.3.581)
-- **[SOTA]** Guha, Khan, Stoyanovich, Schelter. *Automated Data Cleaning Can Hurt Fairness in Machine Learning Pipelines.* (data-cleaning-and-fairness line), 2023–2024. — [DOI](https://doi.org/10.1109/TKDE.2023.3297006)
+- **[SOTA]** Guha, Khan, Stoyanovich, Schelter. *Automated Data Cleaning Can Hurt Fairness in Machine Learning-Based Decision Making.* IEEE TKDE, 2024. — [DOI](https://doi.org/10.1109/TKDE.2024.3365524)
 - **[SOTA]** Salimi, Rodriguez, Howe, Suciu. *Interventional Fairness: Causal Database Repair for Algorithmic Fairness.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319901)
 - **[Survey]** Mehrabi, Morstatter, Saxena, Lerman, Galstyan. *A Survey on Bias and Fairness in Machine Learning.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3457607)
 

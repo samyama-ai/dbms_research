@@ -55,7 +55,7 @@ Active: streaming/temporal-window semantics where snapshot reducibility governs 
 ## 9. Key References
 
 - **[Foundational]** Snodgrass, R.T. *The Temporal Query Language TQuel.* ACM TODS, 1987. — [DOI](https://doi.org/10.1145/22952.22956)
-- **[Foundational]** Toman, D. *Point-Based vs. Interval-Based Temporal Query Languages.* PODS, 1996. — [DOI](https://doi.org/10.1145/237661.237676)
+- **[Foundational]** Toman, D. *Point vs. Interval-Based Query Languages for Temporal Databases.* PODS, 1996. — [DOI](https://doi.org/10.1145/237661.237676)
 - **[Foundational]** Chomicki, J. *Temporal Query Languages: A Survey.* (Temporal Logic / ICTL), 1994. — [DOI](https://doi.org/10.1007/BFb0014006)
 - **[Foundational]** Abadi, M. *The Power of Temporal Proofs / Undecidability of FOTL.* Theoretical Computer Science, 1989. — [DOI](https://doi.org/10.1016/0304-3975(89)90138-2)
 - **[SOTA]** Hodkinson, I., Wolter, F., Zakharyaschev, M. *Decidable Fragments of First-Order Temporal Logics.* Annals of Pure and Applied Logic, 2000. — [DOI](https://doi.org/10.1016/S0168-0072(00)00018-X)

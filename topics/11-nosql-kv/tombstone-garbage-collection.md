@@ -56,7 +56,7 @@ The gap is genuinely open. Locally, the purge condition is tight; **distributive
 
 - **[Foundational]** O'Neil, P. et al. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
 - **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
-- **[SOTA]** Baquero, C., Almeida, P.S., Shoker, A. *Making Operation-Based CRDTs Operation-Based / Causal Stability for CRDT GC.* (DAIS / related), 2014. — [DOI](https://doi.org/10.1007/978-3-662-43352-2_11)
+- **[SOTA]** Baquero, C., Almeida, P.S., Shoker, A. *Making Operation-Based CRDTs Operation-Based.* DAIS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-43352-2_11)
 - **[Foundational]** Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M. *Conflict-Free Replicated Data Types.* SSS, 2011. — [DBLP](https://dblp.org/rec/conf/sss/ShapiroPBZ11.html)
 - **[Survey]** Luo, C., Carey, M. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
 

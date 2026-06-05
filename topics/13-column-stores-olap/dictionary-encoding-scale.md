@@ -49,7 +49,7 @@ Maintaining **dense, order-preserving** codes under insertions has an amortized 
 
 ## 9. Key References
 
-- **[Foundational]** G. Antoshenkov, D. Lomet, J. Murray. *Order Preserving String Compression (ALM).* ICDE, 1996. — [DBLP](https://dblp.org/rec/conf/icde/AntoshenkovLM96.html)
+- **[Foundational]** G. Antoshenkov, D. Lomet, J. Murray. *Order Preserving Compression (ALM).* ICDE, 1996. — [DBLP](https://dblp.org/rec/conf/icde/AntoshenkovLM96.html)
 - **[Foundational]** M. A. Bender et al. *Two Simplified Algorithms for Maintaining Order in a List.* ESA, 2002. — [DOI](https://doi.org/10.1007/3-540-45749-6_17)
 - **[SOTA]** P. Boncz, T. Neumann, V. Leis. *FSST: Fast Random Access String Compression.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407851)
 - **[SOTA]** V. Sikka et al. *Efficient Transaction Processing in SAP HANA Database.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213946)

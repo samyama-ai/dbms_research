@@ -24,7 +24,7 @@ $$ \min_{\text{schedule}} \; w_W \cdot WA + w_R \cdot RA + w_S \cdot SA \quad \t
 
 ## 3. State of the Art (SOTA)
 
-**Systems-SOTA:** RocksDB's leveled and universal compaction with tunable triggers; Cassandra's SizeTieredCompactionStrategy and TimeWindowCompactionStrategy. **Dostoevsky** (Dayan & Idreos, SIGMOD 2018) and **Monkey** (Dayan, Athanassoulis & Idreos, SIGMOD 2017) define the navigable design space. **Wacky/Endure** (Huynh, Chaudhari, Idreos et al., VLDB 2022) adds *robust* tuning under workload uncertainty via robust optimization. Learned and reinforcement-learning schedulers — **Spooky** (Dayan et al. 2022) for partial compaction, and RL-driven compaction picking — are the systems frontier.
+**Systems-SOTA:** RocksDB's leveled and universal compaction with tunable triggers; Cassandra's SizeTieredCompactionStrategy and TimeWindowCompactionStrategy. **Dostoevsky** (Dayan & Idreos, SIGMOD 2018) and **Monkey** (Dayan, Athanassoulis & Idreos, SIGMOD 2017) define the navigable design space. **Wacky/Endure** (Huynh, Chaudhari, Terzi, Athanassoulis, VLDB 2022) adds *robust* tuning under workload uncertainty via robust optimization. Learned and reinforcement-learning schedulers — **Spooky** (Dayan et al. 2022) for partial compaction, and RL-driven compaction picking — are the systems frontier.
 
 **Theory-SOTA:** the closed-form Pareto characterizations of fluid LSM give the best understood *static* configuration; no tight theory exists for the fully online adversarial scheduling problem.
 

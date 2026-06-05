@@ -1,6 +1,7 @@
 # Error-Bounded AQP Under DP Noise
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/aqp-differential-privacy` · **Status:** open
+> **Verification note:** In the Section 10 sampling-variance line the intermediate "$\tfrac{1}{q^2}\,nq\,p(1-p)$" should read $\tfrac{N}{q}\,p(1-p)=\tfrac{10^6}{0.01}\cdot0.16$; the stated result $1.6\times10^7$ (RMSE $\approx4000$) is correct, only the substituted intermediate is mis-stated.
 
 ## 1. Problem Statement
 
@@ -25,7 +26,7 @@ A crucial interaction: **sampling amplifies privacy** — running an $\varepsilo
 ## 3. State of the Art (SOTA)
 
 - **Theory-SOTA:** privacy amplification by subsampling (Balle–Barthe–Gaboardi, NeurIPS 2018, tight bounds; Kasiviswanathan et al.), and the **matrix mechanism** (Li–Hay–Rastogi–Miklau–McGregor, PODS 2010) for optimal linear-query workloads under DP. **Rényi DP** (Mironov, 2017) and **Gaussian DP** (Dong–Roth–Su, JRSS-B 2022) give the tightest composition.
-- **Systems-SOTA:** **APEx** (Ge, Kifer, Machanavajjhala, He, SIGMOD 2019) is an accuracy-aware private query engine that *chooses mechanisms to meet an accuracy bound* — the closest deployed system to this problem. **PrivateSQL** (Kotsogiannis et al., VLDB 2019) and **Chorus** (Johnson–Near, VLDB 2018/2020) push DP into relational engines. Google/Apple/Microsoft production DP-SQL stacks combine sampling and DP but optimize the two budgets largely *separately*.
+- **Systems-SOTA:** **APEx** (Ge, He, Ilyas, Machanavajjhala, SIGMOD 2019) is an accuracy-aware private query engine that *chooses mechanisms to meet an accuracy bound* — the closest deployed system to this problem. **PrivateSQL** (Kotsogiannis et al., VLDB 2019) and **Chorus** (Johnson–Near, VLDB 2018/2020) push DP into relational engines. Google/Apple/Microsoft production DP-SQL stacks combine sampling and DP but optimize the two budgets largely *separately*.
 
 ## 4. Upper Bound
 

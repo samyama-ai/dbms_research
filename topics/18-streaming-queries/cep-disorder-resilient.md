@@ -23,7 +23,7 @@ Lateness beyond $L$ produces **retractions/revisions**, connecting CEP to increm
 ## 3. State of the Art (SOTA)
 - **SASE+ / ZStream / Cayuga**: foundational CEP engines with NFA-with-buffer execution (Wu–Diao–Rizvi, SIGMOD 2006; Demers et al., CIDR 2007).
 - **Out-of-order CEP:** "Runtime Semantic Query Optimization" and **AQ-K-slack / K-slack buffering** (Mutschler–Philippsen); **Aurora/Borealis** punctuation handling; **out-of-order SASE** (Liu et al., Brenna et al.).
-- **Speculative / out-of-order processing:** Li, Tucker, Tufte, Maier — *out-of-order processing* with punctuations (VLDB 2008); aggressive speculation with retraction.
+- **Speculative / out-of-order processing:** Li, Tufte, Papadimos, Maier et al. — *out-of-order processing* with punctuations (VLDB 2008); aggressive speculation with retraction.
 - **CET / CEL theory** (Grez, Riveros, Ugarte, Vansummeren, Bucchi): formal CEP with complexity and **constant-delay enumeration** results (PODS 2019-2022).
 - **FlinkCEP**, Esper, Apache Flink `MATCH_RECOGNIZE`, and **Sase**-derived engines: systems-SOTA with watermark + allowed-lateness and side-output of late events.
 - Disorder via **adaptive buffering / quality-driven** (Ji, Jacobsen) and lattice-based speculation.
@@ -52,7 +52,7 @@ For **bounded** disorder the problem is largely solved (watermarks + allowed lat
 ## 9. Key References
 - **[Foundational]** Wu, E., Diao, Y., Rizvi, S. *High-Performance Complex Event Processing over Streams (SASE).* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142520)
 - **[Foundational]** Demers, A., Gehrke, J., Panda, B., Riedewald, M., Sharma, V., White, W. *Cayuga: A General Purpose Event Monitoring System.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p47.pdf) · [DBLP](https://dblp.org/rec/conf/cidr/DemersGPRSW07.html)
-- **[Foundational]** Li, J., Tucker, K., Tufte, P., Papadimos, V., Maier, D. *Out-of-Order Processing: A New Architecture for High-Performance Stream Systems.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
+- **[Foundational]** Li, J., Tufte, K., Shkapenyuk, V., Papadimos, V., Johnson, T., Maier, D. *Out-of-Order Processing: A New Architecture for High-Performance Stream Systems.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
 - **[SOTA]** Grez, A., Riveros, C., Ugarte, M., Vansummeren, S. *A Formal Framework for Complex Event Recognition (CEL/CET).* ACM TODS, 2021. — [DOI](https://doi.org/10.1145/3485463)
 - **[SOTA]** Mutschler, C., Philippsen, M. *Distributed Low-Latency Out-of-Order Event Processing (K-slack).* IPDPS, 2013. — [DOI](https://doi.org/10.1109/IPDPS.2013.29)
 - **[Survey]** Giatrakos, N., Alevizos, E., Artikis, A., Deligiannakis, A., Garofalakis, M. *Complex Event Recognition in the Big Data Era: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00557-w)
