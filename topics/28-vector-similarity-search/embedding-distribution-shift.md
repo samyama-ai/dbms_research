@@ -51,11 +51,19 @@ The gap is between **proxy metrics** (distortion, alignment residual, drift dive
 
 ## 9. Key References
 
-- **[Foundational]** Shai Ben-David, John Blitzer, Koby Crammer, Alex Kulesza, Fernando Pereira, Jennifer Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[SOTA]** Yantao Shen, Yuanjun Xiong, Wei Xia, Stefano Soatto. *Towards Backward-Compatible Representation Learning (BCT).* CVPR, 2020.
-- **[SOTA]** Aditya Kusupati et al. *Matryoshka Representation Learning.* NeurIPS, 2022.
-- **[SOTA]** Shikhar Jaiswal, Ravishankar Krishnaswamy, Ankit Garg, Harsha Vardhan Simhadri, Sheshansh Agrawal. *OOD-DiskANN: Efficient and Scalable Graph ANNS for Out-of-Distribution Queries.* arXiv:2211.12850, 2022.
-- **[Survey]** Jie Lu, Anjin Liu, Fan Dong, Feng Gu, João Gama, Guangquan Zhang. *Learning under Concept Drift: A Review.* IEEE TKDE, 2019.
+- **[Foundational]** Shai Ben-David, John Blitzer, Koby Crammer, Alex Kulesza, Fernando Pereira, Jennifer Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[SOTA]** Yantao Shen, Yuanjun Xiong, Wei Xia, Stefano Soatto. *Towards Backward-Compatible Representation Learning (BCT).* CVPR, 2020. — [arXiv](https://arxiv.org/abs/2003.11942)
+- **[SOTA]** Aditya Kusupati et al. *Matryoshka Representation Learning.* NeurIPS, 2022. — [arXiv](https://arxiv.org/abs/2205.13147)
+- **[SOTA]** Shikhar Jaiswal, Ravishankar Krishnaswamy, Ankit Garg, Harsha Vardhan Simhadri, Sheshansh Agrawal. *OOD-DiskANN: Efficient and Scalable Graph ANNS for Out-of-Distribution Queries.* arXiv:2211.12850, 2022. — [arXiv](https://arxiv.org/abs/2211.12850)
+- **[Survey]** Jie Lu, Anjin Liu, Fan Dong, Feng Gu, João Gama, Guangquan Zhang. *Learning under Concept Drift: A Review.* IEEE TKDE, 2019. — [DOI](https://doi.org/10.1109/TKDE.2018.2876857)
+
+## 10. Worked Example
+
+**Model drift, concretely.** Suppose the old model $\phi_0$ embeds three documents in $\mathbb{R}^2$: $A=(1,0)$, $B=(0,1)$, $C=(-1,0)$. A query $\phi_0(q)=(0.9,0.1)$ retrieves nearest neighbor $A$ (cosine $\approx 0.99$). Now we upgrade to $\phi_t$, which happens to apply a $90°$ rotation plus reflection of the *same* semantic content: $\phi_t(A)=(0,1)$, $\phi_t(B)=(-1,0)$, $\phi_t(C)=(0,-1)$, and the query lands at $\phi_t(q)=(0.1,0.9)$.
+
+If we query the **un-migrated** index (still storing $\phi_0$ vectors) with $\phi_t(q)=(0.1,0.9)$, the nearest stored vector is $B=(0,1)$, not $A$ — recall@1 drops to $0$. The semantic answer didn't change; only the coordinate frame did.
+
+**Fix via Procrustes alignment.** Learn orthogonal $A$ minimizing $\|A\,\phi_0(X)-\phi_t(X)\|$. Here the exact map is the rotation $R=\begin{psmallmatrix}0&-1\\1&0\end{psmallmatrix}$; applying $R$ to stored $\phi_0(A)=(1,0)$ gives $(0,1)=\phi_t(A)$, restoring recall@1 with **zero re-embedding** of the gallery — exactly the upper-bound route of §4, where residual recall loss is bounded by $\|R\phi_0-\phi_t\|$ (here $0$).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

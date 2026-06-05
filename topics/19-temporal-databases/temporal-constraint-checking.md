@@ -89,13 +89,26 @@ table formats are beginning to add period-key validation in catalog layers *(fro
 
 ## 9. Key References
 - **[Foundational]** R. Snodgrass. *Developing Time-Oriented Database Applications in SQL.*
-  Morgan Kaufmann, 2000.
+  Morgan Kaufmann, 2000. — [DBLP search](https://dblp.org/search?q=Developing+Time-Oriented+Database+Applications+in+SQL+Snodgrass)
 - **[Foundational]** ISO/IEC 9075:2011 (SQL:2011) — application-time period tables,
   `WITHOUT OVERLAPS`, period predicates. ISO, 2011.
-- **[SOTA]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
-- **[Foundational]** P. Kanellakis, G. Kuper, P. Revesz. *Constraint Query Languages.* JCSS, 1995.
+- **[SOTA]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [ACM](https://dl.acm.org/doi/10.1145/2380776.2380786)
+- **[Foundational]** P. Kanellakis, G. Kuper, P. Revesz. *Constraint Query Languages.* JCSS, 1995. — [DOI](https://doi.org/10.1006/jcss.1995.1051)
 - **[SOTA]** A. Dignös, M. Böhlen, J. Gamper, C. Jensen. *Extending the Kernel of a Relational
-  DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016.
+  DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016. — [DOI](https://doi.org/10.1145/2967608)
+
+## 10. Worked Example
+
+**Sequenced PK** on `Employee(emp_id, period)` with `emp_id WITHOUT OVERLAPS`. Existing rows for `emp_id = 7`:
+
+| emp_id | period |
+|--------|--------------|
+| 7 | $[2020, 2022)$ |
+| 7 | $[2023, 2025)$ |
+
+Insert $7, [2021, 2024)$. The stabbing query against the `emp_id = 7` group finds $[2021,2024)$ overlaps both $[2020,2022)$ (share $[2021,2022)$) and $[2023,2025)$ (share $[2023,2024)$) — **rejected**. Insert $7, [2022, 2023)$ instead: it overlaps neither (intervals are half-open, so $[2020,2022)$ and $[2022,2023)$ only *meet*) — **accepted**. With a GiST/interval index this is one $O(\log n)$ overlap probe.
+
+**Sequenced FK**: child `Assignment(emp_id=7, period=[2020,2025))` must be covered by the *union* of parent periods. The two original rows give union $[2020,2022) \cup [2023,2025)$, leaving the gap $[2022,2023)$ **uncovered** — the containment-in-union test ($\text{child} \setminus \text{union} = [2022,2023) \neq \emptyset$) fails. The FK is violated precisely on that instant-set, illustrating why coverage, not single-row matching, is required.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

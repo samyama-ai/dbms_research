@@ -65,12 +65,22 @@ Incremental snapshots exploit an LSM/RocksDB state backend: a snapshot persists 
 
 ## 9. Key References
 
-- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[SOTA]** Carbone, Fóra, Ewen, Haridi, Tzoumas. *Lightweight Asynchronous Snapshots for Distributed Dataflows.* arXiv:1506.08603, 2015.
-- **[SOTA]** Carbone, Ewen, Fóra, Haridi, Richter, Tzoumas. *State Management in Apache Flink.* PVLDB, 2017.
-- **[SOTA]** Murray, McSherry, Isaacs, Isard, Barham, Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013.
-- **[Foundational]** Young / Daly. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006.
+- **[Foundational]** Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[SOTA]** Carbone, Fóra, Ewen, Haridi, Tzoumas. *Lightweight Asynchronous Snapshots for Distributed Dataflows.* arXiv:1506.08603, 2015. — [arXiv](https://arxiv.org/abs/1506.08603)
+- **[SOTA]** Carbone, Ewen, Fóra, Haridi, Richter, Tzoumas. *State Management in Apache Flink.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137777)
+- **[SOTA]** Murray, McSherry, Isaacs, Isard, Barham, Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522738)
+- **[Foundational]** Young / Daly. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
+
+## 10. Worked Example
+
+Consider a linear pipeline $\text{Source} \to \text{Map} \to \text{Sum}$ where Sum keeps a running total. The source emits records $r_1=3, r_2=5, r_3=2,\dots$ and records its offset.
+
+**ABS trace.** The source injects barrier $b_1$ right after $r_2$. Source snapshots `offset=2`, forwards $b_1$. Map has no state; it passes records and then $b_1$. When Sum receives $b_1$ it has consumed $r_1, r_2$, so its state is $3+5=8$; it snapshots `total=8`. The consistent cut therefore is $\{\text{offset}=2,\ \text{total}=8\}$, exactly the system state after $r_1,r_2$ and before $r_3$ — a valid downward-closed cut under $\to$.
+
+**Recovery.** Say a crash happens after $r_3$ was partly processed. The job restores `total=8`, rewinds the source to offset 2, and replays from $r_3$. The result $8+2=10$ matches a failure-free run — no double-counting of $r_1,r_2$.
+
+**Incremental cost.** If only key $k$ changed since the last checkpoint, RocksDB persists the delta SSTable: snapshot IO is $O(\Delta)$, not $O(\text{total state})$. With checkpoint cost $C=4$s and $\text{MTBF}=2{,}000$s, the Young–Daly interval is $T^\* \approx \sqrt{2C\cdot\text{MTBF}} = \sqrt{16{,}000} \approx 126$s.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

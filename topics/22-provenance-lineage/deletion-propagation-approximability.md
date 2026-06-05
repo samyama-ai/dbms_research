@@ -1,6 +1,7 @@
 # Deletion Propagation Approximability
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/deletion-propagation-approximability` · **Status:** partially-solved
+> **Verification note:** The Buneman–Khanna–Tan paper appeared at **PODS 2002** (DOI 10.1145/543613.543633), not ICDT 2002 as stated in sections 2–3.
 
 ## 1. Problem Statement
 
@@ -53,11 +54,23 @@ Active: **resilience with self-joins** (Gatterbauer, Meliou, Makhija) — recent
 
 ## 9. Key References
 
-- **[Foundational]** Buneman, Khanna, Tan. *On Propagation of Deletions and Annotations Through Views.* PODS, 2002.
-- **[SOTA]** Kimelfeld, Vondrák, Williams. *Maximizing Conjunctive Views in Deletion Propagation.* PODS, 2011 (ACM TODS, 2012).
-- **[SOTA]** Freire, Gatterbauer, Immerman, Meliou. *The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries.* VLDB, 2015.
-- **[Foundational]** Cong, Fan, Geerts. *Annotation Propagation Revisited for Key Preserving Views.* CIKM, 2006.
-- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
+- **[Foundational]** Buneman, Khanna, Tan. *On Propagation of Deletions and Annotations Through Views.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543633)
+- **[SOTA]** Kimelfeld, Vondrák, Williams. *Maximizing Conjunctive Views in Deletion Propagation.* PODS, 2011 (ACM TODS, 2012). — [DOI (PODS)](https://doi.org/10.1145/1989284.1989308) · [DOI (TODS)](https://doi.org/10.1145/2389241.2389243)
+- **[SOTA]** Freire, Gatterbauer, Immerman, Meliou. *The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1507.00674) · [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** Cong, Fan, Geerts. *Annotation Propagation Revisited for Key Preserving Views.* CIKM, 2006. — [DOI](https://doi.org/10.1145/1183614.1183705)
+- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+
+## 10. Worked Example
+
+View `Q :- Author(a), Wrote(a,p), Paper(p,'DB')` over a tiny instance. Target view tuple $t$ is produced by three witnesses (each an author–paper pair on a DB paper):
+
+$$ \lambda_t = (a_1\wedge w_1\wedge p_1)\;\vee\;(a_1\wedge w_2\wedge p_2)\;\vee\;(a_2\wedge w_3\wedge p_2). $$
+
+**SSE (source side effect): minimum deletion to kill $t$.** We must falsify *every* clause — a minimum hitting set over the three witnesses. Deleting the single source tuple $a_1$ kills clauses 1 and 2; we still need clause 3, killed by deleting e.g. $p_2$. So $\Delta=\{a_1,p_2\}$, $|\Delta|=2$. But note $p_2$ alone hits clauses 2 and 3, leaving clause 1 (needs $a_1$ or $w_1$ or $p_1$) — also size 2. The optimum here is $|\Delta_{\min}|=2$.
+
+**VSE (view side effect).** If another view tuple $t'$ has lineage that also uses $p_2$, then deleting $p_2$ collaterally removes $t'$ — a side effect VSE tries to minimize. Choosing $\Delta=\{a_1,w_3\}$ instead might avoid touching $t'$.
+
+The hitting-set core makes SSE generalize **minimum vertex cover**: $2$-approximable, but $(2-\varepsilon)$-inapproximable under UGC. Whether *this* query is PTIME hinges on its structure (head domination / triad-freeness) — the dichotomy's dividing line.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

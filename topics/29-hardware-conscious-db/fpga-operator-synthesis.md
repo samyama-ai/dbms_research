@@ -49,12 +49,20 @@ Individual operators are solved empirically and run at line rate; the **open gap
 
 ## 9. Key References
 
-- **[Foundational]** Mueller, Teubner, Alonso. *Streams on Wires — A Query Compiler for FPGAs (Glacier).* VLDB, 2009.
-- **[Foundational]** Teubner, Woods. *Data Processing on FPGAs.* Synthesis Lectures on Data Management, Morgan & Claypool, 2013.
-- **[SOTA]** Woods, István, Alonso. *Ibex — An Intelligent Storage Engine with Support for Advanced SQL Off-loading.* VLDB, 2014.
-- **[SOTA]** Sidler, Owaida, István, Kara, Alonso. *doppioDB: A Hardware Accelerated Database.* SIGMOD (demo), 2017.
-- **[SOTA]** Teubner, Woods, Nie. *Skeleton Automata for FPGAs: Reconfiguring without Reconstructing.* SIGMOD, 2012.
-- **[Foundational]** Putnam et al. *A Reconfigurable Fabric for Accelerating Large-Scale Datacenter Services (Catapult).* ISCA, 2014.
+- **[Foundational]** Mueller, Teubner, Alonso. *Streams on Wires — A Query Compiler for FPGAs (Glacier).* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687654)
+- **[Foundational]** Teubner, Woods. *Data Processing on FPGAs.* Synthesis Lectures on Data Management, Morgan & Claypool, 2013. — [DOI](https://doi.org/10.1007/978-3-031-01849-7)
+- **[SOTA]** Woods, István, Alonso. *Ibex — An Intelligent Storage Engine with Support for Advanced SQL Off-loading.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732967.2732972)
+- **[SOTA]** Sidler, Owaida, István, Kara, Alonso. *doppioDB: A Hardware Accelerated Database.* SIGMOD (demo), 2017. — [DBLP](https://dblp.org/rec/conf/sigmod/SidlerIOKA17)
+- **[SOTA]** Teubner, Woods, Nie. *Skeleton Automata for FPGAs: Reconfiguring without Reconstructing.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213863)
+- **[Foundational]** Putnam et al. *A Reconfigurable Fabric for Accelerating Large-Scale Datacenter Services (Catapult).* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665678)
+
+## 10. Worked Example
+
+Take the predicate `WHERE country = ?` over a stream of fixed-width tuples. A **specialized** circuit bakes the constant `'US'` into a comparator: tiny ($\sim$50 LUTs), runs at $f = 250$ MHz, one tuple/cycle $\Rightarrow 250$ M tuples/s. But changing the query to `country = 'DE'` requires re-synthesis — a full bitstream rebuild taking minutes of CAD time plus a $\sim$10 ms device load. Per-query, that is a non-starter.
+
+A **skeleton-automaton** circuit instead implements a generic equality engine whose comparison constant lives in a register loaded *as data*. Switching from `'US'` to `'DE'` is a single register write ($\sim$1 $\mu$s), no re-synthesis. Cost: it is larger ($\sim$200 LUTs) and may drop to $f = 200$ MHz $\Rightarrow 200$ M tuples/s.
+
+Trade-off: over a workload of $N$ queries each scanning $10^9$ tuples, the specialized path pays $N \times (\text{rebuild})$ reconfiguration but runs scans $25\%$ faster; the parameterized path pays only $N \times 1\,\mu$s. Break-even favors the skeleton automaton whenever queries change faster than once per several minutes — which is essentially always. This is precisely the reconfiguration-free coverage the open problem seeks to generalize from single predicates to broad relational fragments.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -38,11 +38,19 @@ Active work extends Tuple/Theta sketches to *attribute-carrying* joins and "sket
 - Cost-based optimizer integration that treats error as a first-class plan dimension.
 
 ## 9. Key References
-- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog.* AOFA, 2007.
-- **[SOTA]** Cohen, E. *Coordinated Sampling.* (sampling-based set-operation estimators), various incl. SIGMETRICS/PODS, 2014–2018.
-- **[SOTA]** Apache DataSketches. *Theta, Tuple, HLL, KLL Sketch Library and Set Operations.* Apache Software Foundation, 2015–.
-- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog.* AOFA, 2007. — [DOI](https://doi.org/10.46298/dmtcs.3545)
+- **[SOTA]** Cohen, E. *Coordinated Sampling.* (sampling-based set-operation estimators), various incl. SIGMETRICS/PODS, 2014–2018. — [DOI](https://doi.org/10.1007/978-1-4939-2864-4_576)
+- **[SOTA]** Apache DataSketches. *Theta, Tuple, HLL, KLL Sketch Library and Set Operations.* Apache Software Foundation, 2015–. — [Apache](https://datasketches.apache.org/)
+- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+**Union is closed; intersection is not.** Two HLL sketches summarize columns $A$ and $B$ with $p=4$ registers (16 buckets). For three buckets, $S(A)=[\dots,3,1,5,\dots]$ and $S(B)=[\dots,2,4,5,\dots]$ store the max leading-zero count seen per bucket.
+
+*Union* $\oplus_\cup$ is coordinate-wise max: $[\max(3,2),\max(1,4),\max(5,5)] = [3,4,5]$. This is **exact at the sketch level** — the merged registers equal those a single HLL over $A\cup B$ would hold, so the union estimator inherits only the operands' error, no compounding. CM matrices behave the same way but add: $S(A)+S(B)$.
+
+*Intersection* has no such closed register operation for HLL. We must go through inclusion–exclusion: $|A\cap B| = \widehat{|A|}+\widehat{|B|}-\widehat{|A\cup B|}$. Say $\widehat{|A|}=1000$, $\widehat{|B|}=1000$, $\widehat{|A\cup B|}=1900$, true overlap $100$. Each HLL term carries relative error $1.04/\sqrt{16}\approx 26\%$, i.e. absolute std $\approx 260$ on each $\sim$1000-count. The subtraction's error adds in quadrature: $\sqrt{260^2+260^2+494^2}\approx 612$, dwarfing the true answer $100$. So error grows unboundedly as $|A\cap B|/|A\cup B|\to0$ — exactly why Section 6 keeps intersection open while marking union closed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -65,12 +65,22 @@ For *each individually identified* channel we can bound and close capacity; the 
 
 ## 9. Key References
 
-- **[Foundational]** Lampson, B. *A Note on the Confinement Problem.* CACM, 1973.
-- **[Foundational]** Kang, M., Moskowitz, I. *A Pump for Rapid, Reliable, Secure Communication (the NRL Pump).* CCS, 1993.
-- **[Foundational]** Anantharam, V., Verdú, S. *Bits Through Queues.* IEEE Trans. Information Theory, 1996.
-- **[SOTA]** Köpf, B., Basin, D. *An Information-Theoretic Model for Adaptive Side-Channel Attacks.* CCS, 2007.
-- **[SOTA]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009.
-- **[Survey]** Millen, J. *20 Years of Covert Channel Modeling and Analysis.* IEEE S&P, 1999.
+- **[Foundational]** Lampson, B. *A Note on the Confinement Problem.* CACM, 1973. — [DOI](https://doi.org/10.1145/362375.362389)
+- **[Foundational]** Kang, M., Moskowitz, I. *A Pump for Rapid, Reliable, Secure Communication (the NRL Pump).* CCS, 1993. — [DOI](https://doi.org/10.1145/168588.168604)
+- **[Foundational]** Anantharam, V., Verdú, S. *Bits Through Queues.* IEEE Trans. Information Theory, 1996. — [DOI](https://doi.org/10.1109/18.481773)
+- **[SOTA]** Köpf, B., Basin, D. *An Information-Theoretic Model for Adaptive Side-Channel Attacks.* CCS, 2007. — [DOI](https://doi.org/10.1145/1315245.1315282)
+- **[SOTA]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009. — [DOI](https://doi.org/10.1007/978-3-642-00596-1_21)
+- **[Survey]** Millen, J. *20 Years of Covert Channel Modeling and Analysis.* IEEE S&P, 1999. — [DOI](https://doi.org/10.1109/SECPRI.1999.766906)
+
+## 10. Worked Example
+
+**A lock-contention channel and its capacity.** A high transaction $H$ encodes one bit per time slot by either holding ($X=1$) or not holding ($X=0$) a lock on row $r$. A low transaction $L$ probes $r$ and observes "blocked" ($Y=1$) or "free" ($Y=0$). Suppose the channel is noisy: with probability $p=0.1$ the observation flips (e.g. $L$'s probe races and misreads).
+
+This is a **binary symmetric channel** with crossover $p=0.1$. Its per-use capacity is
+$$\mathsf{C}=1-H_2(p)=1-\big(-0.1\log_2 0.1-0.9\log_2 0.9\big)=1-0.469=0.531\ \text{bits/use}.$$
+If $L$ can probe the lock $200$ times per second, the raw covert bandwidth is
+$$0.531 \times 200 \approx 106\ \text{bits/s}.$$
+Under the TCSEC "1 bit/s" auditing threshold $b^\*$, this channel is wildly out of bounds. To drive it below $b^\*=1$ bit/s without partitioning, the system can inject random delay so probes succeed only $\sim$ once/s, or add noise raising $p$ toward $0.5$ (where $H_2(p)\to 1$ and $\mathsf{C}\to 0$) — each lowering $I(X;Y)$ by the data-processing inequality, at a measurable throughput cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

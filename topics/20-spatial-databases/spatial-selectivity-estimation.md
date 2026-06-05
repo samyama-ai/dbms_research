@@ -42,12 +42,20 @@ Active threads: instance-/distribution-adaptive coresets that exploit fractal/in
 - Estimator robustness under data drift and adversarial query workloads.
 
 ## 9. Key References
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979.
-- **[Foundational]** Acharya, Poosala, Ramaswamy. *Selectivity Estimation in Spatial Databases.* SIGMOD, 1999.
-- **[Foundational]** Matoušek. *Geometric Discrepancy.* Springer, 1999 (deterministic $\varepsilon$-approximations).
-- **[SOTA]** Phillips. *Coresets and Sketches.* In *Handbook of Discrete and Computational Geometry*, 3rd ed., 2017.
-- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019.
-- **[Survey]** Har-Peled. *Geometric Approximation Algorithms.* AMS, 2011.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Acharya, Poosala, Ramaswamy. *Selectivity Estimation in Spatial Databases.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304184)
+- **[Foundational]** Matoušek. *Geometric Discrepancy.* Springer, 1999 (deterministic $\varepsilon$-approximations). — [DOI](https://doi.org/10.1007/978-3-642-03942-3)
+- **[SOTA]** Phillips. *Coresets and Sketches.* In *Handbook of Discrete and Computational Geometry*, 3rd ed., 2017. — [arXiv](https://arxiv.org/abs/1601.00617)
+- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1905.04278)
+- **[Survey]** Har-Peled. *Geometric Approximation Algorithms.* AMS, 2011. — [AMS](https://bookstore.ams.org/surv-173)
+
+## 10. Worked Example
+
+Suppose $R$ has $n=1000$ points, with $990$ packed inside a tiny dense city block $B=[0,1]^2$ and $10$ scattered over the rest of a $[0,100]^2$ map. Query $q$ is the range $[0.4,0.6]^2$ — a small window deep inside the dense block.
+
+**Uniform-per-bucket assumption.** A coarse $10\times10$ equi-width grid puts all $990$ city points in one $10\times10$ cell of area $100$. Assuming uniformity inside that cell, the optimizer estimates $\hat\sigma = 990 \cdot \frac{0.04}{100} \cdot \frac{1}{1000}\approx 0.0004$, i.e. $\approx 0.4$ rows. The true answer might be $300$ rows. The skew inside the bucket destroys the estimate.
+
+**Sample-complexity view.** True selectivity here is $\sigma = 300/1000 = 0.3$. For *additive* error $\varepsilon=0.05$ on axis-boxes ($\mathrm{VC}=2d=4$), a uniform sample of $O(\mathrm{VC}/\varepsilon^2)\approx 4/0.0025 = 1600$ points suffices. But for a *relative* $\varepsilon=0.1$ guarantee on a highly selective query with $\sigma=0.001$, the bound $\tilde O(1/(\varepsilon^2\sigma)) = 1/(0.01\cdot0.001)=10^5$ samples already exceeds $n$ — the $1/\sigma$ blowup of Section 5 in action.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

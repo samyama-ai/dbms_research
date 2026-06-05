@@ -48,12 +48,18 @@ Sub-problems:
 - Integration with the other problems here: online-reconfiguration safety, multi-tenant constraints, adversarial robustness, and trust-calibrated human oversight as first-class architectural concerns.
 
 ## 9. Key References
-- **[Foundational/Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems (QueryBot 5000).* SIGMOD, 2018.
-- **[SOTA]** L. Ma et al. *MB2: Decomposed Behavior Modeling for Self-Driving Database Management Systems.* SIGMOD, 2021.
-- **[Foundational]** D. Q. Mayne, J. B. Rawlings, C. V. Rao, P. O. M. Scokaert. *Constrained Model Predictive Control: Stability and Optimality.* Automatica, 2000.
-- **[Foundational]** R. Alur, T. Henzinger. *Reactive Modules / Assume-Guarantee Reasoning.* Formal Methods in System Design, 1999.
-- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021.
+- **[Foundational/Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems (QueryBot 5000).* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[SOTA]** L. Ma et al. *MB2: Decomposed Behavior Modeling for Self-Driving Database Management Systems.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457276)
+- **[Foundational]** D. Q. Mayne, J. B. Rawlings, C. V. Rao, P. O. M. Scokaert. *Constrained Model Predictive Control: Stability and Optimality.* Automatica, 2000. — [DOI](https://doi.org/10.1016/S0005-1098(99)00214-9)
+- **[Foundational]** R. Alur, T. Henzinger. *Reactive Modules / Assume-Guarantee Reasoning.* Formal Methods in System Design, 1999. — [DOI](https://doi.org/10.1023/A:1008739929481)
+- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+**Two composed loops that oscillate.** A *knob loop* sets buffer-pool size; an *index loop* adds/drops indexes. Suppose the workload alternates between scan-heavy and point-lookup phases, and the monitor reports cache hit-rate every 5 s. The index loop, seeing low hit-rate, builds a covering index $I$ (build cost = 30 s). Once $I$ exists, fewer pages are read, hit-rate rises, so the knob loop *shrinks* the buffer pool to "reclaim" memory. With less buffer, the next scan phase shows low hit-rate again, so the index loop builds *another* index — and the knob loop shrinks again. The two locally-stable controllers form an unstable composite: action cost paid every cycle with no net SLO gain (thrashing).
+
+An MPC coordinator over horizon $H=3$ avoids this by planning jointly. With forecast error $\epsilon$, receding-horizon cost obeys $\mathrm{cost}_{\text{MPC}} \le \mathrm{OPT} + O(\epsilon H)$. Concretely, if per-cycle thrash cost is $30$ s and the clairvoyant optimum is $40$ s total over the window, the coordinated plan ("build $I$ once, hold buffer pool fixed") stays near $40$ s, whereas the uncoordinated loops accrue $40 + 3\times 30 = 130$ s — illustrating why composition needs an anti-oscillation coordinator, not just two correct parts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

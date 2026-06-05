@@ -37,11 +37,23 @@ Active work: **learned/RL-based synopsis and sample advisors** that observe the 
 - Optimizer-integrated co-design of plans and synopsis budgets.
 
 ## 9. Key References
-- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB 1997.
-- **[Foundational]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD 2001.
-- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys 2013.
-- **[SOTA]** Park, Y., Mozafari, B., et al. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD 2018.
-- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
+- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[Foundational]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Park, Y., Mozafari, B., et al. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+
+## 10. Worked Example
+
+Budget $B = 12$ KB. Two queries, both `COUNT(DISTINCT user_id)`, served by one HLL sketch whose error is $\approx 1.04/\sqrt{m}$ for $m$ registers (1 byte each, so $\mathrm{size}=m$ bytes). Candidate sizes:
+
+| $m$ (bytes) | std. error | 
+|---|---|
+| $1024$ | $1.04/32 = 3.3\%$ |
+| $4096$ | $1.04/64 = 1.6\%$ |
+| $16384$ | $1.04/128 = 0.8\%$ |
+
+Now add a second column `event_type` (heavy skew, Zipf) needing a Count–Min sketch with error $\propto 1/w$. Suppose query 2's SLA is $\le 2\%$ on `user_id` AND $\le 1\%$ on `event_type`. Continuous (water-filling) allocation: spend marginal bytes where they cut the most error. The HLL marginal error reduction per byte shrinks as $m$ grows ($\propto m^{-3/2}$), so once HLL hits $m=4096$ (1.6%, SLA met) the optimizer diverts the remaining $12{,}288 - 4096 = 8192$ bytes to the CM sketch ($w \approx 8192$, $\varepsilon \approx 1/8192 \cdot \|f\|_1$). This Lagrangian "equalize marginal utility per byte" step is exactly the KKT condition in section 4 — and breaks the moment the two queries *share* a synopsis, which is why the joint problem (section 6) stays open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

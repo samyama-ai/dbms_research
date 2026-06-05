@@ -54,13 +54,23 @@ Active: streaming/temporal-window semantics where snapshot reducibility governs 
 
 ## 9. Key References
 
-- **[Foundational]** Snodgrass, R.T. *The Temporal Query Language TQuel.* ACM TODS, 1987.
-- **[Foundational]** Toman, D. *Point-Based vs. Interval-Based Temporal Query Languages.* PODS, 1996.
-- **[Foundational]** Chomicki, J. *Temporal Query Languages: A Survey.* (Temporal Logic / ICTL), 1994.
-- **[Foundational]** Abadi, M. *The Power of Temporal Proofs / Undecidability of FOTL.* Theoretical Computer Science, 1989.
-- **[SOTA]** Hodkinson, I., Wolter, F., Zakharyaschev, M. *Decidable Fragments of First-Order Temporal Logics.* Annals of Pure and Applied Logic, 2000.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (locality, expressiveness).
-- **[Survey]** Böhlen, M.H., Jensen, C.S., Snodgrass, R.T. *Temporal Statement Modifiers (Sequenced/Non-sequenced Semantics).* ACM TODS, 2000.
+- **[Foundational]** Snodgrass, R.T. *The Temporal Query Language TQuel.* ACM TODS, 1987. — [DOI](https://doi.org/10.1145/22952.22956)
+- **[Foundational]** Toman, D. *Point-Based vs. Interval-Based Temporal Query Languages.* PODS, 1996. — [DOI](https://doi.org/10.1145/237661.237676)
+- **[Foundational]** Chomicki, J. *Temporal Query Languages: A Survey.* (Temporal Logic / ICTL), 1994. — [DOI](https://doi.org/10.1007/BFb0014006)
+- **[Foundational]** Abadi, M. *The Power of Temporal Proofs / Undecidability of FOTL.* Theoretical Computer Science, 1989. — [DOI](https://doi.org/10.1016/0304-3975(89)90138-2)
+- **[SOTA]** Hodkinson, I., Wolter, F., Zakharyaschev, M. *Decidable Fragments of First-Order Temporal Logics.* Annals of Pure and Applied Logic, 2000. — [DOI](https://doi.org/10.1016/S0168-0072(00)00018-X)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (locality, expressiveness). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Survey]** Böhlen, M.H., Jensen, C.S., Snodgrass, R.T. *Temporal Statement Modifiers (Sequenced/Non-sequenced Semantics).* ACM TODS, 2000. — [DOI](https://doi.org/10.1145/377674.377665)
+
+## 10. Worked Example
+
+Let a one-attribute temporal relation `On(server, period)` record when a server is up:
+
+- $s_1$: up on $[1,4)$ and $[6,9)$.
+
+**Reducible query** $Q_1 =$ "servers that are up" (plain selection/projection). At each instant $t$, $\tau_t(Q_1)=Q_1(\tau_t(D))$: at $t=2$ we get $\{s_1\}$, at $t=5$ we get $\varnothing$, at $t=7$ we get $\{s_1\}$. Evaluating slice-by-slice and re-stamping reproduces the periods $[1,4),[6,9)$ exactly — $Q_1$ commutes with timeslice.
+
+**Non-reducible query** $Q_2 =$ "servers up for $\ge 3$ consecutive units." The true answer over $[1,9)$ is: $[1,4)$ has length $3$ (qualifies), $[6,9)$ has length $3$ (qualifies). But this *cannot* be decided from any single snapshot: at $t=2$ the snapshot $\{s_1\}$ carries no duration information; $\tau_t \circ Q_2 \ne Q_2 \circ \tau_t$. Formally, an Ehrenfeucht–Fraïssé argument over the time order shows two databases agreeing on every individual snapshot but differing on $Q_2$ (e.g. split $[1,4)$ into $[1,2),[3,4)$ — identical at $t=1,3$ yet now length-1 runs), so no per-slice FO evaluation expresses $Q_2$. This witnesses the reducibility boundary: duration/`since` queries integrate across $t$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

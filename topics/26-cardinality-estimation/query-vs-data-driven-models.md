@@ -60,12 +60,24 @@ The decision problem is **empirically characterized but theoretically open**: be
 
 ## 9. Key References
 
-- **[SOTA]** Yang, Liang, Kamsetty, Wu, et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2021.
-- **[SOTA]** Hilprecht, Schmidt, Kulessa, Molina, Kersting, Binnig. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020.
-- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities (MSCN).* CIDR, 2019.
-- **[SOTA]** Dutt, Wang, Nazi, Kandula, Narasayya, Chaudhuri. *Selectivity Estimation for Range Predicates using Lightweight Models.* VLDB, 2019.
-- **[Survey/SOTA]** Wang, Qu, Li, Cui, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021.
-- **[Survey/SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022.
+- **[SOTA]** Yang, Liang, Kamsetty, Wu, et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2021. — [arXiv](https://arxiv.org/abs/1905.04278) — [DOI](https://doi.org/10.14778/3368289.3368294)
+- **[SOTA]** Hilprecht, Schmidt, Kulessa, Molina, Kersting, Binnig. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607) — [DOI](https://doi.org/10.14778/3384345.3384349)
+- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677) — [PDF](https://www.cidrdb.org/cidr2019/papers/p101-kipf-cidr19.pdf)
+- **[SOTA]** Dutt, Wang, Nazi, Kandula, Narasayya, Chaudhuri. *Selectivity Estimation for Range Predicates using Lightweight Models.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3329772.3329780) — [PDF](https://www.vldb.org/pvldb/vol12/p1044-dutt.pdf)
+- **[Survey/SOTA]** Wang, Qu, Li, Cui, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743) — [DOI](https://doi.org/10.14778/3461535.3461552)
+- **[Survey/SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2109.05877) — [DOI](https://doi.org/10.14778/3503585.3503586)
+
+## 10. Worked Example
+
+Table $D$ with two binary columns $(A,B)$, $n=1000$ rows, perfectly correlated: $A=B$ always. So $500$ rows have $(0,0)$ and $500$ have $(1,1)$; none have $(0,1)$ or $(1,0)$.
+
+Consider the predicate $q:\ A=0\ \wedge\ B=1$. True cardinality $=0$.
+
+**Data-driven** must learn the joint $P_D$. If it captures the correlation it returns $n\cdot\hat P_D(0,1)\approx0$. But a model assuming independence (a common shortcut) estimates $n\cdot P(A{=}0)P(B{=}1)=1000\cdot0.5\cdot0.5=250$ — a 250-row error from mis-modeling correlation it spent capacity trying to learn.
+
+**Query-driven** simply needs $q$ (or a near neighbor) in its training log. If the workload $P_W$ has executed $A{=}0\wedge B{=}1$ before, it has the label $c=0$ and returns $\approx0$ directly — no joint modeling needed.
+
+Now flip it: a *new* template $A=1\wedge B=1$ never seen in $P_W$. The query-driven model extrapolates blindly (could output anything), while the data-driven model integrates its learned joint and returns $\approx500$. This single $(D,W)$ pair shows each paradigm winning on different predicates — concretely why no universal winner exists and a $P_W$-weighted hybrid is attractive.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

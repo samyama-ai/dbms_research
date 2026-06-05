@@ -46,11 +46,21 @@ Relative-error and weighted/streaming variants (ReqSketch, DDSketch) are activel
 - Private and adversarially-robust mergeable summaries with matching bounds.
 
 ## 9. Key References
-- **[Foundational]** Agarwal, P.K., Cormode, G., Huang, Z., Phillips, J., Wei, Z., Yi, K. *Mergeable Summaries.* PODS 2012 / ACM TODS 2013.
-- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS 2016.
-- **[SOTA]** Cormode, G., Karnin, Z., Liberty, E., Thaler, J., Veselý, P. *Relative Error Streaming Quantiles (ReqSketch).* PODS 2021.
-- **[Foundational]** Kane, D., Nelson, J., Woodruff, D. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010.
-- **[Foundational]** Greenwald, M., Khanna, S. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD 2001.
+- **[Foundational]** Agarwal, P.K., Cormode, G., Huang, Z., Phillips, J., Wei, Z., Yi, K. *Mergeable Summaries.* PODS 2012 / ACM TODS 2013. — [DOI](https://doi.org/10.1145/2500128)
+- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** Cormode, G., Karnin, Z., Liberty, E., Thaler, J., Veselý, P. *Relative Error Streaming Quantiles (ReqSketch).* PODS 2021. — [arXiv](https://arxiv.org/abs/2004.01668)
+- **[Foundational]** Kane, D., Nelson, J., Woodruff, D. *An Optimal Algorithm for the Distinct Elements Problem.* PODS 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[Foundational]** Greenwald, M., Khanna, S. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD 2001. — [DOI](https://doi.org/10.1145/375663.375670)
+
+## 10. Worked Example
+
+**Misra–Gries mergeability for heavy hitters.** Take $\varepsilon=1/3$, so each summary keeps $k-1=2$ counters ($k=\lceil 1/\varepsilon\rceil=3$). Two nodes summarize disjoint streams.
+
+Node $A$, stream $[a,a,b,c]$ (n=4). MG keeps top counters: after processing, $\{a:2, b:1\}$ ($c$ caused a decrement-and-evict). Node $B$, stream $[a,d,d,e]$ (n=4): $\{d:2, a:1\}$.
+
+**Merge:** add counters elementwise → $\{a:3, b:1, d:2, e:0\}$, then keep the $k-1=2$ largest and subtract the $(k)$-th largest value from all (the MG merge rule). The 3rd-largest count is $1$ (b's), so subtract $1$: $\{a:2, d:1\}$, drop non-positive entries.
+
+True frequencies over $A\uplus B$ ($n=8$): $a=3,d=2,b=1,c=1,e=1$. The merged summary reports $a$ (est $2$, true $3$) and $d$ (est $1$, true $2$) — each underestimate is within $\varepsilon n = 8/3 \approx 2.67$, and every item with true frequency $\ge \varepsilon n=2.67$ (only $a$, at $3$) is retained. Size stayed at $2$ counters across the merge — the defining no-blowup property of Section 1, achieved with the $O(1/\varepsilon)$ space of Section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

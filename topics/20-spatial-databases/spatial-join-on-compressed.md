@@ -39,11 +39,21 @@ Directions: predicate-pushdown into columnar/encoded geometry (GeoArrow/GeoParqu
 - GPU/vectorized evaluation entirely in the encoded domain; error-bounded approximate joins on simplified geometries.
 
 ## 9. Key References
-- **[Foundational]** Brinkhoff, Kriegel, Seeger. *Efficient Processing of Spatial Joins Using R-trees.* SIGMOD, 1993.
-- **[Foundational]** Patel, DeWitt. *Partition Based Spatial-Merge Join.* SIGMOD, 1996.
-- **[SOTA]** Pandey et al. *How Good Are Modern Spatial Analytics Systems? (and SpatialParquet / columnar-spatial line).* VLDB, 2018–2023.
-- **[SOTA]** GeoArrow / GeoParquet specifications. *Columnar Encodings for Geometry.* OGC / Apache, 2022–2024.
-- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016.
+- **[Foundational]** Brinkhoff, Kriegel, Seeger. *Efficient Processing of Spatial Joins Using R-trees.* SIGMOD, 1993. — [ACM](https://dl.acm.org/doi/10.1145/170035.170075)
+- **[Foundational]** Patel, DeWitt. *Partition Based Spatial-Merge Join.* SIGMOD, 1996. — [ACM](https://dl.acm.org/doi/10.1145/235968.233338) · [DBLP](https://dblp.org/rec/conf/sigmod/PatelD96.html)
+- **[SOTA]** Pandey et al. *How Good Are Modern Spatial Analytics Systems? (and SpatialParquet / columnar-spatial line).* VLDB, 2018–2023. — [DOI](https://doi.org/10.14778/3236187.3236213) · [DBLP](https://dblp.org/rec/journals/pvldb/PandeyKNK18.html)
+- **[SOTA]** GeoArrow / GeoParquet specifications. *Columnar Encodings for Geometry.* OGC / Apache, 2022–2024. — [GeoArrow](https://geoarrow.org/) · [GeoParquet](https://geoparquet.org/)
+- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
+
+## 10. Worked Example
+
+Join two polygons stored progressively (Douglas–Peucker hierarchies), testing **intersects**. Each polygon has $1{,}000$ vertices; full decode = $1{,}000$ coordinate pairs each.
+
+**Case A — clear separation.** $R$ lies in $x\in[0,3]$, $S$ in $x\in[7,10]$. Their coarse simplifications $\tilde R,\tilde S$ at level 0 (4 vertices each, Hausdorff error $\eta = 0.5$). The simplified MBR gap is $7 - 3 = 4 > 2\eta = 1$, so the conservative test clears the margin and **certifies disjoint** after decoding $8$ vertices total — a $1{,}000/8 = 125\times$ saving over full decode.
+
+**Case B — boundary grazing.** $R$ in $x\in[0,5]$, $S$ in $x\in[4.9,10]$; the overlap band $[4.9,5]$ is narrower than $\eta=0.5$. Coarse tests stay *ambiguous*, so refinement must descend the hierarchy in the band region only. If just $30$ vertices of each polygon fall in that $x$-band, decode $\approx 60$ vertices, not $2{,}000$.
+
+**Adversarial worst case.** Two interlocking combs whose teeth alternate every level force descent everywhere: decode $\Theta(\text{total vertices}) = 2{,}000$ — matching the $\Omega(\text{boundary vertices})$ lower bound. Average redundant data is cheap; adversarial data is not.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

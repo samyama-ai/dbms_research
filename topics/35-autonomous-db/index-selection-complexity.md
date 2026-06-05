@@ -49,12 +49,26 @@ For the **non-interacting** model the gap is essentially **closed**: $(1-1/e)$ u
 - Hardness of the *interacting* problem under fine-grained or PCP-based assumptions.
 
 ## 9. Key References
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997.
-- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* Operations Research Letters, 2004.
-- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor for Microsoft SQL Server.* (DTA), Microsoft, 2020.
-- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor for Microsoft SQL Server.* (DTA), Microsoft, 2020. — [Microsoft Research](https://www.microsoft.com/en-us/research/publication/anytime-algorithm-of-database-tuning-advisor-for-microsoft-sql-server/)
+- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+**Greedy index selection under a cardinality budget.** Workload of 4 queries, each frequency $1$. Candidate indexes $\mathcal I=\{i_1,i_2,i_3\}$; each index, if chosen, serves a set of queries (saving $10$ per served query). Budget: pick $k=2$ indexes.
+
+| index | queries served | benefit alone |
+|---|---|---|
+| $i_1$ | $\{q_1,q_2,q_3\}$ | $30$ |
+| $i_2$ | $\{q_3,q_4\}$ | $20$ |
+| $i_3$ | $\{q_4\}$ | $10$ |
+
+This is monotone submodular (best-single-index-per-query coverage). **Greedy:** round 1 picks $i_1$ (benefit $30$, the max). Round 2 — marginal gains given $\{i_1\}$: $i_2$ adds only $q_4$ (since $q_3$ already covered) $=10$; $i_3$ adds $q_4 = 10$. Pick $i_2$. Result $\{i_1,i_2\}$ covers $\{q_1,q_2,q_3,q_4\}$, benefit $40$ = OPT here.
+
+The guarantee: greedy is never worse than $(1-1/e)\approx 0.632$ of OPT. The worst case is tight — Feige's theorem shows no poly-time algorithm beats $(1-1/e)$ for the coverage core unless $\mathrm{P}=\mathrm{NP}$, so upper and lower bounds meet for this non-interacting model. The cost paid is $O(|\mathcal I|\cdot m) = O(3\times 4)=12$ "what-if" optimizer calls.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

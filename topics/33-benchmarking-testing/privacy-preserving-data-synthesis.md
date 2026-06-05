@@ -42,13 +42,19 @@ Active directions: (1) workload-conditioned synthesis that takes the *query benc
 - Auditing synthetic benchmarks against tracing/membership-inference attacks as a standard release gate.
 
 ## 9. Key References
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003.
-- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based estimation and inference for differential privacy (Private-PGM).* ICML, 2019.
-- **[SOTA]** McKenna, Miklau, Sheldon, et al. *AIM: An Adaptive and Iterative Mechanism for Differentially Private Synthetic Data.* PVLDB, 2022.
-- **[SOTA]** Cai, Lei, Xiao, et al. *PrivLava: Synthesizing Relational Data under Differential Privacy.* SIGMOD, 2023.
-- **[Foundational]** Zhang, Cormode, Procopiuc, Srivastava, Xiao. *PrivBayes: Private Data Release via Bayesian Networks.* SIGMOD 2014 / TODS 2017.
-- **[Survey]** Bun, Ullman, Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014.
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
+- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based estimation and inference for differential privacy (Private-PGM).* ICML, 2019. — [arXiv](https://arxiv.org/abs/1901.09136)
+- **[SOTA]** McKenna, Miklau, Sheldon, et al. *AIM: An Adaptive and Iterative Mechanism for Differentially Private Synthetic Data.* PVLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551817)
+- **[SOTA]** Cai, Lei, Xiao, et al. *PrivLava: Synthesizing Relational Data under Differential Privacy.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589287)
+- **[Foundational]** Zhang, Cormode, Procopiuc, Srivastava, Xiao. *PrivBayes: Private Data Release via Bayesian Networks.* SIGMOD 2014 / TODS 2017. — [DOI](https://doi.org/10.1145/2588555.2588573)
+- **[Survey]** Bun, Ullman, Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014. — [DOI](https://doi.org/10.1145/2591796.2591877)
+
+## 10. Worked Example
+
+Source table `Patients(zip, disease)` with $n=4$ tuples; we release the 1-way marginal over `disease` $\in\{\text{flu},\text{cancer}\}$ under $\varepsilon$-DP. True counts: $f = (\text{flu}{=}3,\ \text{cancer}{=}1)$. Adding one tuple changes one count by 1, so global sensitivity $\Delta f = 1$. The **Laplace mechanism** adds $\mathrm{Lap}(\Delta f/\varepsilon) = \mathrm{Lap}(1/\varepsilon)$ to each count. With $\varepsilon = 1$, the noise scale $b = 1$ and standard deviation is $\sqrt 2 b \approx 1.41$.
+
+One draw might give noisy $\tilde f = (3 + 0.4,\ 1 - 0.9) = (3.4,\ 0.1)$. Post-processing clips/rounds and normalizes to a distribution, then samples $\tilde D$. Note the *relative* error on the heavy hitter (flu, $\approx 13\%$) is small, but on the rare cell (cancer) the $\pm 1.4$ noise can flip it to $0$ or $2$ — exactly the **tail/heavy-hitter fidelity** problem in section 6. For a join correlation needing the 2-way marginal over $(\text{zip},\text{disease})$ with, say, $100$ cells, each gets independent $\mathrm{Lap}(1/\varepsilon)$ noise, so per-cell error stays $O(1/\varepsilon)$ but the *count* of noisy cells grows — illustrating why high-order joint fidelity degrades.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

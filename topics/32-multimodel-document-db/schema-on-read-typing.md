@@ -39,12 +39,27 @@ Active strands: typed JSON Schema validation and inference (Pezoa/Reutter/Suciu/
 A sound gradual type system for a full document query language with the gradual guarantee; precise treatment of 3-valued `NULL`/missing; principal-type inference from data samples with statistical confidence; complexity-tractable checking via automata + abstraction; integration with schema-evolution so types track multiple coexisting versions.
 
 ## 9. Key References
-- **[Foundational]** Siek, Taha. *Gradual Typing for Functional Languages.* Scheme and Functional Programming Workshop, 2006.
-- **[Foundational]** Hosoya, Pierce. *XDuce: A Statically Typed XML Processing Language.* ACM TOIT, 2003.
-- **[Foundational]** Frisch, Castagna, Benzaken. *Semantic Subtyping (CDuce).* JACM, 2008.
-- **[SOTA]** Baazizi, Colazzo, Ghelli, Sartiani. *Counting Types for Massive JSON Datasets.* DBPL, 2017.
-- **[SOTA]** Pezoa, Reutter, Suarez, Ugarte, Vrgoč. *Foundations of JSON Schema.* WWW, 2016.
-- **[Survey]** Siek, Vitousek, Cimini, Boyland. *Refined Criteria for Gradual Typing (the Gradual Guarantee).* SNAPL, 2015.
+- **[Foundational]** Siek, Taha. *Gradual Typing for Functional Languages.* Scheme and Functional Programming Workshop, 2006. — [PDF](http://scheme2006.cs.uchicago.edu/13-siek.pdf)
+- **[Foundational]** Hosoya, Pierce. *XDuce: A Statically Typed XML Processing Language.* ACM TOIT, 2003. — [DOI](https://doi.org/10.1145/767193.767195)
+- **[Foundational]** Frisch, Castagna, Benzaken. *Semantic Subtyping (CDuce).* JACM, 2008. — [DOI](https://doi.org/10.1145/1391289.1391293)
+- **[SOTA]** Baazizi, Colazzo, Ghelli, Sartiani. *Counting Types for Massive JSON Datasets.* DBPL, 2017. — [DOI](https://doi.org/10.1145/3122831.3122837)
+- **[SOTA]** Pezoa, Reutter, Suarez, Ugarte, Vrgoč. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029) · [DBLP](https://dblp.org/rec/conf/www/PezoaRSUV16.html)
+- **[Survey]** Siek, Vitousek, Cimini, Boyland. *Refined Criteria for Gradual Typing (the Gradual Guarantee).* SNAPL, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.SNAPL.2015.274)
+
+## 10. Worked Example
+
+Consider a collection sampled from two documents:
+
+```
+{ "user": "ann", "age": 30 }
+{ "user": "bob", "age": "31" }   // age stored as string!
+```
+
+Inference produces the structural type $\{\,\texttt{user}:\texttt{String},\ \texttt{age}:(\texttt{Int}\mid\texttt{String})\,\}$ — `age` is a *union* because the sample is heterogeneous. Now type-check the query `SELECT age + 1`.
+
+- The `+` operator demands `Int`. Against the inferred type, the operand has type $\texttt{Int}\mid\texttt{String}$. Subtyping requires $(\texttt{Int}\mid\texttt{String})\le\texttt{Int}$, which fails (the `String` arm is not covered) — so a purely static check **rejects** the query, correctly flagging `"31" + 1`.
+
+Under *gradual* typing, suppose `age` were instead annotated `dynamic` (`?`). Consistency gives $? \sim \texttt{Int}$, so the check **passes statically** but inserts a run-time cast $\langle\texttt{Int}\rangle$ at the `+` site. On `ann` the cast succeeds; on `bob` it raises a cast error — failing *earlier and with blame*, exactly as the gradual guarantee promises, rather than silently coercing. This shows the union (sound rejection) vs. dynamic (deferred, blamed check) trade-off at the boundary.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

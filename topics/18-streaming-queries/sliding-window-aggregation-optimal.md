@@ -51,11 +51,23 @@ Active work targets (i) GPU/SIMD-vectorized SWAG and parallel de-amortization, (
 
 ## 9. Key References
 
-- **[SOTA]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017.
-- **[Foundational]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider, Kun-Lung Wu. *General Incremental Sliding-Window Aggregation (FlatFAT / Reactive Aggregator).* PVLDB, 2015.
-- **[SOTA]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider. *Optimal and General Out-of-Order Sliding-Window Aggregation (FiBA).* PVLDB, 2019.
-- **[Foundational]** Noga Alon, Baruch Schieber. *Optimal Preprocessing for Answering On-Line Product Queries.* Tech. Report / TAU, 1987.
-- **[Survey]** Martin Hirzel et al. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014.
+- **[SOTA]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017. — [DOI](https://doi.org/10.1145/3093742.3093925)
+- **[Foundational]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider, Kun-Lung Wu. *General Incremental Sliding-Window Aggregation (FlatFAT / Reactive Aggregator).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** Kanat Tangwongsan, Martin Hirzel, Scott Schneider. *Optimal and General Out-of-Order Sliding-Window Aggregation (FiBA).* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3339490.3339499)
+- **[Foundational]** Noga Alon, Baruch Schieber. *Optimal Preprocessing for Answering On-Line Product Queries.* Tech. Report / TAU, 1987. — [arXiv](https://arxiv.org/abs/2406.06321)
+- **[Survey]** Martin Hirzel et al. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2528412)
+
+## 10. Worked Example
+
+Take $\oplus=\max$ (non-invertible: no "un-max" on evict) and window size $n=3$. The **two-stacks** aggregator keeps a `front` stack of suffix-maxes and a `back` stack of prefix-maxes; `query` $=\max(\text{front.top},\text{back.top})$.
+
+Stream $7,3,9$ then evict-oldest, insert $5$. Window goes $[7,3,9]\to[3,9,5]$.
+
+State after the three inserts (back stack holds running prefix-max as items arrive): $\text{back}=[7,\;\max(7,3){=}7,\;\max(7,9){=}9]$, so $\text{back.top}=9$; `front` empty. `query` $=9$. Correct: $\max(7,3,9)=9$.
+
+Now **evict** the oldest ($7$). With `front` empty we flip `back` into `front`, recomputing suffix-maxes right-to-left over $[7,3,9]$: $\text{front}=[\,\max(7,3,9){=}9,\;\max(3,9){=}9,\;9\,]$. Pop the oldest (top) element $\Rightarrow \text{front}=[9,9]$ for window $[3,9]$. **Insert** $5$: push onto `back`, $\text{back}=[5]$. `query` $=\max(\text{front.top}{=}9,\;\text{back.top}{=}5)=9=\max(3,9,5)$. ✓
+
+Each element is pushed once and flipped once, so over the run the work is $O(1)$ **amortized** per operation — the flip's $O(n)$ cost is what DABA de-amortizes to $O(1)$ worst-case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

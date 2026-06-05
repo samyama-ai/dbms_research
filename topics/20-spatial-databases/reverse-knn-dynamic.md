@@ -46,12 +46,28 @@ Active directions: graph-index (HNSW-style) approximate RkNN with empirical reca
 - RkNN with non-Euclidean / learned distances and on trajectories.
 
 ## 9. Key References
-- **[Foundational]** Korn, Muthukrishnan. *Influence Sets Based on Reverse Nearest Neighbor Queries.* SIGMOD, 2000.
-- **[Foundational]** Stanoi, Agrawal, El Abbadi. *Reverse Nearest Neighbor Queries for Dynamic Databases.* DMKD Workshop, 2000.
-- **[SOTA]** Tao, Papadias, Lian. *Reverse kNN Search in Arbitrary Dimensionality (TPL).* VLDB, 2004.
-- **[SOTA]** Cheema, Lin, Zhang, Wang, Zhang. *Influence Zone: Efficiently Processing Reverse k Nearest Neighbors Queries.* ICDE, 2011.
-- **[Foundational]** Andoni, Indyk, Patrascu. *On the Optimality of the Dimensionality Reduction Method / Lower Bounds for Nearest Neighbor.* FOCS, 2006.
-- **[Survey]** Yang, Cheema, Lin, Zhang. *Reverse k Nearest Neighbors Queries and Spatial Reverse Top-k Queries.* VLDB Journal, 2017.
+- **[Foundational]** Korn, Muthukrishnan. *Influence Sets Based on Reverse Nearest Neighbor Queries.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/335191.335415)
+- **[Foundational]** Stanoi, Agrawal, El Abbadi. *Reverse Nearest Neighbor Queries for Dynamic Databases.* DMKD Workshop, 2000. — [DBLP search](https://dblp.org/search?q=Reverse+Nearest+Neighbor+Queries+for+Dynamic+Databases)
+- **[SOTA]** Tao, Papadias, Lian. *Reverse kNN Search in Arbitrary Dimensionality (TPL).* VLDB, 2004. — [PDF](https://www.vldb.org/conf/2004/RS20P1.PDF)
+- **[SOTA]** Cheema, Lin, Zhang, Wang, Zhang. *Influence Zone: Efficiently Processing Reverse k Nearest Neighbors Queries.* ICDE, 2011. — [DOI](https://doi.org/10.1109/ICDE.2011.5767873)
+- **[Foundational]** Andoni, Indyk, Patrascu. *On the Optimality of the Dimensionality Reduction Method / Lower Bounds for Nearest Neighbor.* FOCS, 2006. — [DOI](https://doi.org/10.1109/FOCS.2006.56)
+- **[Survey]** Yang, Cheema, Lin, Zhang. *Reverse k Nearest Neighbors Queries and Spatial Reverse Top-k Queries.* VLDB Journal, 2017. — [DOI](https://doi.org/10.1007/s00778-016-0445-2)
+
+## 10. Worked Example
+
+Take $k=1$ on the line ($\mathbb{R}^1$) with $O=\{a,b,c\}$ at $a=0,\,b=3,\,c=10$, and query $q=4$.
+
+Compute each object's nearest neighbor:
+- $a=0$: nearest is $b$ (dist $3$) vs $q$ (dist $4$). NN $=b$, $\mathrm{NNdist}(a)=3$.
+- $b=3$: nearest is $q$ (dist $1$) vs $a$ (dist $3$). NN $=q$, $\mathrm{NNdist}(b)=1$.
+- $c=10$: nearest is $q$ (dist $6$) vs $b$ (dist $7$). NN $=q$, $\mathrm{NNdist}(c)=6$.
+
+Precomputation test $o\in\mathrm{R1NN}(q)\iff\lVert o-q\rVert\le\mathrm{NNdist}(o)$:
+- $a$: $|0-4|=4 > 3$ → no.
+- $b$: $|3-4|=1 \le 1$ → **yes**.
+- $c$: $|10-4|=6 \le 6$ → **yes** (tie counts).
+
+So $\mathrm{R1NN}(q)=\{b,c\}$ — note $a$, the object physically closest to one of them, is *not* in the answer, illustrating the asymmetry. Now a **dynamic update**: insert $d=5$. Then $c$'s nearest becomes $d$ (dist $5<6$), so $\mathrm{NNdist}(c)$ shrinks to $5$ and $|10-4|=6>5$ — $c$ drops out, leaving $\mathrm{R1NN}(q)=\{b\}$. A single insertion forced repair of a non-adjacent object's stored $\mathrm{NNdist}$, which is exactly the maintenance cost that makes dynamic RkNN hard.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

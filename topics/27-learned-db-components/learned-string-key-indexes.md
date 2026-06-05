@@ -39,11 +39,17 @@ Wide open. Unlike numeric learned indexes (where PGM gives clean worst-case resu
 - Updatable learned string indexes and range-query support with bounds.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[Foundational]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree (ART).* ICDE, 2013.
-- **[SOTA]** R. Binna, et al. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018.
-- **[SOTA]** B. Spector, A. Kipf, K. Vaidya, et al. *Bounding the Last Mile: Efficient Learned String Indexing (RadixStringSpline).* AIDB @ VLDB, 2021.
-- **[SOTA]** Y. Wang, et al. *SIndex: A Scalable Learned Index for String Keys.* APSys, 2020.
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[Foundational]** V. Leis, A. Kemper, T. Neumann. *The Adaptive Radix Tree (ART).* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544812)
+- **[SOTA]** R. Binna, et al. *HOT: A Height Optimized Trie Index for Main-Memory Database Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196896)
+- **[SOTA]** B. Spector, A. Kipf, K. Vaidya, et al. *Bounding the Last Mile: Efficient Learned String Indexing (RadixStringSpline).* AIDB @ VLDB, 2021. — [arXiv](https://arxiv.org/abs/2111.14905)
+- **[SOTA]** Y. Wang, et al. *SIndex: A Scalable Learned Index for String Keys.* APSys, 2020. — [DOI](https://doi.org/10.1145/3409963.3410496)
+
+## 10. Worked Example
+
+**Why the numeric-CDF model breaks on strings.** Take $n=5$ keys: `apple, apply, apricot, banana, bandana`. Map the first $\ell=2$ bytes to a radix integer ($\texttt{ap}\to 24945$, $\texttt{ba}\to 25185$). Four of five keys collapse to the same radix value 24945 — the CDF is a *staircase*: a monotone linear model predicts essentially the same position for `apple`, `apply`, `apricot`, giving last-mile error $\varepsilon=\Theta(n)$ within the bucket. Extending to $\ell=7$ bytes separates them but multiplies the model's input domain and dilutes resolution.
+
+**The comparison floor.** Even with a perfect position predictor, confirming a probe for `apply` against `apple` requires comparing up to the **distinguishing prefix** `appl` + 1 char $=$ plen $=5$ characters — an $O(\text{plen})$ cost no model removes. A trie/ART reads exactly those $\approx 5$ bytes along one root-to-leaf path: $O(\text{plen})$, the information-theoretic optimum. So a learned string index inherits both floors — $\Omega(\text{plen})$ characters read and $\Omega(\log n)$ comparisons — and can only hope to win on *constants* (fewer cache misses), e.g. by using a radix-spline to jump near the right leaf, then doing the unavoidable 5-character compare. Here RSS would index just the 4-byte distinguishing prefixes, not the full keys.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,24 @@ The problem is **open** because the model and the measurement both wobble. On ho
 - Standard energy benchmarks (beyond TPC-Energy) for heterogeneous accelerator query processing.
 
 ## 9. Key References
-- **[Foundational]** D. Tsirogiannis, S. Harizopoulos, M. Shah. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010.
-- **[Foundational]** W. Lang, J. Patel. *Towards Eco-friendly Database Management Systems.* CIDR, 2009; and *Energy Management for MapReduce Clusters*, VLDB 2010.
-- **[SOTA]** R. Mueller, J. Teubner, G. Alonso. *Data Processing on FPGAs.* VLDB, 2009. (Accelerator energy/throughput trade-offs.)
-- **[Foundational]** R. Landauer. *Irreversibility and Heat Generation in the Computing Process.* IBM J. R&D, 1961. (Thermodynamic energy floor.)
-- **[Foundational]** P. Selinger, et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979. (Cost-based plan enumeration substrate.)
-- **[Survey]** S. Harizopoulos, M. Shah, J. Meza, P. Ranganathan. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009.
+- **[Foundational]** D. Tsirogiannis, S. Harizopoulos, M. Shah. *Analyzing the Energy Efficiency of a Database Server.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807194)
+- **[Foundational]** W. Lang, J. Patel. *Towards Eco-friendly Database Management Systems.* CIDR, 2009; and *Energy Management for MapReduce Clusters*, VLDB 2010. — [arXiv](https://arxiv.org/abs/0909.1767)
+- **[SOTA]** R. Mueller, J. Teubner, G. Alonso. *Data Processing on FPGAs.* VLDB, 2009. (Accelerator energy/throughput trade-offs.) — [DOI](https://doi.org/10.14778/1687627.1687730)
+- **[Foundational]** R. Landauer. *Irreversibility and Heat Generation in the Computing Process.* IBM J. R&D, 1961. (Thermodynamic energy floor.) — [DOI](https://doi.org/10.1147/rd.53.0183)
+- **[Foundational]** P. Selinger, et al. *Access Path Selection in a Relational DBMS.* SIGMOD, 1979. (Cost-based plan enumeration substrate.) — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Survey]** S. Harizopoulos, M. Shah, J. Meza, P. Ranganathan. *Energy Efficiency: The New Holy Grail of Data Management Systems Research.* CIDR, 2009. — [arXiv](https://arxiv.org/abs/0909.1784)
+
+## 10. Worked Example
+
+Run one scan-heavy query on two device choices. A CPU core finishes in $T_{\mathrm{cpu}} = 10$ s drawing dynamic power $P_{\mathrm{cpu}} = 60$ W plus static leakage $P_{\mathrm{leak}} = 20$ W. A GPU finishes the same work in $T_{\mathrm{gpu}} = 2$ s at $P_{\mathrm{gpu}} = 150$ W dynamic, same $20$ W leakage on the host.
+
+Energy $E = (P_{\mathrm{dyn}} + P_{\mathrm{leak}})\cdot T$:
+- CPU: $(60+20)\times 10 = 800$ J.
+- GPU: $(150+20)\times 2 = 340$ J.
+
+The GPU is both faster *and* lower-energy here — **race-to-idle** wins, consistent with the 2010 result.
+
+Now add **DVFS** on the CPU: halving frequency makes $T_{\mathrm{cpu}} = 20$ s and (since dynamic $E \propto f$) dynamic energy $\approx 60\times10 \times \tfrac{1}{2}\cdot 2 = 600$... but recompute carefully: dynamic energy $= P_{\mathrm{dyn}}\cdot T$, with $P_{\mathrm{dyn}}\propto f^2$ at $f/2$ giving $15$ W over $20$ s $= 300$ J, plus leakage $20\times20 = 400$ J $\Rightarrow 700$ J. Leakage now dominates and total energy *rose* vs full-speed CPU's $800$? No: $700 < 800$, so slowing helps slightly — but it is still worse than the GPU's $340$ J. The lesson: on heterogeneous hardware, offload beats DVFS tuning, and the leakage term $P_{\mathrm{leak}}\cdot T$ caps how far slowing down can pay.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

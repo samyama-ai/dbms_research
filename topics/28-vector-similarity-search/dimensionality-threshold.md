@@ -41,12 +41,22 @@ Directions: local intrinsic dimensionality estimators and their link to ANN diff
 - Instance-optimal ANN with guarantees tracking measured LID.
 
 ## 9. Key References
-- **[Foundational]** K. Beyer, J. Goldstein, R. Ramakrishnan, U. Shaft. *When Is "Nearest Neighbor" Meaningful?* ICDT, 1999.
-- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004.
-- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006.
-- **[SOTA]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
-- **[Foundational]** A. Andoni, P. Indyk, M. Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006.
-- **[Survey]** M. E. Houle. *Local Intrinsic Dimensionality.* SISAP, 2017.
+- **[Foundational]** K. Beyer, J. Goldstein, R. Ramakrishnan, U. Shaft. *When Is "Nearest Neighbor" Meaningful?* ICDT, 1999. — [DBLP](https://dblp.org/rec/conf/icdt/BeyerGRS99.html)
+- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004. — [DOI](https://doi.org/10.5555/982792.982913)
+- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857) · [PDF](https://hunch.net/~jl/projects/cover_tree/cover_tree.html)
+- **[SOTA]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904) · [DOI](https://doi.org/10.1145/3188745.3188916)
+- **[Foundational]** A. Andoni, P. Indyk, M. Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006. — [PDF](https://www.mit.edu/~andoni/papers/eps2n.pdf) · [DBLP search](https://dblp.org/search?q=On+the+Optimality+of+the+Dimensionality+Reduction+Method)
+- **[Survey]** M. E. Houle. *Local Intrinsic Dimensionality.* SISAP, 2017. — [DOI](https://doi.org/10.1007/978-3-319-68474-1_5)
+
+## 10. Worked Example
+
+Distance concentration, numerically. Draw $n$ points i.i.d. uniform on the unit cube $[0,1]^d$ and a query $q$ at the center. For independent coordinates, $\mathbb{E}\|q-x\|^2 = d\cdot\mathbb{E}[(U-\tfrac12)^2]=d/12$ and $\mathrm{Var}\|q-x\|^2 = d\cdot c$ for a constant $c\approx 0.0056$. So the *relative spread* of squared distances scales as
+
+$$\frac{\mathrm{sd}(\|q-x\|^2)}{\mathbb{E}\|q-x\|^2}=\frac{\sqrt{d\,c}}{d/12}=\frac{12\sqrt c}{\sqrt d}\to 0.$$
+
+At $d=2$ this ratio is $\approx 0.64$ (nearest and farthest clearly separated). At $d=100$ it is $\approx 0.09$; at $d=10{,}000$, $\approx 0.009$. The Beyer et al. ratio $(\max-\min)/\min$ collapses with it, matching their empirical "10–15 dimensions" onset.
+
+Threshold check: with $n$ points, JL says the effective hard dimension is $\Theta(\log n)$. For $n=10^6$, $\log_2 n \approx 20$ — so an embedding with *intrinsic* dimension $\lesssim 20$ stays in the cover-tree-sublinear regime ($\lambda=o(\log n)$), while ambient $d=768$ does not by itself force the hard regime, explaining why HNSW stays fast on real embeddings.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

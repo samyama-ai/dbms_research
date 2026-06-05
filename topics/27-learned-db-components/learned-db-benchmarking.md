@@ -1,6 +1,7 @@
 # Benchmarks and Reproducibility for Learned DB
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-db-benchmarking` · **Status:** empirically-open
+> **Verification note:** The "Design Space Exploration and a Comparative Evaluation" survey (Ref 6) is authored by Sun, Zhang, Sun, Li, Tang (PVLDB 2022), not Kipf/Kemper; corrected in Section 9.
 
 ## 1. Problem Statement
 
@@ -53,12 +54,22 @@ Directions: out-of-distribution and *workload-drift* benchmarks (redbench-style)
 
 ## 9. Key References
 
-- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* PVLDB 2015.
-- **[SOTA]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* PVLDB 2021.
-- **[SOTA]** Negi, Marcus, Kipf, et al. *Flow-Loss / CEB: Cardinality Estimation Benchmark.* PVLDB 2021.
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[Foundational]** Vapnik, Chervonenkis. *On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities.* 1971.
-- **[Survey]** Kipf, Kemper, et al. *Learned Cardinality Estimation: A Design Space Exploration and a Comparison.* (experiments & analysis).
+- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* PVLDB 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[SOTA]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* PVLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+- **[SOTA]** Negi, Marcus, Kipf, et al. *Flow-Loss / CEB: Cardinality Estimation Benchmark.* PVLDB 2021. — [arXiv](https://arxiv.org/abs/2101.04964)
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[Foundational]** Vapnik, Chervonenkis. *On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities.* 1971. — [DOI](https://doi.org/10.1137/1116025)
+- **[Survey]** Sun, Zhang, Sun, Li, Tang. *Learned Cardinality Estimation: A Design Space Exploration and a Comparative Evaluation.* PVLDB 2022 (experiments & analysis). — [DOI](https://doi.org/10.14778/3485450.3485459)
+
+## 10. Worked Example
+
+Consider reporting a learned estimator $M$ against PostgreSQL on a JOB-style workload. Two evaluation protocols give opposite verdicts.
+
+**In-distribution (the inflated result).** Train on 90 query templates, test on a held-out 10% *of the same templates*. Median q-error: $M=1.8$ vs PostgreSQL $9.0$. End-to-end runtime: $M$ wins by 30%. Headline: "learned beats classical."
+
+**Drift-stressed (the fair result).** Hold out *entire join shapes* never seen in training. Now the q-error distribution develops a heavy tail: median still $2.1$, but the **99th percentile** jumps to $4\times10^4$ while PostgreSQL stays at $\sim200$. One tail mis-estimate picks a nested-loop plan that runs $50\times$ slower, erasing the average win.
+
+**Why the metric matters.** q-error and plan quality are only loosely coupled (Section 2): a median q-error of $2$ looks great, yet a single cell where $\hat c=10$ but $c=4\times10^5$ ($q\text{-error}=4\times10^4$) is enough to flip the optimal plan. And the training cost — say $6$ GPU-hours to collect $10^5$ labeled runtimes — is often excluded entirely. A TCO-honest report must show median *and* tail q-error, in- *and* out-of-distribution latency, plus training cost, against a *tuned* PostgreSQL baseline.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Schema Evolution over Temporal Data
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-schema-evolution` · **Status:** open
+> **Verification note:** The Klettke/Störl/Scherzinger *NoSQL Schema Evolution and Big Data Migration at Scale* paper appeared at IEEE Big Data **2016** (not 2020); the reference year has been corrected.
 
 ## 1. Problem Statement
 A temporal database stores facts stamped with valid time and/or transaction time. Independently, the *schema* itself evolves: attributes are added, dropped, renamed, split, merged, retyped, or have their constraints changed, and each such change is itself stamped in time. The problem is to answer a query posed against one schema version (typically the current one, or a user-chosen "reference" schema) **consistently over data that was written under different, possibly incompatible schema versions**, without materializing every history into a single fixed schema.
@@ -41,12 +42,24 @@ Active directions: (i) schema evolution in lakehouse table formats — Iceberg/D
 - Verified, possibly LLM-assisted, migration synthesis with chase-based equivalence certificates.
 
 ## 9. Key References
-- **[Foundational]** Fagin, R., Kolaitis, P., Miller, R., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2003/2005.
-- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.-C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS/TODS, 2004/2005.
-- **[SOTA]** Curino, C., Moon, H. J., Zaniolo, C. *Graceful Database Schema Evolution: the PRISM Workbench.* VLDB, 2008. (and PRISM++, ICDE 2013)
-- **[Foundational]** Arenas, M., Pérez, J., Riveros, C. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* TODS, 2009.
-- **[Survey]** Roddick, J. F. *A Survey of Schema Versioning Issues for Database Systems.* Information and Software Technology, 1995.
-- **[SOTA]** Störl, U., Klettke, M., Scherzinger, S. *NoSQL Schema Evolution and Big Data Migration at Scale.* IEEE Big Data, 2020.
+- **[Foundational]** Fagin, R., Kolaitis, P., Miller, R., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2003/2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.-C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS/TODS, 2004/2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[SOTA]** Curino, C., Moon, H. J., Zaniolo, C. *Graceful Database Schema Evolution: the PRISM Workbench.* VLDB, 2008. (and PRISM++, ICDE 2013) — [DOI](https://doi.org/10.14778/1453856.1453939)
+- **[Foundational]** Arenas, M., Pérez, J., Riveros, C. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620589)
+- **[Survey]** Roddick, J. F. *A Survey of Schema Versioning Issues for Database Systems.* Information and Software Technology, 1995. — [DOI](https://doi.org/10.1016/0950-5849(95)91494-K)
+- **[SOTA]** Störl, U., Klettke, M., Scherzinger, S. *NoSQL Schema Evolution and Big Data Migration at Scale.* IEEE Big Data, 2016. — [DBLP](https://dblp.org/rec/conf/bigdataconf/KlettkeSSS16.html)
+
+## 10. Worked Example
+
+Schema $S_0$ has `Emp(id, name, salary)`; at transaction-time $\tau_1$ a refactor splits salary into base + bonus, giving $S_1$ = `Emp(id, name, base)`, `Bonus(id, amount)`, with the SMO mapping
+$$m_0:\ \texttt{Emp}_{S_0}(i,n,s)\ \to\ \texttt{Emp}_{S_1}(i,n,b)\wedge \texttt{Bonus}_{S_1}(i,a)\ \text{ where } b+a=s.$$
+
+A row written under $S_0$ is `(7, Maya, 100)`. Chasing through $m_0$ produces $\texttt{Emp}(7,\text{Maya},b)$ and $\texttt{Bonus}(7,a)$ with the constraint $b+a=100$ but **no unique split** — the values $b,a$ are labeled nulls. Now query $Q$ over $S_1$: *"return base salaries."*
+
+- **Certain answers:** $\mathsf{certain}(Q) = \bigcap\{Q(J)\} = \varnothing$ for the base value, since no single number is forced (any $b\in[0,100]$ is possible).
+- Query *"return id of employees that exist"* gives certain answer $\{7\}$ — id survived losslessly.
+
+This illustrates §2/§5: the split SMO is **information-lossy** in the forward direction, so $\mathsf{certain}$ and $\mathsf{possible}$ answers diverge, and reconstructing $s=100$ requires the egd $b+a=s$, which an exact FO inverse cannot supply — only a quasi-inverse (Arenas–Pérez–Riveros).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -57,13 +57,24 @@ If every store guarantees **local serializability** and supports a *probe transa
 
 ## 9. Key References
 
-- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** Breitbart, Garcia-Molina, Silberschatz. *Overview of Multidatabase Transaction Management.* VLDB Journal, 1992.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Bailis, Fekete, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems (Invariant Confluence) / RAMP Transactions.* VLDB, 2014.
-- **[SOTA]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008.
+- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** Breitbart, Garcia-Molina, Silberschatz. *Overview of Multidatabase Transaction Management.* VLDB Journal, 1992. — [DOI](https://doi.org/10.1007/BF01231700)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[SOTA]** Bailis, Fekete, Ghodsi, Hellerstein, Stoica. *Coordination Avoidance in Database Systems (Invariant Confluence) / RAMP Transactions.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2735508.2735509), [arXiv](https://arxiv.org/abs/1402.2237)
+- **[SOTA]** Cahill, Röhm, Fekete. *Serializable Isolation for Snapshot Databases.* SIGMOD, 2008. — [DOI](https://doi.org/10.1145/1376616.1376690)
+
+## 10. Worked Example
+
+Two stores: $S_1$ (serializable, holds account $A$) and $S_2$ (serializable, holds account $B$). Two global transfers run concurrently:
+
+- $T_1$: read $A$ ($S_1$), write $B$ ($S_2$).
+- $T_2$: read $B$ ($S_2$), write $A$ ($S_1$).
+
+Each *local* history is serializable. But $S_1$ may serialize $T_2 \to T_1$ (its $T_2$ write on $A$ precedes $T_1$'s read), while $S_2$ serializes $T_1 \to T_2$. The global conflict graph then has edges $T_2 \to T_1$ (from $S_1$) and $T_1 \to T_2$ (from $S_2$) — a **cycle**, so no serial order is consistent with both. Local serializability did *not* compose (Breitbart et al.).
+
+Ticket fix: each $T_i$ increments a per-store ticket counter as an ordinary transaction. The federation reads ticket values and ensures the ticket order agrees across $S_1,S_2$; if $T_1$ takes ticket $5$ at $S_1$ it must take a *larger* ticket than $T_2$ at $S_2$ too. A disagreement forces an abort, breaking the cycle and yielding global serializability with one extra (ticket) operation per store.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

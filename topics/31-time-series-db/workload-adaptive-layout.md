@@ -1,6 +1,7 @@
 # Workload-adaptive physical layout
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/workload-adaptive-layout` · **Status:** empirically-open
+> **Verification note:** The STOC 2019 "Competitively Chasing Convex Bodies" author list was corrected to Bubeck, Lee, Li, Sellke (arXiv:1811.00887).
 
 ## 1. Problem Statement
 A time-series store partitions data into *chunks* (time ranges) physically encoded as row groups, column segments, or sub-columnar tiles, and placed across a memory/SSD/object-store hierarchy. The **layout** $L$ assigns, per chunk, an encoding, a column-grouping, a sort/cluster order, and a storage tier. The workload is a stream of queries whose mix of **wide scans** (range aggregations, downsampling) versus **selective point/last-value lookups** drifts over time.
@@ -40,12 +41,26 @@ Active directions: learned/RL chunk compaction and tier-eviction policies in IOx
 - Benchmarks capturing realistic scan/last-value drift (TSBS extensions).
 
 ## 9. Key References
-- **[Foundational]** Borodin, Linial, Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007.
-- **[SOTA]** Alagiannis, Idreos, Ailamaki. *H2O: A Hands-free Adaptive Store.* SIGMOD, 2014.
-- **[SOTA]** Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** Bubeck, Cohen, Lee, Lee, Mądry. *Competitively Chasing Convex Bodies.* STOC, 2019.
-- **[Survey]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978.
+- **[Foundational]** Borodin, Linial, Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[Foundational]** Idreos, Kersten, Manegold. *Database Cracking.* CIDR, 2007. — [DBLP](https://dblp.uni-trier.de/pid/i/StratosIdreos.html)
+- **[SOTA]** Alagiannis, Idreos, Ailamaki. *H2O: A Hands-free Adaptive Store.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610502)
+- **[SOTA]** Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.uni-trier.de/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** Bubeck, Lee, Li, Sellke. *Competitively Chasing Convex Bodies.* STOC, 2019. — [arXiv](https://arxiv.org/abs/1811.00887)
+- **[Survey]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+
+## 10. Worked Example
+
+Suppose a chunk can hold one of $N=2$ layouts: $L_A$ = sorted-by-time + heavy compression (great for **wide scans**, slow for point lookups) and $L_B$ = sorted-by-series-id + light compression (great for **last-value lookups**, costly to scan). Per-query costs:
+
+$$c(\text{scan}, L_A)=1,\quad c(\text{scan}, L_B)=5,\quad c(\text{lookup}, L_A)=4,\quad c(\text{lookup}, L_B)=1.$$
+
+Reorganizing between layouts costs $w(L_A,L_B)=w(L_B,L_A)=3$ (rewrite bytes). The query stream drifts: $\langle\text{scan},\text{scan},\text{lookup},\text{lookup},\text{lookup}\rangle$.
+
+**Stay in $L_A$ the whole time:** $1+1+4+4+4=14$.
+**Stay in $L_B$:** $5+5+1+1+1=13$.
+**Switch $L_A\!\to\!L_B$ after query 2:** $\underbrace{1+1}_{L_A}+\underbrace{3}_{\text{reorg}}+\underbrace{1+1+1}_{L_B}=8$.
+
+The switching policy wins (8 vs 13–14) by paying a one-time reorg of 3 to match the drift. This is exactly the **MTS** objective $\sum_t c(q_t,L_t)+\sum_t w(L_{t-1},L_t)$. An online policy that does not see the future must decide *when* to pay the 3; for $N$ states the deterministic competitive ratio is $2N-1$ (here $=3$), illustrating why large layout spaces $\mathcal{L}$ make worst-case bounds loose.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

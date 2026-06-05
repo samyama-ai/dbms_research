@@ -44,13 +44,23 @@ Active threads: (1) **anytime-valid / e-value inference** for OLA, importing Ram
 - Tight scheduling theory for many concurrent OLA queries sharing a scan.
 
 ## 9. Key References
-- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[Foundational]** P. J. Haas, J. M. Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999.
-- **[SOTA]** S. R. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-Uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021.
-- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[Foundational]** J. Neyman. *On the Two Different Aspects of the Representative Method (stratified/optimal allocation).* JRSS, 1934.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253262.253291)
+- **[Foundational]** P. J. Haas, J. M. Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304208)
+- **[SOTA]** S. R. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-Uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021. — [DOI](https://doi.org/10.1214/20-AOS1991), [arXiv](https://arxiv.org/abs/1810.08240)
+- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Foundational]** J. Neyman. *On the Two Different Aspects of the Representative Method (stratified/optimal allocation).* JRSS, 1934. — [DOI](https://doi.org/10.1111/j.2397-2335.1934.tb04184.x)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Consider `SELECT AVG(amount) FROM payments` over $N = 1{,}000{,}000$ rows with true mean $\mu = 50$ and standard deviation $\sigma = 40$. We want a 95% CI of half-width $\varepsilon = 1$ (so $z_{0.975} = 1.96$).
+
+Ignoring the finite-population correction, the required sample size is
+$$n \approx \Big(\frac{z\,\sigma}{\varepsilon}\Big)^2 = \Big(\frac{1.96 \times 40}{1}\Big)^2 = (78.4)^2 \approx 6{,}147.$$
+After scanning only $\sim 0.6\%$ of the table the interval already reads $[49, 51]$ at 95% confidence.
+
+Watch the $1/\sqrt n$ law: at $n = 1{,}500$ the half-width is $1.96 \cdot 40/\sqrt{1500} \approx 2.02$; quadrupling to $n = 6{,}000$ halves it to $\approx 1.01$. To reach $\varepsilon = 0.5$ we must again quadruple $n$ to $\approx 24{,}600$ — the exponent never improves, confirming Section 5's $\Omega(\sigma^2/\varepsilon^2)$ floor. Stratifying by, say, region (cutting effective $\sigma$ to $30$) lowers the constant, needing only $\approx 3{,}458$ rows, but the $1/\sqrt n$ shape is unchanged.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

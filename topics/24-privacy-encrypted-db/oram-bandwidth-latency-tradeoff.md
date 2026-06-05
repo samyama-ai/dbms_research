@@ -34,12 +34,26 @@ Active: **practical optimal ORAM** narrowing OptORAMa's constants toward Path/Ri
 - Workload-aware ORAM exploiting locality/range structure of DB access without leaking it.
 
 ## 9. Key References
-- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[SOTA]** Stefanov, van Dijk, Shi, Fletcher, Ren, Yu, Devadas. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013.
-- **[SOTA]** Asharov, Komargodski, Lin, Nayak, Peserico, Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020.
-- **[Lower bound]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Doerner, shelat. *Scaling ORAM for Secure Computation (Floram).* CCS, 2017.
-- **[SOTA]** Ren, Fletcher, Kwon, Stefanov, Shi, van Dijk, Devadas. *Constants Count: Practical Improvements to Oblivious RAM (Ring ORAM).* USENIX Security, 2015.
+- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[SOTA]** Stefanov, van Dijk, Shi, Fletcher, Ren, Yu, Devadas. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013. — [DOI](https://doi.org/10.1145/2508859.2516660) — [ePrint](https://eprint.iacr.org/2013/280)
+- **[SOTA]** Asharov, Komargodski, Lin, Nayak, Peserico, Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020. — [DOI](https://doi.org/10.1007/978-3-030-45724-2_14) — [ePrint](https://eprint.iacr.org/2018/892)
+- **[Lower bound]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) — [ePrint](https://eprint.iacr.org/2018/423)
+- **[SOTA]** Doerner, shelat. *Scaling ORAM for Secure Computation (Floram).* CCS, 2017. — [DOI](https://doi.org/10.1145/3133956.3133967) — [ePrint](https://eprint.iacr.org/2017/827)
+- **[SOTA]** Ren, Fletcher, Kwon, Stefanov, Shi, van Dijk, Devadas. *Constants Count: Practical Improvements to Oblivious RAM (Ring ORAM).* USENIX Security, 2015. — [USENIX](https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/ren-ling)
+
+## 10. Worked Example
+
+A Path ORAM stores $N = 8$ logical blocks in a binary tree of height $L = \log_2 N = 3$, so 4 leaves, each root-to-leaf path holding $L+1 = 4$ buckets. Suppose the position map says logical block 5 currently maps to **leaf 2** (path $\text{root}\to b_1\to b_2\to \text{leaf}_2$).
+
+**One access (read block 5):**
+1. Look up position: leaf 2. Read **all 4 buckets** along that path into the client stash — this is the $O(\log N)$ bandwidth: 4 buckets moved, not 1.
+2. The path traversal is $L+1$ dependent fetches, i.e. $O(\log N) = 4$ network round-trips — the latency cost.
+3. Remap block 5 to a *fresh* uniformly random leaf, say leaf 0, and update the position map.
+4. Write back: greedily push stashed blocks as deep as their assigned leaves allow, re-encrypting every bucket so the server sees only fresh ciphertexts.
+
+Because the new leaf is independent of the old, the server's view is a uniform random path each time — access pattern leaks nothing.
+
+**Bandwidth tally:** $\approx 2(L+1)Z$ blocks per access for bucket size $Z$; with the practical constant $\sim 8\log N$. For $N=2^{30}$ that is $\sim 240$ blocks per logical access — illustrating exactly the constant-factor gap (Section 6) between Path ORAM and OptORAMa's asymptotically optimal $O(\log N)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

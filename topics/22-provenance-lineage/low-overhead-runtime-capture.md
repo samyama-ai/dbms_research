@@ -32,12 +32,22 @@ The theory says worst-case overhead is unbounded (join blow-up); systems show ty
 A tail-latency SLA for provenance capture and an admission-control mechanism that degrades to sampling under blow-up. Standard overhead benchmarks (row vs cell, OLTP vs OLAP vs streaming). Co-design of physical operators with capture so annotation flows for free. Cell-level capture through expression evaluation (UDF-aware).
 
 ## 9. Key References
-- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018.
-- **[SOTA]** Matteo Interlandi, et al. *Titian: Data Provenance Support in Spark.* PVLDB, 2015.
-- **[Foundational]** Boris Glavic, Gustavo Alonso. *Perm: Processing Provenance and Data Through Query Rewriting.* ICDE, 2009.
-- **[Foundational]** Yingwei Cui, Jennifer Widom, Janet Wiener. *Tracing the Lineage of View Data in a Warehousing Environment.* ACM TODS, 2000.
-- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound).
-- **[Survey]** Boris Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021.
+- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3199517.3199522) · [arXiv](https://arxiv.org/abs/1801.07237)
+- **[SOTA]** Matteo Interlandi, et al. *Titian: Data Provenance Support in Spark.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850595)
+- **[Foundational]** Boris Glavic, Gustavo Alonso. *Perm: Processing Provenance and Data Through Query Rewriting.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.15)
+- **[Foundational]** Yingwei Cui, Jennifer Widom, Janet Wiener. *Tracing the Lineage of View Data in a Warehousing Environment.* ACM TODS, 2000. — [DOI](https://doi.org/10.1145/357775.357777)
+- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Survey]** Boris Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
+
+## 10. Worked Example
+
+Run a self-join $Q = R(x,y) \bowtie_y R(y,z)$ where $R$ is a "star": one hub node $h$ with $R = \{(h, v_i)\} \cup \{(v_i, h)\}$ for $i=1..k$, so $|R| = 2k$.
+
+*Row-level capture, cheap case.* Most engine pipelines move tuples linearly; the semiring functor adds $O(1)$ pointer-tagging per tuple per operator. For an SPJ plan over $N=|R|$ tuples the capture work is $O(\text{plan work})$ — a small constant-factor slowdown, matching Smoke's observed $<2\times$.
+
+*The blow-up that breaks predictability.* But this query's output is large: every $(h,v_i)$ joins with every $(v_j,h)$ through the hub, giving $\Theta(k^2)$ output rows, each needing a lineage record $\{(h,v_i),(v_j,h)\}$. So stored lineage is $\Theta(k^2) = \Theta(N^2)$. The AGM/fractional-edge-cover bound here is $\rho^* = 2$, and indeed $|D|^{\rho^*} = (2k)^2 = \Theta(k^2)$ — the worst-case space floor of section 5 is realized.
+
+*Takeaway.* With $k = 10^4$ the input is $2\!\times\!10^4$ rows but lineage is $\sim\!10^8$ records: a $5000\times$ space inflation on a single operator. A row-count-only cost model would not have predicted it; this is exactly why always-on, bounded-tail capture needs blow-up-aware admission control and a fallback to sampled lineage.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

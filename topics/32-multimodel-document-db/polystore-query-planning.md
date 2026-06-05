@@ -44,12 +44,26 @@ This differs from multi-model optimization *within one engine* (see multimodel-q
 - Decomposition with provable bounded-suboptimality and adaptive data-movement.
 
 ## 9. Key References
-- **[Foundational]** A. Levy, A. Mendelzon, Y. Sagiv, D. Srivastava. *Answering Queries Using Views.* PODS, 1995.
-- **[Foundational]** M. Stonebraker et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015.
-- **[SOTA]** R. Pottinger, A. Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB Journal, 2001.
-- **[SOTA]** R. Bonaque, B. Cautis, F. Goasdoué, I. Manolescu (Estocada/Tatooine). *Mixed-instance querying / view-based polystore rewriting.* VLDB / EDBT, 2016.
-- **[Survey]** A. Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001.
-- **[Foundational]** L. Mackert, G. Lohman. *R* Optimizer Validation and Performance Evaluation for Distributed Queries.* VLDB, 1986.
+- **[Foundational]** A. Levy, A. Mendelzon, Y. Sagiv, D. Srivastava. *Answering Queries Using Views.* PODS, 1995. — [DOI](https://doi.org/10.1145/212433.220198)
+- **[Foundational]** M. Stonebraker et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814713)
+- **[SOTA]** R. Pottinger, A. Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100048)
+- **[SOTA]** R. Bonaque, B. Cautis, F. Goasdoué, I. Manolescu (Estocada/Tatooine). *Mixed-instance querying / view-based polystore rewriting.* VLDB / EDBT, 2016. — [HAL](https://inria.hal.science/hal-01321201v2)
+- **[Survey]** A. Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[Foundational]** L. Mackert, G. Lohman. *R* Optimizer Validation and Performance Evaluation for Distributed Queries.* VLDB, 1986. — [DBLP](https://dblp.org/rec/conf/vldb/MackertL86.html)
+
+## 10. Worked Example
+
+Query: "for each `customer` in a relational warehouse $W$, find friends-of-friends in a graph store $G$ who reviewed product $P$ (reviews live in a document store $D$)."
+
+$$\text{ans} = \sigma_{\text{prod}=P}\big( W.\text{cust} \bowtie G.\text{fof} \bowtie D.\text{review} \big)$$
+
+Capability records: $G$ can do the 2-hop `fof` traversal (relational stores cannot express it cheaply); $D$ can push down the `prod = P` filter on JSON reviews; $W$ joins and aggregates. Planning:
+
+1. **Decompose** by capability: push `fof` to $G$ (only it can), push `prod=P` selection into $D$ (shrinks 1M reviews to ~500).
+2. **Site selection.** Ship the 500 filtered review-ids and the `fof` edge set (say 2k pairs) up to $W$ for the final join, rather than shipping $W$'s 100k customers down. Estimated shipping $\approx 2.5\text{k}$ rows vs. $100\text{k}$ — a 40$\times$ saving.
+3. **Cost incomparability.** $G$ reports cost in "traversed edges", $D$ in "scanned docs", $W$ in "I/O pages". The planner must calibrate these to one scale (learned/micro-benchmarked) before comparing alternative plans.
+
+Capability-feasibility (can every sub-plan run on its assigned store?) is decidable via answering-queries-using-views; cost-optimal site selection over the feasible plans is the NP-hard part (section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -62,11 +62,29 @@ The gap is between (a) pragmatic differential testing that finds many real bugs 
 
 ## 9. Key References
 
-- **[Foundational]** D. R. Slutz. *Massive Stochastic Testing of SQL (RAGS).* VLDB, 1998.
-- **[SOTA]** J. Jung, H. Hu, J. Arulraj, T. Kim, W. Kang. *APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems.* VLDB, 2020.
-- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI, 2020.
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977.
-- **[Survey]** R. B. Evans, A. Savoia. *Differential Testing: A New Approach to Change Detection.* ESEC/FSE, 2007.
+- **[Foundational]** D. R. Slutz. *Massive Stochastic Testing of SQL (RAGS).* VLDB, 1998. — [DBLP](https://dblp.org/rec/conf/vldb/Slutz98.html)
+- **[SOTA]** J. Jung, H. Hu, J. Arulraj, T. Kim, W. Kang. *APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3357377.3357382)
+- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger) · [arXiv](https://arxiv.org/abs/2001.04174)
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Survey]** R. B. Evans, A. Savoia. *Differential Testing: A New Approach to Change Detection.* ESEC/FSE, 2007. — [DOI](https://doi.org/10.1145/1295014.1295038)
+
+## 10. Worked Example
+
+Run one query on three engines over table `t(name TEXT)` with rows $\{$`'apple'`, `NULL`, `'Banana'`$\}$:
+
+```sql
+SELECT name FROM t ORDER BY name;
+```
+
+| Engine | Output order |
+|--------|--------------|
+| $D_1$ (PostgreSQL) | `apple`, `Banana`, `NULL` (NULLs last; case-sensitive `'B' < 'a'` is false → `Banana` after `apple`) |
+| $D_2$ (SQLite) | `NULL`, `Banana`, `apple` (NULLs first; ASCII: `'B'`=66 < `'a'`=97) |
+| $D_3$ (MySQL, `utf8_general_ci`) | `NULL`, `apple`, `Banana` (NULLs first; case-*insensitive* collation) |
+
+A naive differential oracle flags all three as disagreeing → 3 candidate "bugs", **all false positives**: NULL ordering and collation are *implementation-defined* in the SQL standard. The fix is to quotient by a divergence theory $\equiv_\Delta$ that (a) treats NULL-first vs NULL-last as equivalent and (b) normalizes collation by mapping each engine to its declared collation before comparing. After applying $\equiv_\Delta$, the multisets are identical and no bug is reported.
+
+If instead $D_2$ had *dropped* the NULL row entirely, that difference lies *outside* $\equiv_\Delta$ (cardinality change, not an ordering/collation rule) — and is correctly flagged as a real bug. This is exactly why single-engine metamorphic oracles (PQS/TLP) sidestep the brittle $\equiv_\Delta$ construction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

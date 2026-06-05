@@ -1,6 +1,7 @@
 # Worst-case-optimal joins on parallel hardware
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/wcoj-parallel-hardware` · **Status:** open
+> **Verification note:** EmptyHeaded's conference version appeared at SIGMOD 2016 (the journal version is TODS 2017); the year has been corrected in §9.
 
 ## 1. Problem Statement
 A worst-case-optimal join (WCOJ) algorithm evaluates a full conjunctive query $Q$ in time proportional to the **AGM bound** — the maximum possible output size over all databases with the given relation cardinalities — rather than the size of pairwise intermediate results. The problem: **realize WCOJ runtime guarantees on parallel hardware (SIMD vector units and GPUs)** without discarding the guarantee.
@@ -44,12 +45,25 @@ The work bound is closed (WCOJ is optimal). The genuinely **open** gap is the *p
 - Integration into mainstream vectorized engines (DuckDB, Velox) with a unified cost model spanning binary and worst-case-optimal joins.
 
 ## 9. Key References
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013 (FOCS 2008).
-- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013; *Worst-case Optimal Join Algorithms*, JACM 2018.
-- **[Foundational]** T. Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014.
-- **[SOTA]** C. Aberger, A. Lamb, S. Tu, A. Nötzli, K. Olukotun, C. Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD, 2017 / TODS 2017.
-- **[SOTA]** Y. Wang, M. Willsey, D. Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023.
-- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013 (FOCS 2008). — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013; *Worst-case Optimal Join Algorithms*, JACM 2018. — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[Foundational]** T. Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481)
+- **[SOTA]** C. Aberger, A. Lamb, S. Tu, A. Nötzli, K. Olukotun, C. Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD, 2016 / TODS 2017. — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Y. Wang, M. Willsey, D. Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2301.10841)
+- **[SOTA]** M. Abo Khamis, H. Q. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+
+## 10. Worked Example
+
+Take the **triangle query** $Q = R(a,b) \bowtie S(b,c) \bowtie T(c,a)$ with $|R| = |S| = |T| = N$.
+
+**AGM bound.** The fractional edge cover LP minimizes $\sum_e x_e$ (since all $|R_e| = N$) subject to covering each of $a,b,c$, each appearing in 2 of the 3 edges. Setting $x_R = x_S = x_T = \tfrac12$ covers every attribute ($\tfrac12 + \tfrac12 = 1$), giving $\text{AGM}(Q) = N^{1/2+1/2+1/2} = N^{3/2}$. A pairwise plan first computes $R\bowtie S$, which can be $\Theta(N^2)$ — quadratically worse.
+
+**Generic Join trace** on $R=S=T=\{(0,0),(0,1),(1,0),(1,1)\}$ ($N=4$, a complete bipartite-ish instance). Order attributes $a,b,c$:
+1. Candidate $a \in \pi_a R \cap \pi_a T = \{0,1\}$.
+2. For each $a$, candidate $b \in \pi_b R(a,\cdot) \cap \pi_b S$ — a **multiway set intersection**.
+3. For each $(a,b)$, candidate $c \in \pi_c S(b,\cdot) \cap \pi_c T(\cdot,a)$, emit $(a,b,c)$.
+
+The hot primitive is step 2/3's sorted-set intersection. On a $p=8$-lane SIMD unit, two sorted lists of length $m$ intersect in work $O(m)$ and depth $O(\log m)$ — but if adjacency is sparse/skewed, lanes diverge and idle, evaporating the speedup. That divergence, not the $\tilde{O}(N^{3/2})$ work bound, is the open §6 obstruction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

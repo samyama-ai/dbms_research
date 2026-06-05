@@ -56,12 +56,20 @@ The gap is qualitative. Rank logic was the most promising algebraic candidate to
 
 ## 9. Key References
 
-- **[Foundational]** A. Dawar, M. Grohe, B. Holm, B. Laubner. *Logics with rank operators.* LICS 2009.
-- **[Foundational]** B. Holm. *Descriptive Complexity of Linear Algebra.* PhD thesis, University of Cambridge, 2010.
-- **[SOTA]** M. Lichter. *Separating rank logic from polynomial time.* LICS 2021 / J. ACM, 2023.
-- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992.
-- **[SOTA]** A. Dawar, E. Grädel, W. Pakusa. *Approximations of isomorphism and logics with linear-algebraic operators.* ICALP 2019.
-- **[Survey]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017.
+- **[Foundational]** A. Dawar, M. Grohe, B. Holm, B. Laubner. *Logics with rank operators.* LICS 2009. — [DOI](https://doi.org/10.1109/LICS.2009.24)
+- **[Foundational]** B. Holm. *Descriptive Complexity of Linear Algebra.* PhD thesis, University of Cambridge, 2010. — [PDF](https://www.cl.cam.ac.uk/~ad260/Holm_2010_phd-thesis.pdf)
+- **[SOTA]** M. Lichter. *Separating rank logic from polynomial time.* LICS 2021 / J. ACM, 2023. — [arXiv](https://arxiv.org/abs/2104.12999) — [DOI](https://doi.org/10.1145/3572918)
+- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992. — [DOI](https://doi.org/10.1007/BF01305232)
+- **[SOTA]** A. Dawar, E. Grädel, W. Pakusa. *Approximations of isomorphism and logics with linear-algebraic operators.* ICALP 2019. — [arXiv](https://arxiv.org/abs/1902.06648) — [DOI](https://doi.org/10.4230/LIPIcs.ICALP.2019.112)
+- **[Survey]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017. — [Cambridge Core](https://www.cambridge.org/core/books/descriptive-complexity-canonisation-and-definable-graph-structure-theory/BC758F6004BD96F6995D5F1EF1E29BAD)
+
+## 10. Worked Example
+
+Why rank sees what counting cannot. Consider solving a $2\times 2$ system over $\mathbb{F}_2$ encoded as a definable matrix
+$$M = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix} \in \mathbb{F}_2^{2\times 2}.$$
+Over $\mathbb{F}_2$ the two rows are identical, so $\mathrm{rank}_{\mathbb{F}_2}(M) = 1$, and the homogeneous system $Mx = 0$ has a nontrivial solution ($x = (1,1)^\top$, since $1+1=0$ in $\mathbb{F}_2$). The operator $\mathrm{rk}_2$ returns the number $1$, which IFP+C can then use.
+
+Counting cannot extract this. The CFI gadget glues two such "twisted" rows so that flipping a $\mathbb{F}_2$-parity distinguishes the YES/NO instances, yet the two instances have **identical multiset statistics** at every Weisfeiler–Leman round — so FPC (equivalently bounded-variable counting logic, Cai–Fürer–Immerman) cannot tell them apart, while $\mathrm{rk}_2$ decides solvability in $O(n^3)$ Gaussian elimination. Lichter's separation pushes the same idea to $\mathbb{Z}/2^k\mathbb{Z}$ (a *ring*, not a field), where even $\mathrm{rk}_p$ over every prime $p$ fails — placing the query in PTIME but outside rank logic.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

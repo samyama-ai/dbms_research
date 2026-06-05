@@ -48,12 +48,20 @@ The classical *optimization* gap (MQO approximation) is essentially closed up to
 - Sharing across *encrypted* tenants with provable non-interference.
 
 ## 9. Key References
-- **[Foundational]** Timos Sellis. *Multiple-Query Optimization.* ACM TODS, 1988.
-- **[Foundational]** Prasan Roy, S. Seshadri, S. Sudarshan, Siddhesh Bhobe. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000.
-- **[Foundational]** Ashok K. Chandra, Philip M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977.
-- **[SOTA]** Stavros Harizopoulos, Vladislav Shkapenyuk, Anastassia Ailamaki. *QPipe: A Simultaneously Pipelined Relational Query Engine.* SIGMOD, 2005.
-- **[SOTA]** Georgios Giannikis, Gustavo Alonso, Donald Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* VLDB, 2012.
-- **[Survey]** Serge Abiteboul, Richard Hull, Victor Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, containment).
+- **[Foundational]** Timos Sellis. *Multiple-Query Optimization.* ACM TODS, 1988. — [DOI](https://doi.org/10.1145/42201.42203) · [DBLP](https://dblp.org/rec/journals/tods/Sellis88.html)
+- **[Foundational]** Prasan Roy, S. Seshadri, S. Sudarshan, Siddhesh Bhobe. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335419) · [arXiv](https://arxiv.org/abs/cs/9910021)
+- **[Foundational]** Ashok K. Chandra, Philip M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397) · [DBLP](https://dblp.org/rec/conf/stoc/ChandraM77.html)
+- **[SOTA]** Stavros Harizopoulos, Vladislav Shkapenyuk, Anastassia Ailamaki. *QPipe: A Simultaneously Pipelined Relational Query Engine.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066201) · [DBLP](https://dblp.org/rec/conf/sigmod/HarizopoulosSA05.html)
+- **[SOTA]** Georgios Giannikis, Gustavo Alonso, Donald Kossmann. *SharedDB: Killing One Thousand Queries with One Stone.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2168651.2168654) · [arXiv](https://arxiv.org/abs/1203.0056)
+- **[Survey]** Serge Abiteboul, Richard Hull, Victor Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, containment). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Three tenants submit similar scans over the same orders table. Suppose evaluating the shared scan subexpression $S$ costs $c(S) = 100$ resource-seconds, while each tenant's residual filter costs $10$ each. Without sharing the total is $3\times(100+10) = 330$ s; with one shared scan it is $100 + 3\times10 = 130$ s — a $2.5\times$ saving, exactly the "$n$ scans in $O(1)$ passes" win.
+
+Billing fairness via the Shapley value: the shared $100$ s is a cost split among the three co-users. Since all three need the identical scan, the symmetric Shapley share is $100/3 \approx 33.3$ s each, so each pays $33.3 + 10 = 43.3$ s — no tenant subsidizes another.
+
+Cache-reuse decision: tenant $X$ asks $Q:\sigma_{\text{region}=\text{EU}}(R)$ and a cached $Q':\sigma_{\text{region}\in\{\text{EU},\text{US}\}}(R)$ exists. Since $Q \sqsubseteq Q'$ (a homomorphism from $Q'$ into $Q$ exists, Chandra–Merlin), $Q$ is answerable by applying residual filter $\text{region}=\text{EU}$ to the cached result — no rescan needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

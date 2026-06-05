@@ -1,6 +1,7 @@
 # Disaggregated MVCC garbage collection
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/disaggregated-mvcc-gc` · **Status:** open
+> **Verification note:** The "Hekaton" VLDB 2011 concurrency-control paper is by Larson, Blanas, Diaconu, Freedman, Patel & Zwilling; Lomet is not an author of that specific paper (he authored other Hekaton-era recovery work).
 
 ## 1. Problem Statement
 Multi-version concurrency control (MVCC) keeps multiple physical versions of each tuple so readers see a consistent snapshot without blocking writers. A version becomes **garbage** once no current or future transaction can observe it. **GC** reclaims such versions to bound space and keep version chains short.
@@ -55,12 +56,29 @@ There is **no consensus protocol or algorithm** that gives *precise* (HyPer-clas
 - Verifiable GC (proving no live version was reclaimed) for compliance.
 
 ## 9. Key References
-- **[Foundational]** David Lomet, et al. / Per-Åke Larson et al. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases (Hekaton).* VLDB, 2011.
-- **[SOTA]** Jan Böttcher, Viktor Leis, Thomas Neumann, Alfons Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems.* VLDB, 2019.
-- **[SOTA]** Alexandre Verbitski, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Panagiotis Antonopoulos, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[Foundational]** Michael J. Fischer, Nancy A. Lynch, Michael S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** K. Mani Chandy, Leslie Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
+- **[Foundational]** David Lomet, et al. / Per-Åke Larson et al. *High-Performance Concurrency Control Mechanisms for Main-Memory Databases (Hekaton).* VLDB, 2011. — [DOI](https://doi.org/10.14778/2095686.2095689) · [arXiv](https://arxiv.org/abs/1201.0228)
+- **[SOTA]** Jan Böttcher, Viktor Leis, Thomas Neumann, Alfons Kemper. *Scalable Garbage Collection for In-Memory MVCC Systems.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
+- **[SOTA]** Alexandre Verbitski, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Panagiotis Antonopoulos, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[Foundational]** Michael J. Fischer, Nancy A. Lynch, Michael S. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** K. Mani Chandy, Leslie Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+
+## 10. Worked Example
+
+A key $k$ has three committed versions: $v_1$ valid over $[5,9)$, $v_2$ over $[9,14)$, $v_3$ over $[14,\infty)$ (begin-timestamps from a logical clock). Three compute nodes hold active snapshots: $T_a@7$, $T_b@12$, $T_c@20$.
+
+*Low-water mark.* $\tau^* = \min\{7, 12, 20\} = 7$.
+
+*Reclaimability check.* A version is collectible only if it is invisible to **every** snapshot $\ge \tau^*$.
+- $v_1$ ($[5,9)$) is read by $T_a@7$ ($7 \in [5,9)$) → **not** collectible.
+- $v_2$ ($[9,14)$) is read by $T_b@12$ → **not** collectible.
+- $v_3$ is the latest → never collectible.
+
+So nothing is reclaimed yet, even though $v_1$ looks "old."
+
+*Watermark advance.* $T_a$ commits and leaves. New low-water mark $\tau^* = \min\{12, 20\} = 12$. Re-check $v_1$ ($[5,9)$): is any live snapshot $\ge 12$ inside $[5,9)$? No — $12 \notin [5,9)$ and $20 \notin [5,9)$. Now $v_1$ is **safe to reclaim**.
+
+*Distributed cost.* Computing the new $\tau^*=12$ requires aggregating the active-snapshot set across nodes — a consistent global-min (Chandy–Lamport-style) computation. Under a centralized lease safe-point refreshed every epoch of length $L$, we conservatively retain anything newer than the last-computed min, so up to $L \times (\text{write-rate})$ extra dead versions linger — the $\Omega(\text{RTT})$/$\Omega(\epsilon)$ space floor of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

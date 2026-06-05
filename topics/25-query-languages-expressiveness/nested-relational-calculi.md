@@ -61,12 +61,24 @@ The **set-based, non-recursive** picture is closed (tight conservativity + norma
 
 ## 9. Key References
 
-- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types.* TCS, 1995.
-- **[Foundational]** Wong. *Normal Forms and Conservative Extension Properties for Query Languages over Collection Types.* JCSS, 1996.
-- **[Foundational]** Libkin, Wong. *Query Languages for Bags and Aggregate Functions.* JCSS, 1997.
-- **[SOTA]** Cheney, Lindley, Wadler. *Query Shredding: Efficient Relational Evaluation of Queries over Nested Multisets.* SIGMOD/ICFP, 2014.
-- **[SOTA]** Cooper. *The Script-Writer's Dream: How to Write Great SQL in Your Own Language (Links query normalization).* DBPL, 2009.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (complex-object models).
+- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types.* TCS, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00024-Q)
+- **[Foundational]** Wong. *Normal Forms and Conservative Extension Properties for Query Languages over Collection Types.* JCSS, 1996. — [DOI](https://doi.org/10.1006/jcss.1996.0037)
+- **[Foundational]** Libkin, Wong. *Query Languages for Bags and Aggregate Functions.* JCSS, 1997. — [DOI](https://doi.org/10.1006/jcss.1997.1523)
+- **[SOTA]** Cheney, Lindley, Wadler. *Query Shredding: Efficient Relational Evaluation of Queries over Nested Multisets.* SIGMOD/ICFP, 2014. — [arXiv](https://arxiv.org/abs/1404.7078) — [DOI](https://doi.org/10.1145/2588555.2612186)
+- **[SOTA]** Cooper. *The Script-Writer's Dream: How to Write Great SQL in Your Own Language (Links query normalization).* DBPL, 2009. — [DOI](https://doi.org/10.1007/978-3-642-03793-1_3)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (complex-object models). — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+**Conservativity in action.** Flat input: `Emp = {(Ann,d1),(Bob,d1),(Cy,d2)}` and `Dept = {d1,d2}`. A *nested* NRC query groups employees by department:
+$$Q \;=\; \{\,(d,\ \{\,n \mid (n,d')\in \text{Emp},\ d'=d\,\})\ \mid\ d\in\text{Dept}\,\}$$
+yielding the **nested** result $\{(d1,\{Ann,Bob\}),\ (d2,\{Cy\})\}$ — output type $\{ \text{dept}\times\{\text{name}\}\}$ has nesting depth 2.
+
+Now a *flat-to-flat* query: "names in some department of size $\ge 2$." One could write it by building the nested grouping above and then unnesting. **Wong's normalization** rewrites any such expression so intermediate types never exceed $\max(\text{input depth},\text{output depth}) = \max(1,1)=1$: the powerset-free detour through depth-2 collections is *eliminable*. The normalized query is the flat relational expression
+$$\{\,n \mid (n,d)\in\text{Emp},\ (n',d)\in\text{Emp},\ n\ne n'\,\} = \{Ann,Bob\},$$
+pure FO. So nesting bought us nothing for this flat answer — exactly the conservative-extension theorem.
+
+**Where it breaks:** add powerset $\mathcal P$. Then $\{\,S \mid S\in\mathcal P(\text{Dept})\,\}$ has $2^{|\text{Dept}|}$ elements; iterating it lets NRC+powerset express transitive closure and parity, escaping FO — and intermediate sizes blow up non-elementarily in nesting depth, the matching lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

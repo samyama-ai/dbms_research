@@ -1,6 +1,7 @@
 # Persistent-memory logging and recovery
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/pmem-logging-recovery` · **Status:** partially-solved
+> **Verification note:** Write-Behind Logging is a distinct PVLDB 10(4) paper by Arulraj, Perron, and Pavlo (not the "Bridging the Archipelago" SIGMOD'16 paper and not co-authored by Malladi); the reference and §3 attribution have been corrected accordingly.
 
 ## 1. Problem Statement
 
@@ -22,7 +23,7 @@ Cost model: a commit issues $f$ flushes and $b$ fences; with per-flush cost $c_f
 
 ## 3. State of the Art (SOTA)
 
-**Systems-SOTA.** Single-tier PMEM-resident engines and hybrids dominate. Notable: *FOEDUS* (Kimura, SIGMOD 2015) with master-tree + dual page snapshots; *SOFORT* (Oukid et al., DaMoN 2014) one-tier engine eliminating the persistent log; *Write-Behind Logging* (Arulraj–Pavlo–Malladi, VLDB 2016) inverting WAL to leverage PMEM; *NV-Logging* / passive group commit; *Zen* and *FAST&FAIR* (Hwang et al., FAST 2018) for failure-atomic B+-trees; *RECIPE* (Lee et al., SOSP 2019) converting concurrent indexes to crash-consistent ones. PMEM-aware allocators: *PMDK*'s `libpmemobj`, *Makalu*.
+**Systems-SOTA.** Single-tier PMEM-resident engines and hybrids dominate. Notable: *FOEDUS* (Kimura, SIGMOD 2015) with master-tree + dual page snapshots; *SOFORT* (Oukid et al., DaMoN 2014) one-tier engine eliminating the persistent log; *Write-Behind Logging* (Arulraj–Perron–Pavlo, PVLDB 2016) inverting WAL to leverage PMEM; *NV-Logging* / passive group commit; *Zen* and *FAST&FAIR* (Hwang et al., FAST 2018) for failure-atomic B+-trees; *RECIPE* (Lee et al., SOSP 2019) converting concurrent indexes to crash-consistent ones. PMEM-aware allocators: *PMDK*'s `libpmemobj`, *Makalu*.
 
 **Theory-SOTA.** *Log-free / link-and-persist* techniques, *durable linearizable* index transforms (RECIPE conditions: readable→durable conversion rules), and the *Montage* buffered-durable framework (Wen et al., PPoPP 2021) giving generic constructions with proved buffered durable linearizability.
 
@@ -53,12 +54,26 @@ Active threads: (i) porting PMEM durability results to **CXL Type-3 / CXL.mem** 
 
 ## 9. Key References
 
-- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[Foundational]** Izraelevitz, J., Mendes, H., Scott, M. L. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[SOTA]** Arulraj, J., Pavlo, A., Malladi, S. R. *Bridging the Archipelago between Row-Stores and Column-Stores for Hybrid Workloads (Write-Behind Logging).* VLDB, 2016.
-- **[SOTA]** Lee, S. K. et al. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019.
-- **[SOTA]** Wen, H. et al. *Montage: A General System for Buffered Durably Linearizable Data Structures.* PPoPP, 2021.
-- **[Survey]** Pelley, S., Chen, P. M., Wenisch, T. F. *Memory Persistency.* ISCA, 2014.
+- **[Foundational]** Mohan, C. et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770) — [DBLP](https://dblp.org/rec/journals/tods/MohanHLPS92.html)
+- **[Foundational]** Izraelevitz, J., Mendes, H., Scott, M. L. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23) — [DBLP](https://dblp.org/rec/conf/wdag/IzraelevitzMS16.html)
+- **[SOTA]** Arulraj, J., Perron, M., Pavlo, A. *Write-Behind Logging.* PVLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025116) — [DBLP](https://dblp.org/rec/journals/pvldb/ArulrajPP16.html)
+- **[SOTA]** Lee, S. K. et al. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [DOI](https://doi.org/10.1145/3341301.3359635) — [DBLP](https://dblp.org/rec/conf/sosp/LeeMKKC19.html)
+- **[SOTA]** Wen, H. et al. *Montage: A General System for Buffered Durably Linearizable Data Structures.* PPoPP, 2021. — [arXiv](https://arxiv.org/abs/2009.13701) — [DBLP](https://dblp.org/rec/conf/ppopp/WenCDJVS21.html)
+- **[Survey]** Pelley, S., Chen, P. M., Wenisch, T. F. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712) — [DBLP](https://dblp.org/rec/conf/isca/PelleyCW14.html)
+
+## 10. Worked Example
+
+**Commit-latency arithmetic.** Suppose `CLWB` costs $c_f = 100$ ns and `SFENCE` costs $c_b = 60$ ns. A transaction updates $k=4$ tuples, each on its own cache line.
+
+*Classic per-update WAL on PMEM:* log-record + data each flushed and fenced. Naive cost $\approx k(2c_f + 2c_b) = 4(200+120) = 1280$ ns, plus redo replay at recovery.
+
+*Link-and-persist single publication* (§4 upper bound): write the 4 payloads (4 flushes), then **one** failure-atomic 8-byte pointer swing publishing them, with a single fence: $4c_f + 1c_b = 460$ ns — and no redo, since an unswung pointer simply means the txn never happened. This is the $O(1)$-barrier-per-publication regime.
+
+**Optimal checkpoint interval.** With MTBF $M = 10^7$ s and checkpoint cost $\delta = 5$ s, Daly's first-order optimum is
+$$\tau^\* \approx \sqrt{2 M \delta} = \sqrt{2\cdot10^7\cdot5} = \sqrt{10^8} = 10^4\ \text{s} \;(\approx 2.8\ \text{h}).$$
+Checkpoint much more often and you pay $\delta$ too frequently; much less often and a crash forces replaying a longer dirty epoch (recovery $\Theta(|\text{epoch}|)$).
+
+**Where it stays open (§6):** the 4-tuple commit above still issues $\Theta(k)$ flushes for the payloads. Whether a group-persist scheme can commit all $k$ objects with $o(k)$ fences while preserving durable linearizability is the unresolved $k$-object lower-bound gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

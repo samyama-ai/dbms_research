@@ -44,12 +44,27 @@ The gap is between today's **data-shape-only, rule-based** checkers (sound for s
 - Counterexample-producing checkers (the breaking query/datum) for developer ergonomics.
 
 ## 9. Key References
-- **[Foundational]** Chandra, A., Merlin, P. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** Hosoya, H., Pierce, B. *XDuce: A Statically Typed XML Processing Language (regular expression types / tree-automata subtyping).* ACM TOIT, 2003.
-- **[SOTA]** Chu, S., Weitz, K., Cheung, A., Suciu, D. *Cosette: An Automated Prover for SQL.* CIDR, 2017.
-- **[SOTA]** Pezoa, F., Reutter, J., Suarez, F., Ugarte, M., Vrgoč, D. *Foundations of JSON Schema.* WWW, 2016.
-- **[Survey]** Confluent. *Schema Registry: Schema Evolution and Compatibility* (documentation), 2017–.
-- **[Foundational]** Martens, W., Neven, F., Schwentick, T. *Complexity of Decision Problems for XML Schemas and Inclusion.* ACM TODS, 2006.
+- **[Foundational]** Chandra, A., Merlin, P. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** Hosoya, H., Pierce, B. *XDuce: A Statically Typed XML Processing Language (regular expression types / tree-automata subtyping).* ACM TOIT, 2003. — [DOI](https://doi.org/10.1145/767193.767195)
+- **[SOTA]** Chu, S., Weitz, K., Cheung, A., Suciu, D. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
+- **[SOTA]** Pezoa, F., Reutter, J., Suarez, F., Ugarte, M., Vrgoč, D. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029)
+- **[Survey]** Confluent. *Schema Registry: Schema Evolution and Compatibility* (documentation), 2017–. — [docs](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
+- **[Foundational]** Martens, W., Neven, F., Schwentick, T. *Complexity of Decision Problems for XML Schemas and Inclusion.* ACM TODS, 2006. — [DBLP search](https://dblp.org/search?q=Martens+Neven+Schwentick+XML+schema+complexity) *(unverified)*
+
+## 10. Worked Example
+
+Take an Avro record evolving $\mathcal{S} \to \mathcal{S}'$:
+
+```
+S:   record User { string name; int age; }
+S':  record User { string name; int age; string email = "n/a"; }
+```
+
+**Backward compatibility** (new reader $\mathcal{S}'$, old data written under $\mathcal{S}$): old data has no `email` field. The new reader supplies the default `"n/a"`, so it reads old data correctly — **backward-compatible**. Avro's rule: adding a field with a default is backward-safe.
+
+**Forward compatibility** (old reader $\mathcal{S}$, new data written under $\mathcal{S}'$): new data carries an `email` the old reader does not know; the resolution rule drops unknown fields — so the old reader still parses it — **forward-compatible**. Adding a field with a default is therefore **FULL**-compatible.
+
+Contrast a *removal*: dropping `age` would break a backward reader expecting `age` unless `age` also had a default. This is a pure data-shape check (linear in fields). It says nothing about query semantics: a view `SELECT name FROM User WHERE age > 18` is unaffected by adding `email`, but the *semantic* variant — does some query $q$ return the same answers under $\mathcal{S}'$? — reduces to conjunctive-query equivalence (NP-complete via Chandra–Merlin), and to undecidable full SQL equivalence in general, which the rule-based checker cannot certify.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

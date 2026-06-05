@@ -55,12 +55,24 @@ Items are vectors in $\mathbb{R}^d$ (or sets over a universe). Similarity join a
 
 ## 9. Key References
 
-- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[Foundational]** A. Andoni, P. Indyk. *Near-Optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions.* FOCS, 2006 / CACM, 2008.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2018.
-- **[Foundational]** Y. Zhu, D. Shasha. *StatStream: Statistical Monitoring of Thousands of Data Streams in Real Time.* VLDB, 2002.
-- **[SOTA]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search (SETH-based).* STOC, 2018.
+- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876)
+- **[Foundational]** A. Andoni, P. Indyk. *Near-Optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions.* FOCS, 2006 / CACM, 2008. — [DOI](https://doi.org/10.1109/FOCS.2006.49)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2018. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[Foundational]** Y. Zhu, D. Shasha. *StatStream: Statistical Monitoring of Thousands of Data Streams in Real Time.* VLDB, 2002. — [DBLP](https://dblp.org/rec/conf/vldb/ZhuS02.html)
+- **[SOTA]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search (SETH-based).* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
+
+## 10. Worked Example
+
+**Cosine-LSH over a sliding window.** Window holds the last $W=3$ unit vectors per stream; threshold $\theta = 0.9$ (angle $\le 25.8^\circ$). Use one sign-random-projection (SimHash) hash with random hyperplane $u=(1,1)/\sqrt2$: $h(x)=\text{sign}(u\cdot x)$.
+
+$S_1$ live: $x_1=(1,0),\,x_2=(0,1),\,x_3=(-1,0)$. $S_2$ arrives with $y=(0.71,0.71)$.
+
+Hashes: $u\cdot x_1=0.71\Rightarrow h{=}1$; $u\cdot x_2=0.71\Rightarrow h{=}1$; $u\cdot x_3=-0.71\Rightarrow h{=}0$; $u\cdot y=1.0\Rightarrow h{=}1$.
+
+Probing $y$ visits bucket $1 = \{x_1,x_2\}$, skipping $x_3$ entirely — only 2 of 3 candidates examined. Verify exact cosines: $\cos(y,x_1)=0.71<\theta$, $\cos(y,x_2)=0.71<\theta$ — neither qualifies, no pair emitted. The SimHash collision probability is $\Pr[h(x){=}h(y)] = 1-\tfrac{\angle(x,y)}{\pi}$, monotone in similarity, so close pairs collide more often; stacking $L$ independent tables drives recall up at $O(n^{\rho})$ query cost, $\rho=1/(2c^2-1)$.
+
+**The deletion pain:** when $x_1$ expires, we must remove it from its bucket. A graph-ANN index (HNSW) has no clean way to do this without degrading the navigation graph — the open sliding-window difficulty.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

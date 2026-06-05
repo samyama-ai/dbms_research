@@ -32,12 +32,22 @@ Threads: graph-based detectors (GDN-style) made **streaming with sketched adjace
 - Benchmarks with injected structural (vs. point) anomalies at high $m$.
 
 ## 9. Key References
-- **[Foundational]** E. Liberty. *Simple and Deterministic Matrix Sketching (Frequent Directions).* KDD, 2013.
-- **[Foundational]** G. Valiant. *Finding Correlations in Subquadratic Time, with Applications to Learning Parities and the Closest Pair Problem.* JACM, 2015.
-- **[Foundational]** M. Ghashami, E. Liberty, J. Phillips, D. Woodruff. *Frequent Directions: Simple and Deterministic Matrix Sketching.* SIAM J. Computing, 2016.
-- **[SOTA]** Y. Su, Y. Zhao, C. Niu, R. Liu, W. Sun, D. Pei. *Robust Anomaly Detection for Multivariate Time Series through Stochastic Recurrent Networks (OmniAnomaly).* KDD, 2019.
-- **[SOTA]** A. Deng, B. Hooi. *Graph Neural Network-Based Anomaly Detection in Multivariate Time Series (GDN).* AAAI, 2021.
-- **[Survey]** J. Friedman, T. Hastie, R. Tibshirani. *Sparse Inverse Covariance Estimation with the Graphical Lasso.* Biostatistics, 2008.
+- **[Foundational]** E. Liberty. *Simple and Deterministic Matrix Sketching (Frequent Directions).* KDD, 2013. — [DOI](https://doi.org/10.1145/2487575.2487623)
+- **[Foundational]** G. Valiant. *Finding Correlations in Subquadratic Time, with Applications to Learning Parities and the Closest Pair Problem.* JACM, 2015. — [DOI](https://doi.org/10.1145/2728167)
+- **[Foundational]** M. Ghashami, E. Liberty, J. Phillips, D. Woodruff. *Frequent Directions: Simple and Deterministic Matrix Sketching.* SIAM J. Computing, 2016. — [DOI](https://doi.org/10.1137/15M1009718), [arXiv](https://arxiv.org/abs/1501.01711)
+- **[SOTA]** Y. Su, Y. Zhao, C. Niu, R. Liu, W. Sun, D. Pei. *Robust Anomaly Detection for Multivariate Time Series through Stochastic Recurrent Networks (OmniAnomaly).* KDD, 2019. — [DOI](https://doi.org/10.1145/3292500.3330672)
+- **[SOTA]** A. Deng, B. Hooi. *Graph Neural Network-Based Anomaly Detection in Multivariate Time Series (GDN).* AAAI, 2021. — [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/16523), [arXiv](https://arxiv.org/abs/2106.06947)
+- **[Survey]** J. Friedman, T. Hastie, R. Tibshirani. *Sparse Inverse Covariance Estimation with the Graphical Lasso.* Biostatistics, 2008. — [DOI](https://doi.org/10.1093/biostatistics/kxm045)
+
+## 10. Worked Example
+
+Take $m=4$ CPU-utilization series. In the normal window the correlation matrix is
+
+$$C_{\text{ref}}=\begin{pmatrix}1&0.9&0.1&0.1\\0.9&1&0.1&0.1\\0.1&0.1&1&0.0\\0.1&0.1&0.0&1\end{pmatrix}.$$
+
+Series 1 and 2 are a tightly-coupled pair ($\rho_{12}=0.9$); the rest are near-independent. In the next window every series stays inside its usual range (so per-series detectors fire nothing), but the new estimate gives $\rho_{12}=0.2$ and $\rho_{34}=0.85$. No mean shifted — only the *structure* flipped.
+
+Naive all-pairs monitoring costs $\binom{4}{2}=6$ correlations; at $m=10^6$ that is $5\times10^{11}$ pairs, infeasible. Instead project each series with a JL sketch into $d=O(\epsilon^{-2}\log m)$ dimensions. With $\epsilon=0.1,\,m=10^6$, $d\approx 100\,\epsilon^{-2}\ln m \approx 100\cdot 14 = 1400$ — sketch state is $O(md)$, sublinear in $\binom{m}{2}$ — and inner products of the sketches recover each $\rho_{ij}$ to $\pm0.1$. The Frobenius change statistic $\|C_{\text{new}}-C_{\text{ref}}\|_F=\sqrt{(0.9-0.2)^2+(0.85-0.0)^2}\cdot\sqrt2\approx 1.57$ far exceeds the JL noise floor, so the structural anomaly is flagged while individual series look normal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

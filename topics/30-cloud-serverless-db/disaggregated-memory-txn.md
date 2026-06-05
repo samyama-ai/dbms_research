@@ -47,13 +47,29 @@ Active: protocols *native* to compute/memory separation that tolerate compute-no
 
 ## 9. Key References
 
-- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** C. Mohan et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992.
-- **[SOTA]** A. Dragojević, D. Narayanan, M. Castro, O. Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014.
-- **[SOTA]** A. Kalia, M. Kaminsky, D. Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016.
-- **[SOTA]** Q. Wang et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022.
-- **[SOTA]** M. Zhang et al. *FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory.* FAST, 2022.
-- **[Survey]** M. K. Aguilera et al. *Designing Far Memory Data Structures: Think Outside the Box.* HotOS, 2019.
+- **[Foundational]** M. Herlihy. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** C. Mohan et al. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
+- **[SOTA]** A. Dragojević, D. Narayanan, M. Castro, O. Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [DBLP](https://dblp.org/rec/conf/nsdi/DragojevicNCH14.html)
+- **[SOTA]** A. Kalia, M. Kaminsky, D. Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016. — [DBLP](https://dblp.org/rec/conf/osdi/KaliaKA16.html)
+- **[SOTA]** Q. Wang et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517824) · [arXiv](https://arxiv.org/abs/2112.07320)
+- **[SOTA]** M. Zhang et al. *FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory.* FAST, 2022. — [DBLP](https://dblp.org/rec/conf/fast/ZhangHZL22.html)
+- **[Survey]** M. K. Aguilera et al. *Designing Far Memory Data Structures: Think Outside the Box.* HotOS, 2019. — [DOI](https://doi.org/10.1145/3317550.3321433)
+
+## 10. Worked Example
+
+A compute node runs a transfer transaction $T$: read balances $A, B$ in remote memory, check $A \ge 100$, then debit $A$ by 100 and credit $B$. The verb set is $V=\{\text{READ}, \text{WRITE}, \text{CAS}\}$.
+
+*Optimistic FaRM-style commit, conflict-free path.* Each record carries a version stamp.
+1. **READ** $A$ and $B$ (with versions $v_A, v_B$) — 1 round trip (batched).
+2. Compute locally: $A'=A-100$, $B'=B+100$.
+3. **Lock + validate**: issue **CAS** on each record's lock word, checking the version is still $v_A, v_B$ — 1 round trip.
+4. **WRITE** new values and release — 1 round trip (can overlap with replication of the log).
+
+Total: a *constant* 3 round trips, independent of data size — the $O(1)$ upper bound of section 4.
+
+*Why a register isn't enough.* Step 3 needs CAS, not plain WRITE. By Herlihy's hierarchy, atomic READ/WRITE registers have consensus number 1 and cannot atomically test-and-set a lock; two compute nodes both doing READ-then-WRITE could both pass the version check and double-spend. CAS (consensus number $\infty$) is what makes the lock atomic.
+
+*Failure wrinkle.* If the compute node crashes between steps 3 and 4, record $A$'s lock word is set with no owner alive — an orphaned lock. Pure asynchrony + crash cannot safely reclaim it (FLP); a lease on the lock word (auto-expiring after $\tau$) or an external failure detector is required, illustrating section 5(a).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

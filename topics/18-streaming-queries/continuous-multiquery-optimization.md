@@ -49,13 +49,28 @@ The *online/adaptive* optimization problem — continuously re-deriving a near-o
 - Co-optimizing sharing with load shedding and elasticity/auto-scaling.
 
 ## 9. Key References
-- **[Foundational]** Sellis, T. *Multiple-Query Optimization.* ACM TODS, 1988.
-- **[Foundational]** Chen, J., DeWitt, D., Tian, F., Wang, Y. *NiagaraCQ: A Scalable Continuous Query System for Internet Databases.* SIGMOD, 2000.
-- **[Foundational]** Roy, P., Seshadri, S., Sudarshan, S., Bhobe, S. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000.
-- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S., Wu, K.-L. *General Incremental Sliding-Window Aggregation.* PVLDB, 2015.
-- **[SOTA]** Traub, J., Grulich, P., Cuéllar, A.R., Breß, S., Katsifodimos, A., Rabl, T., Markl, V. *Scotty: Efficient Window Aggregation for Out-of-Order Stream Processing.* ICDE 2018 / TKDE, 2021.
-- **[SOTA]** Karimov, J., Rabl, T., Markl, V. *AStream / AJoin: Shared Window/Join Processing.* SIGMOD, 2019.
-- **[Survey]** Arasu, A., Babu, S., Widom, J. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006.
+- **[Foundational]** Sellis, T. *Multiple-Query Optimization.* ACM TODS, 1988. — [DOI](https://doi.org/10.1145/42201.42203)
+- **[Foundational]** Chen, J., DeWitt, D., Tian, F., Wang, Y. *NiagaraCQ: A Scalable Continuous Query System for Internet Databases.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335432)
+- **[Foundational]** Roy, P., Seshadri, S., Sudarshan, S., Bhobe, S. *Efficient and Extensible Algorithms for Multi Query Optimization.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335419) · [arXiv](https://arxiv.org/abs/cs/9910021)
+- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S., Wu, K.-L. *General Incremental Sliding-Window Aggregation.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** Traub, J., Grulich, P., Cuéllar, A.R., Breß, S., Katsifodimos, A., Rabl, T., Markl, V. *Scotty: Efficient Window Aggregation for Out-of-Order Stream Processing.* ICDE 2018 / TKDE, 2021. — [DOI](https://doi.org/10.1109/ICDE.2018.00135)
+- **[SOTA]** Karimov, J., Rabl, T., Markl, V. *AStream / AJoin: Shared Window/Join Processing.* SIGMOD, 2019. — [DBLP](https://dblp.org/rec/conf/sigmod/KarimovRM19.html) · [PDF](https://hpi.de/fileadmin/user_upload/fachgebiete/rabl/publications/2019/AStreamSIGMOD2019.pdf)
+- **[Survey]** Arasu, A., Babu, S., Widom, J. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+
+## 10. Worked Example
+
+Two standing queries over a stream of trades, both `SUM(volume)` over sliding windows on the same source:
+
+- $Q_1$: range $6$ s, slide $2$ s.
+- $Q_2$: range $4$ s, slide $2$ s.
+
+**Without sharing:** each query maintains its own window. Per slide, $Q_1$ re-aggregates up to $6$ s of tuples and $Q_2$ up to $4$ s — overlapping work recomputed independently, and both rescan the shared recent tuples every $2$ s.
+
+**With pane/slice sharing:** decompose into panes of size $\gcd(\text{ranges, slides}) = \gcd(6,4,2) = 2$ s. The stream becomes a sequence of pane partials $p_1, p_2, p_3, \dots$, each a single $\texttt{SUM}$ over one $2$-s slice, computed **once**:
+
+$$Q_1\text{ at time }t = p_{t-2}+p_{t-1}+p_t \quad(3\text{ panes}), \qquad Q_2\text{ at time }t = p_{t-1}+p_t \quad(2\text{ panes}).$$
+
+Suppose pane partials are $p_1{=}5,\ p_2{=}3,\ p_3{=}8,\ p_4{=}2$. At the slide ending after $p_4$: $Q_1 = p_2+p_3+p_4 = 13$, $Q_2 = p_3+p_4 = 10$ — and $p_3,p_4$ were each summed exactly once, then reused. Because `SUM` is a distributive (commutative-monoid) aggregate, pane reuse is exact. A FlatFAT/Reactive-Aggregator tree over the panes then answers any sub-window in $O(\log W)$ amortized time. (Holistic aggregates like `COUNT DISTINCT` would instead need mergeable sketches to share.)
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

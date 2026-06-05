@@ -42,12 +42,26 @@ Active directions: (1) **TEE + fragmentation hybrids** and oblivious query proce
 - Benchmarks pairing real schemas with realistic sensitive-association sets.
 
 ## 9. Key References
-- **[Foundational]** Aggarwal, G., et al. *Two Can Keep a Secret: A Distributed Architecture for Secure Database Services.* CIDR, 2005.
-- **[Foundational]** Ciriani, V., De Capitani di Vimercati, S., Foresti, S., Jajodia, S., Paraboschi, S., Samarati, P. *Combining Fragmentation and Encryption to Protect Privacy in Data Storage.* ACM TISSEC, 2010.
-- **[SOTA]** Popa, R.A., Redfield, C., Zeldovich, N., Balakrishnan, H. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011.
-- **[Foundational]** Sweeney, L. *k-Anonymity: A Model for Protecting Privacy.* IJUFKS, 2002.
-- **[Foundational]** Dwork, C. *Differential Privacy.* ICALP, 2006.
-- **[Foundational]** Dinur, I., Steurer, D. *Analytical Approach to Parallel Repetition (tight Set Cover hardness).* STOC, 2014.
+- **[Foundational]** Aggarwal, G., et al. *Two Can Keep a Secret: A Distributed Architecture for Secure Database Services.* CIDR, 2005. — [PDF](https://www.cidrdb.org/cidr2005/papers/P16.pdf) — [DBLP](https://dblp.org/rec/conf/cidr/AggarwalBGGKMSTX05.html)
+- **[Foundational]** Ciriani, V., De Capitani di Vimercati, S., Foresti, S., Jajodia, S., Paraboschi, S., Samarati, P. *Combining Fragmentation and Encryption to Protect Privacy in Data Storage.* ACM TISSEC, 2010. — [DOI](https://doi.org/10.1145/1805974.1805978)
+- **[SOTA]** Popa, R.A., Redfield, C., Zeldovich, N., Balakrishnan, H. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043566)
+- **[Foundational]** Sweeney, L. *k-Anonymity: A Model for Protecting Privacy.* IJUFKS, 2002. — [DOI](https://doi.org/10.1142/S0218488502001648)
+- **[Foundational]** Dwork, C. *Differential Privacy.* ICALP, 2006. — [DOI](https://doi.org/10.1007/11787006_1)
+- **[Foundational]** Dinur, I., Steurer, D. *Analytical Approach to Parallel Repetition (tight Set Cover hardness).* STOC, 2014. — [DOI](https://doi.org/10.1145/2591796.2591884) — [arXiv](https://arxiv.org/abs/1305.1979)
+
+## 10. Worked Example
+
+Patient relation $R(\text{Name},\text{DOB},\text{ZIP},\text{Disease})$ with confidentiality constraints
+$\mathcal{C}=\{\,c_1=\{\text{Name},\text{Disease}\},\ c_2=\{\text{DOB},\text{ZIP},\text{Disease}\}\,\}$:
+the identity of a patient must not be linkable to their disease, and the quasi-identifier $\{\text{DOB},\text{ZIP}\}$ must not co-occur with Disease.
+
+A valid fragmentation must ensure no fragment is a superset of $c_1$ or $c_2$. Try
+
+$$F_1=\{\text{tid},\text{Name},\text{DOB},\text{ZIP}\},\qquad F_2=\{\text{tid},\text{Disease}\}.$$
+
+Check: $c_1\not\subseteq F_1$ (no Disease) and $c_1\not\subseteq F_2$ (no Name) — split. $c_2$: $F_1$ holds DOB, ZIP but not Disease, so $c_2\not\subseteq F_1$ — split. Both constraints are *hit*, so $\mathcal{F}=\{F_1,F_2\}$ satisfies $\mathcal{C}$ with $k=2$ fragments (the minimum here). Reconstruction is the tid-join $F_1\Join_{\text{tid}}F_2$.
+
+**Inference channel.** Suppose the FD $\text{ZIP}\to\text{Disease}$ held in some region (a rare disease cluster). Then ZIP $\in F_1$ functionally determines Disease, re-creating association $c_2$ across the split — so the chase of $\mathcal{C}$ against FDs would *add* $\{\text{ZIP}\}$ as a derived constraint, forcing ZIP to be encrypted. This is the set-cover/hitting-set structure whose minimization is NP-hard with a matching $\ln m$ greedy bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

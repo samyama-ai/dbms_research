@@ -1,6 +1,7 @@
 # High-ingest LSM tuning for time-series
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/lsm-ingest-tuning` · **Status:** empirically-open
+> **Verification note:** Endure (VLDB 2022) authors are Huynh, Chaudhari, Terzi, Athanassoulis (not Idreos); corrected in §9.
 
 ## 1. Problem Statement
 Most write-heavy TSDBs store data in **Log-Structured Merge (LSM)** trees (RocksDB-backed, or bespoke TSM/chunk engines). Writes append to an in-memory memtable, flush to sorted on-disk runs, and background **compaction** merges runs to bound the number a read must consult. The tuning problem: choose flush and compaction policies that **sustain peak append throughput** while keeping **read amplification** (runs touched per query) and **space amplification** (bytes on disk / bytes of live data) bounded.
@@ -45,12 +46,23 @@ Active: **learned / reinforcement-learned compaction** controllers that adapt fa
 - Bridging the proven external-memory lower bounds to the partially-ordered TS regime.
 
 ## 9. Key References
-- **[Foundational]** O'Neil, Cheng, Gawlick, O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[Foundational]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** Dayan, Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[SOTA]** Huynh, Chaudhari, Idreos, Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022.
-- **[Foundational]** Brodal, Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
+- **[Foundational]** O'Neil, Cheng, Gawlick, O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[Foundational]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42) — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[SOTA]** Dayan, Athanassoulis, Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** Dayan, Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Huynh, Chaudhari, Terzi, Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022. — [DOI](https://doi.org/10.14778/3529337.3529345) — [arXiv](https://arxiv.org/abs/2110.13801)
+- **[Foundational]** Brodal, Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+
+## 10. Worked Example
+
+Take a leveled LSM with buffer $B = 10^6$ entries, fanout $T = 10$, and $N = 10^{10}$ entries. Number of levels:
+$$L = \lceil \log_T (N/B) \rceil = \lceil \log_{10}(10^{10}/10^6) \rceil = \lceil \log_{10} 10^4 \rceil = 4.$$
+
+- **Leveling write amp** $\approx O(T\cdot L) = 10\times 4 = 40$: each entry is rewritten ~40 times on its way to the bottom level.
+- **Point read** consults $O(L) = 4$ runs; with a Bloom filter per level at FPR $\epsilon$, expected wasted I/O $\approx L\cdot\epsilon$. *Monkey* reallocates the same total filter memory so deeper (larger) levels get *lower* FPR, minimizing $\sum_i \epsilon_i$ instead of using a uniform $\epsilon$.
+- **Tiering** instead gives write amp $O(L) = 4$ (10$\times$ cheaper writes) but point reads now probe $O(T\cdot L) = 40$ runs — the RUM trade-off in numbers.
+
+**Time-series twist:** if timestamps arrive monotonically, each new flush covers a disjoint time range, so runs never overlap and compaction is near append-only: write amp collapses toward $O(1)$ instead of $40$. A burst of *late* (out-of-order) points reintroduces overlap on a few levels, forcing partial rewrites — exactly the partially-ordered regime §6 flags as lacking a proven optimal policy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Optimal DP Mechanisms for Multi-Join Queries
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/dp-multi-join-sensitivity` · **Status:** open
+> **Verification note:** *Residual Sensitivity* (SIGMOD 2021) is by Wei Dong and Ke Yi (author list corrected in §9); Juanru Fang joins them on the R2T (SIGMOD 2022) paper.
 
 ## 1. Problem Statement
 
@@ -53,12 +54,22 @@ For **self-join-free acyclic** queries the gap is essentially **closed** (consta
 
 ## 9. Key References
 
-- **[Foundational]** Nissim, Raskhodnikova, Smith. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound).
-- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* VLDB, 2018.
-- **[SOTA]** Dong, Fang, Yi. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD/PODS, 2021.
-- **[SOTA]** Dong, Yi, et al. *R2T: Instance-optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022.
-- **[Survey]** Kotsogiannis et al. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB, 2019.
+- **[Foundational]** Nissim, Raskhodnikova, Smith. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250803) · [DBLP](https://dblp.org/rec/conf/stoc/NissimRS07.html)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3177732.3177733) · [arXiv](https://arxiv.org/abs/1706.09479)
+- **[SOTA]** Dong, Yi. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813) · [PDF](https://www.cse.ust.hk/~yike/ResidualSensitivity-full.pdf)
+- **[SOTA]** Dong, Yi, et al. *R2T: Instance-optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517844) · [PDF](https://juanru-fang.github.io/R2T.pdf)
+- **[Survey]** Kotsogiannis et al. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342274) · [PDF](https://cs.uwaterloo.ca/~xihe/PrivateSQL-VLDB2019.pdf)
+
+## 10. Worked Example
+
+**Join amplification blows up global sensitivity.** Consider $Q=\texttt{COUNT(*)}$ over $R(a,b)\bowtie_b S(b,c)$, with neighbors defined as add/remove one base tuple.
+
+Let $R=\{(a_1,k),(a_2,k),(a_3,k)\}$ and $S=\{(k,c_1),(k,c_2)\}$ — every tuple shares join key $k$. Then $|Q(D)|=3\times 2=6$.
+
+Now add one tuple $t=(k,c_3)$ to $S$. The new count is $3\times 3=9$, so $|Q(D)-Q(D')|=3$ — adding *one* $S$-tuple changed the answer by the degree of $k$ in $R$. Push this worst case: with $n$ tuples in $R$ all sharing key $k$, one added $S$-tuple shifts the count by $n$, so global sensitivity is $\Delta_{\mathrm{GS}}(Q)=\Theta(n)$. Calibrating Laplace noise to $\Delta_{\mathrm{GS}}/\varepsilon=\Theta(n/\varepsilon)$ swamps the true answer.
+
+*Local* sensitivity at this specific $D$ is only $\max(\deg_R(k),\deg_S(k))=\max(3,2)=3$, far smaller. Elastic/residual sensitivity calibrate noise to this instance-dependent max-degree (smoothed over nearby databases) instead of the global worst case — recovering usable accuracy whenever join keys are not pathologically skewed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

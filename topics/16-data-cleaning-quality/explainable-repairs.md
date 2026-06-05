@@ -73,5 +73,23 @@ The gap is **fundamental and open on two axes**. (1) *Definitional:* there is no
 - **[SOTA]** Lundberg, Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1705.07874)
 - **[Survey]** Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
 
+## 10. Worked Example
+
+Consider a tiny `Employee` table and one functional dependency $\textsf{Zip} \to \textsf{City}$:
+
+| id | Zip   | City      |
+|----|-------|-----------|
+| 1  | 02139 | Cambridge |
+| 2  | 02139 | Cambridge |
+| 3  | 02139 | **Boston** |
+
+Tuples 1, 2, 3 share `Zip = 02139` but $t_3.\textsf{City}=\text{Boston}$ violates the FD. A cleaner repairs $t_3.\textsf{City}\to\text{Cambridge}$.
+
+**Why-error (attribution).** The minimal unsatisfiable subset justifying the change is exactly the set of cells participating in a violation: $\{t_3.\textsf{City}\}$ together with the conflicting majority $\{t_1.\textsf{City},t_2.\textsf{City}\}$ under the firing of $\textsf{Zip}\to\textsf{City}$. The how-provenance of the repair is the monomial $t_1\cdot t_2$ (the agreeing witnesses).
+
+**Why-this-value (counterfactual).** Why "Cambridge" not "Somerville"? Plurality: 2 of 3 tuples vote Cambridge. **Responsibility** of $t_1$ for the choice: the smallest contingency set $\Gamma$ that would flip the decision is $\{t_2\}$ (delete it and it becomes a 1–1 tie), so $|\Gamma|=1$ and responsibility $=1/(1+|\Gamma|)=1/2$. Symmetrically $t_2$ has responsibility $1/2$.
+
+This $\frac{1}{1+|\Gamma|}$ score is exactly the Halpern–Pearl/Meliou responsibility from section 2, computed here on a 3-row instance.
+
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

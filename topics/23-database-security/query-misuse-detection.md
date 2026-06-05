@@ -52,12 +52,22 @@ Active directions: **LLM/transformer embeddings of SQL + access provenance graph
 
 ## 9. Key References
 
-- **[Foundational]** Axelsson, S. *The Base-Rate Fallacy and the Difficulty of Intrusion Detection.* ACM CCS / TISSEC, 1999/2000.
-- **[Foundational]** Kamra, A., Terzi, E., Bertino, E. *Detecting Anomalous Access Patterns in Relational Databases.* VLDB Journal, 2008.
-- **[Foundational]** Kenthapadi, K., Mishra, N., Nissim, K. *Simulatable Auditing.* PODS, 2005.
-- **[Foundational]** Kleinberg, J., Papadimitriou, C., Raghavan, P. *Auditing Boolean Attributes.* JCSS / PODS, 2003.
-- **[SOTA]** Hu, Y., Panda, B. *A Data Mining Approach for Database Intrusion Detection.* ACM SAC, 2004.
-- **[Survey]** Bertino, E., Sandhu, R. *Database Security — Concepts, Approaches, and Challenges.* IEEE TDSC, 2005.
+- **[Foundational]** Axelsson, S. *The Base-Rate Fallacy and the Difficulty of Intrusion Detection.* ACM CCS / TISSEC, 1999/2000. — [DOI](https://doi.org/10.1145/357830.357849)
+- **[Foundational]** Kamra, A., Terzi, E., Bertino, E. *Detecting Anomalous Access Patterns in Relational Databases.* VLDB Journal, 2008. — [DOI](https://doi.org/10.1007/s00778-007-0051-4)
+- **[Foundational]** Kenthapadi, K., Mishra, N., Nissim, K. *Simulatable Auditing.* PODS, 2005. — [DOI](https://doi.org/10.1145/1065167.1065183)
+- **[Foundational]** Kleinberg, J., Papadimitriou, C., Raghavan, P. *Auditing Boolean Attributes.* JCSS / PODS, 2003. — [DOI](https://doi.org/10.1016/S0022-0000(02)00036-3)
+- **[SOTA]** Hu, Y., Panda, B. *A Data Mining Approach for Database Intrusion Detection.* ACM SAC, 2004. — [DOI](https://doi.org/10.1145/967900.968048)
+- **[Survey]** Bertino, E., Sandhu, R. *Database Security — Concepts, Approaches, and Challenges.* IEEE TDSC, 2005. — [DOI](https://doi.org/10.1109/TDSC.2005.9)
+
+## 10. Worked Example
+
+Consider a 10,000-analyst bank where genuine insider misuse is rare: prevalence $p = 10^{-4}$ (1 misuse session per 10,000). Suppose our detector is excellent in the usual sense — true-positive rate $\mathrm{TPR} = 0.95$ and false-positive rate $\mathrm{FPR} = 0.01$ (1% of benign sessions trip an alert).
+
+Plug into the Bayesian detection rate:
+
+$$ \Pr[\text{misuse}\mid\text{alert}] = \frac{p\cdot\mathrm{TPR}}{p\cdot\mathrm{TPR} + (1-p)\cdot\mathrm{FPR}} = \frac{10^{-4}\cdot 0.95}{10^{-4}\cdot 0.95 + 0.9999\cdot 0.01} \approx \frac{9.5\times10^{-5}}{1.005\times10^{-2}} \approx 0.0094. $$
+
+So **only ~0.9% of alerts are real** — roughly 106 false alarms per true catch. To reach even 50% precision at this base rate you would need $\mathrm{FPR} \le p\cdot\mathrm{TPR}/(1-p) \approx 9.5\times10^{-5}$ — a hundredfold tighter than 1%, on drifting analytic traffic. This is the base-rate wall (Axelsson): the limiting quantity is FPR, not TPR, and no learner escapes it without driving FPR below the misuse prevalence itself.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

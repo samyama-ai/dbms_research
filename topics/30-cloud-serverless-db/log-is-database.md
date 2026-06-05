@@ -44,11 +44,17 @@ For pure **durability latency**, upper and lower bounds *match* (the $V_w$-order
 - Extending log-is-the-database to HTAP, where analytical reads stress cold-page materialization.
 
 ## 9. Key References
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: On Avoiding Distributed Consensus for I/Os, Commits, and Membership Changes.* SIGMOD, 2018.
-- **[SOTA]** Antonopoulos, P. et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[Foundational]** Gifford, D. *Weighted Voting for Replicated Data.* SOSP, 1979.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101) · [DBLP](https://dblp.org/rec/conf/sigmod/VerbitskiGSBGMK17.html)
+- **[SOTA]** Verbitski, A. et al. *Amazon Aurora: On Avoiding Distributed Consensus for I/Os, Commits, and Membership Changes.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196937) · [DBLP](https://dblp.org/rec/conf/sigmod/VerbitskiGSCGBM18.html)
+- **[SOTA]** Antonopoulos, P. et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047) · [DBLP](https://dblp.org/rec/conf/sigmod/AntonopoulosBDS19.html)
+- **[Foundational]** Gifford, D. *Weighted Voting for Replicated Data.* SOSP, 1979. — [DOI](https://doi.org/10.1145/800215.806583) · [DBLP](https://dblp.org/rec/conf/sosp/Gifford79.html)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121) · [DBLP](https://dblp.org/rec/journals/jacm/FischerLP85.html)
+
+## 10. Worked Example
+
+Take Aurora's quorum $V=6$, $V_w=4$, $V_r=3$. Suppose each storage-node ack latency is i.i.d. uniform on $[0,10]$ ms. A commit waits for the $4$th-fastest of $6$ acks, i.e. the order statistic $X_{(4)}$. For Uniform$[0,10]$, $\mathbb{E}[X_{(k)}] = 10\cdot\frac{k}{V+1}$, so commit latency $\approx 10\cdot\frac{4}{7}\approx 5.7$ ms. Page mirroring (wait for both of $V=2$ copies) would pay $X_{(2)} = 10\cdot\frac{2}{3}\approx 6.7$ ms, and a full $6$-copy mirror would pay $X_{(6)}=10\cdot\frac{6}{7}\approx 8.6$ ms — the log-quorum tail wins.
+
+Now the byte side. A row update emits a redo record of $\approx 200$ B; the page is $16{,}384$ B, so $\rho \approx 0.012$. Network write volume per commit: log shipping moves $V_w\cdot 200 = 800$ B, whereas mirroring all pages moves $V\cdot 16384 \approx 98$ KB. The $\approx 120\times$ reduction is exactly the $1/\rho$ throughput win the model predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

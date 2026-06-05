@@ -35,11 +35,21 @@ Active threads: event-time **interval-join** state minimization and TTL tuning i
 - Cost models exposing band selectivity to multi-way and multi-query optimizers.
 
 ## 9. Key References
-- **[Foundational]** N. Polyzotis et al. / J. Kang, J. Naughton, S. Viglas. *Evaluating Window Joins over Unbounded Streams.* ICDE, 2003.
-- **[SOTA]** O. Papapetrou, M. Garofalakis, A. Deligiannakis. *Sketch-based Querying of Distributed Sliding-Window Data Streams (ECM-sketch).* VLDB, 2012.
-- **[SOTA]** K. Elseidy, A. Elguindy, A. Vitorovic, C. Koch. *Scalable and Adaptive Online Joins (theta-join matrix).* VLDB, 2014.
-- **[Foundational]** A. Okcan, M. Riedewald. *Processing Theta-Joins using MapReduce.* SIGMOD, 2011.
-- **[Survey]** L. Golab, M. T. Özsu. *Issues in Data Stream Management.* SIGMOD Record, 2003.
+- **[Foundational]** N. Polyzotis et al. / J. Kang, J. Naughton, S. Viglas. *Evaluating Window Joins over Unbounded Streams.* ICDE, 2003. — [DOI](https://doi.org/10.1109/ICDE.2003.1260804)
+- **[SOTA]** O. Papapetrou, M. Garofalakis, A. Deligiannakis. *Sketch-based Querying of Distributed Sliding-Window Data Streams (ECM-sketch).* VLDB, 2012. — [DOI](https://doi.org/10.14778/2336664.2336672)
+- **[SOTA]** K. Elseidy, A. Elguindy, A. Vitorovic, C. Koch. *Scalable and Adaptive Online Joins (theta-join matrix).* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732279.2732281)
+- **[Foundational]** A. Okcan, M. Riedewald. *Processing Theta-Joins using MapReduce.* SIGMOD, 2011. — [DOI](https://doi.org/10.1145/1989323.1989423)
+- **[Survey]** L. Golab, M. T. Özsu. *Issues in Data Stream Management.* SIGMOD Record, 2003. — [DOI](https://doi.org/10.1145/776985.776986)
+
+## 10. Worked Example
+
+**A 1-D band join and why state stays linear.** Predicate $|R.a - S.b| \le \varepsilon$ with $\varepsilon = 2$, time window $w$. Live $R$ tuples (key $a$): $\{10, 14, 21\}$. An $S$ tuple with $b=12$ arrives.
+
+Probe: matches are $R$ tuples in $[b-\varepsilon,\,b+\varepsilon]=[10,14]$. With $R$'s keys held in a balanced BST sorted on $a$, a range query returns $\{10,14\}$ in $O(\log n + k)$ time, here $k=2$. Emit $(12,10)$ and $(12,14)$. The tuple $21$ is outside the band, untouched.
+
+**Selectivity blow-up.** Suppose instead all $n$ live $R$ keys cluster inside one $2\varepsilon$-wide band and $n$ matching $S$ tuples arrive. Each $S$ probe matches all $n$, so output size is $\Theta(n^2)$ — the AGM-style worst case. No operator can beat $\Omega(\text{output})$ work, but **resident state** is still just the $O(n)$ live tuples per side; that linear state is what the communication lower bound (Section 5) shows is also *necessary* for exact answers.
+
+Contrast an equi-join: a hash on $a$ would let a probe touch only the matching bucket. The band has no such hash — $12$ can match keys $10,11,\dots,14$, a contiguous range, not one value — which is exactly why band joins resist constant-state and hash-partitioned parallelism.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

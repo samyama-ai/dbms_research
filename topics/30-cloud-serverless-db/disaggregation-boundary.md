@@ -44,11 +44,25 @@ Active threads: computational-storage / SmartSSD pushdown (CIDR, VLDB), "near-da
 
 ## 9. Key References
 
-- **[Foundational]** Verbitski, Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017.
-- **[SOTA]** Antonopoulos, Kossmann, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019.
-- **[SOTA]** Yang, Wu, et al. *FlexPushdownDB: Hybrid Pushdown and Caching in a Cloud DBMS.* VLDB, 2021.
-- **[SOTA]** Cao, Liu, et al. *PolarDB Serverless: A Cloud Native Database for Disaggregated Data Centers.* SIGMOD, 2021.
-- **[Survey]** Dageville, Cruanes, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016.
+- **[Foundational]** Verbitski, Gupta, et al. *Amazon Aurora: Design Considerations for High Throughput Cloud-Native Relational Databases.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056101)
+- **[SOTA]** Antonopoulos, Kossmann, et al. *Socrates: The New SQL Server in the Cloud.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314047)
+- **[SOTA]** Yang, Wu, et al. *FlexPushdownDB: Hybrid Pushdown and Caching in a Cloud DBMS.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476265)
+- **[SOTA]** Cao, Liu, et al. *PolarDB Serverless: A Cloud Native Database for Disaggregated Data Centers.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457560)
+- **[Survey]** Dageville, Cruanes, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2903741)
+
+## 10. Worked Example
+
+Query: `SELECT region, SUM(amount) FROM sales WHERE year=2025 GROUP BY region`. The base table `sales` lives in storage and holds 100 GB; the predicate `year=2025` has selectivity 0.1, and the aggregation collapses the result to a tiny 5-row group table (negligible bytes). Per-byte crossing cost $\beta$, fixed latency $\tau$.
+
+Operator tree (leaf→root): $\text{Scan} \to \sigma_{year=2025} \to \gamma_{\text{GROUP BY}}$. Each edge can cross the storage/compute boundary.
+
+*Two placements.*
+- **Pull-up (filter at compute):** Scan emits 100 GB across the wire. Cost $\approx \beta \cdot 100\,\text{GB} + \tau$.
+- **Pushdown (filter at storage):** $\sigma$ runs storage-side; only $0.1 \times 100 = 10\,\text{GB}$ crosses. Then $\gamma$ at compute emits ~0 bytes upward. Cost $\approx \beta \cdot 10\,\text{GB} + \tau$.
+
+Pushing the filter down cuts bytes-on-wire $10\times$. If the storage tier can also run partial aggregation, pushing $\gamma$ down too sends only the 5-row result — bytes $\to 0$.
+
+*DP optimality.* For this tree the bottom-up DP of section 4 memoizes, at each node, the best cost given its own tier label; with linear crossing costs and no storage-capacity limit it returns the global optimum in $O(|V|)$ — here, $|V|=3$ nodes. The decision flips only when the storage tier hits a CPU cap (can't afford the aggregation) — exactly the capacitated case that makes the general problem NP-hard (section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

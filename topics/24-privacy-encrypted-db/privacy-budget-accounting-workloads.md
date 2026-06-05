@@ -1,6 +1,7 @@
 # End-to-End Privacy Budget Accounting for Workloads
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/privacy-budget-accounting-workloads` · **Status:** partially-solved
+> **Verification note:** Gopi–Lee–Wutschitz (NeurIPS 2021) is titled "Numerical Composition of Differential Privacy"; the "Connect-the-Dots" name refers to a distinct later accountant (Doroshenko et al., PoPETs 2022), so the parenthetical in §3 and §9 conflates two papers.
 
 ## 1. Problem Statement
 
@@ -47,13 +48,27 @@ The advanced-composition $\Omega(\sqrt{k}\,\varepsilon)$ growth is **tight** —
 
 ## 9. Key References
 
-- **[Foundational]** Dwork, Rothblum, Vadhan. *Boosting and Differential Privacy (Advanced Composition).* FOCS, 2010.
-- **[Foundational]** Kairouz, Oh, Viswanath. *The Composition Theorem for Differential Privacy.* ICML, 2015.
-- **[Foundational]** Bun, Steinke. *Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds.* TCC, 2016.
-- **[SOTA]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016.
-- **[SOTA]** Gopi, Lee, Wutschitz. *Numerical Composition of Differential Privacy (Connect-the-Dots).* NeurIPS, 2021.
-- **[SOTA]** Dong, Roth, Su. *Gaussian Differential Privacy.* J. Royal Statistical Society B, 2022.
-- **[Survey]** McSherry. *Privacy Integrated Queries (PINQ).* SIGMOD, 2009.
+- **[Foundational]** Dwork, Rothblum, Vadhan. *Boosting and Differential Privacy (Advanced Composition).* FOCS, 2010. — [DOI](https://doi.org/10.1109/FOCS.2010.12)
+- **[Foundational]** Kairouz, Oh, Viswanath. *The Composition Theorem for Differential Privacy.* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/kairouz15.html) — [arXiv](https://arxiv.org/abs/1311.0776)
+- **[Foundational]** Bun, Steinke. *Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds.* TCC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53641-4_24) — [arXiv](https://arxiv.org/abs/1605.02065)
+- **[SOTA]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1605.08294)
+- **[SOTA]** Gopi, Lee, Wutschitz. *Numerical Composition of Differential Privacy (Connect-the-Dots).* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2106.02848)
+- **[SOTA]** Dong, Roth, Su. *Gaussian Differential Privacy.* J. Royal Statistical Society B, 2022. — [DOI](https://doi.org/10.1111/rssb.12454)
+- **[Survey]** McSherry. *Privacy Integrated Queries (PINQ).* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559850)
+
+## 10. Worked Example
+
+A DP dataset has total budget $\varepsilon_{\text{tot}} = 1.0$ at $\delta = 10^{-6}$. An analyst issues $k = 100$ identical Laplace-mechanism count queries, each $\varepsilon_0$-DP. How small must $\varepsilon_0$ be?
+
+**Basic composition** charges linearly: $k\varepsilon_0 \le 1 \Rightarrow \varepsilon_0 \le 0.01$. So at most 100 queries at $\varepsilon_0 = 0.01$ each.
+
+**Advanced composition** (Dwork–Rothblum–Vadhan) gives, for $k$ mechanisms,
+$$\varepsilon_{\text{tot}} \le \sqrt{2k\ln(1/\delta)}\,\varepsilon_0 + k\varepsilon_0(e^{\varepsilon_0}-1).$$
+With $k=100,\ \delta=10^{-6}$: $\ln(1/\delta)\approx13.8$, so $\sqrt{2\cdot100\cdot13.8}\approx52.6$. Ignoring the tiny second term, $52.6\,\varepsilon_0 \le 1 \Rightarrow \varepsilon_0 \le 0.019$ — nearly **double** the per-query budget of basic composition, because privacy loss grows like $\sqrt{k}$, not $k$.
+
+**Tighter still:** the PLD/numerical accountant (Gopi–Lee–Wutschitz) computes the exact $(\varepsilon,\delta)$ curve, typically permitting $\varepsilon_0$ a further $\sim$10–30% larger.
+
+**The open gap:** if the 100 queries are *correlated* (e.g., COUNT on heavily overlapping predicates), true joint leakage can be far below this $\sqrt{k}$ bound, yet no sound general accountant certifies the saving — so the system still over-charges and stops early.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

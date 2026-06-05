@@ -38,12 +38,27 @@ Velox and DuckDB teams publish ongoing work on vectorized nested kernels and laz
 - Pushdown of array predicates to avoid full unnest materialization.
 
 ## 9. Key References
-- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[Foundational]** S. Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010.
-- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW, 2015.
-- **[SOTA]** P. Pedreira et al. *Velox: Meta's Unified Execution Engine.* VLDB, 2022.
-- **[SOTA]** M. Raasveldt, H. Mühleisen. *DuckDB: an Embeddable Analytical Database.* SIGMOD (demo), 2019.
-- **[Foundational]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism.* SIGMOD, 2014.
+- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [PDF](https://www.cidrdb.org/cidr2005/papers/P19.pdf) · [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[Foundational]** S. Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920886) · [PDF](https://research.google.com/pubs/archive/36632.pdf)
+- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW, 2015. — [PDF](https://cs.emis.de/LNI/Proceedings/Proceedings241/383.pdf) · [DBLP](https://dblp.org/rec/conf/btw/0001K15.html)
+- **[SOTA]** P. Pedreira et al. *Velox: Meta's Unified Execution Engine.* VLDB, 2022. — [DOI](https://doi.org/10.14778/3554821.3554829) · [PDF](https://www.vldb.org/pvldb/vol15/p3372-pedreira.pdf)
+- **[SOTA]** M. Raasveldt, H. Mühleisen. *DuckDB: an Embeddable Analytical Database.* SIGMOD (demo), 2019. — [PDF](https://hannes.muehleisen.org/publications/SIGMOD2019-demo-duckdb.pdf) · [DOI](https://doi.org/10.1145/3299869.3320212)
+- **[Foundational]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507) · [PDF](https://db.in.tum.de/~leis/papers/morsels.pdf)
+
+## 10. Worked Example
+
+Three parent rows with a nested `tags` array, stored Arrow-style as a flat **values** buffer plus an **offsets** array:
+
+```
+values  = [ x, y, z, w, p ]          // 5 child elements
+offsets = [ 0, 2, 2, 5 ]             // row i spans values[offsets[i] : offsets[i+1]]
+```
+
+Row 0 has `[x,y]` ($\ell_0=2$), row 1 has `[]` ($\ell_1=0$), row 2 has `[z,w,p]` ($\ell_2=3$).
+
+`UNNEST(tags)` is one linear pass: emit each child paired with its parent id, producing $\sum_i \ell_i = 2+0+3 = 5$ output rows in $O(N + \sum\ell_i) = O(3+5)$ time, reading both buffers sequentially — bandwidth-bound, no per-tuple branching.
+
+The lower-bound wrinkle: row 1 is empty, rows 0 and 2 differ in length. A SIMD kernel processing fixed lanes of, say, width 4 cannot align cleanly to these ragged segments — the length variance forces a *gather* with data-dependent strides and a partially filled final lane. So while the asymptotics stay linear, achieved SIMD utilization on this tiny skewed input is well below 100%, illustrating exactly the "flat-relational efficiency on ragged data" gap of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

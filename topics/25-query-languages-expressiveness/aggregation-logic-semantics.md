@@ -1,6 +1,7 @@
 # Aggregation and Arithmetic in Logical Query Languages
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/aggregation-logic-semantics` · **Status:** open
+> **Verification note:** Hella–Libkin–Nurmonen–Wong, *Logics with Aggregate Operators*, appeared in the Journal of the ACM 48(4), 2001 (not the Journal of Symbolic Logic); reference corrected.
 
 ## 1. Problem Statement
 SQL and practical query languages compute over *interpreted* numeric domains: `GROUP BY`, `SUM`, `AVG`, `COUNT`, window functions, and arithmetic ($+,\times,\le$). Classical finite model theory studies *uninterpreted* relational structures, so it does not directly explain what such languages can and cannot express. The problem: build a **clean expressiveness theory** for logics with grouping/aggregation/arithmetic — define the right logic $\mathcal{L}_{\mathrm{aggr}}$, settle its expressive power, prove **capture results** (which logic = which complexity class on which structures), and obtain **inexpressibility** tools (locality/games) that survive interpreted operations.
@@ -33,11 +34,25 @@ Libkin and collaborators (Geerts, Guagliardo, Toruńczyk) continue rigorous SQL 
 A complete locality theory for bag semantics and window functions; capture results for the recursive+aggregate fragment that mirror the lattice/semantics work in Datalog; tools for proving inexpressibility in presence of approximate/numeric operators; and reconciling the two-sorted logical model with property-graph aggregate queries.
 
 ## 9. Key References
-- **[Foundational]** L. Hella, L. Libkin, J. Nurmonen, L. Wong. *Logics with Aggregate Operators.* Journal of Symbolic Logic 66(2), 2001.
-- **[Foundational]** L. Libkin. *Expressive Power of SQL.* Theoretical Computer Science 296(3), 2003.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** P. Guagliardo, L. Libkin. *A Formal Semantics of SQL Queries, Its Validation, and Applications.* VLDB / PVLDB 11(1), 2017.
-- **[Foundational]** N. Immerman. *Descriptive Complexity.* Springer, 1999 (FO+counting and TC$^0$ capture).
+- **[Foundational]** L. Hella, L. Libkin, J. Nurmonen, L. Wong. *Logics with Aggregate Operators.* Journal of the ACM 48(4), 2001. — [DOI](https://doi.org/10.1145/502090.502100)
+- **[Foundational]** L. Libkin. *Expressive Power of SQL.* Theoretical Computer Science 296(3), 2003. — [DOI](https://doi.org/10.1016/S0304-3975(02)00736-3)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** P. Guagliardo, L. Libkin. *A Formal Semantics of SQL Queries, Its Validation, and Applications.* VLDB / PVLDB 11(1), 2017. — [DOI](https://doi.org/10.14778/3151113.3151116)
+- **[Foundational]** N. Immerman. *Descriptive Complexity.* Springer, 1999 (FO+counting and TC$^0$ capture). — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+
+## 10. Worked Example
+
+Consider one relation $\mathrm{Sales}(\text{store}, \text{amount})$ over the two-sorted model (store is a domain element; amount lives on the numeric sort):
+
+| store | amount |
+|-------|--------|
+| A | 10 |
+| A | 30 |
+| B | 50 |
+
+The SQL query `SELECT store, SUM(amount) FROM Sales GROUP BY store` is the aggregate term $q(s) = \mathrm{sum}_{a}\,\{a : \mathrm{Sales}(s,a)\}$, giving $q(A)=40,\ q(B)=50$.
+
+**Why locality blocks reachability.** Now take a graph relation $E$ on the *domain* sort and ask "are $u,v$ connected?". A query in $\mathrm{FO}(\mathbf{Aggr},+,\times)$ has some locality radius $r$ (independent of $n$). Take two cycles of length $2r{+}2$: in $C_1$ pick antipodal $u,v$ (connected); in $C_2$ pick $u',v'$ from two *separate* copies (disconnected). The radius-$r$ neighborhoods $N_r(u,v)\cong N_r(u',v')$ are isomorphic disjoint paths, so any aggregate the logic computes returns identical numeric values on both — it cannot separate "connected" from "disconnected". Hence $\text{connectivity}\notin\mathrm{FO}(\mathbf{Aggr},+,\times)$ over unordered structures, even though summation/counting on the numeric sort is unrestricted.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

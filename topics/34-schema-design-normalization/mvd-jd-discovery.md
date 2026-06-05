@@ -59,12 +59,25 @@ This is **genuinely open**. For FDs we have mature, scalable discovery; for MVDs
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin. *Multivalued Dependencies and a New Normal Form for Relational Databases.* ACM TODS, 1977.
-- **[Foundational]** C. Beeri, R. Fagin, J. H. Howard. *A Complete Axiomatization for Functional and Multivalued Dependencies.* ACM SIGMOD, 1977.
-- **[Foundational]** R. Fagin. *Normal Forms and Relational Database Operators (PJ/NF, 5NF).* ACM SIGMOD, 1979.
-- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983.
-- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[Survey]** Z. Abedjan, L. Golab, F. Naumann. *Profiling Relational Data: A Survey.* The VLDB Journal, 2015.
+- **[Foundational]** R. Fagin. *Multivalued Dependencies and a New Normal Form for Relational Databases.* ACM TODS, 1977. — [DOI](https://doi.org/10.1145/320557.320571)
+- **[Foundational]** C. Beeri, R. Fagin, J. H. Howard. *A Complete Axiomatization for Functional and Multivalued Dependencies.* ACM SIGMOD, 1977. — [DOI](https://doi.org/10.1145/509404.509414)
+- **[Foundational]** R. Fagin. *Normal Forms and Relational Database Operators (PJ/NF, 5NF).* ACM SIGMOD, 1979. — [DBLP search](https://dblp.org/search?q=Fagin+Normal+Forms+and+Relational+Database+Operators)
+- **[Foundational]** C. Beeri, R. Fagin, D. Maier, M. Yannakakis. *On the Desirability of Acyclic Database Schemes.* JACM, 1983. — [DOI](https://doi.org/10.1145/2402.322389)
+- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143)
+- **[Survey]** Z. Abedjan, L. Golab, F. Naumann. *Profiling Relational Data: A Survey.* The VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0389-y)
+
+## 10. Worked Example
+
+Consider the classic 4NF-violating relation $\text{CTB}(\text{Course},\text{Teacher},\text{Book})$ — each course has a set of teachers and an *independent* set of books:
+
+| Course | Teacher | Book   |
+|--------|---------|--------|
+| DB     | Alice   | Ullman |
+| DB     | Alice   | Date   |
+| DB     | Bob     | Ullman |
+| DB     | Bob     | Date   |
+
+For $X=\text{Course}$, the single $X$-class $\{\text{DB}\}$ contains every $(\text{Teacher},\text{Book})$ pair — a $2\times 2$ Cartesian product $\{$Alice,Bob$\}\times\{$Ullman,Date$\}$. By the partition test, $\text{Course}\twoheadrightarrow\text{Teacher}$ holds (and by complementation $\text{Course}\twoheadrightarrow\text{Book}$). Equivalently the binary JD $\bowtie[\text{CT},\text{CB}]$ holds: $\pi_{CT}=\{($DB,Alice$),($DB,Bob$)\}$ joined with $\pi_{CB}=\{($DB,Ullman$),($DB,Date$)\}$ on Course reproduces all 4 rows losslessly. Drop one row, say (DB, Bob, Date): the class is no longer a full product (it has 3 of 4 cells), the MVD fails, and the join would *re-introduce* the missing tuple — a spurious tuple exposing the lost dependency. The 4NF fix decomposes CTB into CT and CB, each storing $2$ rows instead of $4$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -103,11 +103,21 @@ characterization of when two-sided guarantees are impossible below linear space.
 
 ## 9. Key References
 
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: the Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** M. Abo Khamis, H. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017.
-- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation.* SIGMOD 2019.
-- **[SOTA]** K. Deeds, B. Sagi, D. Suciu, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD 2023.
-- **[Survey]** X. Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021.
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: the Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001) — [PDF](https://dimacs.rutgers.edu/~graham/pubs/papers/cm-full.pdf)
+- **[Foundational]** M. Abo Khamis, H. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017. — [arXiv](https://arxiv.org/abs/1612.02503) — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation.* SIGMOD 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[SOTA]** K. Deeds, B. Sagi, D. Suciu, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2211.09864) — [DOI](https://doi.org/10.1145/3588907)
+- **[Survey]** X. Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743) — [DOI](https://doi.org/10.14778/3461535.3461552)
+
+## 10. Worked Example
+
+Let the true cardinality of a query be $c(q) = 1000$. An estimator predicts $\hat c(q) = 100$ (a 10$\times$ under-estimate). The multiplicative q-error is
+$$\mathrm{qerr}(q) = \max\!\Big(\tfrac{100}{1000}, \tfrac{1000}{100}\Big) = \max(0.1, 10) = 10.$$
+Such an under-estimate is the dangerous case: the optimizer believes the intermediate result is tiny and picks a nested-loop join that becomes catastrophic at $1000$ rows.
+
+Now contrast a **pessimistic** estimator on the join $R(a,b)\bowtie S(b,c)$ with $|R|=|S|=N=100$. The AGM bound uses edge cover $x_R = x_S = 1$, giving $\hat c = N^1 \cdot N^1 = 10{,}000 \ge c(q)$ *always* — a one-sided guarantee ($\hat c \ge c$, never under-estimates). If the join is actually a foreign-key join with true output $c = 100$, the q-error is $10000/100 = 100$: bounded above, but loose.
+
+The open problem: get a *two-sided* certified $\rho$ (say $\rho = 2$, so $500 \le \hat c \le 2000$ when $c = 1000$) from a compact *learned* model. No such certificate is known for general correlated joins below linear space — set-disjointness communication bounds say a synopsis of size $o(N)$ cannot certify it for all queries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -54,13 +54,23 @@ Dependency *theory* (GFDs/GEDs with coNP implication, complete axioms) is compar
 - Empirical study linking normal forms to query performance and update anomalies.
 
 ## 9. Key References
-- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972.
-- **[Foundational]** Fagin, R. *Multivalued Dependencies and a New Normal Form for Relational Databases.* ACM TODS, 1977.
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005.
-- **[SOTA]** Fan, W., Wu, Y., Xu, J. *Functional Dependencies for Graphs.* SIGMOD 2016.
-- **[SOTA]** Fan, W., Lu, P. *Dependencies for Graphs.* ACM TODS, 2019 (PODS 2017).
-- **[SOTA]** Fan, W., Fan, Z., Tian, C., Dong, X. L. *Keys for Graphs.* VLDB 2015.
-- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972. — [DBLP search](https://dblp.org/search?q=Further+Normalization+of+the+Data+Base+Relational+Model)
+- **[Foundational]** Fagin, R. *Multivalued Dependencies and a New Normal Form for Relational Databases.* ACM TODS, 1977. — [DOI](https://doi.org/10.1145/320557.320571)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
+- **[SOTA]** Fan, W., Wu, Y., Xu, J. *Functional Dependencies for Graphs.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915232)
+- **[SOTA]** Fan, W., Lu, P. *Dependencies for Graphs.* ACM TODS, 2019 (PODS 2017). — [DOI](https://doi.org/10.1145/3287285)
+- **[SOTA]** Fan, W., Fan, Z., Tian, C., Dong, X. L. *Keys for Graphs.* VLDB 2015. — [DOI](https://doi.org/10.14778/2824032.2824056)
+- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. — [book site](http://webdam.inria.fr/Alice/)
+
+## 10. Worked Example
+
+**A GFD detecting redundancy.** Consider a property graph of an airline. Pattern $Q$ matches any two `Flight` vertices $x,y$ that each point (via an `operatedBy` edge) to the same `Airline` vertex $z$. Attach the dependency
+$$X \to Y:\quad z.\texttt{name} \;\to\; x.\texttt{carrierCode}.$$
+Semantics: in **every** match of $Q$, if two flights share airline $z$, then $z.\texttt{name}$ functionally determines the flight's `carrierCode`.
+
+Now take $G$ with $z.\texttt{name}=$ "Delta", and flights $f_1,\dots,f_{100}$ all `operatedBy` $z$, each storing `carrierCode = DL`. The GFD holds, but the value `DL` is **redundant**: it is predictable from $z.\texttt{name}$ in all 100 vertices. Information-theoretically (Arenas–Libkin), the conditional entropy of any one `carrierCode` cell given the rest is $0$ — the hallmark of a non-normal-form design. A graph "BCNF" would refactor `carrierCode` onto the `Airline` vertex $z$, storing it once.
+
+**Validation cost.** Checking $G\models\Sigma$ requires enumerating matches of $Q$ — here a subgraph-isomorphism search, NP-hard in combined complexity but PTIME for the fixed pattern $Q$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -44,12 +44,23 @@ The view-selection sub-problem is essentially tight ($1-1/e$ both ways). The **g
 - Anomaly-governed redundancy (materialized, auto-maintained) with formal consistency SLAs.
 
 ## 9. Key References
-- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1971.
-- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005.
-- **[SOTA]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013.
-- **[SOTA]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978.
-- **[Survey]** Gupta, A., Mumick, I.S. *Materialized Views: Techniques, Implementations, and Applications.* MIT Press, 1999.
+- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1971. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
+- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [ACM](https://dl.acm.org/doi/10.5555/645923.673646)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
+- **[SOTA]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Survey]** Gupta, A., Mumick, I.S. *Materialized Views: Techniques, Implementations, and Applications.* MIT Press, 1999. — [MIT Press](https://direct.mit.edu/books/edited-volume/2853/Materialized-ViewsTechniques-Implementations-and)
+
+## 10. Worked Example
+Take two BCNF relations: $\text{Orders}(\underline{oid}, cid, total)$ with 1,000,000 rows and $\text{Customers}(\underline{cid}, region)$ with 10,000 rows. Workload $W$: a read $q_r$ = "join Orders with Customers to tag each order with its region," run $f_r = 100$/s, and an update $q_u$ = "change a customer's region," run $f_u = 1$/s.
+
+Candidate denormalization $\mathcal{D}$: fold $region$ into Orders, giving $\text{Orders}'(\underline{oid}, cid, total, region)$.
+
+Read benefit: each $q_r$ avoids a join. Using a unit cost of one tuple-scan, the normalized read costs $\approx |\text{Orders}| = 10^6$; denormalized it is also $10^6$ but with no probe into Customers, saving the hash-build over $10^4$ rows per query — modest here, but materializing the pre-join entirely removes per-query join work.
+
+Update amplification: $region$ now appears in $r = 2$ relations (Customers and every matching Orders' row). Changing one customer's region rewrites on average $10^6/10^4 = 100$ Orders' rows instead of 1 cell — a $100\times$ amplification, weighted by $f_u = 1$/s.
+
+Net per-second change $\approx -100 \cdot \text{(join saved)} + 1 \cdot 100 \cdot \text{(row rewrite)}$. With reads 100× more frequent than updates and each update touching ~100 rows, the trade is roughly break-even — illustrating why the decision is genuinely workload-dependent, not a pure normal-form question. The merged $\text{Orders}'$ is no longer in BCNF ($cid \to region$ holds but $cid$ is not a key), so it reintroduces update anomalies: the same $cid$ can carry inconsistent $region$ values across rows if not jointly maintained.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

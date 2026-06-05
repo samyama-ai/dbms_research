@@ -51,13 +51,21 @@ Active threads: **instance-optimal DP for self-joins and cyclic queries** extend
 
 ## 9. Key References
 
-- **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Nissim, K., Raskhodnikova, S., Smith, A. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007.
-- **[SOTA]** Johnson, N., Near, J.P., Song, D. *Towards Practical Differential Privacy for SQL Queries.* VLDB, 2018.
-- **[SOTA]** Dong, W., Fang, J., Yi, K. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021.
-- **[SOTA]** Dong, W., Yi, K. *R2T: Instance-Optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022.
-- **[SOTA]** Proserpio, D., Goldberg, S., McSherry, F. *Calibrating Data to Sensitivity in Private Data Analysis (wPINQ).* VLDB, 2014.
-- **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
+- **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Nissim, K., Raskhodnikova, S., Smith, A. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250803)
+- **[SOTA]** Johnson, N., Near, J.P., Song, D. *Towards Practical Differential Privacy for SQL Queries.* VLDB, 2018. — [arXiv](https://arxiv.org/abs/1706.09479)
+- **[SOTA]** Dong, W., Fang, J., Yi, K. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813)
+- **[SOTA]** Dong, W., Yi, K. *R2T: Instance-Optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517844)
+- **[SOTA]** Proserpio, D., Goldberg, S., McSherry, F. *Calibrating Data to Sensitivity in Private Data Analysis (wPINQ).* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1203.3453)
+- **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+
+## 10. Worked Example
+
+Consider `Users(uid)` and `Events(uid, …)`, with the count query $f = $ `SELECT COUNT(*) FROM Users JOIN Events USING(uid)`. Suppose user $u^\star$ has degree (event count) $d_{u^\star}$. Removing $u^\star$ (user-level neighbor) drops *all* of their events, so the global sensitivity is $\Delta f = \max_u d_u$. If one popular user has $d_{u^\star}=10^6$, then $\Delta f = 10^6$: Laplace noise of scale $\Delta f/\varepsilon = 10^6/\varepsilon$ swamps any answer.
+
+Contribution bounding fixes this. Cap each user at $\tau$ events (keep at most $\tau$ rows per `uid`). Now $\Delta f_\tau = \tau$, so we add $\mathrm{Lap}(\tau/\varepsilon)$. Pick $\tau$ to balance the two error sources: truncation bias $\sum_u \max(0, d_u-\tau)$ versus noise std $\sqrt{2}\,\tau/\varepsilon$.
+
+Say true count $=5\times10^6$, $\varepsilon=1$, and degrees are mostly small with a few large. At $\tau=100$: noise std $\approx 141$, truncation drops perhaps $\sim$0.1% of rows. The DP answer is $5\times10^6 \pm \mathcal{O}(10^3)$ — usable. R2T automates choosing $\tau$ near-optimally, paying only a $\mathrm{polylog}$ factor over the best fixed threshold.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

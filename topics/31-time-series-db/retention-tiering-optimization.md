@@ -34,12 +34,28 @@ Threads: **learning-augmented online algorithms** (Lykouris–Vassilvitskii styl
 - Joint optimization with chunking (`time-chunking-policy.md`) and rollup materialization (`rollup-materialization-optimal.md`).
 
 ## 9. Key References
-- **[Foundational]** V. Harinarayan, A. Rajaraman, J. D. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978.
-- **[Foundational]** D. Sleator, R. E. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM / ICML, 2018/2021.
-- **[SOTA]** Timescale. *Continuous Aggregates and Tiered Storage.* (system documentation/engineering), 2021–.
-- **[Survey]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
+- **[Foundational]** V. Harinarayan, A. Rajaraman, J. D. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** D. Sleator, R. E. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM / ICML, 2018/2021. — [DOI](https://doi.org/10.1145/3447579) — [arXiv](https://arxiv.org/abs/1802.05399)
+- **[SOTA]** Timescale. *Continuous Aggregates and Tiered Storage.* (system documentation/engineering), 2021–. — [docs](https://docs.timescale.com/use-timescale/latest/continuous-aggregates/)
+- **[Survey]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+
+## 10. Worked Example
+
+Three aging chunks, each with a representation menu (storage cost / residual error):
+
+| chunk | raw | 1-min rollup | sketch | evicted |
+|---|---|---|---|---|
+| $A$ | (10, 0) | (2, 0.01) | (1, 0.05) | (0, 1.0) |
+| $B$ | (10, 0) | (2, 0.02) | (1, 0.04) | (0, 1.0) |
+| $C$ | (10, 0) | (2, 0.02) | (1, 0.06) | (0, 1.0) |
+
+Storage budget $B=6$, and every chunk must satisfy error $\le \varepsilon = 0.05$.
+
+Evicting is cheapest but violates $\varepsilon$ (error $1.0$). Picking *raw* everywhere costs $30 > 6$. The 1-min rollup meets $\varepsilon$ for all three at cost $2{+}2{+}2 = 6 \le B$ — feasible, total residual error $0.01{+}0.02{+}0.02 = 0.05$. Swapping $A$ to its sketch (cost 1, error $0.05$) frees a byte but does not improve the objective since the budget is already met; swapping $C$ to its sketch fails ($0.06 > \varepsilon$). 
+
+So the optimal assignment is *all 1-min rollups*. Note the **irreversibility**: once $C$'s raw is dropped, a later query demanding $\varepsilon = 0.03$ can no longer be served — the online version must hedge against such future tightening, which is exactly the $\Omega(\log k)$-competitive hard core.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

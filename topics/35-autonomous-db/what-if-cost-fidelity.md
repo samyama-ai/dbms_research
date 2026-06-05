@@ -41,11 +41,21 @@ Active directions: *uncertainty-aware* cardinality estimators producing calibrat
 - Benchmarks that report *decision regret* from cost error, not just q-error of cardinalities.
 
 ## 9. Key References
-- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997.
-- **[Foundational]** Moerkotte, G., Neumann, T., Steidl, G. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* PVLDB, 2009.
-- **[SOTA]** Kossmann, J., Halfpap, S., Jankrift, M., Schlosser, R. *Magic mirror in my hand, which is the best in the land? An Experimental Evaluation of Index Selection Algorithms.* PVLDB, 2020.
-- **[SOTA]** Kipf, A., et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[Survey]** Marcus, R., et al. *Neo / Bao: Learned Query Optimization.* PVLDB, 2019–2021.
+- **[Foundational]** Chaudhuri, S., Narasayya, V. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server.* VLDB, 1997. — [MSR](https://www.microsoft.com/en-us/research/publication/an-efficient-cost-driven-index-selection-tool-for-microsoft-sql-server/)
+- **[Foundational]** Moerkotte, G., Neumann, T., Steidl, G. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* PVLDB, 2009. — [PDF](http://www.vldb.org/pvldb/vol2/vldb09-657.pdf), [DOI](https://doi.org/10.14778/1687627.1687738)
+- **[SOTA]** Kossmann, J., Halfpap, S., Jankrift, M., Schlosser, R. *Magic mirror in my hand, which is the best in the land? An Experimental Evaluation of Index Selection Algorithms.* PVLDB, 2020. — [PDF](https://www.vldb.org/pvldb/vol13/p2382-kossmann.pdf)
+- **[SOTA]** Kipf, A., et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Survey]** Marcus, R., et al. *Neo / Bao: Learned Query Optimization.* PVLDB, 2019–2021. — [Neo PDF](https://www.vldb.org/pvldb/vol12/p1705-marcus.pdf)
+
+## 10. Worked Example
+
+Two candidate single-column indexes, $D_1$ on `orders(cust_id)` and $D_2$ on `orders(date)`, one query $q$: `SELECT * FROM orders WHERE cust_id=? AND date BETWEEN ? AND ?`. True executed costs: $c^\star(q,D_1)=100$, $c^\star(q,D_2)=160$. So $D^\star=D_1$.
+
+The optimizer's what-if estimates rely on cardinality estimates. Suppose it assumes `cust_id` and `date` are independent, but they are correlated, so it underestimates the `cust_id` selectivity, yielding $\hat c(q,D_1)=150$, $\hat c(q,D_2)=140$. Now $\hat D=D_2$ — the **decision flips**, and we pay $F^\star(\hat D)=160$ vs. optimum $100$: a decision regret of $60\%$.
+
+Transfer bound: here the distortion is $\rho=\max(150/100,\,160/140)\approx1.5$. The $\rho^2$ guarantee promises any $\hat c$-optimal design is within $\rho^2\approx2.25\times$ of $c^\star$-optimal — and indeed $160\le2.25\cdot100$, consistent. The flip happened precisely because the per-design distortions were *not order-consistent*.
+
+Why $\rho$ can blow up: if the predicates spanned a 4-join chain, the q-error compounds multiplicatively, $\hat q\le q^{\text{joins}}$, so $\rho$ can reach $\Omega(2^{\text{joins}})$ on adversarially correlated data — the section-5 information-theoretic wall. Selective execution of the top-$2$ designs ($O(k)$ real runs) would catch this flip empirically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

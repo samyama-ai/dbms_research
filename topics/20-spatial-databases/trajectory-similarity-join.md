@@ -42,12 +42,22 @@ Active directions: learned trajectory embeddings (t2vec, TrajCL, contrastive/sel
 - Unified GPU + distributed cost models for filter-and-refine pipelines.
 
 ## 9. Key References
-- **[Foundational]** Alt, Godau. *Computing the Fréchet Distance Between Two Polygonal Curves.* IJCG, 1995.
-- **[Foundational]** Bringmann. *Why Walking the Dog Takes Time: Fréchet Distance Has No Strongly Subquadratic Algorithms Unless SETH Fails.* FOCS, 2014.
-- **[Foundational]** Abboud, Backurs, Williams. *Tight Hardness Results for LCS and Other Sequence Similarity Measures.* FOCS, 2015.
-- **[SOTA]** Driemel, Silvestri. *Locality-Sensitive Hashing of Curves.* SoCG, 2017.
-- **[SOTA]** Shang, Chen, Wei, Jensen, et al. *DITA: Distributed In-Memory Trajectory Analytics.* SIGMOD, 2018.
-- **[Survey]** Su, Liu, Zheng, et al. *A Survey of Trajectory Distance Measures and Performance Evaluation.* VLDB Journal, 2020.
+- **[Foundational]** Alt, Godau. *Computing the Fréchet Distance Between Two Polygonal Curves.* IJCG, 1995. — [DOI](https://doi.org/10.1142/S0218195995000064)
+- **[Foundational]** Bringmann. *Why Walking the Dog Takes Time: Fréchet Distance Has No Strongly Subquadratic Algorithms Unless SETH Fails.* FOCS, 2014. — [arXiv](https://arxiv.org/abs/1404.1448)
+- **[Foundational]** Abboud, Backurs, Williams. *Tight Hardness Results for LCS and Other Sequence Similarity Measures.* FOCS, 2015. — [DBLP](https://dblp.org/rec/conf/focs/AbboudBW15.html)
+- **[SOTA]** Driemel, Silvestri. *Locality-Sensitive Hashing of Curves.* SoCG, 2017. — [arXiv](https://arxiv.org/abs/1703.04040)
+- **[SOTA]** Shang, Chen, Wei, Jensen, et al. *DITA: Distributed In-Memory Trajectory Analytics.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183743)
+- **[Survey]** Su, Liu, Zheng, et al. *A Survey of Trajectory Distance Measures and Performance Evaluation.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00574-9)
+
+## 10. Worked Example
+
+Two length-3 trajectories on a line: $A=\langle 0,2,3\rangle$, $B=\langle 1,1,4\rangle$. Compute **DTW** by filling the $3\times3$ cost lattice with squared-distance local cost $c(i,j)=(A_i-B_j)^2$ and cumulative $D(i,j)=c(i,j)+\min\{D(i{-}1,j),D(i,j{-}1),D(i{-}1,j{-}1)\}$:
+
+local costs $c=\begin{bmatrix}1&1&16\\1&1&4\\4&4&1\end{bmatrix}$, giving cumulative $D=\begin{bmatrix}1&2&18\\2&2&6\\6&6&3\end{bmatrix}$.
+
+So $\mathrm{DTW}(A,B)=D(3,3)=3$, via warping path $(1,1)\!\to\!(2,2)\!\to\!(3,3)$. With threshold $\tau=2$ this pair is **not** reported.
+
+**Filter-and-refine.** $\mathrm{LB\_Keogh}$ bounds DTW cheaply: build an envelope around $B$ with warping band $w=1$, $U_j=\max_{|k-j|\le1}B_k$, $L_j=\min_{|k-j|\le1}B_k$, giving $U=\langle1,4,4\rangle$, $L=\langle1,1,1\rangle$. Then $\mathrm{LB}=\sum_i (A_i-U_i)^2$ if $A_i>U_i$ else $(A_i-L_i)^2$ if $A_i<L_i$ else $0 = 0+0+0=0 \le \mathrm{DTW}=3$. Since $\mathrm{LB}=0\le\tau$ the pair survives the filter and goes to exact refinement — illustrating the $O(m)$ filter guarding the $O(m^2)$ DP, with no false dismissal. Over $n$ trajectories this still leaves the $\Theta(n^2)$ candidate wall of Section 1.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

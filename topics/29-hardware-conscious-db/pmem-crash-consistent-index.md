@@ -50,12 +50,26 @@ For *unsorted* / hash and for *single-key* updates, theory and practice nearly m
 
 ## 9. Key References
 
-- **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014.
-- **[Foundational]** Izraelevitz, Mendes, Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016.
-- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018.
-- **[SOTA]** Arulraj, Levandoski, Minhas, Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018.
-- **[SOTA]** Lu, Hua, Xie, et al. *Dash: Scalable Hashing on Persistent Memory.* VLDB, 2020.
-- **[Foundational]** Oukid, Lasperas, Nica, Willhalm, Lehner. *FPTree: A Hybrid SCM-DRAM Persistent and Concurrent B-Tree.* SIGMOD, 2016.
+- **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712) — [DBLP](https://dblp.org/rec/conf/isca/PelleyCW14.html)
+- **[Foundational]** Izraelevitz, Mendes, Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23) — [DBLP](https://dblp.org/rec/conf/wdag/IzraelevitzMS16.html)
+- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
+- **[SOTA]** Arulraj, Levandoski, Minhas, Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3164135.3164147) — [DBLP](https://dblp.org/rec/journals/pvldb/ArulrajLML18.html)
+- **[SOTA]** Lu, Hua, Xie, et al. *Dash: Scalable Hashing on Persistent Memory.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389134) — [arXiv](https://arxiv.org/abs/2003.07302)
+- **[Foundational]** Oukid, Lasperas, Nica, Willhalm, Lehner. *FPTree: A Hybrid SCM-DRAM Persistent and Concurrent B-Tree.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915251) — [DBLP](https://dblp.org/rec/conf/sigmod/OukidLNWL16.html)
+
+## 10. Worked Example
+
+Consider a sorted PMEM B+-tree leaf holding 8-byte keys in a packed array, one cache line ($L=64$ B) = 8 slots. Current contents: $[10, 20, 30, \_, \_, \_, \_, \_]$. We insert key $25$, which belongs at index 2.
+
+**Naive logged insert.** Write an undo-log record, fence, shift $30 \to$ slot 3, write $25$ into slot 2, fence, then clear the log: $\ge 3$ ordering points.
+
+**FAST insert (logging-free).** Shift right one slot at a time using *failure-atomic 8-byte stores*, tolerating a transient duplicate:
+1. Copy slot 2's value ($30$) into slot 3 → array $[10,20,30,30,\dots]$. A crash here is recoverable: a reader sees a duplicate $30$, which FAIR's recovery deduplicates — the tree invariant (sorted, no lost key) still holds.
+2. Overwrite slot 2 with $25$ → $[10,20,25,30,\dots]$.
+
+Because all writes land in **one 64-byte cache line**, a single `CLWB`+`SFENCE` persists the whole result: **1 ordering point**, no log. This is the $O(1)$-flush common case of section 4.
+
+**When the bound bites:** inserting at index 0 of a *full* line forces shifting all 8 slots; if the node spans 2 lines, the shift crosses a line boundary and now needs $\ge 2$ flushes — the $\Omega((B-p)/(L/w))$ shift cost of section 5 (here $w=8$, $L/w=8$). A node *split* (structural modification) is where minimal-flush + lock-freedom + durable linearizability remain jointly open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

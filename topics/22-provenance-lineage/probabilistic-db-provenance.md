@@ -56,12 +56,25 @@ The **exact** boundary is **closed** for UCQs (full dichotomy, matching compilat
 
 ## 9. Key References
 
-- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* PODS 2007 / JACM, 2012.
-- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979.
-- **[Foundational]** R. M. Karp, M. Luby, N. Madras. *Monte-Carlo Approximation Algorithms for Enumeration Problems (FPRAS for DNF).* J. Algorithms, 1989.
-- **[SOTA]** A. Amarilli, P. Bourhis, P. Senellart. *Provenance Circuits for Trees and Treelike Instances / Bounded Treewidth.* ICALP, 2015.
-- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018.
-- **[Survey]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Morgan & Claypool, 2011.
+- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* PODS 2007 / JACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. — [DOI](https://doi.org/10.1137/0208032)
+- **[Foundational]** R. M. Karp, M. Luby, N. Madras. *Monte-Carlo Approximation Algorithms for Enumeration Problems (FPRAS for DNF).* J. Algorithms, 1989. — [DOI](https://doi.org/10.1016/0196-6774(89)90038-2)
+- **[SOTA]** A. Amarilli, P. Bourhis, P. Senellart. *Provenance Circuits for Trees and Treelike Instances / Bounded Treewidth.* ICALP, 2015. — [arXiv](https://arxiv.org/abs/1511.08723) · [DOI](https://doi.org/10.1007/978-3-662-47666-6_5)
+- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253) · [DBLP](https://dblp.org/rec/journals/pvldb/SenellartJMR18.html)
+- **[Survey]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00362ED1V01Y201105DTM016)
+
+## 10. Worked Example
+
+Take the canonical *unsafe* query $H_0 :- R(x), S(x,y), T(y)$ on a tiny TID:
+$R=\{a\}$ ($p{=}0.5$), $T=\{b\}$ ($p{=}0.5$), and $S=\{(a,b)\}$ ($p{=}0.5$).
+Lineage: $\phi = r_a \wedge s_{ab} \wedge t_b$, so $\Pr[\phi]=0.5^3=0.125$ — trivial here because there is a single derivation.
+
+Now contrast a **safe** query $Q :- R(x), T(x)$ with $R=\{a,b\}$, $T=\{a,b\}$, all $p{=}0.5$.
+Per value the conjunct is independent: $\Pr[R(a)\wedge T(a)] = 0.25$. The two values are independent disjuncts, so by inclusion–exclusion
+$$\Pr[Q] = 1-(1-0.25)(1-0.25) = 1-0.75^2 = 0.4375,$$
+computed in PTIME by an extensional plan — no formula enumeration needed.
+
+The difference: $Q$ factors cleanly (each tuple variable appears in one independent block), so it is safe; $H_0$'s lineage over a larger instance with $R=\{a_1,\dots\}$, $T=\{b_1,\dots\}$ and a full $S$ creates a bipartite formula whose model count reduces from #PP2DNF, making exact $\Pr$ **#P-hard** — yet each such monotone-DNF answer still admits a Karp–Luby $(1\pm\varepsilon)$ FPRAS.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

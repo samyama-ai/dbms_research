@@ -51,12 +51,25 @@ Maintenance changes the picture: maintenance cost is a function of *update frequ
 - Joint MV + index + partition selection (see *joint-physical-design*).
 
 ## 9. Key References
-- **[Foundational]** V. Harinarayan, A. Rajaraman, J. D. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** H. Gupta, I. S. Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999.
-- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Math. Programming, 1978.
-- **[SOTA]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000.
-- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* OR Letters, 2004.
-- **[Survey]** R. Chirkova, J. Yang. *Materialized Views.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** V. Harinarayan, A. Rajaraman, J. D. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** H. Gupta, I. S. Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_28)
+- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Math. Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000. — [PDF](https://www.vldb.org/conf/2000/P496.pdf)
+- **[SOTA]** M. Sviridenko. *A note on maximizing a submodular set function subject to a knapsack constraint.* OR Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Survey]** R. Chirkova, J. Yang. *Materialized Views.* Foundations and Trends in Databases, 2012. — [PDF](https://dsf.berkeley.edu/cs286/papers/mv-fntdb2012.pdf)
+
+## 10. Worked Example
+
+**HRU greedy on a 3-dimension cube.** Lattice over dimensions {Part, Supplier, Customer}. View sizes (rows): top cube $PSC=6{,}000{,}000$; $PS=800{,}000$, $PC=1{,}500{,}000$, $SC=10{,}000$; $P=200{,}000$, $S=100$, $C=50{,}000$; base/none $=1$. The full cube $PSC$ is always materialized (size $6\mathrm{M}$). Answering a query from the smallest materialized ancestor costs that ancestor's size. We pick $k=2$ more views to materialize.
+
+**Round 1** — benefit of view $u$ = (rows saved per dependent view) summed over views currently answered by $PSC$:
+- $PS$: helps $PS,P,S$ → each drops from $6\mathrm{M}$ to $0.8\mathrm{M}$: $3\times(6{,}000{,}000-800{,}000)=15{,}600{,}000$.
+- $PC$: helps $PC,P,C$ → $3\times(6{,}000{,}000-1{,}500{,}000)=13{,}500{,}000$.
+- $SC$: helps $SC,S,C$ → $3\times(6{,}000{,}000-10{,}000)=17{,}970{,}000$. **Winner: $SC$.**
+
+**Round 2** — recompute marginals given $\{PSC,SC\}$. Now $S,C$ answer from $SC$ (10k), so $PS$'s benefit is just $PS,P$ from $6\mathrm{M}$: $2\times5{,}200{,}000=10{,}400{,}000$; $PC$ similarly $2\times4{,}500{,}000=9{,}000{,}000$. **Winner: $PS$.**
+
+Greedy selects $\{SC, PS\}$. By Nemhauser–Wolsey–Fisher this benefit is $\ge(1-1/e)\approx0.63$ of the optimal 2-view choice — the §4 guarantee, exact because benefit is monotone submodular here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

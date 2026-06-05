@@ -56,12 +56,20 @@ Active: **policy mining across the spectrum** — ABAC-rule mining (Xu–Stoller
 
 ## 9. Key References
 
-- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996.
-- **[Foundational]** Tripunitara, M.V., Li, N. *A Theory for Comparing the Expressive Power of Access Control Models.* Journal of Computer Security / ACM TISSEC, 2007.
-- **[SOTA]** Jin, X., Krishnan, R., Sandhu, R. *A Unified Attribute-Based Access Control Model Covering DAC, MAC, and RBAC (ABAC_α).* DBSec, 2012.
-- **[SOTA]** Kuhn, D.R., Coyne, E.J., Weil, T.R. *Adding Attributes to Role-Based Access Control.* IEEE Computer, 2010.
-- **[SOTA]** Vaidya, J., Atluri, V., Guo, Q. *The Role Mining Problem: Finding a Minimal Descriptive Set of Roles.* SACMAT, 2007.
-- **[Survey]** Hu, V.C., et al. *Guide to Attribute Based Access Control (ABAC) Definition and Considerations.* NIST SP 800-162, 2014.
+- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996. — [DOI](https://doi.org/10.1109/2.485845)
+- **[Foundational]** Tripunitara, M.V., Li, N. *A Theory for Comparing the Expressive Power of Access Control Models.* Journal of Computer Security / ACM TISSEC, 2007. — [DOI](https://doi.org/10.3233/JCS-2007-15202)
+- **[SOTA]** Jin, X., Krishnan, R., Sandhu, R. *A Unified Attribute-Based Access Control Model Covering DAC, MAC, and RBAC (ABAC_α).* DBSec, 2012. — [DOI](https://doi.org/10.1007/978-3-642-31540-4_4)
+- **[SOTA]** Kuhn, D.R., Coyne, E.J., Weil, T.R. *Adding Attributes to Role-Based Access Control.* IEEE Computer, 2010. — [DOI](https://doi.org/10.1109/MC.2010.155)
+- **[SOTA]** Vaidya, J., Atluri, V., Guo, Q. *The Role Mining Problem: Finding a Minimal Descriptive Set of Roles.* SACMAT, 2007. — [DOI](https://doi.org/10.1145/1266840.1266870)
+- **[Survey]** Hu, V.C., et al. *Guide to Attribute Based Access Control (ABAC) Definition and Considerations.* NIST SP 800-162, 2014. — [DOI](https://doi.org/10.6028/NIST.SP.800-162)
+
+## 10. Worked Example
+
+Consider $k=3$ independent Boolean attributes per subject — $\mathit{clearance}$, $\mathit{dept}$, $\mathit{onCall}$ — and the ABAC rule "permit iff an **odd** number of them are true" (a parity policy). This single rule is one compact ABAC condition.
+
+To realize it in flat RBAC we must group subjects by their permission set. Two subjects can share a role only if they have identical authorization. Parity makes the $2^3=8$ attribute-vectors split into the 4 "permit" classes $\{001,010,100,111\}$ and 4 "deny" classes. Since attributes vary independently, no proper subset of attributes determines the outcome, so each permit-class needs its **own** role: $4 = 2^{k-1}$ roles, i.e. $2^{\Omega(k)}$ growth.
+
+Contrast the access matrix view: the bipartite subject-permission graph here has Boolean rank (biclique-cover number) $4$, matching the role count. So RBAC pays $2^{k-1}=4$ roles for what ABAC writes as one parity condition — a concrete instance of the exponential role blow-up, and finding the minimum cover is itself NP-hard (minimum biclique cover).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

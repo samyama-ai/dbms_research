@@ -47,11 +47,23 @@ DRF closes the divisible, SLO-free case optimally. The **open** gap is the *comb
 - Hierarchical fairness across nested tenants (orgs → teams → apps).
 
 ## 9. Key References
-- **[Foundational]** Ghodsi, A. et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011.
-- **[SOTA]** Caragiannis, I. et al. *The Unreasonable Fairness of Maximum Nash Welfare.* ACM EC, 2016.
-- **[Systems]** Shue, D., Freedman, M., Shaikh, A. *Performance Isolation and Fairness for Multi-Tenant Cloud Storage (Pisces).* OSDI, 2012.
-- **[Systems]** Mace, J., Bodik, P., Fonseca, R., Musuvathi, M. *Retro: Targeted Resource Management in Multi-tenant Distributed Systems.* NSDI, 2015.
-- **[Foundational]** Moulin, H. *Fair Division and Collective Welfare.* MIT Press, 2003.
+- **[Foundational]** Ghodsi, A. et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011. — [USENIX](https://www.usenix.org/conference/nsdi11/dominant-resource-fairness-fair-allocation-multiple-resource-types)
+- **[SOTA]** Caragiannis, I. et al. *The Unreasonable Fairness of Maximum Nash Welfare.* ACM EC, 2016. — [DOI](https://doi.org/10.1145/2940716.2940726)
+- **[Systems]** Shue, D., Freedman, M., Shaikh, A. *Performance Isolation and Fairness for Multi-Tenant Cloud Storage (Pisces).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/shue)
+- **[Systems]** Mace, J., Bodik, P., Fonseca, R., Musuvathi, M. *Retro: Targeted Resource Management in Multi-tenant Distributed Systems.* NSDI, 2015. — [USENIX](https://www.usenix.org/conference/nsdi15/technical-sessions/presentation/mace)
+- **[Foundational]** Moulin, H. *Fair Division and Collective Welfare.* MIT Press, 2003. — [DOI](https://doi.org/10.7551/mitpress/2954.001.0001)
+
+## 10. Worked Example
+
+**DRF in action.** Capacity $C = (\text{9 CPU},\ \text{18 GB})$. Two tenants:
+- Tenant A's tasks each need $(1\text{ CPU},\ 4\text{ GB})$. Shares per task: CPU $1/9$, RAM $4/18 = 2/9$. **Dominant resource = RAM** (larger fraction).
+- Tenant B's tasks each need $(3\text{ CPU},\ 1\text{ GB})$. Shares per task: CPU $3/9 = 1/3$, RAM $1/18$. **Dominant resource = CPU**.
+
+DRF equalizes *dominant shares*. Let A run $x$ tasks, B run $y$ tasks. Dominant shares: A $= \tfrac{2x}{9}$ (RAM), B $= \tfrac{3y}{9}$ (CPU). Set equal and respect capacity:
+$$\tfrac{2x}{9} = \tfrac{3y}{9}\ \Rightarrow\ 2x = 3y,\qquad x + 3y \le 9\ (\text{CPU}),\quad 4x + y \le 18\ (\text{RAM}).$$
+Solving: $x = 3,\ y = 2$. Check: CPU used $= 3 + 6 = 9$ (full), RAM used $= 12 + 2 = 14 \le 18$. Each tenant's dominant share $= \tfrac{2\cdot3}{9} = \tfrac{6}{9} = \tfrac{2}{9}\cdot3 = 0.67$ — **equalized**.
+
+So A gets $(3\text{ CPU},12\text{ GB})$, B gets $(6\text{ CPU},2\text{ GB})$. CPU is saturated (work-conserving); neither tenant envies the other's bundle given its own demands. Note: adding a *latency SLO* — say B must finish within $T$ — could force $y > 2$, breaking the clean equal-dominant-share solution. That is precisely the open tension in §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

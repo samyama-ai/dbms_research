@@ -35,11 +35,32 @@ Active: serverless/cloud-native elastic streaming with disaggregated state store
 - Formal verification of exactly-once across live migration + checkpointing.
 
 ## 9. Key References
-- **[SOTA]** M. Hoffmann, A. Lattuada, F. McSherry, et al. *Megaphone: Latency-conscious State Migration for Distributed Streaming Dataflows.* VLDB, 2019.
-- **[SOTA]** V. Kalavri, J. Liagouris, M. Hoffmann, D. Dimitrova, et al. *Three Steps is All You Need: Fast, Accurate, Automatic Scaling Decisions (DS2).* OSDI, 2018.
-- **[SOTA]** A. Floratou, A. Agrawal, B. Graham, S. Rao, K. Ramasamy. *Dhalion: Self-Regulating Stream Processing in Heron.* VLDB, 2017.
-- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, et al. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* VLDB, 2017.
+- **[SOTA]** M. Hoffmann, A. Lattuada, F. McSherry, et al. *Megaphone: Latency-conscious State Migration for Distributed Streaming Dataflows.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1812.01371)
+- **[SOTA]** V. Kalavri, J. Liagouris, M. Hoffmann, D. Dimitrova, et al. *Three Steps is All You Need: Fast, Accurate, Automatic Scaling Decisions (DS2).* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/kalavri)
+- **[SOTA]** A. Floratou, A. Agrawal, B. Graham, S. Rao, K. Ramasamy. *Dhalion: Self-Regulating Stream Processing in Heron.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137786)
+- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, et al. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137777)
+
+## 10. Worked Example
+
+Suppose a keyed aggregation uses $g=12$ key-groups, currently spread over $p=3$ instances (4 groups each):
+
+| Instance | Key-groups |
+|---|---|
+| $I_0$ | 0,1,2,3 |
+| $I_1$ | 4,5,6,7 |
+| $I_2$ | 8,9,10,11 |
+
+Load rises, so we rescale to $p'=4$. A balanced assignment gives 3 groups each. A *minimal-movement* plan keeps groups in place where possible and peels off only the surplus:
+
+| Instance | New key-groups | Moved in |
+|---|---|---|
+| $I_0$ | 0,1,2 | — |
+| $I_1$ | 4,5,6 | — |
+| $I_2$ | 8,9,10 | — |
+| $I_3$ | 3,7,11 | 3 (from $I_0$), 7 (from $I_1$), 11 (from $I_2$) |
+
+Only 3 of 12 groups move, i.e. fraction $\tfrac{1}{4} = O(1/\max(p,p'))$, matching the consistent-hashing bound. During the cut, group 3 must be owned by exactly one of $I_0$/$I_3$ (mutual exclusion), so migration is serialized against a checkpoint barrier. If group 3 holds $B=200$ MB and the link runs at $\beta=1$ GB/s, the transfer floor is $B/\beta = 0.2$ s. Megaphone splits this into many small fluid batches so the p99 latency spike stays sub-second instead of a single 0.2 s stall.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

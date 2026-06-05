@@ -43,12 +43,23 @@ Directions: (1) Iris/separation-logic mechanized proofs of MVCC/SI implementatio
 - Reusable, certified libraries of dependency-graph invariants usable across engines.
 
 ## 9. Key References
-- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
-- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012.
-- **[SOTA]** Hawblitzel, Howell, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015.
+- **[Foundational]** Bernstein, Hadzilacos, Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/dbtext/bernstein87.html)
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DBLP](https://dblp.org/rec/conf/icde/AdyaLO00.html)
+- **[Foundational]** Fekete, Liarokapis, O'Neil, O'Neil, Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+- **[SOTA]** Ports, Grittner. *Serializable Snapshot Isolation in PostgreSQL.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2367502.2367523)
+- **[SOTA]** Hawblitzel, Howell, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815428)
+
+## 10. Worked Example
+
+**Write skew** under Snapshot Isolation — the anomaly a verifier must rule out for serializability. Table holds two on-call doctors: $D_1.\textit{oncall}=\textsf{true}$, $D_2.\textit{oncall}=\textsf{true}$; constraint: at least one stays on call. Two transactions start from the *same snapshot*:
+
+- $T_1$: reads both ($\geq 2$ on call, OK), sets $D_1.\textit{oncall}=\textsf{false}$.
+- $T_2$: reads both (same snapshot, OK), sets $D_2.\textit{oncall}=\textsf{false}$.
+
+No **write–write** conflict (disjoint rows), so SI commits both. Result: zero doctors on call — constraint violated. The schedule is not serializable: any serial order ($T_1;T_2$ or $T_2;T_1$) would block the second.
+
+In the **dependency (SSG)** view, the cycle uses two **rw anti-dependency** edges: $T_1 \xrightarrow{rw} T_2$ (T_1 reads $D_2$, T_2 later writes it) and $T_2 \xrightarrow{rw} T_1$. Fekete et al. prove every SI non-serializable execution contains two consecutive rw edges forming such a "dangerous structure." **SSI** (PostgreSQL) tracks these edges and aborts one transaction when the pattern appears, with $O(1)$ bookkeeping per conflict — the provably-correct fix a mechanized proof certifies as preserving the acyclicity invariant.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

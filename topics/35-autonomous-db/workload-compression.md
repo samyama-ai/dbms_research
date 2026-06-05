@@ -43,11 +43,29 @@ Active directions: learned query embeddings for clustering/compression that resp
 - Streaming/online compression with bounded memory and provable coverage.
 
 ## 9. Key References
-- **[Foundational]** Chaudhuri, S., Gupta, A. K., Narasayya, V. *Compressing SQL Workloads.* SIGMOD, 2002.
-- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions—I.* Mathematical Programming, 1978.
-- **[SOTA]** Feldman, D., Langberg, M. *A Unified Framework for Approximating and Clustering Data (sensitivity coresets).* STOC, 2011.
-- **[SOTA]** Kossmann, J., Halfpap, S., Jankrift, M., Schlosser, R. *Magic mirror in my hand... An Experimental Evaluation of Index Selection Algorithms.* PVLDB, 2020.
-- **[Foundational]** Dinur, I., Steurer, D. *Analytical Approach to Parallel Repetition (tight Set Cover hardness).* STOC, 2014.
+- **[Foundational]** Chaudhuri, S., Gupta, A. K., Narasayya, V. *Compressing SQL Workloads.* SIGMOD, 2002. — [DBLP](https://dblp.org/db/conf/sigmod/sigmod2002.html)
+- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Feldman, D., Langberg, M. *A Unified Framework for Approximating and Clustering Data (sensitivity coresets).* STOC, 2011. — [arXiv](https://arxiv.org/abs/1106.1379)
+- **[SOTA]** Kossmann, J., Halfpap, S., Jankrift, M., Schlosser, R. *Magic mirror in my hand... An Experimental Evaluation of Index Selection Algorithms.* PVLDB, 2020. — [PDF](https://www.vldb.org/pvldb/vol13/p2382-kossmann.pdf)
+- **[Foundational]** Dinur, I., Steurer, D. *Analytical Approach to Parallel Repetition (tight Set Cover hardness).* STOC, 2014. — [arXiv](https://arxiv.org/abs/1305.1979)
+
+## 10. Worked Example
+
+A trace of $n=5$ queries, each with a benefit profile $b_q$ over 3 candidate indexes $\{x_1,x_2,x_3\}$ (benefit = cost saved if the index exists), weight $w_q=1$:
+
+| $q$ | $x_1$ | $x_2$ | $x_3$ |
+|----|----|----|----|
+| $q_1$ | 90 | 0 | 0 |
+| $q_2$ | 85 | 0 | 0 |
+| $q_3$ | 0 | 80 | 0 |
+| $q_4$ | 0 | 0 | 5 |
+| $q_5$ | 0 | 0 | 4 |
+
+Budget: pick $k=1$ index. True best on full $W$: $x_1$ saves $90+85=175$, $x_2$ saves $80$, $x_3$ saves $9$. So $D^\star_W=\{x_1\}$, $F_W=175$.
+
+Compress to $W'$ of size 2 by **uniform** sampling and we might draw $\{q_3,q_4\}$: now $x_2$ looks best (80 vs. $x_1$'s 0), so $D^\star_{W'}=\{x_2\}$ giving real benefit $F_W(\{x_2\})=80$ — task regret $175-80=95$.
+
+**Sensitivity sampling** instead weights each query by its importance (its max contribution to any design); $q_1,q_2$ have high sensitivity and are retained with up-weighting, so $x_1$ is correctly chosen — an $\varepsilon$-coreset preserves $F_W(D)$ for *all* $D$. This contrasts coverage (provably $(1\pm\varepsilon)$ via $\tilde O(d/\varepsilon^2)$ samples) against the still-open *decision-regret* characterization of section 6: the near-orthogonal profiles of $q_1,q_3$ are exactly the dimension lower bound that forbids tiny surrogates.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

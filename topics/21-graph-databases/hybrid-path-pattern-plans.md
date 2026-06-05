@@ -56,13 +56,22 @@ Each paradigm is *individually* near-optimal (WCOJ for cyclic patterns, Yannakak
 - Adaptive runtime re-optimization that switches paradigms mid-execution.
 
 ## 9. Key References
-- **[Foundational]** Selinger, P. G., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008 / SICOMP (the AGM bound).
-- **[SOTA]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[SOTA]** Abo Khamis, M., Ngo, H. Q., Suciu, D. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* (PANDA) PODS 2017.
-- **[SOTA]** Aberger, C. R., Lamb, A., Tu, S., Nötzli, A., Olukotun, K., Ré, C. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD 2017 / ACM TODS.
-- **[SOTA]** Freitag, M., Bandle, M., Schmidt, T., Kemper, A., Neumann, T. *Adopting Worst-Case Optimal Joins in Relational Database Systems.* VLDB 2020.
-- **[Survey/Benchmark]** Park, Y., Ko, S., Bhowmick, S. S., Kim, K., Hong, K., Han, W.-S. *G-CARE: A Framework for Performance Benchmarking of Cardinality Estimation Techniques for Subgraph Matching.* SIGMOD 2020.
+- **[Foundational]** Selinger, P. G., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008 / SICOMP (the AGM bound). — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Abo Khamis, M., Ngo, H. Q., Suciu, D. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* (PANDA) PODS 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** Aberger, C. R., Lamb, A., Tu, S., Nötzli, A., Olukotun, K., Ré, C. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD 2017 / ACM TODS. — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Freitag, M., Bandle, M., Schmidt, T., Kemper, A., Neumann, T. *Adopting Worst-Case Optimal Joins in Relational Database Systems.* VLDB 2020. — [DOI](https://doi.org/10.14778/3407790.3407797)
+- **[Survey/Benchmark]** Park, Y., Ko, S., Bhowmick, S. S., Kim, K., Hong, K., Han, W.-S. *G-CARE: A Framework for Performance Benchmarking of Cardinality Estimation Techniques for Subgraph Matching.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3389702)
+
+## 10. Worked Example
+
+**Why the triangle forces WCOJ.** The triangle query $Q_\triangle = R(a,b)\bowtie S(b,c)\bowtie T(a,c)$ over relations each of size $N$. The AGM bound uses the fractional edge cover LP: assign weight $x_e$ to each of the three edges of the query hypergraph (a triangle), minimizing $\sum_e x_e$ subject to covering every vertex. Setting $x_R=x_S=x_T=\tfrac12$ covers each of $a,b,c$ with total weight $1$, so $\rho^*=\tfrac32$ and the output is bounded by $N^{3/2}$.
+
+- **Binary-join plan:** materialize $R\bowtie S$ first. On a worst-case instance this intermediate has $\Theta(N^2)$ tuples even though the final answer is only $O(N^{3/2})$ — so any binary plan does $\Omega(N^2)$ work.
+- **WCOJ (Leapfrog Triejoin):** runs in $O(N^{3/2}+\mathrm{OUT})$, matching $\rho^*$.
+
+For $N=10^6$: binary $\approx 10^{12}$ vs. WCOJ $\approx 10^9$ — a $1000\times$ gap. Now add a path subgoal, e.g. $a \xrightarrow{ab^*} c$: its output size is *not* captured by $\rho^*$, so a unified optimizer must cost the automaton product separately — exactly the open modeling gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

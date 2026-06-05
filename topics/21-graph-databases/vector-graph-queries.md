@@ -45,12 +45,24 @@ Hot area driven by **RAG / GraphRAG**: retrieval that walks knowledge-graph stru
 - Worst-case-optimal-style guarantees for joint pattern + similarity queries.
 
 ## 9. Key References
-- **[Foundational]** Malkov, Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020.
-- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[SOTA]** Subramanya, Devvrit, Kadekodi, Krishaswamy, Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[SOTA]** Patel, Kraft, Guestrin, Zaharia. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024.
-- **[SOTA]** Ren, Hu, Leskovec. *Query2box / Embedding Logical Queries on Knowledge Graphs.* ICLR / NeurIPS, 2020.
-- **[Lower bound]** Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
+- **[Foundational]** Malkov, Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020. — [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[Foundational]** Indyk, Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DBLP](https://dblp.org/rec/conf/stoc/IndykM98.html)
+- **[SOTA]** Subramanya, Devvrit, Kadekodi, Krishaswamy, Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)
+- **[SOTA]** Patel, Kraft, Guestrin, Zaharia. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3654923)
+- **[SOTA]** Ren, Hu, Leskovec. *Query2box: Reasoning over Knowledge Graphs in Vector Space Using Box Embeddings.* ICLR, 2020. — [arXiv](https://arxiv.org/abs/2002.05969)
+- **[Lower bound]** Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [DOI](https://doi.org/10.1145/3188745.3188916)
+
+## 10. Worked Example
+
+Struct-first vs. ANN-first plan choice. Query: "find users $v$ who *follow* the account $h$ AND whose profile embedding is in the top-$k{=}5$ closest to query vector $q$."
+
+Suppose the graph has $n=10^6$ users. The structural predicate "follows $h$" matches $|S|=200$ users. The vector index (HNSW) answers a top-$k'$ ANN query in $\approx c\log n \approx 20\,k'$ distance evaluations.
+
+**Plan A (struct-first):** fetch the 200 followers, compute $\|v.\mathrm{emb}-q\|$ for each, keep top-5. Cost $\approx 200$ distance evals — cheap, exact recall.
+
+**Plan B (ANN-first):** ask HNSW for top-$k'$ globally, then filter to followers of $h$. Because only $200/10^6 = 0.02\%$ of users follow $h$, to expect 5 survivors after filtering we need $k' \approx 5/0.0002 = 25{,}000$ candidates — cost $\approx 20 \cdot 25{,}000 = 5{\times}10^5$ evals, and *no* recall guarantee (HNSW may miss followers ranked just outside $k'$).
+
+Here struct-first wins by $2500\times$. But flip the selectivity — if "follows $h$" matched $400{,}000$ users — struct-first costs $400{,}000$ evals while ANN-first needs only $k'\approx 13$, so ANN-first wins. The crux (Section 6): the optimal choice depends on the *joint* selectivity $|\,\{v:\text{follows }h\}\cap \mathrm{ANN}_k(q)\,|$, which no current cost model reliably estimates.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

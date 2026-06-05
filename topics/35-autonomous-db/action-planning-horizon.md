@@ -41,12 +41,26 @@ Threads: (a) **forecast-driven, look-ahead deployment** (build indexes *before* 
 - Anti-thrashing guarantees (no pathological build/drop oscillation) as a certified property.
 
 ## 9. Key References
-- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018.
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[SOTA]** M. Sellke. *Chasing Convex Bodies Optimally.* SODA, 2020.
-- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[SOTA]** M. Sellke. *Chasing Convex Bodies Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1905.11968)
+- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2104.01744)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+A tuner faces a 3-tick horizon. The candidate index $I$ costs a one-time **build** of $c=20$ (units of lost throughput while building, paid the tick it is created) and yields per-tick **utility** $u=15$ once live. The forecast says the query that $I$ helps fires on ticks 2 and 3 only. Use $\gamma=1$.
+
+**Plan A — build now (tick 1):** pay $-20$ at tick 1 (build, index not yet helping), then $+15$ at ticks 2 and 3.
+$$V_A = -20 + 15 + 15 = +10.$$
+
+**Plan B — myopic / never build:** $V_B = 0$ (no cost, no benefit).
+
+**Plan C — build at tick 2 (greedy reaction once demand appears):** index is building during tick 2 so it does not help that tick; only tick 3 benefits.
+$$V_C = 0 - 20 + 15 = -5.$$
+
+So the optimal schedule is **build ahead at tick 1** ($V_A=10$), beating both the do-nothing baseline and the reactive build. This is the look-ahead-deployment intuition of §3/§7: the transient build window must be paid *before* the demand spike so the index is warm when load arrives. Had demand lasted only one tick, $V_A = -20+15 = -5 < 0$ and *not building* would win — the build cost fails to amortize, which is exactly the horizon/sequencing tradeoff at the core of the problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

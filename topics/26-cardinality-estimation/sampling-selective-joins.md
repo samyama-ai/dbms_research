@@ -1,6 +1,7 @@
 # Sample-Based Estimation for Selective Joins
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/sampling-selective-joins` · **Status:** partially-solved
+> **Verification note:** The Charikar–Chaudhuri–Motwani–Narasayya distinct-values paper appeared at PODS 2000 (not VLDB); corrected in §9.
 
 ## 1. Problem Statement
 
@@ -67,12 +68,22 @@ The unavoidable barrier: for a predicate of selectivity $s$, a uniform sample ne
 
 ## 9. Key References
 
-- **[Foundational]** Haas, Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999.
-- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[SOTA]** Chen, Yi. *Two-Level Sampling for Join Size Estimation.* SIGMOD/VLDB, 2017.
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimating the Number of Distinct Values of an Attribute.* VLDB, 2000.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Haas, Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304181.304208) — [DBLP](https://dblp.org/rec/conf/sigmod/HaasH99.html)
+- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235) — [PDF](https://www.cse.ust.hk/~yike/sigmod16.pdf)
+- **[SOTA]** Chen, Yi. *Two-Level Sampling for Join Size Estimation.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3035921) — [PDF](https://www.cse.ust.hk/~yike/sigmod17.pdf)
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimating the Number of Distinct Values of an Attribute.* PODS, 2000. — [DBLP](https://dblp.org/rec/conf/pods/CharikarCMN00.html)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894) — [PDF](https://homes.cs.washington.edu/~suciu/sigmod-2019-pessimistic.pdf)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004) — [PDF](https://dsf.berkeley.edu/cs286/papers/synopses-fntdb2012.pdf)
+
+## 10. Worked Example
+
+Let $R$ and $S$ each have $n=10^6$ rows joining on key $A$, true join size $|T|=|R\bowtie S|=10^6$.
+
+**Naive independent sampling** at rate $f=10^{-3}$ (1000 rows each): expected joining pairs $=f^2|T|=10^{-6}\cdot10^6=1$. On average a single surviving pair — and often *zero*, the empty-sample failure mode. The estimate $\hat{|T|}=|R'\bowtie S'|/f^2$ then jumps in steps of $10^6$ (each observed pair contributes $1/f^2=10^6$), giving wild variance.
+
+**Index-assisted (correlated) sampling:** sample 1000 rows of $R$; for each, probe an index on $S.A$ to fetch all matches. Now the effective yield is $f=10^{-3}$ of the join, not $f^2$ — about $10^3$ joining tuples observed instead of $1$. The $f^2\to f$ shift is a $10^3\times$ improvement in surviving sample size here.
+
+**Skew bites variance:** suppose one heavy value $v$ has $f_R(v)=f_S(v)=1000$, contributing $10^6$ to $|T|$ alone. Then $\mathrm{Var}\propto\sum_v f_R(v)^2f_S(v)^2\ge(1000)^2(1000)^2=10^{12}$, dominated entirely by $v$. Measure-biased / two-level sampling fixes this by sampling $v$ with probability $\propto$ its degree, deterministically accounting for the heavy hitter and sampling only the light tail — exactly the §2 variance term it targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

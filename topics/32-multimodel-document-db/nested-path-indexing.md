@@ -41,11 +41,26 @@ Learned and adaptive indexes over JSON paths; *(frontier — verify)* learned mu
 Unified index with provable combined space–time bounds; entropy-aware path indexes for heavy-tailed schemas; updatable succinct nested indexes; cost models letting the optimizer pick partial path indexes automatically; tight cell-probe lower bounds for path-with-predicate matching.
 
 ## 9. Key References
-- **[Foundational]** Al-Khalifa, Jagadish, Koudas, Patel, Srivastava, Wu. *Structural Joins: A Primitive for Efficient XML Query Pattern Matching.* ICDE, 2002.
-- **[Foundational]** Milo, Suciu. *Index Structures for Path Expressions (1-index).* ICDT, 1999.
-- **[SOTA]** Kaushik, Shenoy, Bohannon, Gudes. *Exploiting Local Similarity for Indexing Paths in Graph-Structured Data (A(k)-index).* ICDE, 2002.
-- **[SOTA]** Navarro, Sadakane. *Fully Functional Static and Dynamic Succinct Trees.* ACM TALG, 2014.
-- **[Survey]** Gou, Chirkova. *Efficiently Querying Large XML Data Repositories: A Survey.* IEEE TKDE, 2007.
+- **[Foundational]** Al-Khalifa, Jagadish, Koudas, Patel, Srivastava, Wu. *Structural Joins: A Primitive for Efficient XML Query Pattern Matching.* ICDE, 2002. — [DBLP](https://dblp.org/rec/conf/icde/Al-KhalifaJPWKS02.html)
+- **[Foundational]** Milo, Suciu. *Index Structures for Path Expressions (1-index).* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_18)
+- **[SOTA]** Kaushik, Shenoy, Bohannon, Gudes. *Exploiting Local Similarity for Indexing Paths in Graph-Structured Data (A(k)-index).* ICDE, 2002. — [DOI](https://doi.org/10.1109/ICDE.2002.994703)
+- **[SOTA]** Navarro, Sadakane. *Fully Functional Static and Dynamic Succinct Trees.* ACM TALG, 2014. — [arXiv](https://arxiv.org/abs/0905.0768)
+- **[Survey]** Gou, Chirkova. *Efficiently Querying Large XML Data Repositories: A Survey.* IEEE TKDE, 2007. — [DOI](https://doi.org/10.1109/TKDE.2007.1060)
+
+## 10. Worked Example
+
+Consider three JSON documents and the query `//order/*/price[. > 50]`.
+
+```
+d1: {order:{line:{price:60}}}        d2: {order:{promo:{price:40}}}
+d3: {order:{line:{price:80}, gift:{price:55}}}
+```
+
+Assign Dewey region labels $(start,end,level)$ by a pre-order walk. For `d3`'s `order` node take $(1,8,1)$; its `line.price`=80 gets $(3,4,3)$ and `gift.price`=55 gets $(6,7,3)$. The wildcard `*` matches any single child of `order`, so we need ancestor `order` paired with a `price` descendant exactly 2 levels below, then the value filter.
+
+Structural-join step (merge by region containment): pair each `price` node $p$ with an `order` node $o$ where $o.start < p.start < o.end$ and $p.level = o.level+2$. This yields candidates $\{(d1,60),(d2,40),(d3,80),(d3,55)\}$ in $O(|A|+|D|)$ merge time.
+
+Value-predicate step: keep `price` $> 50$, dropping $d2$'s 40. **Answer:** the 60, 80, 55 nodes (documents $d1,d3$). The cost is $O(|A|+|D|+|\mathrm{out}|)$ — linear in inputs plus the 3 output nodes — exactly the structural-join bound in section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

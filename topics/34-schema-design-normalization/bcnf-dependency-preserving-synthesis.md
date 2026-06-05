@@ -57,12 +57,22 @@ The boundary between the polynomial-time recognizable cases and the coNP-hard ge
 
 ## 9. Key References
 
-- **[Foundational]** E. F. Codd. *Further Normalization of the Data Base Relational Model.* In *Data Base Systems*, Courant Computer Science Symposia, 1972.
-- **[Foundational]** P. A. Bernstein. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976.
-- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemes.* ACM TODS, 1979.
-- **[Foundational]** C. L. Lucchesi, S. L. Osborn. *Candidate Keys for Relations.* JCSS, 1978.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** D. Maier. *The Theory of Relational Databases.* Computer Science Press, 1983.
+- **[Foundational]** E. F. Codd. *Further Normalization of the Data Base Relational Model.* In *Data Base Systems*, Courant Computer Science Symposia, 1972. — [DBLP search](https://dblp.org/search?q=Further+Normalization+of+the+Data+Base+Relational+Model)
+- **[Foundational]** P. A. Bernstein. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320493.320489)
+- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemes.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320066)
+- **[Foundational]** C. L. Lucchesi, S. L. Osborn. *Candidate Keys for Relations.* JCSS, 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** D. Maier. *The Theory of Relational Databases.* Computer Science Press, 1983. — [DBLP](https://dblp.org/rec/books/cs/Maier83.html)
+
+## 10. Worked Example
+
+Take the classic schema $R(A,B,C)$ with $\Sigma = \{AB \to C,\ C \to B\}$ — concretely, think of $A=\text{student}$, $B=\text{course}$, $C=\text{section}$: a (student, course) pair maps to one section ($AB\to C$), and each section belongs to one course ($C\to B$).
+
+**Keys.** Closures: $(AB)^+ = ABC$ and $(AC)^+ = ABC$, so $AB$ and $AC$ are the two candidate keys. Prime attributes: $A,B,C$ are all prime.
+
+**Is $R$ in BCNF?** The FD $C \to B$ is nontrivial, but $C^+ = CB \ne ABC$, so $C$ is **not** a superkey. Hence $C\to B$ violates BCNF.
+
+**Decompose to remove the violation.** Splitting on $C\to B$ gives $R_1(C,B)$ and $R_2(A,C)$. This is lossless: $R_1 \cap R_2 = \{C\}$ and $C \to B$, so $C\to R_1$. But the FD $AB\to C$ is now **lost** — neither fragment contains all of $A,B,C$, and $\pi_{R_1}(\Sigma)\cup\pi_{R_2}(\Sigma)$ cannot re-derive $AB\to C$. No BCNF decomposition of this $R$ preserves $AB\to C$, so a dependency-preserving BCNF decomposition does **not exist** — yet a dependency-preserving 3NF one (keeping $R$ itself, already 3NF since $C$ and $B$ are prime) does.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

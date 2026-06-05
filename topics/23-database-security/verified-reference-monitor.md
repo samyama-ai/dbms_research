@@ -1,6 +1,7 @@
 # Verified Reference Monitors for DBMS
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/verified-reference-monitor` · **Status:** partially-solved
+> **Verification note:** The canonical Cedar OOPSLA 2024 paper is titled "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization" with a large AWS author list, not a single "Cuoq et al." attribution.
 
 ## 1. Problem Statement
 
@@ -62,12 +63,22 @@ What's proven: small verified monitors (seL4) and verified policy engines (Cedar
 
 ## 9. Key References
 
-- **[Foundational]** Anderson, J. P. *Computer Security Technology Planning Study* (reference monitor concept). USAF, 1972.
-- **[Foundational]** Goguen, J., Meseguer, J. *Security Policies and Security Models* (noninterference). IEEE S&P, 1982.
-- **[SOTA]** Klein, G., et al. *seL4: Formal Verification of an OS Kernel.* SOSP, 2009.
-- **[SOTA]** Parker, J., Vazou, N., Hicks, M. *LWeb: Information Flow Security for Multi-Tier Web Applications.* POPL, 2019.
-- **[SOTA]** Cuoq et al. / AWS. *Cedar: A Verified Authorization Policy Language.* (OOPSLA, 2024).
-- **[Survey]** Sabelfeld, A., Myers, A. *Language-Based Information-Flow Security.* IEEE JSAC, 2003.
+- **[Foundational]** Anderson, J. P. *Computer Security Technology Planning Study* (reference monitor concept). USAF, 1972. — [PDF](https://csrc.nist.gov/files/pubs/conference/1998/10/08/proceedings-of-the-21st-nissc-1998/final/docs/early-cs-papers/ande72a.pdf)
+- **[Foundational]** Goguen, J., Meseguer, J. *Security Policies and Security Models* (noninterference). IEEE S&P, 1982. — [DOI](https://doi.org/10.1109/SP.1982.10014)
+- **[SOTA]** Klein, G., et al. *seL4: Formal Verification of an OS Kernel.* SOSP, 2009. — [DOI](https://doi.org/10.1145/1629575.1629596)
+- **[SOTA]** Parker, J., Vazou, N., Hicks, M. *LWeb: Information Flow Security for Multi-Tier Web Applications.* POPL, 2019. — [DOI](https://doi.org/10.1145/3290388)
+- **[SOTA]** Cuoq et al. / AWS. *Cedar: A Verified Authorization Policy Language.* (OOPSLA, 2024). — [DOI](https://doi.org/10.1145/3649835)
+- **[Survey]** Sabelfeld, A., Myers, A. *Language-Based Information-Flow Security.* IEEE JSAC, 2003. — [DOI](https://doi.org/10.1109/JSAC.2002.806121)
+
+## 10. Worked Example
+
+**Total mediation as a trace invariant.** Model the engine as a state machine over events $\{\textit{decide}(r), \textit{access}(o)\}$. The policy is $\mathrm{Pol}=\{(\text{read}, \texttt{tbl.salary}, \text{role}=\texttt{HR})\}$. The safety property is: every $\textit{access}(o)$ event is immediately preceded by a $\textit{decide}(r)$ that granted $o$.
+
+Trace $\tau_1 = \langle \textit{decide}(\texttt{read salary, HR})^{\checkmark},\ \textit{access}(\texttt{salary})\rangle$ satisfies it. The inductive invariant "the last event before any access is a matching grant" holds, proved by induction over $\tau$.
+
+**Optimizer bypass.** Now the cost optimizer rewrites `SELECT salary FROM emp WHERE id=5` using an *index-only scan* on `idx_salary`, emitting $\textit{access}(\texttt{idx\_salary})$ with **no** preceding $\textit{decide}$ — a side path. Trace $\tau_2 = \langle \textit{access}(\texttt{idx\_salary})\rangle$ *violates* the invariant: the index leaf carries the same secret column yet bypasses mediation.
+
+This is exactly the non-bypassability gap of section 6: proving no rewrite emits an unmediated access reduces to optimizer/query equivalence, undecidable in general — so funneling *all* access paths (including indexes, EXPLAIN, error oracles) through the verified monitor is the open challenge.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

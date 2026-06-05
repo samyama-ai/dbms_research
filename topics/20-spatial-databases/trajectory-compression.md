@@ -44,12 +44,20 @@ Active threads: error-bounded online simplification with workload-aware budgets;
 - Hardware/storage-aware error-bounded codecs integrated with spatial indexes.
 
 ## 9. Key References
-- **[Foundational]** Douglas, Peucker. *Algorithms for the Reduction of the Number of Points Required to Represent a Digitized Line or Its Caricature.* Cartographica, 1973.
-- **[Foundational]** Imai, Iri. *Polygonal Approximations of a Curve — Formulations and Algorithms.* In *Computational Morphology*, 1988.
-- **[Foundational]** Agarwal, Har-Peled, Mustafa, Wang. *Near-Linear Time Approximation Algorithms for Curve Simplification.* Algorithmica, 2005.
-- **[SOTA]** Muckell et al. *SQUISH-E: An Online Approach for Compressing Trajectories.* GeoInformatica, 2014.
-- **[SOTA]** Lin, Jensen, et al. *One-Pass Error-Bounded Trajectory Simplification (OPERB).* VLDB, 2017.
-- **[Survey]** Zheng. *Trajectory Data Mining: An Overview.* ACM TIST, 2015.
+- **[Foundational]** Douglas, Peucker. *Algorithms for the Reduction of the Number of Points Required to Represent a Digitized Line or Its Caricature.* Cartographica, 1973. — [DOI](https://doi.org/10.3138/FM57-6770-U75U-7727)
+- **[Foundational]** Imai, Iri. *Polygonal Approximations of a Curve — Formulations and Algorithms.* In *Computational Morphology*, 1988. — [DOI](https://doi.org/10.1016/B978-0-444-70467-2.50011-4)
+- **[Foundational]** Agarwal, Har-Peled, Mustafa, Wang. *Near-Linear Time Approximation Algorithms for Curve Simplification.* Algorithmica, 2005. — [DOI](https://doi.org/10.1007/s00453-005-1165-y)
+- **[SOTA]** Muckell et al. *SQUISH-E: An Online Approach for Compressing Trajectories.* GeoInformatica, 2014. — [DOI](https://doi.org/10.1007/s10707-013-0184-0)
+- **[SOTA]** Lin, Jensen, et al. *One-Pass Error-Bounded Trajectory Simplification (OPERB).* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1702.05597)
+- **[Survey]** Zheng. *Trajectory Data Mining: An Overview.* ACM TIST, 2015. — [DOI](https://doi.org/10.1145/2743025)
+
+## 10. Worked Example
+
+Take a 5-point trajectory $T=\langle p_1,\dots,p_5\rangle$ with $p_1=(0,0)$, $p_2=(1,0.3)$, $p_3=(2,0.1)$, $p_4=(3,0.4)$, $p_5=(4,0)$, and Douglas–Peucker tolerance $\varepsilon=0.5$.
+
+**DP trace.** Keep endpoints $p_1,p_5$; the baseline is the segment $y=0$. Perpendicular distances of interior points: $p_2{:}0.3$, $p_3{:}0.1$, $p_4{:}0.4$ — the max is $p_4$ at $0.4<\varepsilon$. So *every* interior point is dropped: $\tilde T=\langle p_1,p_5\rangle$, compressing $5\to2$ vertices ($60\%$ reduction).
+
+**Query-faithfulness via Fréchet lifting.** Here the Fréchet error $\delta_F(T,\tilde T)\le 0.4\le\varepsilon$. For a range query "all points within radius $r=1.0$ of $q=(2,1.2)$": evaluated on $T$, $p_4$ is at distance $\sqrt{1+0.64}\approx1.28>1$, so $T$ does *not* qualify. Evaluating on $\tilde T$ at *inflated* radius $r+\varepsilon=1.4$ guarantees **no false dismissal** — the lifted bound $|d(T,q)-d(\tilde T,q)|\le\varepsilon$ (Section 2) certifies the filter. Under non-metric DTW this guarantee would not hold (Section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -40,12 +40,24 @@ Work continues on **kinetic and dynamic external structures** (Arge, Larsen, Yi 
 - Extension to spatiotemporal (moving-object) workloads with provable bounds.
 
 ## 9. Key References
-- **[Foundational]** A. Guttman. *R-Trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984.
-- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R*-tree: An Efficient and Robust Access Method for Points and Rectangles.* SIGMOD, 1990.
-- **[SOTA]** L. Arge, M. de Berg, H. Haverkort, K. Yi. *The Priority R-Tree: A Practically Efficient and Worst-Case Optimal R-Tree.* SIGMOD, 2004.
-- **[Foundational]** L. Arge, V. Samoladas, J. S. Vitter. *On Two-Dimensional Indexability and Optimal Range Search Indexing.* PODS, 1999.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* Communications of the ACM, 1988.
-- **[SOTA]** N. Beckmann, B. Seeger. *A Revised R*-tree in Comparison with Related Index Structures.* SIGMOD, 2009.
+- **[Foundational]** A. Guttman. *R-Trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/971697.602266)
+- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R*-tree: An Efficient and Robust Access Method for Points and Rectangles.* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93597.98741)
+- **[SOTA]** L. Arge, M. de Berg, H. Haverkort, K. Yi. *The Priority R-Tree: A Practically Efficient and Worst-Case Optimal R-Tree.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007608)
+- **[Foundational]** L. Arge, V. Samoladas, J. S. Vitter. *On Two-Dimensional Indexability and Optimal Range Search Indexing.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.304010)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* Communications of the ACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** N. Beckmann, B. Seeger. *A Revised R*-tree in Comparison with Related Index Structures.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559929)
+
+## 10. Worked Example
+
+**Why a heuristic R-tree can probe $\Theta(N/B)$ while the PR-tree bound is $\sqrt{N/B}$.**
+
+Take $N=16$ thin horizontal rectangles, each $[0,1]\times[i,i+0.1]$ for $i=0,\dots,15$ — all span the full width but sit at different heights. Page size $B=4$, so a leaf holds $4$ rectangles.
+
+A naive area-minimizing loader might group by index: Leaf $L_j$ holds rows $4j,\dots,4j+3$, giving leaf MBR $[0,1]\times[4j,4j+3.1]$. Now query the **vertical sliver** $Q=[0,1]\times[0,16]$ that intersects *every* rectangle: it visits all $4$ leaves — fine, output $T=16$. But query the *thin* $Q'=[0.4,0.6]\times[-1,17]$: it overlaps all $4$ leaf MBRs in $x$ (each spans $[0,1]\ni[0.4,0.6]$) yet many leaves contribute few results — the overlap forces visiting $N/B=4$ pages even where output is sparse. With $N$ large and pathological overlap this is the $\Theta(N/B)$ worst case the file warns of.
+
+The PR-tree instead reserves *priority leaves* for the extreme rectangles along each of the $2d=4$ directions, capping any window query at
+$$O\!\left(\sqrt{N/B}+K/B\right) = O(\sqrt{16/4}+K/4)=O(2+K/4)\ \text{I/Os},$$
+versus the heuristic's $4$. The $\sqrt{N/B}=2$ term is provably unavoidable for linear-space rectangle indexing (Arge–Samoladas–Vitter), so the PR-tree is worst-case optimal — and the open problem is keeping this bound under *dynamic* updates without amortized rebuilds.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

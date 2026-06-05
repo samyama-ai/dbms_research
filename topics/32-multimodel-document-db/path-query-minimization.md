@@ -39,12 +39,26 @@ JSON-specific path minimization is being re-derived from the XPath theory becaus
 - Incremental re-minimization as schema drifts.
 
 ## 9. Key References
-- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004.
-- **[Foundational]** S. Amer-Yahia, S. Cho, L. Lakshmanan, D. Srivastava. *Tree Pattern Query Minimization.* The VLDB Journal, 2002.
-- **[Foundational]** F. Neven, T. Schwentick. *XPath Containment in the Presence of Disjunction, DTDs, and Variables.* ICDT, 2003.
-- **[SOTA]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008.
-- **[Foundational]** A. Chandra, P. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977.
-- **[Survey]** S. Gottlob, C. Koch, R. Pichler. *Efficient Algorithms for Processing XPath Queries.* ACM TODS, 2005.
+- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/602382.602383)
+- **[Foundational]** S. Amer-Yahia, S. Cho, L. Lakshmanan, D. Srivastava. *Tree Pattern Query Minimization.* The VLDB Journal, 2002. — [DOI](https://doi.org/10.1007/s00778-002-0076-7)
+- **[Foundational]** F. Neven, T. Schwentick. *XPath Containment in the Presence of Disjunction, DTDs, and Variables.* ICDT, 2003. — [DOI](https://doi.org/10.1007/3-540-36285-1_21)
+- **[SOTA]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346333)
+- **[Foundational]** A. Chandra, P. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Survey]** S. Gottlob, C. Koch, R. Pichler. *Efficient Algorithms for Processing XPath Queries.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071614)
+
+## 10. Worked Example
+
+Take the tree-pattern query (using `/` for child, `//` for descendant, `[]` for branch)
+
+$$p = a\,/\,b\,[\,//c\,]\,//c$$
+
+read as: from $a$, a child $b$ that has *some* descendant $c$, and from that $b$ a descendant $c$ selected as the answer. Is the branch `[//c]` redundant?
+
+Apply the homomorphism/core test for the $\{/,//,[]\}$ fragment. The candidate minimal query is $p' = a/b//c$. Check $p \equiv p'$ by exhibiting homomorphisms both ways (mapping nodes to nodes, preserving `/` as `/` and `//` as ancestor-or-self reachability):
+- $p' \to p$: trivial inclusion, $p \sqsubseteq p'$.
+- $p \to p'$: map $p$'s answer-$c$ to $p'$'s $c$; map the predicate `//c` also onto $p'$'s $c$ (the same node witnesses both descendant requirements). This proves $p' \sqsubseteq p$.
+
+Both hold, so $p \equiv p'$ and the branch node is redundant: minimal size drops from 4 nodes to 3. The whole check is **PTIME** (section 4). Note adding a wildcard, e.g. `a/*[//c]//c`, would break the homomorphism shortcut and push the equivalent test into coNP.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

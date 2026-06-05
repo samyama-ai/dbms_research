@@ -49,13 +49,25 @@ For **trail/walk (homomorphism) semantics** — the GQL default for reachability
 - Practical simple-path enumeration heuristics with anytime guarantees.
 
 ## 9. Key References
-- **[Foundational]** Mendelzon, A. O., Wood, P. T. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Computing, 1995.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (RPQ / datalog navigation).
-- **[SOTA]** Valstar, L., Fletcher, G., Yoshida, Y. *Landmark Indexing for Evaluation of Label-Constrained Reachability Queries.* SIGMOD 2017.
-- **[SOTA]** Peng, Y., Zhang, Y., Lin, X., Qin, L., Zhang, W. *Answering Billion-Scale Label-Constrained Reachability Queries within Microsecond.* VLDB 2020.
-- **[SOTA]** Bagan, G., Bonifati, A., Groz, B. *A Trichotomy for Regular Simple Path Queries on Graphs.* PODS 2013 / JCSS.
-- **[Survey]** Angles, R., Arenas, M., Barceló, P., Hogan, A., Reutter, J., Vrgoč, D. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017.
-- **[SOTA]** Vrgoč, D. et al. *MillenniumDB: An Open-Source Graph Database System.* 2023.
+- **[Foundational]** Mendelzon, A. O., Wood, P. T. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Computing, 1995. — [DOI](https://doi.org/10.1137/S009753979122370X)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (RPQ / datalog navigation). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** Valstar, L., Fletcher, G., Yoshida, Y. *Landmark Indexing for Evaluation of Label-Constrained Reachability Queries.* SIGMOD 2017. — [DOI](https://doi.org/10.1145/3035918.3035955)
+- **[SOTA]** Peng, Y., Zhang, Y., Lin, X., Qin, L., Zhang, W. *Answering Billion-Scale Label-Constrained Reachability Queries within Microsecond.* VLDB 2020. — [DOI](https://doi.org/10.14778/3380750.3380753)
+- **[SOTA]** Bagan, G., Bonifati, A., Groz, B. *A Trichotomy for Regular Simple Path Queries on Graphs.* PODS 2013 / JCSS. — [arXiv](https://arxiv.org/abs/1212.6857)
+- **[Survey]** Angles, R., Arenas, M., Barceló, P., Hogan, A., Reutter, J., Vrgoč, D. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017. — [arXiv](https://arxiv.org/abs/1610.06264)
+- **[SOTA]** Vrgoč, D. et al. *MillenniumDB: An Open-Source Graph Database System.* 2023. — [arXiv](https://arxiv.org/abs/2111.01540)
+
+## 10. Worked Example
+
+**RPQ via product automaton.** Edge-labeled graph: $1\xrightarrow{a}2$, $2\xrightarrow{b}3$, $2\xrightarrow{a}4$, $4\xrightarrow{b}3$. Query: is there an $s\!=\!1$ to $t\!=\!3$ path matching $R = a\,b^{*}$ (one $a$ then zero or more $b$)?
+
+Automaton $\mathcal{A}_R$ has states $q_0 \xrightarrow{a} q_1$, $q_1 \xrightarrow{b} q_1$, accepting $q_1$. Run reachability on the product $G\times\mathcal{A}_R$ from $(1,q_0)$:
+$$(1,q_0)\xrightarrow{a}(2,q_1)\xrightarrow{b}(3,q_1).$$
+State $(3,q_1)$ is accepting, so **yes** — path $1\xrightarrow{a}2\xrightarrow{b}3$ matches, found in $O(|E|\cdot|\mathcal{A}_R|)$ BFS time.
+
+**Why semantics matter.** Switch the query to $R'=(aa)^{*}$ under *simple-path* semantics. Now the problem is NP-complete (Mendelzon–Wood): you must find a path of even $a$-length with no repeated vertex, and there is no polynomial guarantee. Under *walk/trail* semantics the product-BFS above still runs in NL.
+
+**LCR contrast.** For the label-*set* query $(s,t,A=\{a,b\})$ — "any path using only $a,b$ edges" — a 2-hop index stores per vertex the minimal label sets reaching each landmark; the answer is monotone in $A$, so adding labels never disconnects, enabling near-$O(|L_s|+|L_t|)$ lookups instead of a BFS.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

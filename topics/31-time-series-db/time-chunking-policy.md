@@ -34,11 +34,23 @@ Active threads: learned/adaptive partitioning that ties chunk width to live card
 - Integration with the cost-based optimizer (see `tsdb-cost-based-optimization.md`) so partitioning decisions are planner-visible.
 
 ## 9. Key References
-- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998.
-- **[Foundational]** A. Aggarwal, M. Klawe, S. Moran, P. Shor, R. Wilber. *Geometric applications of a matrix-searching algorithm (SMAWK).* Algorithmica, 1987.
-- **[SOTA]** M. Stonebraker et al. / Timescale. *TimescaleDB: SQL made scalable for time-series data.* (system; hypertable chunking design), 2017–.
-- **[SOTA]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015.
-- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998. — [DBLP](https://dblp.org/rec/conf/vldb/JagadishKMPSS98.html)
+- **[Foundational]** A. Aggarwal, M. Klawe, S. Moran, P. Shor, R. Wilber. *Geometric applications of a matrix-searching algorithm (SMAWK).* Algorithmica, 1987. — [DOI](https://doi.org/10.1007/BF01840359)
+- **[SOTA]** M. Stonebraker et al. / Timescale. *TimescaleDB: SQL made scalable for time-series data.* (system; hypertable chunking design), 2017–. *(unverified)*
+- **[SOTA]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824078)
+- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Consider a 6-hour ingest with candidate boundaries every hour: $t_0,\dots,t_6$. We must pick a sub-partition. Define a separable chunk cost $c(j,k)$ for the chunk $[t_j,t_k)$ as $\text{storage} + \text{scan}$, where storage favors *wider* chunks (codec header $h=2$ amortized once per chunk) and scan favors *finer* chunks (queries touch only overlapping chunks).
+
+Suppose each hour holds 100 points; storage $=h + 0.5\cdot(\text{points})$ and the workload is one recurring query over $[t_2,t_4)$ that pays a flat $20$ per chunk it must open. Two candidate partitions:
+
+- **One chunk** $[t_0,t_6)$: storage $=2+0.5\cdot600=302$; the query opens 1 chunk $\Rightarrow$ scan $=20$. Total $=322$.
+- **Hourly chunks** ($6$ chunks): storage $=6\cdot(2+50)=312$; the query overlaps exactly 2 chunks ($[t_2,t_3),[t_3,t_4)$) $\Rightarrow$ scan $=40$. Total $=352$.
+- **Aligned split** $\{[t_0,t_2),[t_2,t_4),[t_4,t_6)\}$: storage $=3\cdot(2+100)=306$; query opens 1 chunk $\Rightarrow$ scan $=20$. Total $=\mathbf{326}$.
+
+The DP recurrence $\mathrm{OPT}[k]=\min_{j<k}\mathrm{OPT}[j]+c(j,k)$ finds the single-chunk optimum (322) here, but note how *boundary alignment* to the query edge ($t_2,t_4$) lets the 3-chunk plan undercut hourly chunks — illustrating why the scan term couples boundaries to the query distribution.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

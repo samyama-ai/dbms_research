@@ -42,11 +42,21 @@ Active: RDMA/CXL disaggregated-memory buffer pools, multi-writer cloud databases
 
 ## 9. Key References
 
-- **[Foundational]** Gray, Cheriton. *Leases: An Efficient Fault-Tolerant Mechanism for Distributed File Cache Consistency.* SOSP, 1989.
-- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[SOTA]** Cao, Liu, et al. *PolarDB Serverless: A Cloud Native Database for Disaggregated Data Centers.* SIGMOD, 2021.
-- **[SOTA]** Verbitski, Gupta, et al. *Amazon Aurora: On Avoiding Distributed Consensus for I/Os, Commits, and Membership Changes.* SIGMOD, 2018.
+- **[Foundational]** Gray, Cheriton. *Leases: An Efficient Fault-Tolerant Mechanism for Distributed File Cache Consistency.* SOSP, 1989. — [DOI](https://doi.org/10.1145/74850.74870)
+- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Cao, Liu, et al. *PolarDB Serverless: A Cloud Native Database for Disaggregated Data Centers.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457560)
+- **[SOTA]** Verbitski, Gupta, et al. *Amazon Aurora: On Avoiding Distributed Consensus for I/Os, Commits, and Membership Changes.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196937)
+
+## 10. Worked Example
+
+Two compute nodes $C_1, C_2$ cache page $P$ from a shared log-structured store. The log assigns monotonic LSNs. Initial state: both cache $P$ at version $\text{LSN}=10$.
+
+*Snapshot path (cheap).* $C_2$ runs a read-only transaction pinned at watermark $\text{LSN}=10$. $C_1$ now writes $P$, appending a new version at $\text{LSN}=14$. $C_2$ needs **no** invalidation message: its snapshot is defined as "ignore any version $>10$," so it keeps serving the $\text{LSN}=10$ copy correctly. Coherence cost $=O(1)$ (just the watermark), at the price of bounded staleness — $C_2$ sees data 4 LSNs behind.
+
+*Strong path (expensive).* Now suppose $C_2$ demands a linearizable read of $P$. After $C_1$'s write at $\text{LSN}=14$, a directory-based protocol must send an invalidation to every sharer holding the stale copy. With $N$ sharers this is $\Theta(N)$ messages per conflicting write — matching the $\Omega(N)$ lower bound in section 5. A lease-based variant instead lets $C_2$ keep reading locally until its lease (say $T=5\,\text{ms}$) expires, bounding stale-read latency by $T$ and avoiding a round trip on the common path, but forcing $C_1$'s write to wait out (or recall) outstanding leases.
+
+The contrast — $O(1)$ vs. $\Theta(N)$ — is exactly why production systems funnel writes through a single node and serve everyone else snapshot reads.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

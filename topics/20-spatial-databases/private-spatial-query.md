@@ -41,12 +41,22 @@ For DP range counting the upper and lower bounds match up to $\mathrm{polylog}$ 
 Tight result-size-hiding kNN; composing DP output-privacy with cryptographic access-privacy without multiplying overheads; DP under continual observation for streaming location feeds; standardized utility benchmarks for private kNN.
 
 ## 9. Key References
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* J. ACM, 1996.
-- **[SOTA]** Zhang, Xiao, Xie. *PrivTree: A Differentially Private Algorithm for Hierarchical Decompositions.* SIGMOD, 2016.
-- **[SOTA]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries under Differential Privacy.* PODS, 2010.
-- **[SOTA]** Andrés, Bordenabe, Chatzikokolakis, Palamidessi. *Geo-indistinguishability: Differential Privacy for Location-Based Systems.* CCS, 2013.
-- **[SOTA]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* J. ACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[SOTA]** Zhang, Xiao, Xie. *PrivTree: A Differentially Private Algorithm for Hierarchical Decompositions.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882928)
+- **[SOTA]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries under Differential Privacy.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104)
+- **[SOTA]** Andrés, Bordenabe, Chatzikokolakis, Palamidessi. *Geo-indistinguishability: Differential Privacy for Location-Based Systems.* CCS, 2013. — [DOI](https://doi.org/10.1145/2508859.2516735)
+- **[SOTA]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+
+## 10. Worked Example
+
+**DP range count over a 1-D grid.** A city splits a region into $n=4$ cells with true counts $c=(10,3,8,21)$. We answer the range-count query "how many records in cells $1$–$3$?", whose true answer is $10+3+8=21$. Target $\varepsilon=1$.
+
+**Flat (Laplace-per-cell) approach.** Each cell's sensitivity is $\Delta=1$; releasing all 4 cells with $\mathrm{Lap}(1/\varepsilon)=\mathrm{Lap}(1)$ noise, a 3-cell range sums 3 independent noises, variance $3\cdot 2/\varepsilon^2 = 6$, so std $\approx 2.45$.
+
+**Hierarchical (dyadic) approach.** Build a binary tree: leaves $\{c_1\},\dots,\{c_4\}$, internal nodes $\{c_1{+}c_2\}=13$, $\{c_3{+}c_4\}=29$, root $=42$. A node now appears in $h=3$ levels, so by sequential composition each gets $\mathrm{Lap}(h/\varepsilon)=\mathrm{Lap}(3)$. The range $[1,3]$ decomposes into the node $\{c_1{+}c_2\}$ plus the leaf $\{c_3\}$ — only **2** noisy reads instead of 3, variance $2\cdot 2\cdot 3^2/\varepsilon^2$... but the matrix-mechanism optimization tunes per-level budgets so the *worst-case over all ranges* scales as $O(\log n)=O(\log 4)=2$ noisy terms rather than $O(n)$.
+
+This is exactly the $\Omega(\log n)$ discrepancy floor of §2: no $\varepsilon$-DP mechanism answers every dyadic range with $\ell_\infty$ error $o(\log n)$, and the dyadic tree achieves it up to constants.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -61,12 +61,24 @@ For **worst-case bounds**, the gap is essentially closed: AGM/polymatroid bounds
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM 2018).
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM 2018). — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2211.09864)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Take the triangle query $Q = R(A,B) \bowtie S(B,C) \bowtie T(A,C)$ with $|R| = |S| = |T| = N = 100$.
+
+**AGM bound.** The fractional edge cover assigns $x_R = x_S = x_T = 1/2$ (each attribute $A,B,C$ is covered by the two edges containing it, $1/2 + 1/2 = 1$). The bound is
+$$|Q| \le |R|^{1/2}|S|^{1/2}|T|^{1/2} = 100^{1/2 \cdot 3} = 100^{1.5} = 1000.$$
+A worst-case database (a complete bipartite-style gadget) actually realizes $\approx 1000$ output tuples, so the bound is tight in the worst case.
+
+**Naive per-edge estimate.** A classical optimizer joins $R \bowtie S$ first. Assuming each $B$ value is uniform over a domain of $100$, $|R \bowtie S| \approx N^2 / 100 = 100$. It then joins with $T$ on $(A,C)$, treating the closing edge as an *independent* filter with selectivity $1/100 \times 1/100$, giving $\hat{c} \approx 100 \times 10000 / 10000 = 100$.
+
+But cyclicity correlates the edges: the third relation cannot be treated independently. On a clustered instance the true count can be far higher (up to $1000$) — a $10\times$ under-estimate. The AGM bound $1000$ is safe; the independence estimate $100$ is biased, which is exactly the gap Section 6 describes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

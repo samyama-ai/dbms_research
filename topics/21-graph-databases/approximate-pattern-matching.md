@@ -1,6 +1,7 @@
 # Approximate and sampled pattern matching
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/approximate-pattern-matching` · **Status:** open
+> **Verification note:** Wander Join (SIGMOD 2016) authors are Li, Wu, Yi, Zhao (corrected in §9 from a mis-cited "Li, Wu, Das, Haritsa").
 
 ## 1. Problem Statement
 Given a massive graph $G=(V,E)$ (billions of edges, often not fitting in memory) and a small connected pattern $H$ (e.g., triangle, 4-clique, $k$-path, labeled motif), estimate the number of (homomorphic or subgraph) **embeddings** $\mathrm{hom}(H,G)$ / $\mathrm{sub}(H,G)$, or an aggregate over them (e.g., $\sum_{\text{matches}} f(\text{attributes})$), to within relative error $\varepsilon$ with confidence $1-\delta$, using as few edge reads / passes / samples as possible.
@@ -49,12 +50,21 @@ Color-coding + succinct sampling continues to be pushed past 8-node motifs and o
 - Anytime estimators with shrinking, certified confidence intervals usable inside an optimizer's cardinality module.
 
 ## 9. Key References
-- **[Foundational]** Alon, Yuster, Zwick. *Color-Coding.* J. ACM, 1995.
-- **[Foundational]** Eden, Levi, Ron, Seshadhri. *Approximately Counting Triangles in Sublinear Time.* FOCS, 2015.
-- **[SOTA]** Bressan, Leucci, Panconesi. *Motivo: Fast Motif Counting via Succinct Color Coding and Adaptive Sampling.* VLDB, 2019.
-- **[SOTA]** Curticapean, Dell, Marx. *Homomorphisms Are a Good Basis for Counting Small Subgraphs.* STOC, 2017.
-- **[SOTA]** Li, Wu, Das, Haritsa. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[Survey]** Seshadhri, Tirthapura. *Scalable Subgraph Counting: The Methods Behind the Madness.* WWW Tutorial / Foundations, 2019.
+- **[Foundational]** Alon, Yuster, Zwick. *Color-Coding.* J. ACM, 1995. — [DOI](https://doi.org/10.1145/210332.210337)
+- **[Foundational]** Eden, Levi, Ron, Seshadhri. *Approximately Counting Triangles in Sublinear Time.* FOCS, 2015. — [arXiv](https://arxiv.org/abs/1504.00954)
+- **[SOTA]** Bressan, Leucci, Panconesi. *Motivo: Fast Motif Counting via Succinct Color Coding and Adaptive Sampling.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1906.01599)
+- **[SOTA]** Curticapean, Dell, Marx. *Homomorphisms Are a Good Basis for Counting Small Subgraphs.* STOC, 2017. — [arXiv](https://arxiv.org/abs/1705.01595)
+- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[Survey]** Seshadhri, Tirthapura. *Scalable Subgraph Counting: The Methods Behind the Madness.* WWW Tutorial / Foundations, 2019. — [DOI](https://doi.org/10.1145/3308560.3320092)
+
+## 10. Worked Example
+
+**Color-coding for a 3-path.** Suppose we want $\mathrm{hom}(P_3,G)$, the number of homomorphic 3-vertex paths $u\!-\!v\!-\!w$, in a small graph $G$ with $V=\{1,2,3,4\}$ and edges $\{(1,2),(2,3),(3,4),(2,4)\}$.
+
+Color each vertex uniformly with one of $k=3$ colors. A path is *colorful* iff its three vertices get distinct colors; this happens with probability $p = k!/k^k = 6/27 = 2/9 \approx 0.22$. Count colorful 3-paths by a DP over color subsets: for each vertex, track the set of colors usable on a path ending there. Say one trial finds $X=5$ colorful paths. The Horvitz–Thompson estimator rescales:
+$$\hat{N} = X / p = 5 / (2/9) = 22.5.$$
+
+To hit relative error $\varepsilon=0.1$ with confidence $1-\delta$, average over $R = O(e^k \log(1/\delta)/\varepsilon^2)$ independent colorings — the $e^k$ factor ($\approx 20$ for $k=3$) is the price of demanding *colorful* witnesses, and is exactly what MOTIVO's biased coloring and adaptive sampling attack so the method scales to $k\le 8$–$9$ on billion-edge graphs. Naive uniform path sampling, by contrast, would have variance dominated by the high-degree hub vertex $2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

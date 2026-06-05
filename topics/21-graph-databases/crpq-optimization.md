@@ -52,12 +52,24 @@ CRPQ **evaluation/containment** combined complexity is high: Boolean CRPQ evalua
 
 ## 9. Key References
 
-- **[Foundational]** Consens, Mendelzon. *GraphLog / Expressing structural queries.* and Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998.
-- **[Foundational]** Barceló, Libkin, Reutter (and Romero, Vardi). *Querying Graphs with Data / CRPQ tractability.* — Barceló. *Querying Graph Databases.* PODS 2013 (tutorial/survey).
-- **[Foundational]** Abo Khamis, Ngo, Rudra. *PANDA: submodular-width joins.* PODS 2016 (applied to CRPQ atoms).
-- **[SOTA]** Vrgoč, Rojas, Angles, Arenas, et al. *MillenniumDB.* 2023.
-- **[SOTA]** Wang, Yakovets, et al. / AvantGraph team. *Worst-Case Optimal Joins for Regular Path Query Evaluation.* (TU Eindhoven), 2022–2023.
-- **[Survey]** Angles, Arenas, Barceló, Hogan, Reutter, Vrgoč. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017.
+- **[Foundational]** Consens, Mendelzon. *GraphLog / Expressing structural queries.* and Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998. — [DOI](https://doi.org/10.1145/275487.275503) (Florescu–Levy–Suciu)
+- **[Foundational]** Barceló, Libkin, Reutter (and Romero, Vardi). *Querying Graphs with Data / CRPQ tractability.* — Barceló. *Querying Graph Databases.* PODS 2013 (tutorial/survey). — [DOI](https://doi.org/10.1145/2463664.2465216)
+- **[Foundational]** Abo Khamis, Ngo, Rudra. *PANDA: submodular-width joins.* PODS 2016 (applied to CRPQ atoms). — [arXiv](https://arxiv.org/abs/1612.02503) *(the PANDA algorithm is Abo Khamis, Ngo, Suciu, "What do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog have to do with one another?", PODS 2017; the 2016 PODS paper by Abo Khamis–Ngo–Rudra is FAQ, arXiv 1504.04044)*
+- **[SOTA]** Vrgoč, Rojas, Angles, Arenas, et al. *MillenniumDB.* 2023. — [arXiv](https://arxiv.org/abs/2111.01540)
+- **[SOTA]** Wang, Yakovets, et al. / AvantGraph team. *Worst-Case Optimal Joins for Regular Path Query Evaluation.* (TU Eindhoven), 2022–2023. — [AvantGraph engine, VLDB 2022 DOI](https://doi.org/10.14778/3554821.3554878), [DBLP search](https://dblp.org/search?q=AvantGraph%20worst-case%20optimal%20regular%20path%20query)
+- **[Survey]** Angles, Arenas, Barceló, Hogan, Reutter, Vrgoč. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017. — [arXiv](https://arxiv.org/abs/1610.06264)
+
+## 10. Worked Example
+
+Consider the triangle-shaped CRPQ
+$$Q(x,y,z) \leftarrow a^{+}(x,y),\; a^{+}(y,z),\; a^{+}(z,x),$$
+three RPQ atoms, each "reachable via one-or-more $a$-edges." On a graph with $|E|=m$ $a$-labeled edges, each atom's materialized relation $\llbracket a^{+}\rrbracket$ is the transitive closure, worst-case $|V|^2$ pairs — far larger than $m$.
+
+**Materialize-then-join:** building each closure costs up to $O(|V|\cdot m)$, then the triangle conjunction over three binary relations of size $N\approx|V|^2$ has AGM exponent $\rho^{*}=3/2$, giving $\tilde O(N^{3/2}) = \tilde O(|V|^{3})$ — and we paid the closure blow-up first.
+
+**Lazy navigate-and-join:** treat each $a^{+}$ atom as an on-demand reachability oracle. A WCOJ matches one variable at a time: pick $x$, expand its $a^{+}$-frontier to candidate $y$'s, intersect with the $a^{+}$-predecessors of a candidate $z$, etc., never materializing a full closure. The intermediate size is bounded by the *actual* output plus per-binding navigation $O(m)$ per source.
+
+The open problem: no planner provably picks, per atom, when lazy navigation beats materialize-then-WCOJ. If the conjunction reduces to Boolean triangle detection, fine-grained (BMM/hyperclique) hardness rules out $O(m^{3-\varepsilon})$ combinatorial evaluation — so even the "easy" $a$-only case is conditionally hard.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

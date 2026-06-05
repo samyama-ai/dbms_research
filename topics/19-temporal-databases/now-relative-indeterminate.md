@@ -51,12 +51,22 @@ For **semantics**, the gap is largely *definitional/adoption*, not complexity: a
 
 ## 9. Key References
 
-- **[Foundational]** J. Clifford, C. Dyreson, T. Isakowitz, C. S. Jensen, R. T. Snodgrass. *On the Semantics of "NOW" in Databases.* ACM Transactions on Database Systems / VLDB Journal, 1997.
-- **[Foundational]** C. E. Dyreson, R. T. Snodgrass. *Supporting Valid-Time Indeterminacy.* ACM Transactions on Database Systems, 23(1), 1998.
-- **[Foundational]** C. S. Jensen, C. E. Dyreson et al. (eds.). *The Consensus Glossary of Temporal Database Concepts.* In Temporal Databases: Research and Practice, LNCS 1399, 1998.
-- **[SOTA]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* Journal of the ACM, 2012.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (incomplete information, conditional tables).
-- **[Survey]** M. H. Böhlen, A. Dignös, J. Gamper, C. S. Jensen. *Temporal Data Management — An Overview.* eBISS lectures, Springer, 2018.
+- **[Foundational]** J. Clifford, C. Dyreson, T. Isakowitz, C. S. Jensen, R. T. Snodgrass. *On the Semantics of "NOW" in Databases.* ACM Transactions on Database Systems, 22(2):171–214, 1997. — [DBLP search](https://dblp.org/search?q=On%20the%20Semantics%20of%20NOW%20in%20Databases%20Clifford)
+- **[Foundational]** C. E. Dyreson, R. T. Snodgrass. *Supporting Valid-Time Indeterminacy.* ACM Transactions on Database Systems, 23(1), 1998. — [DOI](https://doi.org/10.1145/288086.288087)
+- **[Foundational]** C. S. Jensen, C. E. Dyreson et al. (eds.). *The Consensus Glossary of Temporal Database Concepts.* In Temporal Databases: Research and Practice, LNCS 1399, 1998. — [DOI](https://doi.org/10.1007/BFb0053710)
+- **[SOTA]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* Journal of the ACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (incomplete information, conditional tables). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Survey]** M. H. Böhlen, A. Dignös, J. Gamper, C. S. Jensen. *Temporal Data Management — An Overview.* eBISS lectures, Springer, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96655-7_3)
+
+## 10. Worked Example
+
+**Now-relative.** Row $r$ is valid $[2020,\textsf{now})$. Its ground extent depends on evaluation time: queried in $2023$ it denotes $[2020,2023)$; in $2026$ it denotes $[2020,2026)$. Storing the sentinel $9999$ collapses this to $[2020,9999)$ — wrong, because two `NOW` rows then compare *equal* on their end column even though both should track the same moving clock, corrupting a self-join on "ended at the same time."
+
+**Indeterminate.** An event's start lies in $\{9{:}00,9{:}30,10{:}00\}$ with mass $p_a=(0.2,0.5,0.3)$ and it ends at a fixed $11{:}00$. Ask: does it hold at $t=9{:}45$?
+
+$$\Pr[a\le 9{:}45 < b]=\Big(\sum_{x\le 9{:}45}p_a(x)\Big)\cdot 1 = p_a(9{:}00)+p_a(9{:}30)=0.2+0.5=0.7.$$
+
+So the fact *possibly* holds (some binding), does *not certainly* hold (the $9{:}45$-binding $\to$ start $10{:}00$ fails), and holds with probability $0.7$ — the three semantic regimes giving three different answers on one tiny instance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

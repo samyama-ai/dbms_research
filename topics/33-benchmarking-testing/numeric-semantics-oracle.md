@@ -49,13 +49,21 @@ Open. The exact-decimal fragment is solved (recompute in rationals); the float f
 - Standardization of acceptable cross-engine numeric divergence for benchmark fairness.
 
 ## 9. Key References
-- **[Foundational]** IEEE. *IEEE Standard for Floating-Point Arithmetic, IEEE 754-2019.*
-- **[Foundational]** Higham. *Accuracy and Stability of Numerical Algorithms (2nd ed.).* SIAM, 2002. (Summation error bounds; $\gamma_n$ analysis.)
-- **[Foundational]** Kahan. *Further Remarks on Reducing Truncation Errors (compensated summation).* CACM, 1965.
-- **[SOTA]** Solovyev, Jacobsen, Rakamarić, Gopalakrishnan. *Rigorous Estimation of Floating-Point Round-off Errors with Symbolic Taylor Expansions (FPTaylor).* FM 2015 / TOPLAS.
-- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis / NoREC.* OSDI 2020.
-- **[SOTA]** Darulova, Izycheva, et al. *Daisy: Framework for Analysis and Optimization of Numerical Programs.* TACAS 2018.
-- **[Foundational]** Daumas, Melquiond. *Gappa: Certifying Floating-Point Computations.* ACM TOMS, 2010.
+- **[Foundational]** IEEE. *IEEE Standard for Floating-Point Arithmetic, IEEE 754-2019.* — [DOI](https://doi.org/10.1109/IEEESTD.2019.8766229)
+- **[Foundational]** Higham. *Accuracy and Stability of Numerical Algorithms (2nd ed.).* SIAM, 2002. (Summation error bounds; $\gamma_n$ analysis.) — [DOI](https://doi.org/10.1137/1.9780898718027)
+- **[Foundational]** Kahan. *Further Remarks on Reducing Truncation Errors (compensated summation).* CACM, 1965. — [DOI](https://doi.org/10.1145/363707.363723)
+- **[SOTA]** Solovyev, Jacobsen, Rakamarić, Gopalakrishnan. *Rigorous Estimation of Floating-Point Round-off Errors with Symbolic Taylor Expansions (FPTaylor).* FM 2015 / TOPLAS. — [DOI](https://doi.org/10.1145/3230733)
+- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis / NoREC.* OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger)
+- **[SOTA]** Darulova, Izycheva, et al. *Daisy: Framework for Analysis and Optimization of Numerical Programs.* TACAS 2018. — [DOI](https://doi.org/10.1007/978-3-319-89960-2_15)
+- **[Foundational]** Daumas, Melquiond. *Gappa: Certifying Floating-Point Computations.* ACM TOMS, 2010. — [DOI](https://doi.org/10.1145/1644001.1644003)
+
+## 10. Worked Example
+
+Take a one-column table `R(x)` with three binary64 values and the query `SELECT SUM(x) FROM R`:
+$$x_1 = 10^{16},\quad x_2 = 1.0,\quad x_3 = -10^{16}.$$
+The exact sum is $1.0$. Engine $A$ partitions and accumulates left-to-right: $(x_1 \oplus x_2)\oplus x_3$. But $10^{16}+1$ is not representable in binary64 (next representable value above $10^{16}$ is $10^{16}+2$), so $x_1\oplus x_2 = 10^{16}$ exactly, and the result is $10^{16}\oplus(-10^{16}) = 0.0$. Engine $B$ accumulates $x_1\oplus x_3$ first $=0$, then $0\oplus x_2 = 1.0$. So $A$ reports $0$ and $B$ reports $1$.
+
+A naive equality oracle flags a "bug." But this is **catastrophic cancellation**: $\sum|x_i| = 2{\times}10^{16}$ while $|\sum x_i| = 1$, so the condition number is $\kappa = 2{\times}10^{16}$. The sound forward bound admits tolerance $\tau \approx \gamma_2 \sum|x_i| \approx 2u\cdot 2{\times}10^{16} \approx 2^{-53}\cdot 4{\times}10^{16} \approx 4.4$. Since $|0-1| = 1 \le \tau$, both outputs are *acceptable* under reordering. The oracle's correct verdict is **indeterminate** (ill-conditioned), not "bug."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

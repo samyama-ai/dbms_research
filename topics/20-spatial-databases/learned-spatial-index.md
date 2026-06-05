@@ -50,12 +50,30 @@ Groups: MIT DSAIL (Kraska), Pisa (Ferragina–Vinciguerra), TU Munich, RMIT (Qi/
 - Secondary/disk-resident learned spatial indexes with I/O-optimal guarantees.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The case for learned index structures.* SIGMOD, 2018.
-- **[Foundational]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020.
-- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning multi-dimensional indexes (Flood).* SIGMOD, 2020.
-- **[SOTA]** J. Ding et al. *Tsunami: a learned multi-dimensional index for correlated data and skewed workloads.* PVLDB, 2020.
-- **[SOTA]** P. Li, H. Lu, Q. Zheng, L. Yang, G. Pan. *LISA: A learned index structure for spatial data.* SIGMOD, 2020.
-- **[Survey]** A. Al-Mamun, H. Wu, W. G. Aref. *A tutorial on learned multi-dimensional indexes.* SIGSPATIAL, 2020.
+- **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The case for learned index structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208), [DOI](https://doi.org/10.1145/3183713.3196909)
+- **[Foundational]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning multi-dimensional indexes (Flood).* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1912.01668), [DOI](https://doi.org/10.1145/3318464.3380579)
+- **[SOTA]** J. Ding et al. *Tsunami: a learned multi-dimensional index for correlated data and skewed workloads.* PVLDB, 2020. — [arXiv](https://arxiv.org/abs/2006.13282), [DOI](https://doi.org/10.14778/3425879.3425880)
+- **[SOTA]** P. Li, H. Lu, Q. Zheng, L. Yang, G. Pan. *LISA: A learned index structure for spatial data.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389703)
+- **[Survey]** A. Al-Mamun, H. Wu, W. G. Aref. *A tutorial on learned multi-dimensional indexes.* SIGSPATIAL, 2020. — [DOI](https://doi.org/10.1145/3397536.3426358)
+
+## 10. Worked Example
+
+Take a sorted array of $n=8$ keys and fit one linear model $\hat f(x)=a x + b$ (a single PLA segment), predicting position from key value:
+
+| pos $i$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---------|---|---|---|---|---|---|---|---|
+| key $x$ | 2 | 5 | 8 | 10 | 14 | 21 | 22 | 30 |
+
+Least-squares-style line through the endpoints: $\hat f(x)=\frac{7}{28}(x-2)=0.25(x-2)$. Predictions vs. truth:
+
+| key | 2 | 5 | 8 | 10 | 14 | 21 | 22 | 30 |
+|-----|---|---|---|----|----|----|----|----|
+| $\hat f$ | 0.0 | 0.75 | 1.5 | 2.0 | 3.0 | 4.75 | 5.0 | 7.0 |
+| true pos | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| error | 0 | .25 | .5 | 1 | 1 | .25 | 1 | 0 |
+
+The **maximum prediction error** is $\epsilon=\lceil 1\rceil=1$. A lookup for key $14$ computes $\hat f(14)=3$, then does a bounded local search in $[3-\epsilon,\,3+\epsilon]=[2,4]$ — at most $O(\log\epsilon)$ work — and finds it at position 4 (just one step off). This is the PGM guarantee: pick a segmentation so each segment's error stays $\le\epsilon$, and *worst-case* query is $O(\log(n/\epsilon)+\log\epsilon)$. In $d\ge2$ (Section 5) no order keeps $\epsilon$ small for all axis-parallel boxes, so this clean bound has no proven multidimensional analogue — the open core.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

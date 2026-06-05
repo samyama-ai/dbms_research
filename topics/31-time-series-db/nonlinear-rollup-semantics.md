@@ -41,11 +41,24 @@ Active work targets (a) *error-bounded* continuous aggregates where the planner 
 - Standardizing rate semantics across Prometheus/InfluxDB/SQL so rollups are portable.
 
 ## 9. Key References
-- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, Reichart, Venkatrao, Pellow, Pirahesh. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery / VLDB Journal, 1997.
-- **[Foundational]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* ACM TODS, 2013.
-- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** Cormode, Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Gray, Chaudhuri, Bosworth, Layman, Reichart, Venkatrao, Pellow, Pirahesh. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery / VLDB Journal, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843)
+- **[Foundational]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128), [DBLP](https://dblp.org/rec/journals/tods/AgarwalCHPWY13.html)
+- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** Cormode, Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020. — [arXiv](https://arxiv.org/abs/1905.03838), [DOI](https://doi.org/10.1145/3375395.3387650)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Two adjacent 1-minute buckets each hold 5 latency samples:
+
+- Bucket $A$ = $\{10, 20, 30, 40, 50\}$, finalized $p99(A)\approx 50$.
+- Bucket $B$ = $\{60, 70, 80, 90, 100\}$, finalized $p99(B)\approx 100$.
+
+A 2-minute query wants $p99$ over all 10 points $\{10,\dots,100\}$. The true answer is $\approx 99$.
+
+**Wrong (re-aggregate finals):** averaging the per-bucket $p99$s gives $(50+100)/2 = 75$ — off by 24. Even taking the max, $100$, only happens to be close here and fails whenever the high bucket is the smaller one. This is the holistic-aggregate trap: $p99$ is *not* distributive, so no associative merge of scalar finals is correct.
+
+**Right (mergeable sketch):** store a KLL/GK sketch per bucket instead of the scalar. Merging the two sketches yields a summary of all 10 values; querying rank $0.99$ returns an item within $\pm\varepsilon n$ of true rank. With $\varepsilon = 0.05$ and $n=10$, the error tolerance is $\pm 0.5$ ranks — the sketch returns $90$ or $100$, both valid $0.99$-quantiles. State per bucket is $O(\tfrac{1}{\varepsilon}\log(\varepsilon n))$ words, and the merge is exact-as-a-monoid, so the rollup composes across arbitrarily many buckets without the averaging error.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

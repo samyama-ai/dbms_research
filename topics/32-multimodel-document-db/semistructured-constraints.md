@@ -39,12 +39,27 @@ Formal JSON Schema semantics (Pezoa, Bourhis, Reutter, Vrgoč, Suciu) underpins 
 - Scalable cross-document constraint enforcement and discovery.
 
 ## 9. Key References
-- **[Foundational]** P. Buneman, S. Davidson, W. Fan, C. Hara, W.-C. Tan. *Keys for XML.* Computer Networks / WWW, 2002.
-- **[Foundational]** M. Arenas, L. Libkin. *A Normal Form for XML Documents.* ACM TODS, 2004.
-- **[Foundational]** W. Fan, J. Siméon. *Integrity Constraints for XML.* JCSS / PODS, 2000–2003.
-- **[Foundational]** J. C. Mitchell. *The Implication Problem for Functional and Inclusion Dependencies.* Information and Control, 1983.
-- **[SOTA]** F. Pezoa, J. Reutter, F. Suciu, D. Vrgoč, et al. *Foundations of JSON Schema.* WWW, 2016.
-- **[Survey]** W. Fan. *XML Constraints: Specification, Analysis, and Applications.* (survey/tutorial), DEXA/various, 2005.
+- **[Foundational]** P. Buneman, S. Davidson, W. Fan, C. Hara, W.-C. Tan. *Keys for XML.* Computer Networks / WWW, 2002. — [DOI](https://doi.org/10.1145/371920.371984)
+- **[Foundational]** M. Arenas, L. Libkin. *A Normal Form for XML Documents.* ACM TODS, 2004. — [DOI](https://doi.org/10.1145/974750.974757)
+- **[Foundational]** W. Fan, J. Siméon. *Integrity Constraints for XML.* JCSS / PODS, 2000–2003. — [DOI](https://doi.org/10.1145/335168.335172)
+- **[Foundational]** J. C. Mitchell. *The Implication Problem for Functional and Inclusion Dependencies.* Information and Control, 1983. — [DOI](https://doi.org/10.1016/S0019-9958(83)80002-3)
+- **[SOTA]** F. Pezoa, J. Reutter, F. Suciu, D. Vrgoč, et al. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029) · [DBLP](https://dblp.org/rec/conf/www/PezoaRSUV16.html)
+- **[Survey]** W. Fan. *XML Constraints: Specification, Analysis, and Applications.* (survey/tutorial), DEXA/various, 2005. — [DOI](https://doi.org/10.1109/DEXA.2005.204)
+
+## 10. Worked Example
+
+Take a JSON `order` document with a nested array of line items:
+
+```
+{ "orderId": "O1",
+  "items": [ { "sku": "A", "qty": 2 },
+             { "sku": "B", "qty": 1 },
+             { "sku": "A", "qty": 5 } ] }
+```
+
+Consider a **relative key**: "within one order (context path `/order`), `sku` is a key for `items`" — i.e. $(\,/order,\ (items,\{sku\})\,)$. This order **violates** it: two `items` nodes share `sku = "A"`. Note the key is *relative*, not absolute — the same `sku` "A" may legally reappear in a different order `O2`, so an absolute key `(\epsilon, (//items, \{sku\}))` would be a strictly stronger (and here false) constraint.
+
+Now add optionality: suppose some items omit `qty`. An XFD `sku → qty` (same SKU implies same quantity) then faces the three-valued question of Section 6 — does a *missing* `qty` count as equal to, distinct from, or incomparable with a present `qty`? Under "missing = distinct", `sku → qty` is satisfiable; under "missing matches anything", it may be violated. This ambiguity is exactly why a clean Armstrong-style axiomatization over optional+repeated structure remains open: the satisfaction relation itself is not yet canonical.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

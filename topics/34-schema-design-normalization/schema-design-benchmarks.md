@@ -40,12 +40,21 @@ Active directions: (1) **LLM-assisted ground-truth curation** — using models t
 - Benchmarks for end-to-end *design* tasks (decomposition, placement), not only discovery.
 
 ## 9. Key References
-- **[SOTA]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015.
-- **[SOTA]** Arocena, P., Glavic, B., Mecca, G., Miller, R.J., Papotti, P., Santoro, D. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* PVLDB, 2015.
-- **[Foundational]** Transaction Processing Performance Council. *TPC-H / TPC-DS Benchmark Specifications.* TPC, 1999–.
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms.* JACM, 2005.
-- **[SOTA]** Hulsebos, M., et al. *GitTables: A Large-Scale Corpus of Relational Tables.* SIGMOD, 2023.
-- **[Survey]** Abedjan, Z., Golab, L., Naumann, F. *Profiling Relational Data: A Survey.* VLDB Journal, 2015.
+- **[SOTA]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+- **[SOTA]** Arocena, P., Glavic, B., Mecca, G., Miller, R.J., Papotti, P., Santoro, D. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2850578.2850579)
+- **[Foundational]** Transaction Processing Performance Council. *TPC-H / TPC-DS Benchmark Specifications.* TPC, 1999–. — [TPC](https://www.tpc.org/tpch/)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms.* JACM, 2005. — [DOI](https://doi.org/10.1145/1067298.1067302)
+- **[SOTA]** Hulsebos, M., et al. *GitTables: A Large-Scale Corpus of Relational Tables.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3588710)
+- **[Survey]** Abedjan, Z., Golab, L., Naumann, F. *Profiling Relational Data: A Survey.* VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0389-y)
+
+## 10. Worked Example
+
+Consider a planted ground truth $\Sigma^\star = \{A \to B\}$ over a 5-row table. A discovery tool outputs $\hat\Sigma = \{A \to B,\ \ AB \to B,\ \ C \to D\}$.
+
+**Why raw overlap misleads.** Naively, $|\hat\Sigma \cap \Sigma^\star| = 1$, giving precision $1/3 \approx 0.33$. But $AB \to B$ is *trivial* (RHS $\subseteq$ LHS) and $A \to B \models AB \to B$, so it is in the closure of $\Sigma^\star$. Scoring **modulo implication** quotients it out: only $C \to D$ is a genuine false positive, so
+$$\text{precision} = \frac{|\{A\to B\}|}{|\{A\to B,\ C\to D\}|} = \frac{1}{2} = 0.5, \qquad \text{recall} = \frac{|\{A\to B\}|}{|\Sigma^\star|} = 1.0.$$
+
+**Coincidence rate.** Is $C \to D$ spurious or real? With only $m=5$ rows and $C$ having 5 distinct values, $C$ is a key, so *every* $C \to X$ holds accidentally — $g_3$-error $= 0$ despite no semantic dependency. This is exactly the genuine-vs-coincidental gap: shrinking $m$ inflates accidental FDs, so a good benchmark must report the expected coincidence count and tune $(m, n, \text{domain sizes})$ so that planted $\Sigma^\star$ is distinguishable from noise. This is why ground truth cannot be read off the instance alone.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

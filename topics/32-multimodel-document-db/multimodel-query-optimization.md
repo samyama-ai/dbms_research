@@ -43,12 +43,24 @@ Decision/optimization variants: optimal join order is already the relational har
 - Quality-guaranteed enumeration (anytime / bounded-suboptimality) over the multi-model plan lattice.
 
 ## 9. Key References
-- **[Foundational]** P. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
-- **[SOTA]** M. Abo Khamis, H. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[Foundational]** G. Moerkotte, T. Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees (DPccp).* VLDB, 2006.
-- **[Survey]** J. Lu, I. Holubová. *Multi-model Databases: A New Journey to Handle the Variety of Data.* ACM Computing Surveys, 2019.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013.
+- **[Foundational]** P. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+- **[SOTA]** M. Abo Khamis, H. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [DOI](https://doi.org/10.1145/2902251.2902280)
+- **[Foundational]** G. Moerkotte, T. Neumann. *Analysis of Two Existing and One New Dynamic Programming Algorithm for the Generation of Optimal Bushy Join Trees (DPccp).* VLDB, 2006. — [DBLP](https://dblp.org/rec/conf/vldb/MoerkotteN06.html)
+- **[Survey]** J. Lu, I. Holubová. *Multi-model Databases: A New Journey to Handle the Variety of Data.* ACM Computing Surveys, 2019. — [DOI](https://doi.org/10.1145/3323214)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+
+## 10. Worked Example
+
+A cross-model triangle query: relational `Follows(a,b)`, document field path `mentions(b,c)` (unnested from JSON arrays), and graph edge `knows(c,a)`. Logically this is the three-way join
+$$Q = \text{Follows}(a,b)\bowtie \text{mentions}(b,c)\bowtie \text{knows}(c,a),$$
+the classic triangle — identical whether the relations come from a table, a shredded document, or a graph.
+
+**AGM bound.** With each relation of size $N$, the fractional edge cover number is $\rho^* = 3/2$ (assign weight $\tfrac12$ to all three edges; every vertex is covered: $\tfrac12+\tfrac12 = 1$). So the output is at most $N^{3/2}$, and a worst-case-optimal join (Leapfrog Triejoin) computes $Q$ in $\tilde{O}(N^{3/2})$.
+
+**Why binary joins lose.** Any pairwise plan first materializes a two-relation join, e.g. $\text{Follows}\bowtie\text{mentions}$, which can have $\Theta(N^2)$ tuples even though the final triangle has only $\le N^{3/2}$. On a star-of-paths instance this $N^2$ intermediate is realized — so a System-R/`DPccp` pairwise enumerator is asymptotically worse than the multiway algorithm.
+
+The point for multi-model optimization: once `mentions` (document) and `knows` (graph) are costed on the *same* AGM scale as the relational `Follows`, the optimizer can pick the worst-case-optimal multiway plan across all three models — the unification Section 6 calls for.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

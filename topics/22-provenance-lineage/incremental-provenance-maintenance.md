@@ -60,13 +60,27 @@ For positive CQs the dichotomy is essentially **tight** (q-hierarchical = $O(1)$
 
 ## 9. Key References
 
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007.
-- **[Foundational]** Gupta, Mumick, Subrahmanian. *Maintaining Views Incrementally.* SIGMOD 1993 (and DRed for recursion).
-- **[SOTA]** Koch et al. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014.
-- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017.
-- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB 2018.
-- **[SOTA]** Olteanu, Závodný. *Size Bounds for Factorised Representations of Query Results.* ACM TODS, 2015.
-- **[Survey]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR 2013.
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)
+- **[Foundational]** Gupta, Mumick, Subrahmanian. *Maintaining Views Incrementally.* SIGMOD 1993 (and DRed for recursion). — [DOI](https://doi.org/10.1145/170035.170066)
+- **[SOTA]** Koch et al. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014. — [DOI](https://doi.org/10.1007/s00778-013-0348-4)
+- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017. — [DOI](https://doi.org/10.1145/3034786.3034789) · [arXiv](https://arxiv.org/abs/1702.06370)
+- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[SOTA]** Olteanu, Závodný. *Size Bounds for Factorised Representations of Query Results.* ACM TODS, 2015. — [DOI](https://doi.org/10.1145/2656335)
+- **[Survey]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR 2013. — [DBLP](https://dblp.org/rec/conf/cidr/McSherryMII13.html)
+
+## 10. Worked Example
+
+Take the join view $V = R(x,y) \bowtie S(y,z)$ under $\mathbb{N}[X]$ provenance. Base tuples carry variables:
+$R = \{(1,2)\!:\!r_1,\ (1,3)\!:\!r_2\}$, $S = \{(2,9)\!:\!s_1,\ (3,9)\!:\!s_2\}$.
+
+The result $V$ on $z=9$ has provenance polynomial
+$$ P = r_1 s_1 + r_2 s_2. $$
+
+*Insertion update.* Insert $\Delta S = \{(2,9)\!:\!s_3\}$. By the product rule $\Delta(R\cdot S) = R\cdot \Delta S$ (the $\Delta R\cdot S$ and $\Delta R \cdot \Delta S$ terms vanish since $\Delta R=\varnothing$), the delta provenance is
+$$ \Delta P = r_1 s_3, $$
+so the maintained polynomial becomes $P' = r_1 s_1 + r_2 s_2 + r_1 s_3$. Cost is proportional to the affected tuples ($1$ join probe), **not** a re-scan of $R\bowtie S$.
+
+*Why the dichotomy bites.* This query $R(x,y),S(y,z)$ is q-hierarchical (the atoms' variable sets are nested/disjoint per the hierarchy condition on $y$), so each single-tuple update is $O(1)$ with constant-delay enumeration (Berkholz–Keppeler–Schweikardt). Contrast the 4-cycle $R(x,y),S(y,z),T(z,w),U(w,x)$: it is *not* q-hierarchical, so under the OMv conjecture no algorithm achieves both $O(N^{1/2-\epsilon})$ update and query time — provenance maintenance inherits this hardness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

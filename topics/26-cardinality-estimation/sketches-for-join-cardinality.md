@@ -27,12 +27,18 @@ Directions: (i) **degree- and sample-augmented sketches** for multi-way joins th
 Mergeable multi-way join sketches with provable relative error under skew; predicate-aware sketches (join restricted by selections); tight space–accuracy trade-offs for cyclic joins; learning-augmented sketches with guaranteed worst-case behavior; and standard integration as maintainable optimizer statistics under updates.
 
 ## 9. Key References
-- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996 / JCSS, 1999.
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[SOTA]** Charikar, Chen, Farach-Colton. *Finding Frequent Items in Data Streams (Count-Sketch).* ICALP, 2002.
-- **[SOTA]** Dobra, Garofalakis, Gehrke, Rastogi. *Processing Complex Aggregate Queries over Data Streams.* SIGMOD, 2002.
-- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996 / JCSS, 1999. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[SOTA]** Charikar, Chen, Farach-Colton. *Finding Frequent Items in Data Streams (Count-Sketch).* ICALP, 2002. — [DOI](https://doi.org/10.1007/3-540-45465-9_59)
+- **[SOTA]** Dobra, Garofalakis, Gehrke, Rastogi. *Processing Complex Aggregate Queries over Data Streams.* SIGMOD, 2002. — [DOI](https://doi.org/10.1145/564691.564699)
+- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Two-way equi-join $R\bowtie_A S$ on a domain $\{1,2,3\}$. Frequencies: $f=(3,1,0)$ in $R$ (value 1 appears 3 times, value 2 once), $g=(2,0,4)$ in $S$. True join size is the inner product $\langle f,g\rangle = 3\cdot2 + 1\cdot0 + 0\cdot4 = 6$ (the 3 tuples with $A{=}1$ in $R$ pair with 2 in $S$).
+
+AMS sketch: draw $\pm1$ signs $\epsilon=(\epsilon_1,\epsilon_2,\epsilon_3)$. Build $X=\sum_v \epsilon_v f_v$ over $R$ and $Y=\sum_v \epsilon_v g_v$ over $S$ using the *shared* signs. Say $\epsilon=(+1,-1,+1)$: then $X = 3-1+0 = 2$, $Y = 2-0+4 = 6$, and the single-copy estimate is $XY = 12$ — noisy. Over the random signs, $\mathbb{E}[XY] = \sum_v f_v g_v = 6$ (cross terms $\epsilon_u\epsilon_v$ vanish in expectation since $\mathbb{E}[\epsilon_u\epsilon_v]=0$ for $u\neq v$). Averaging $O(\varepsilon^{-2})$ independent copies drives the estimate to $6$ with additive error $\varepsilon\|f\|_2\|g\|_2 = \varepsilon\sqrt{10}\cdot\sqrt{20}\approx 14.1\,\varepsilon$. Crucially $X,Y$ are computed in one pass and are mergeable: signs are shared, so partition sketches simply add.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

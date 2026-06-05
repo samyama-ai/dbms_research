@@ -39,11 +39,29 @@ Renewed activity on **higher-dimensional and generalized Hilbert curves** (multi
 - Spherical and manifold SFC optimality (relevant to S2 / geospatial at scale).
 
 ## 9. Key References
-- **[Foundational]** B. Moon, H. V. Jagadish, C. Faloutsos, J. H. Saltz. *Analysis of the Clustering Properties of the Hilbert Space-Filling Curve.* IEEE TKDE, 2001.
-- **[Foundational]** C. Gotsman, M. Lindenbaum. *On the Metric Properties of Discrete Space-Filling Curves.* IEEE Transactions on Image Processing, 1996.
-- **[Foundational]** H. V. Jagadish. *Linear Clustering of Objects with Multiple Attributes.* SIGMOD, 1990.
-- **[SOTA]** R. Niedermeier, K. Reinhardt, P. Sanders. *Towards Optimal Locality in Mesh-Indexings.* Discrete Applied Mathematics, 2002.
-- **[Survey]** M. Bader. *Space-Filling Curves: An Introduction with Applications in Scientific Computing.* Springer, 2013.
+- **[Foundational]** B. Moon, H. V. Jagadish, C. Faloutsos, J. H. Saltz. *Analysis of the Clustering Properties of the Hilbert Space-Filling Curve.* IEEE TKDE, 2001. — [DOI](https://doi.org/10.1109/69.908985)
+- **[Foundational]** C. Gotsman, M. Lindenbaum. *On the Metric Properties of Discrete Space-Filling Curves.* IEEE Transactions on Image Processing, 1996. — [DOI](https://doi.org/10.1109/83.499920)
+- **[Foundational]** H. V. Jagadish. *Linear Clustering of Objects with Multiple Attributes.* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93597.98742)
+- **[SOTA]** R. Niedermeier, K. Reinhardt, P. Sanders. *Towards Optimal Locality in Mesh-Indexings.* Discrete Applied Mathematics, 2002. — [DOI](https://doi.org/10.1016/S0166-218X(00)00326-7)
+- **[Survey]** M. Bader. *Space-Filling Curves: An Introduction with Applications in Scientific Computing.* Springer, 2013. — [DOI](https://doi.org/10.1007/978-3-642-31046-1)
+
+## 10. Worked Example
+
+**Counting clusters on a $4\times4$ Hilbert grid.** The order-2 Hilbert curve assigns these indices to the 16 cells (rows bottom $y=0$ to top $y=3$, columns $x=0..3$):
+
+$$
+\begin{array}{c|cccc}
+ & x{=}0 & 1 & 2 & 3\\\hline
+y{=}3 & 5 & 6 & 9 & 10\\
+y{=}2 & 4 & 7 & 8 & 11\\
+y{=}1 & 3 & 2 & 13 & 12\\
+y{=}0 & 0 & 1 & 14 & 15
+\end{array}
+$$
+
+Query the $2\times2$ window $Q=\{x\in\{0,1\},\,y\in\{0,1\}\}$. Its Hilbert indices are $\{0,1,2,3\}$ — one **contiguous run**, so $C(Q)=1$ cluster: a single sequential read. This is the locality win, and it matches the perimeter heuristic $\mathbb{E}[C]\approx \partial Q/(2d)$: here $\partial Q=8$, $d=2\Rightarrow \approx 2$, order-consistent.
+
+Now compare **Z-order (Morton)** on the same window. Z-order indices interleave bits: $(x,y)=(0,0)\to0,(1,0)\to1,(0,1)\to2,(1,1)\to3$ — also $\{0,1,2,3\}$, one cluster here. But take $Q'=\{x\in\{1,2\},y\in\{1,2\}\}$ (the center $2\times2$ block). Under Hilbert these cells are $\{7,8,13,...\}$ — let's read them: $(1,1){=}2,(2,1){=}13,(1,2){=}7,(2,2){=}8$, i.e. $\{2,7,8,13\}$, giving runs $\{2\},\{7,8\},\{13\}$ → $C=3$. Under Z-order the same block gives $\{3,6,9,12\}$, four singletons → $C=4$. Hilbert's $3<4$ illustrates its constant-factor edge on off-origin windows. The open problem is the *exact* optimal constant and the best curve as $d\to\ge3$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

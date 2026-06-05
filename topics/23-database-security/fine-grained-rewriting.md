@@ -66,11 +66,31 @@ For **row filtering and the CQ/SPJ core, the problem is solved** (sound, often c
 
 ## 9. Key References
 
-- **[Foundational]** Shariq Rizvi, Alberto Mendelzon, S. Sudarshan, Prasan Roy. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004.
-- **[SOTA]** Surajit Chaudhuri, Tanmoy Dutta, S. Sudarshan. *Fine Grained Authorization Through Predicated Grants.* ICDE, 2007.
-- **[Foundational]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM TODS, 2010.
-- **[Foundational]** Arnon Rosenthal, Edward Sciore. *View Security as the Basis for Data Warehouse Security.* DMDW, 2000.
-- **[Survey]** Andrei Sabelfeld, Andrew C. Myers. *Language-Based Information-Flow Security.* IEEE Journal on Selected Areas in Communications, 2003.
+- **[Foundational]** Shariq Rizvi, Alberto Mendelzon, S. Sudarshan, Prasan Roy. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007631)
+- **[SOTA]** Surajit Chaudhuri, Tanmoy Dutta, S. Sudarshan. *Fine Grained Authorization Through Predicated Grants.* ICDE, 2007. — [DBLP](https://dblp.org/rec/conf/icde/ChaudhuriDS07.html)
+- **[Foundational]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM TODS, 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[Foundational]** Arnon Rosenthal, Edward Sciore. *View Security as the Basis for Data Warehouse Security.* DMDW, 2000. — [CEUR](https://ceur-ws.org/Vol-28/paper8.pdf)
+- **[Survey]** Andrei Sabelfeld, Andrew C. Myers. *Language-Based Information-Flow Security.* IEEE Journal on Selected Areas in Communications, 2003. — [DOI](https://doi.org/10.1109/JSAC.2002.806121)
+
+## 10. Worked Example
+
+Table `Emp(name, dept, salary)`, four rows:
+
+| name | dept | salary |
+|------|------|--------|
+| Ann  | HR   | 90     |
+| Bob  | HR   | 120    |
+| Cara | IT   | 200    |
+| Dan  | IT   | 110    |
+
+Policy for manager *Ann* of HR: "see salaries only of your own department." The authorization view is
+`V = SELECT name, dept, salary FROM Emp WHERE dept='HR'`.
+
+**Row filtering (Truman, sound):** Ann's query `SELECT name, salary FROM Emp` is silently rewritten to run against $V$, returning `{Ann:90, Bob:120}`. Correct and side-channel-free for this query.
+
+**Aggregate distortion:** Ann issues `SELECT AVG(salary) FROM Emp`. Rewritten over $V$ it returns $\tfrac{90+120}{2}=105$. But Ann may *believe* it is the company-wide average; the true value is $\tfrac{90+120+200+110}{4}=130$. The rewriting is sound (no unauthorized cell shown) yet *misleadingly complete* — the hidden IT salaries silently change the answer.
+
+**Non-Truman response:** instead of silently answering, the system tests validity — is `AVG(salary) FROM Emp` $\equiv$ its rewrite under $V$ on *every* database? It is not (IT rows matter), so the query is **rejected**, forcing Ann to phrase `... WHERE dept='HR'` explicitly. This trades completeness for honesty, and is the crux of the open gap for aggregation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

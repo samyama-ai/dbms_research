@@ -47,11 +47,28 @@ There is no agreed objective, so the problem is **genuinely open**: tractable, g
 - Incremental and noise-tolerant inference (corpora with dirty/outlier documents).
 
 ## 9. Key References
-- **[Foundational]** E. M. Gold. *Language Identification in the Limit.* Information and Control, 1967.
-- **[Foundational]** S. Nestorov, S. Abiteboul, R. Motwani. *Extracting Schema from Semistructured Data.* SIGMOD, 1998.
-- **[SOTA]** G. J. Bex, F. Neven, T. Schwentick, K. Tuyls. *Inference of Concise DTDs from XML Data.* VLDB, 2006.
-- **[Foundational]** L. Pitt, M. K. Warmuth. *The Minimum Consistent DFA Problem Cannot be Approximated within any Polynomial.* JACM, 1993.
-- **[Survey]** M. A. Baazizi, D. Colazzo, G. Ghelli, C. Sartiani. *Schema Inference for Massive JSON Datasets.* EDBT, 2017.
+- **[Foundational]** E. M. Gold. *Language Identification in the Limit.* Information and Control, 1967. — [DOI](https://doi.org/10.1016/S0019-9958(67)91165-5)
+- **[Foundational]** S. Nestorov, S. Abiteboul, R. Motwani. *Extracting Schema from Semistructured Data.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276331)
+- **[SOTA]** G. J. Bex, F. Neven, T. Schwentick, K. Tuyls. *Inference of Concise DTDs from XML Data.* VLDB, 2006. — [DOI](https://doi.org/10.5555/1182635.1164139), [PDF](https://www.vldb.org/conf/2006/p115-bex.pdf)
+- **[Foundational]** L. Pitt, M. K. Warmuth. *The Minimum Consistent DFA Problem Cannot be Approximated within any Polynomial.* JACM, 1993. — [DOI](https://doi.org/10.1145/138027.138042)
+- **[Survey]** M. A. Baazizi, D. Colazzo, G. Ghelli, C. Sartiani. *Schema Inference for Massive JSON Datasets.* EDBT, 2017. — [DOI](https://doi.org/10.5441/002/edbt.2017.21)
+
+## 10. Worked Example
+
+Corpus $D$ of 3 JSON documents:
+
+- $d_1 =$ `{"id":1,"tags":["a"]}`
+- $d_2 =$ `{"id":2,"tags":["a","b"],"note":"x"}`
+- $d_3 =$ `{"id":3,"tags":[]}`
+
+Per-field inference: `id` is `number` in all 3 (required). `tags` is `array of string` in all 3 (required; empty array still typed). `note` appears in 1 of 3 ⇒ marked **optional** by frequency. Inferred schema $S$:
+$$\texttt{\{ id: number, tags: [string], note?: string \}}.$$
+
+**Soundness check:** each $d_i \models S$ — no false rejection. **Conciseness (MDL):** $S$ factors the shared `id`/`tags` structure rather than enumerating two object variants, so $L(S)$ is small.
+
+**Why the trivial schema is rejected:** "any JSON" ($\top$) is also sound but useless — it accepts `{"id":"oops"}`, which $S$ rejects. The $\arg\min |S| + \lambda\cdot\mathrm{imprecision}(S)$ objective penalizes $\top$'s huge accepted-but-unobserved set.
+
+**Lower-bound bite:** if we demanded the *minimum-size* deterministic tree automaton consistent with $D$, that is NP-hard and inapproximable (Pitt–Warmuth) — so practical tools settle for the cheap frequency heuristic above, with no optimality guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

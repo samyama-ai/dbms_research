@@ -53,12 +53,26 @@ Active threads: integrating TFDs with SQL:2011 bitemporal semantics so that decl
 
 ## 9. Key References
 
-- **[Foundational]** Codd, E.F. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970.
-- **[Foundational]** Wijsen, J. *Temporal FDs on Complex Objects / Design of Temporal Relational Databases Based on Dynamic and Temporal Functional Dependencies.* IEEE TKDE, 1999.
-- **[Foundational]** Vianu, V. *Dynamic Functional Dependencies and Database Aging.* JACM, 1987.
-- **[Foundational]** Jensen, C.S., Snodgrass, R.T., Su, M.D. *Unifying Temporal Data Models via a Conceptual Model.* Information Systems, 1994.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (chase, dependency theory).
-- **[Survey]** Lucchesi, C.L., Osborn, S.L. *Candidate Keys for Relations.* JCSS, 1978.
+- **[Foundational]** Codd, E.F. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
+- **[Foundational]** Wijsen, J. *Temporal FDs on Complex Objects / Design of Temporal Relational Databases Based on Dynamic and Temporal Functional Dependencies.* IEEE TKDE, 1999. — [Temporal FDs on Complex Objects, ACM TODS 24(1) 1999, DOI](https://doi.org/10.1145/310701.310715)
+- **[Foundational]** Vianu, V. *Dynamic Functional Dependencies and Database Aging.* JACM, 1987. — [DOI](https://doi.org/10.1145/7531.7918)
+- **[Foundational]** Jensen, C.S., Snodgrass, R.T., Soo, M.D. *Unifying Temporal Data Models via a Conceptual Model.* Information Systems, 1994. — [DOI](https://doi.org/10.1016/0306-4379(94)90013-2)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (chase, dependency theory). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Survey]** Lucchesi, C.L., Osborn, S.L. *Candidate Keys for Relations.* JCSS, 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
+
+## 10. Worked Example
+
+Let the TFD be $\text{Emp} \xrightarrow{\text{month}} \text{Salary}$: *within any month, an employee's salary is fixed, but it may change across months.* Tuples carry a day-granularity timestamp:
+
+| Emp | Salary | day |
+|-----|--------|-----|
+| Alice | 5000 | Jan-10 |
+| Alice | 5000 | Jan-25 |
+| Alice | 5200 | Feb-03 |
+
+Group by month-granule. The Jan-granule holds the two Jan tuples: both have $\text{Emp}=\text{Alice} \Rightarrow \text{Salary}=5000$ — **consistent**. The Feb-granule holds one tuple — trivially consistent. So $\text{Emp}\xrightarrow{\text{month}}\text{Salary}$ **holds**.
+
+Now add Alice, $4800$, Jan-30. The Jan-granule now has $\{5000,5000,4800\}$ for the same Emp — the dependency is **violated** at granularity month, though it would still hold at granularity *day* (each day has one value). This shows the granularity rule: $\mu' \preceq \mu$ (day finer than month) means $X\xrightarrow{\text{month}}Y \Rightarrow X\xrightarrow{\text{day}}Y$, but not conversely — exactly why ordinary attribute-closure $X^+$ must be lifted with the granularity lattice to decide implication.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

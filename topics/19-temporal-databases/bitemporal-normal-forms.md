@@ -1,6 +1,7 @@
 # Bitemporal Normal Forms
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/bitemporal-normal-forms` · **Status:** open
+> **Verification note:** The third author of *Unifying Temporal Data Models via a Conceptual Model* (Information Systems 1994) is M.D. **Soo**, not "Su" (corrected in §9).
 
 ## 1. Problem Statement
 
@@ -57,12 +58,40 @@ Work centers on (a) making SQL:2011 system-versioned tables space-efficient with
 
 ## 9. Key References
 
-- **[Foundational]** Snodgrass, R.T. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 1999.
-- **[Foundational]** Jensen, C.S., Snodgrass, R.T., Su, M.D. *Unifying Temporal Data Models via a Conceptual Model.* Information Systems, 1994.
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005.
-- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972.
-- **[SOTA]** Böhlen, M., Gamper, J., Jensen, C.S. *Multi-dimensional Aggregation / Temporal Coalescing.* (TKDE / VLDB line), 2000s.
-- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
+- **[Foundational]** Snodgrass, R.T. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 1999. — [ACM](https://dl.acm.org/doi/book/10.5555/320037)
+- **[Foundational]** Jensen, C.S., Snodgrass, R.T., Soo, M.D. *Unifying Temporal Data Models via a Conceptual Model.* Information Systems, 1994. — [DOI](https://doi.org/10.1016/0306-4379(94)90013-2)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
+- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
+- **[SOTA]** Böhlen, M., Gamper, J., Jensen, C.S. *Multi-dimensional Aggregation for Temporal Data.* EDBT, 2006. — [DOI](https://doi.org/10.1007/11687238_18); cf. coalescing: Böhlen–Snodgrass–Soo, VLDB 1996 — [PDF](https://www.vldb.org/conf/1996/P180.PDF)
+- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+
+## 10. Worked Example
+
+Consider a bitemporal `Salary(emp, amt, I_vt, I_tt)` instance (one fixed transaction interval
+$I_{tt}=[1,\textsf{NOW})$ for all rows, so we focus on the valid axis):
+
+| emp | amt | $I_{vt}$ |
+|-----|-----|----------|
+| 7 | 50 | $[0,10)$ |
+| 7 | 50 | $[10,20)$ |
+| 7 | 50 | $[25,30)$ |
+
+Rows 1–2 are **value-equivalent** ($\{7,50\}$) with *meeting* valid intervals
+($[0,10)$ abuts $[10,20)$), so they violate the coalesced normal form: a fact is stored across two
+tuples that could be one. The **coalesce** post-pass sorts endpoints and sweeps, merging the
+connected run $[0,10)\cup[10,20)=[0,20)$ (Helly-on-the-line: they share the boundary point 10),
+while $[25,30)$ stays separate (gap at $[20,25)$):
+
+| emp | amt | $I_{vt}$ |
+|-----|-----|----------|
+| 7 | 50 | $[0,20)$ |
+| 7 | 50 | $[25,30)$ |
+
+This is the **unique** maximally-coalesced instance, computable in $O(n\log n)$ per
+value-equivalence class — placing the *decision* "is this coalesced?" in P. Note redundancy
+elimination here is safe *only* because all three rows shared one transaction interval; had they
+differed on $I_{tt}$, merging would erase audit history — the §1 tension between requirements
+(1) zero-redundancy and (3) history-preservation.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

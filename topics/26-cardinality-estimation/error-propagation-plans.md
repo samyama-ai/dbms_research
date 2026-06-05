@@ -29,12 +29,28 @@ Directions: (i) **uncertainty-propagating optimization** — carrying distributi
 Models of correlated operator-error propagation; optimizers that consume calibrated uncertainty from learned estimators; scalable robust optimization beyond low selectivity-dimension; theory linking per-operator q-error guarantees to plan-regret bounds; and standardized benchmarks measuring *end-to-end* robustness rather than estimator accuracy in isolation.
 
 ## 9. Key References
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
-- **[SOTA]** Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Performance Robustness via Estimation-Free Execution.* SIGMOD, 2014.
-- **[SOTA]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001.
-- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)
+- **[SOTA]** Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Processing without Selectivity Estimation.* SIGMOD, 2014. — [DBLP](https://dblp.org/rec/conf/sigmod/DuttH14.html)
+- **[SOTA]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01.html)
+- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+
+## 10. Worked Example
+
+Consider a left-deep plan over a 4-way join: $o_1 = A \bowtie B$, $o_2 = o_1 \bowtie C$, $o_3 = o_2 \bowtie D$ (three join operators, depth $h=3$). Suppose the optimizer's per-operator estimates are each off by a factor of $4$ in the *same* direction (independence assumption underestimates each join's correlation), so per-operator q-error $q_i = 4$.
+
+True intermediate sizes vs. estimates:
+
+| node | true $c_i$ | estimate $\hat c_i$ | $q_i$ |
+|------|-----------|--------------------|-------|
+| $o_1$ | 4{,}000 | 1{,}000 | 4 |
+| $o_2$ | 160{,}000 | 10{,}000 | 4 |
+| $o_3$ | 6{,}400{,}000 | 100{,}000 | 4 |
+
+The errors **compound multiplicatively**: in log space they add, $\sum_i \log q_i = 3\log 4$, so the root q-error is $\prod_i q_i = 4^3 = 64$. The optimizer believes the final join yields $100{,}000$ rows but it actually yields $6.4$M — a $64\times$ under-estimate that can make it pick a hash build side or memory budget off by two orders of magnitude.
+
+This is the $q^h$ worst-case bound of Section 5 made concrete: bounded per-operator error ($q=4$) over depth $h=3$ produces $q^h = 64$ end-to-end. Plan-Bouquet-style execution sidesteps it by discovering true selectivities at runtime rather than trusting the compounded estimate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

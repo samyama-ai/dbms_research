@@ -49,13 +49,22 @@ The portability gap is **information-theoretically irreducible** in general: two
 
 ## 9. Key References
 
-- **[Foundational]** Ragan-Kelley, J. et al. *Halide: A Language and Compiler for Optimizing Parallelism, Locality, and Recomputation in Image Processing Pipelines.* PLDI, 2013.
-- **[Foundational]** Pennycook, S. J., Sewall, J. D., Lee, V. W. *A Metric for Performance Portability.* arXiv:1611.07409, 2016.
-- **[SOTA]** Chen, T. et al. *TVM: An Automated End-to-End Optimizing Compiler for Deep Learning.* OSDI, 2018.
-- **[SOTA]** Tillet, P., Kung, H. T., Cox, D. *Triton: An Intermediate Language and Compiler for Tiled Neural Network Computations.* MAPL, 2019.
-- **[SOTA]** Pirk, H., Moll, O., Zaharia, M., Madden, S. *Voodoo: A Vector Algebra for Portable Database Performance on Modern Hardware.* VLDB, 2016.
-- **[SOTA]** Ansel, J. et al. *OpenTuner: An Extensible Framework for Program Autotuning.* PACT, 2014.
-- **[Foundational]** Ben-David, S. et al. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
+- **[Foundational]** Ragan-Kelley, J. et al. *Halide: A Language and Compiler for Optimizing Parallelism, Locality, and Recomputation in Image Processing Pipelines.* PLDI, 2013. — [DBLP](https://dblp.uni-trier.de/rec/conf/pldi/Ragan-KelleyBAPDA13.html)
+- **[Foundational]** Pennycook, S. J., Sewall, J. D., Lee, V. W. *A Metric for Performance Portability.* arXiv:1611.07409, 2016. — [arXiv](https://arxiv.org/abs/1611.07409)
+- **[SOTA]** Chen, T. et al. *TVM: An Automated End-to-End Optimizing Compiler for Deep Learning.* OSDI, 2018. — [arXiv](https://arxiv.org/abs/1802.04799)
+- **[SOTA]** Tillet, P., Kung, H. T., Cox, D. *Triton: An Intermediate Language and Compiler for Tiled Neural Network Computations.* MAPL, 2019. — [DOI](https://doi.org/10.1145/3315508.3329973)
+- **[SOTA]** Pirk, H., Moll, O., Zaharia, M., Madden, S. *Voodoo: A Vector Algebra for Portable Database Performance on Modern Hardware.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3007328.3007336)
+- **[SOTA]** Ansel, J. et al. *OpenTuner: An Extensible Framework for Program Autotuning.* PACT, 2014. — [DOI](https://doi.org/10.1145/2628071.2628092)
+- **[Foundational]** Ben-David, S. et al. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+
+## 10. Worked Example
+
+Consider a memory-bound DB scan kernel auto-tuned on GPU generation $H_1$ (peak BW $900$ GB/s) where the best tile size hits $e(o,H_1)=\frac{\text{perf}}{\text{peak}}=0.90$. Ship the *same* fixed config to $H_2$ (a newer GPU, peak BW $2000$ GB/s, more SMs); the stale tile under-fills the wider memory subsystem and achieves only $e(o,H_2)=0.40$.
+
+Pennycook's performance-portability metric is the harmonic mean of efficiencies:
+$$\Phi = \frac{|\mathcal{H}|}{\sum_H 1/e(o,H)} = \frac{2}{\frac{1}{0.90}+\frac{1}{0.40}} = \frac{2}{1.111+2.5} = \frac{2}{3.611} \approx 0.554.$$
+
+The harmonic mean ($0.554$) sits far below the arithmetic mean ($0.65$): it *punishes* the collapse on $H_2$. Re-running the autotuner on $H_2$ (warm-started from $H_1$'s data) recovers $e(o,H_2)=0.88$, lifting $\Phi$ to $\frac{2}{1.111+1.136}\approx 0.890$. This quantifies why a single static config cannot be near-peak everywhere (Section 5) and why low-cost per-target re-specialization is the open lever (Section 6).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

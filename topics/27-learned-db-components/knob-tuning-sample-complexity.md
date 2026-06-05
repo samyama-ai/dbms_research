@@ -40,11 +40,21 @@ Directions: (a) measuring effective dimensionality of real engines (PostgreSQL, 
 - Sample-complexity theory for multi-objective (latency, throughput, cost) tuning.
 
 ## 9. Key References
-- **[Foundational]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design.* ICML, 2010.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017.
-- **[SOTA]** K. Kanellis et al. *LlamaTune: Sample-Efficient DBMS Configuration Tuning.* PVLDB, 2022.
-- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019.
-- **[Foundational]** Z. Wang, F. Hutter, M. Zoghi, D. Matheson, N. de Freitas. *Bayesian Optimization in a Billion Dimensions via Random Embeddings (REMBO).* JAIR, 2016.
+- **[Foundational]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design.* ICML, 2010. — [arXiv](https://arxiv.org/abs/0912.3995) — [DBLP](https://dblp.org/rec/conf/icml/SrinivasKKS10.html)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** K. Kanellis et al. *LlamaTune: Sample-Efficient DBMS Configuration Tuning.* PVLDB, 2022. — [arXiv](https://arxiv.org/abs/2203.05128) — [DOI](https://doi.org/10.14778/3551793.3551844)
+- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019. — [PDF](https://dbgroup.cs.tsinghua.edu.cn/ligl/papers/sigmod19-cdbtune.pdf) — [DBLP search](https://dblp.org/search?q=An%20End-to-End%20Automatic%20Cloud%20Database%20Tuning%20System%20Using%20Deep%20Reinforcement%20Learning)
+- **[Foundational]** Z. Wang, F. Hutter, M. Zoghi, D. Matheson, N. de Freitas. *Bayesian Optimization in a Billion Dimensions via Random Embeddings (REMBO).* JAIR, 2016. — [arXiv](https://arxiv.org/abs/1301.1942) — [DOI](https://doi.org/10.1613/jair.4806)
+
+## 10. Worked Example
+
+Suppose a DBMS exposes $d = 100$ knobs, but throughput truly depends on only $d_e = 3$ of them (buffer pool, parallelism, prefetch depth); the other 97 are inert. We want an $\epsilon$-optimal config with $L = 1$ Lipschitz throughput on $[0,1]^d$.
+
+- **Naive grid / ambient-dimension bound.** The covering-number lower bound is $\Omega((1/\epsilon)^d)$. For $\epsilon = 0.1$ that is $10^{100}$ workload runs — astronomically infeasible.
+- **Effective-dimension upper bound.** If a tuner exploits the true $d_e = 3$ structure (e.g. a random embedding à la REMBO, or additive GP), the cost collapses to $\sim (1/\epsilon)^{d_e} = 10^3$ runs — still a lot, but finite.
+- **Additive-GP info gain.** GP-UCB needs $N = O\!\big(\gamma_N \log(1/\delta)/\epsilon^2\big)$. With additive groups of size $g_0 = 1$, $\gamma_N = O(d\,(\log N)^{2})$. Plugging $d = 100$, $\delta = 0.05$, $\epsilon = 0.1$ gives $N$ of order a few thousand — *polynomial in $d$* instead of exponential.
+
+The chasm between $10^{100}$ and $10^3$ is exactly the open question: real engines must *provably* possess such low-effective-dimension structure for the polynomial bound to hold; integer knobs and performance cliffs may violate the GP smoothness assumption.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

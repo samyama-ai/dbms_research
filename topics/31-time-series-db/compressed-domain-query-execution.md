@@ -59,11 +59,25 @@ Closed for the "nice" pairs (RLE/dictionary/FOR with SUM/COUNT/MIN/MAX/range). G
 
 ## 9. Key References
 
-- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006.
-- **[Foundational]** M. Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005.
-- **[SOTA]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[SOTA]** A. Afroozeh, P. Boncz. *The FastLanes Compression Layout.* VLDB, 2023.
-- **[Foundational]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016.
+- **[Foundational]** D. Abadi, S. Madden, M. Ferreira. *Integrating Compression and Execution in Column-Oriented Database Systems.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142548)
+- **[Foundational]** M. Stonebraker et al. *C-Store: A Column-oriented DBMS.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/StonebrakerABCCFLLMOORTZ05.html)
+- **[SOTA]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[SOTA]** A. Afroozeh, P. Boncz. *The FastLanes Compression Layout.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+- **[Foundational]** G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [ACM](https://dl.acm.org/doi/book/10.5555/3092586)
+
+## 10. Worked Example
+
+A 12-row column stored **RLE** as $(value,\ run)$ pairs:
+
+$$(7,4),\ (7,3),\ (12,5)\quad\text{i.e. }7,7,7,7,\ 7,7,7,\ 12,12,12,12,12.$$
+
+Query: `SELECT SUM(x), COUNT(*)`. RLE is homomorphic for SUM/COUNT, so compute directly from the 3 metadata pairs without materializing 12 values:
+
+$$\text{SUM}=\sum_k v_k\cdot \text{run}_k = 7\cdot4 + 7\cdot3 + 12\cdot5 = 28+21+60 = 109,\qquad \text{COUNT}=\sum_k \text{run}_k = 4+3+5 = 12.$$
+
+Cost is $O(\text{compressed size})=3$ operations versus $12$ for full decode — a $4\times$ speedup equal to the compression ratio.
+
+Now contrast a **filter** `WHERE x > 10` on the same column. RLE/FOR keep value magnitude, so the predicate runs on the 3 runs: only $(12,5)$ survives, returning 5 rows, output-sensitive. But if the column were instead **XOR/Gorilla**-encoded, the stored stream is $7\oplus7\oplus12\dots$, where the XOR deltas destroy magnitude order — the operator $\mathcal{O}'$ satisfying $\mathcal{O}(D(c))=\mathcal{O}'(c)$ does not exist, so the predicate forces a full $\Omega(\text{block size})$ sequential decode. This is exactly the homomorphic / non-homomorphic boundary the problem turns on.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

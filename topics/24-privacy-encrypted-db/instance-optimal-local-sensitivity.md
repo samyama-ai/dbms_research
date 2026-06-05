@@ -37,12 +37,22 @@ Active threads: tighter **per-instance optimality for SQL** beyond elastic sensi
 - Practical libraries exposing smooth/elastic sensitivity to optimizers with composition-aware accounting.
 
 ## 9. Key References
-- **[Foundational]** Nissim, Raskhodnikova, Smith. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007.
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[SOTA]** Asi, Duchi. *Instance-Optimality in Differential Privacy via Approximate Inverse Sensitivity Mechanisms.* NeurIPS, 2020.
-- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* PVLDB, 2018.
-- **[SOTA]** Fang, Dong, Yi. *Shifted Inverse: A General Mechanism for Monotonic Functions under User Differential Privacy.* SIGMOD/CCS line, 2022–2023.
-- **[Survey]** Vadhan. *The Complexity of Differential Privacy.* In *Tutorials on the Foundations of Cryptography*, 2017.
+- **[Foundational]** Nissim, Raskhodnikova, Smith. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250803)
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[SOTA]** Asi, Duchi. *Instance-Optimality in Differential Privacy via Approximate Inverse Sensitivity Mechanisms.* NeurIPS, 2020. — [NeurIPS](https://proceedings.neurips.cc/paper/2020/hash/a267f936e54d7c10a2bb70dbe6ad7a89-Abstract.html)
+- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* PVLDB, 2018. — [DOI](https://doi.org/10.1145/3187009.3177733) · [arXiv](https://arxiv.org/abs/1706.09479)
+- **[SOTA]** Fang, Dong, Yi. *Shifted Inverse: A General Mechanism for Monotonic Functions under User Differential Privacy.* SIGMOD/CCS line, 2022–2023. — [DBLP search](https://dblp.org/search?q=Shifted+Inverse+A+General+Mechanism+for+Monotonic+Functions+under+User+Differential+Privacy)
+- **[Survey]** Vadhan. *The Complexity of Differential Privacy.* In *Tutorials on the Foundations of Cryptography*, 2017. — [DOI](https://doi.org/10.1007/978-3-319-57048-8_7)
+
+## 10. Worked Example
+
+Release the **median** of a salary dataset under $\varepsilon$-DP. Take $n=7$ sorted values (in $\$$k):
+$$x = (40,\ 42,\ 45,\ 50,\ 51,\ 52,\ 300).$$
+The median is $x_{(4)} = 50$. Global sensitivity is huge: a single record can be any value in $[0,\infty)$, so $\mathrm{GS}_{\text{med}}$ is unbounded (or the full range) — naive Laplace noise is useless.
+
+**Local sensitivity** only looks at *this* instance: changing one point moves the median at most to a neighboring order statistic, so $\mathrm{LS}(x)=\max(x_{(4)}-x_{(3)},\,x_{(5)}-x_{(4)})=\max(50-45,\,51-50)=5$. Far smaller than global.
+
+But $\mathrm{LS}$ itself is private, so we use **smooth sensitivity** $S^*_{\beta}(x)=\max_{k\ge0} e^{-\beta k}\mathrm{LS}^{(k)}(x)$. At distance $k$, $\mathrm{LS}^{(k)}$ can grow (e.g., $\mathrm{LS}^{(1)}$ uses $x_{(3)},x_{(6)}$ giving $\max(50-45,52-50)=5$; larger $k$ eventually reaches the $300$ gap). With $\beta=\varepsilon/2$ and $\varepsilon=1$ the geometric decay caps the smoothed value near $S^*\approx 5$–$8$. We then add Cauchy noise scaled to $S^*/\varepsilon$, giving error $\approx \$6$k — versus unbounded error from global sensitivity. The instance-optimal benchmark $\mathrm{len}_{\text{med}}(x,1/\varepsilon)$ matches this up to constants.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

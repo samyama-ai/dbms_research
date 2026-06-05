@@ -48,12 +48,37 @@ For *unconditioned* distinct counting the gap is essentially **closed** (sketche
 - Incremental maintenance of composite-NDV synopses under updates.
 
 ## 9. Key References
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007.
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** G. Valiant, P. Valiant. *Estimating the Unseen: Improved Estimators for Entropy and Other Properties.* STOC 2011 / JACM 2017.
-- **[SOTA]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* PVLDB, 2019; *NeuroCard.* PVLDB, 2020.
-- **[Survey]** P. J. Haas, J. F. Naughton, S. Seshadri, L. Stokes. *Sampling-Based Estimation of the Number of Distinct Values of an Attribute.* VLDB, 1995.
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166v1)
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[SOTA]** G. Valiant, P. Valiant. *Estimating the Unseen: Improved Estimators for Entropy and Other Properties.* STOC 2011 / JACM 2017. — [STOC 2011 (DOI)](https://doi.org/10.1145/1993636.1993727) · [JACM (DOI)](https://doi.org/10.1145/3125643)
+- **[SOTA]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DBLP](https://dblp.org/rec/conf/pods/KaneNW10.html) · [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* PVLDB, 2019; *NeuroCard.* PVLDB, 2020. — [Naru (arXiv)](https://arxiv.org/abs/1905.04278) · [NeuroCard (arXiv)](https://arxiv.org/abs/2006.08109)
+- **[Survey]** P. J. Haas, J. F. Naughton, S. Seshadri, L. Stokes. *Sampling-Based Estimation of the Number of Distinct Values of an Attribute.* VLDB, 1995. — [PDF](https://www.vldb.org/conf/1995/P311.PDF)
+
+## 10. Worked Example
+
+Relation $R$ has $|R| = 12$ rows over columns `(state, city)`:
+
+| state | city |
+|-------|------|
+| CA | LA |
+| CA | LA |
+| CA | SF |
+| CA | SF |
+| NY | NYC |
+| NY | NYC |
+| NY | NYC |
+| TX | DAL |
+| TX | DAL |
+| TX | HOU |
+| TX | AUS |
+| TX | AUS |
+
+Per-column NDV: $d_{\text{state}} = 3$ (CA, NY, TX), $d_{\text{city}} = 6$. The composite-key bounds give
+$$\max(3,6) = 6 \;\le\; D \;\le\; \min(12,\ 3\times 6) = 12.$$
+The true composite NDV is $D = 6$ (the distinct `(state,city)` pairs), sitting at the **bottom** of the range because cities are functionally nested under states — strong correlation. The AVI estimate $\min(|R|,\prod_i d_i) = \min(12,18) = 12$ overestimates by $2\times$, which would push a planner toward a too-large hash-aggregate.
+
+Now add a filter `WHERE state = 'TX'`: the surviving 5 rows have group set $\{(TX,DAL),(TX,HOU),(TX,AUS)\}$, so $D_{\sigma} = 3$. A uniform sample of size $n=2$ might draw two AUS rows and see only $1$ group — the unseen-groups problem; species estimators (Good–Turing) would then inflate the estimate to account for groups not yet sampled.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

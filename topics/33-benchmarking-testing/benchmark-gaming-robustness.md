@@ -77,12 +77,22 @@ Genuinely **open**. We have (a) a strong impossibility intuition (Goodhart), (b)
 
 ## 9. Key References
 
-- **[Foundational]** C. A. E. Goodhart. *Problems of Monetary Management: The UK Experience.* 1975 (Goodhart's law); see also M. Strathark's restatement.
-- **[Foundational]** C. Dwork, V. Feldman, M. Hardt, T. Pitassi, O. Reingold, A. Roth. *The Reusable Holdout: Preserving Validity in Adaptive Data Analysis.* Science, 2015.
-- **[SOTA]** D. Kiela et al. *Dynabench: Rethinking Benchmarking in NLP.* NAACL, 2021.
-- **[SOTA]** B. Recht, R. Roelofs, L. Schmidt, V. Shankar. *Do ImageNet Classifiers Generalize to ImageNet?* ICML, 2019.
-- **[Foundational]** J. Gray (ed.). *The Benchmark Handbook for Database and Transaction Systems.* Morgan Kaufmann, 1993.
-- **[Survey]** Transaction Processing Performance Council. *TPC Benchmark Specifications and Audit Requirements.* tpc.org.
+- **[Foundational]** C. A. E. Goodhart. *Problems of Monetary Management: The UK Experience.* 1975 (Goodhart's law); see also M. Strathern's restatement. — [DBLP search](https://dblp.org/search?q=Goodhart%20Problems%20of%20Monetary%20Management) *(unverified)*
+- **[Foundational]** C. Dwork, V. Feldman, M. Hardt, T. Pitassi, O. Reingold, A. Roth. *The Reusable Holdout: Preserving Validity in Adaptive Data Analysis.* Science, 2015. — [DOI](https://doi.org/10.1126/science.aaa9375)
+- **[SOTA]** D. Kiela et al. *Dynabench: Rethinking Benchmarking in NLP.* NAACL, 2021. — [arXiv](https://arxiv.org/abs/2104.14337)
+- **[SOTA]** B. Recht, R. Roelofs, L. Schmidt, V. Shankar. *Do ImageNet Classifiers Generalize to ImageNet?* ICML, 2019. — [arXiv](https://arxiv.org/abs/1902.10811)
+- **[Foundational]** J. Gray (ed.). *The Benchmark Handbook for Database and Transaction Systems.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/db/books/collections/gray93.html)
+- **[Survey]** Transaction Processing Performance Council. *TPC Benchmark Specifications and Audit Requirements.* tpc.org. — [TPC](https://www.tpc.org/)
+
+## 10. Worked Example
+
+Suppose a benchmark $\mathcal B$ has exactly one fixed query: `SELECT * FROM orders WHERE region='APAC' AND year=2025`. A vendor adds a *benchmark-special* code path: "if the query text hashes to $h_0$, return the precomputed materialized answer in $0.1$ ms." On $\mathcal B$ the system scores a blazing $0.1$ ms; the genuine engine needs $50$ ms. The real workload $\mathcal W$, however, draws `region` and `year` uniformly from $10\times 10 = 100$ combinations. The cached path matches only $1$ of them, so
+
+$$\mathbb E_{w\sim\mathcal W}[\text{time}] = \tfrac{1}{100}(0.1) + \tfrac{99}{100}(50) \approx 49.5\ \text{ms}.$$
+
+Gaming gap $\Gamma = 49.5 - 0.1 = 49.4$ ms — almost the full benefit was illusory.
+
+Now apply the randomization defense: draw the query parameters per run from the family of $N=100$ combinations. Expected gamed speedup shrinks to $\tilde O(1/N)$ of its former value, and the published score $\approx 49.5$ ms now tracks $\mathcal W$. The special-case path no longer pays off — the benchmark became gaming-robust by enlarging its effective support.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

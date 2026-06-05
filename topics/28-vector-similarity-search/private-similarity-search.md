@@ -46,11 +46,17 @@ For two-server secret-shared exact ANN, SANNS achieves sublinear *online* work v
 
 ## 9. Key References
 
-- **[Foundational]** Chor, B., Goldreich, O., Kushilevitz, E., Sudan, M. *Private Information Retrieval.* JACM / FOCS, 1995/1998.
-- **[SOTA]** Chen, H., Chillotti, I., Dong, Y., Poburinnaya, O., Razenshteyn, I., Riazi, M. S. *SANNS: Scaling Up Secure Approximate k-Nearest Neighbors Search.* USENIX Security, 2020.
-- **[SOTA]** Henzinger, A., Hong, M., Corrigan-Gibbs, H., Meiklejohn, S., Vaikuntanathan, V. *One Server for the Price of Two: Simple and Fast Single-Server PIR (SimplePIR).* USENIX Security, 2023.
-- **[Lower bound]** Larsen, K. G., Nielsen, J. B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[Lower bound]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
+- **[Foundational]** Chor, B., Goldreich, O., Kushilevitz, E., Sudan, M. *Private Information Retrieval.* JACM / FOCS, 1995/1998. — [DOI](https://doi.org/10.1145/293347.293350)
+- **[SOTA]** Chen, H., Chillotti, I., Dong, Y., Poburinnaya, O., Razenshteyn, I., Riazi, M. S. *SANNS: Scaling Up Secure Approximate k-Nearest Neighbors Search.* USENIX Security, 2020. — [arXiv](https://arxiv.org/abs/1904.02033)
+- **[SOTA]** Henzinger, A., Hong, M., Corrigan-Gibbs, H., Meiklejohn, S., Vaikuntanathan, V. *One Server for the Price of Two: Simple and Fast Single-Server PIR (SimplePIR).* USENIX Security, 2023. — [ePrint](https://eprint.iacr.org/2022/949)
+- **[Lower bound]** Larsen, K. G., Nielsen, J. B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[Lower bound]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+
+## 10. Worked Example
+
+Consider the **single-server $\Omega(n)$ computation** lower bound concretely. The server holds $n=4$ encrypted records and the client wants record index $2$. Suppose the server, to save work, only touched records $\{2,3\}$ and skipped $\{1,4\}$. Over many queries the server observes *which* records it accessed; here it learns the answer lies in $\{2,3\}$ — the access pattern leaked $1$ bit about the query, violating obliviousness. To leak nothing, the server's computation must be a function of *all* $4$ ciphertexts on *every* query, i.e. $\Omega(n)$ work.
+
+Now the FHE distance step (CKKS): client encrypts $q=(1,0)$; server holds $x=(0.6,0.8)$. The squared $\ell_2$ distance $\lVert q-x\rVert^2 = (1-0.6)^2+(0-0.8)^2 = 0.16+0.64 = 0.80$ is degree-2 in the ciphertext, computable *without bootstrapping*. But the subsequent argmin/top-$k$ comparison is non-arithmetic and needs bit-decomposition or bootstrapping — the practical cost floor of section 5. So the cheap part (distances) and the expensive part (ranking) sit on opposite sides of the FHE difficulty boundary.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,12 +42,24 @@ The gap is large and open: between NP-hardness/inapproximability of balanced min
 - Robust designs under adversarial / drifting skew with regret bounds.
 
 ## 9. Key References
-- **[SOTA]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** M. Serafini, R. Taft, A. Elmore, A. Pavlo, A. Aboulnaga, M. Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016.
-- **[Foundational]** S. Ceri, M. Negri, G. Pelagatti. *Horizontal Data Partitioning in Database Design.* SIGMOD, 1982.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[Survey]** M. T. Özsu, P. Valduriez. *Principles of Distributed Database Systems.* Springer, 4th ed., 2020.
+- **[SOTA]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853) · [DBLP](https://dblp.org/rec/journals/pvldb/CurinoZJM10.html)
+- **[SOTA]** M. Serafini, R. Taft, A. Elmore, A. Pavlo, A. Aboulnaga, M. Stonebraker. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[Foundational]** S. Ceri, M. Negri, G. Pelagatti. *Horizontal Data Partitioning in Database Design.* SIGMOD, 1982. — [DOI](https://doi.org/10.1145/582353.582376)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121) · [DBLP](https://dblp.org/rec/journals/jacm/FischerLP85.html)
+- **[Survey]** M. T. Özsu, P. Valduriez. *Principles of Distributed Database Systems.* Springer, 4th ed., 2020. — [DOI](https://doi.org/10.1007/978-3-030-26253-2)
+
+## 10. Worked Example
+Suppose 6 tuples $\{t_1,\dots,t_6\}$ and a workload of 4 transactions, each co-accessing a set of tuples (a hyperedge), to be split across $k=2$ shards:
+- $T_1=\{t_1,t_2\}$, $T_2=\{t_2,t_3\}$, $T_3=\{t_4,t_5\}$, $T_4=\{t_5,t_6\}$, each weight $w=1$.
+
+Build the co-access graph (edges from the hyperedges). A transaction becomes **distributed** iff its tuples land on different shards. Balance constraint: each shard holds 3 tuples.
+
+**Bad split** $P=\{t_1,t_3,t_5\},\ \{t_2,t_4,t_6\}$: $T_1$ ($t_1|t_2$ split), $T_2$ ($t_2|t_3$), $T_3$ ($t_4|t_5$), $T_4$ ($t_5|t_6$) — all 4 cross, cut $=4$.
+
+**Good split** $P^\star=\{t_1,t_2,t_3\},\ \{t_4,t_5,t_6\}$: $T_1,T_2$ stay local (left shard); $T_3,T_4$ stay local (right shard). Cut $=0$, perfectly balanced ($3{:}3$).
+
+Here $P^\star$ achieves zero distributed transactions because the workload's co-access structure is *separable* — the Schism insight. The objective minimized is $\sum_{e} w_e\,[\,e \text{ spans} \ge 2\text{ parts}\,]$ subject to $|P_i|\le (1+\epsilon)\frac{6}{2}=3$. Finding such a $P^\star$ in general is balanced min-cut: NP-hard, with no constant-factor approximation under the hard balance bound — multilevel partitioners (METIS) find it heuristically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

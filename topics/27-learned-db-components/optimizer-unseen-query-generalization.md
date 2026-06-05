@@ -60,11 +60,20 @@ Open. In-distribution generalization is well understood; **systematic** shift (s
 
 ## 9. Key References
 
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022.
-- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Lan, Bao, Peng. *A Survey on Advancing the DBMS Query Optimizer: Cardinality Estimation, Cost Model, and Plan Enumeration.* Data Science and Engineering, 2021.
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.00561)
+- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** Lan, Bao, Peng. *A Survey on Advancing the DBMS Query Optimizer: Cardinality Estimation, Cost Model, and Plan Enumeration.* Data Science and Engineering, 2021. — [DOI](https://doi.org/10.1007/s41019-020-00149-7)
+
+## 10. Worked Example
+
+Train a learned optimizer only on **chain** joins $A\!\bowtie\!B\!\bowtie\!C$ (a path graph). Test query: a **star** join $A\!\bowtie\!B,\,A\!\bowtie\!C,\,A\!\bowtie\!D$ (hub $A$). Both use the seen primitive "two-way hash join", but the star's topology was never seen — *systematic*, not random, shift.
+
+- **Flat/per-edge encoder.** Features = bag of pairwise join predicates. The chain and star can share identical pairwise features yet have very different optimal plans (the star wants $A$ built once and probed 3×). The encoder conflates them: degradation off-distribution, as Balsa reports on held-out templates.
+- **Permutation-equivariant GNN.** Encode the join graph; message passing makes node $A$'s embedding reflect its degree-3 hub role. If true cost factorizes over the graph and the model is equivariant to relabeling $\{B,C,D\}$, the section-4 shape-extrapolation term is **0**: the learned policy provably transfers to any star isomorphic to the trained-on motif size.
+
+Contrast the lower bound: a genuinely new *4-clique* topology (cyclic, no acyclic seen analog) carries no equivariance guarantee — the no-free-lunch barrier of section 5 bites, and abstention to the classical optimizer is the safe move.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

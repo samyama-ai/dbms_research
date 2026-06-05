@@ -41,12 +41,22 @@ Theory gives value-loss bounds *as a function of an assumed cross-system discrep
 - Continual/version-aware policies that cheaply adapt across DBMS upgrades.
 
 ## 9. Key References
-- **[Foundational]** S. Ben-David, J. Blitzer, K. Crammer, A. Kulesza, F. Pereira, J. Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[Foundational]** N. Ferns, P. Panangaden, D. Precup. *Metrics for Finite Markov Decision Processes.* UAI, 2004.
-- **[SOTA]** B. Hilprecht, C. Binnig. *Zero-Shot Cost Models for Out-of-the-box Learned Cost Prediction.* VLDB, 2022.
-- **[SOTA]** R. Marcus et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
+- **[Foundational]** S. Ben-David, J. Blitzer, K. Crammer, A. Kulesza, F. Pereira, J. Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[Foundational]** N. Ferns, P. Panangaden, D. Precup. *Metrics for Finite Markov Decision Processes.* UAI, 2004. — [arXiv](https://arxiv.org/abs/1207.4114)
+- **[SOTA]** B. Hilprecht, C. Binnig. *Zero-Shot Cost Models for Out-of-the-box Learned Cost Prediction.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.00561)
+- **[SOTA]** R. Marcus et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+
+## 10. Worked Example
+
+A learned cost model trained on Postgres predicts plan latency from features (rows scanned, joins, I/O constant). On the source engine, scanning $N$ rows costs $c_S(N)=0.5\,\text{ms/Krow}\cdot N$. We transfer it to a target engine on faster NVMe where the true cost is $c_T(N)=0.2\,\text{ms/Krow}\cdot N$ — a pure I/O rescale.
+
+**Zero-shot (no adaptation):** on a query scanning $N=1000$ Krows, the source model predicts $500$ ms; truth is $200$ ms. Relative error $=\frac{|500-200|}{200}=150\%$ — large, because the engines differ by an affine constant.
+
+**Few-shot affine refit:** the shift is $c_T=\alpha\,c_S$ with $\alpha=0.2/0.5=0.4$. A single target probe ($N=1000$: observe $200$ ms vs. predicted $500$) identifies $\hat\alpha=200/500=0.4$. After rescaling, predictions match exactly.
+
+This illustrates the bound: with alignment discrepancy $\eta\to0$ after refit, transferred value loss $\to 0$, and domain-adaptation theory's adaptive term shrinks as $\tilde O(\sqrt{\text{VC}/m})$ — here a single sample ($m=1$) suffices because the shift is a one-parameter affine reparameterization. Had the optimizers also reordered joins (structural, not affine, shift), $\eta$ would stay bounded away from 0 and no cheap refit would recover accuracy — the empirically-open regime.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

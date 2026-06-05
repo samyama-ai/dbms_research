@@ -42,12 +42,27 @@ Active directions: (1) **incremental/streaming** FD and DC discovery under updat
 - Human-in-the-loop validation to suppress spurious near-FDs at scale.
 
 ## 9. Key References
-- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research / Courant Computer Science Symposia, 1972.
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003 / JACM, 2005.
-- **[Foundational]** Lucchesi, C.L., Osborn, S.L. *Candidate Keys for Relations.* JCSS, 1978.
-- **[SOTA]** Papenbrock, F., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016.
-- **[SOTA]** Bleifuß, T., Kruse, S., Naumann, F. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017.
-- **[Survey]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015.
+- **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research / Courant Computer Science Symposia, 1972. — [DBLP search](https://dblp.org/search?q=Codd+Further+Normalization+Data+Base+Relational+Model)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003 / JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
+- **[Foundational]** Lucchesi, C.L., Osborn, S.L. *Candidate Keys for Relations.* JCSS, 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
+- **[SOTA]** Papenbrock, F., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[SOTA]** Bleifuß, T., Kruse, S., Naumann, F. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3157794.3157800)
+- **[Survey]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+
+## 10. Worked Example
+
+Legacy table `Enroll` with no declared constraints:
+
+| StudentID | Advisor | Dept |
+|-----------|---------|------|
+| S1 | Dr. Lee | CS |
+| S2 | Dr. Lee | CS |
+| S3 | Dr. Kim | EE |
+| S4 | Dr. Kim | EE |
+
+A discovery tool (TANE/HyFD-style) mines the instance and finds the FD $\text{Advisor}\to\text{Dept}$ holds (every Advisor maps to one Dept), with $g_3$ error $0$ (no tuples must be deleted). The candidate key is $\{\text{StudentID}\}$. Now test BCNF: the FD $\text{Advisor}\to\text{Dept}$ has LHS Advisor, whose closure is $\{\text{Advisor},\text{Dept}\}$ — *not* a superkey (doesn't include StudentID). So the table violates BCNF.
+
+Anomaly quantification: group by the LHS value. Advisor=Dr. Lee appears in $|\sigma|=2$ tuples, Dr. Kim in $2$. Redundant duplicated Dept cells $=\sum_X(|\sigma_X|-1)=(2-1)+(2-1)=2$. These 2 cells are the update-anomaly risk: changing Dr. Lee's department requires editing both rows. The tool flags `Enroll`, names the offending FD, and reports severity $=2$ redundant cells — exactly the prioritization signal an engineer needs.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,12 +50,24 @@ For submodular savings under a capacity constraint, the gap is essentially **clo
 
 ## 9. Key References
 
-- **[Foundational]** Nemhauser, G. L., Wolsey, L. A., Fisher, M. L. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[SOTA]** Yu, X., Lu, Y., Yao, N., Zhang, J., Stonebraker, M., et al. *PushdownDB: Accelerating a DBMS Using S3 Computation.* ICDE, 2020.
-- **[SOTA]** Ruan, Z., He, T., Cong, J. *INSIDER: Designing In-Storage Computing System for Emerging High-Performance Drive.* USENIX ATC, 2019.
-- **[Foundational]** Do, J., Kee, Y.-S., Patel, J. M., et al. *Query Processing on Smart SSDs: Opportunities and Challenges.* SIGMOD, 2013.
-- **[SOTA]** Koo, G., et al. *Summarizer: Trading Communication with Computing Near Storage.* MICRO, 2017.
-- **[Survey]** Barbalace, A., Do, J. *Computational Storage: Where Are We Today?* CIDR, 2021.
+- **[Foundational]** Nemhauser, G. L., Wolsey, L. A., Fisher, M. L. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Yu, X., Lu, Y., Yao, N., Zhang, J., Stonebraker, M., et al. *PushdownDB: Accelerating a DBMS Using S3 Computation.* ICDE, 2020. — [arXiv](https://arxiv.org/abs/2002.05837) · [DOI](https://doi.org/10.1109/ICDE48307.2020.00174)
+- **[SOTA]** Ruan, Z., He, T., Cong, J. *INSIDER: Designing In-Storage Computing System for Emerging High-Performance Drive.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/ruan)
+- **[Foundational]** Do, J., Kee, Y.-S., Patel, J. M., et al. *Query Processing on Smart SSDs: Opportunities and Challenges.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465295)
+- **[SOTA]** Koo, G., et al. *Summarizer: Trading Communication with Computing Near Storage.* MICRO, 2017. — [DOI](https://doi.org/10.1145/3123939.3124553)
+- **[Survey]** Barbalace, A., Do, J. *Computational Storage: Where Are We Today?* CIDR, 2021. — [PDF](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper29.pdf)
+
+## 10. Worked Example
+
+A `SELECT ... WHERE price > 100` filter scans $N = 10$ GB from a computational SSD. Interface bandwidth $\beta_{io} = 2$ GB/s. Host throughput $\pi_h = 10$ GB/s; weak device cores $\pi_d = 1$ GB/s. The filter's selectivity is $\sigma = 0.1$ (10% of rows pass), and its compute cost is $c(N) = N$ "byte-cycles."
+
+**No pushdown:** transfer all 10 GB to host, then filter on host.
+$$\frac{N}{\beta_{io}} + \frac{c(N)}{\pi_h} = \frac{10}{2} + \frac{10}{10} = 5 + 1 = 6\text{ s}.$$
+
+**Pushdown:** filter in-device, transfer only $\sigma N = 1$ GB.
+$$\frac{c(N)}{\pi_d} + \frac{\sigma N}{\beta_{io}} = \frac{10}{1} + \frac{1}{2} = 10 + 0.5 = 10.5\text{ s}.$$
+
+Here pushdown *loses* — the wimpy device core ($\pi_d = 1$) dominates. The break-even from §2 requires the saved traffic $(1-\sigma)N/\beta_{io} = 9/2 = 4.5$ s to exceed the device slowdown $c(N)(1/\pi_d - 1/\pi_h) = 10(1 - 0.1) = 9$ s — it does not. But raise device speed to $\pi_d = 5$ GB/s and the slowdown term falls to $10(0.2-0.1)=1$ s $< 4.5$ s, flipping the decision to push. This is exactly the **selective, compute-light, bandwidth-heavy** condition.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

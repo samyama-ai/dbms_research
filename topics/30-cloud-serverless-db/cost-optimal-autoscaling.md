@@ -1,6 +1,7 @@
 # Cost-optimal autoscaling policies
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cost-optimal-autoscaling` · **Status:** empirically-open
+> **Verification note:** The Christianson–Shen–Wierman robustness–consistency result appeared at AISTATS 2023 (the §9 year is corrected from 2022); its specific setting is learning-augmented metrical task systems.
 
 ## 1. Problem Statement
 
@@ -44,11 +45,21 @@ Active: learning-augmented online algorithms (Wierman/Caltech, Lee/USC), RL-base
 
 ## 9. Key References
 
-- **[Foundational]** Lin, Wierman, Andrew, Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM ToN, 2013.
-- **[Foundational]** Bansal, Gupta, et al. *A 2-competitive algorithm for online convex optimization with switching costs.* APPROX, 2015.
-- **[SOTA]** Sellke. *Chasing Convex Bodies Optimally.* SODA, 2020.
-- **[SOTA]** Christianson, Shen, Wierman. *Optimal Robustness-Consistency Trade-offs for Learning-Augmented Online Algorithms.* AISTATS / NeurIPS, 2022.
-- **[Survey]** Lorido-Botran, Miguel-Alonso, Lozano. *A Review of Auto-scaling Techniques for Elastic Applications in Cloud Environments.* J. Grid Computing, 2014.
+- **[Foundational]** Lin, Wierman, Andrew, Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM ToN, 2013. — [DOI](https://doi.org/10.1109/TNET.2012.2226216)
+- **[Foundational]** Bansal, Gupta, et al. *A 2-competitive algorithm for online convex optimization with switching costs.* APPROX, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.APPROX-RANDOM.2015.96)
+- **[SOTA]** Sellke. *Chasing Convex Bodies Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1905.11968)
+- **[SOTA]** Christianson, Shen, Wierman. *Optimal Robustness-Consistency Trade-offs for Learning-Augmented Online Algorithms.* AISTATS, 2023. — [arXiv](https://arxiv.org/abs/2010.11443)
+- **[Survey]** Lorido-Botran, Miguel-Alonso, Lozano. *A Review of Auto-scaling Techniques for Elastic Applications in Cloud Environments.* J. Grid Computing, 2014. — [DOI](https://doi.org/10.1007/s10723-014-9314-7)
+
+## 10. Worked Example
+
+Consider $1$-D autoscaling over $4$ time steps. The resource level $x_t$ is the number of warehouse units; load implies a target level $\hat{x}_t = [2, 6, 2, 6]$. Hitting cost is $f_t(x) = (x - \hat{x}_t)^2$ (under/over-provisioning penalty); switching cost is $\gamma|x_t - x_{t-1}|$ with $\gamma = 3$, $x_0 = 2$.
+
+**Reactive (chase the target exactly):** $x = [2,6,2,6]$. Hitting cost $=0$; switching cost $= 3(|6-2|+|2-6|+|6-2|) = 3\cdot 12 = 36$. Total $= 36$.
+
+**Smoothed (stay flat at $x=4$):** $x = [4,4,4,4]$. Hitting cost $= (4-2)^2+(4-6)^2+(4-2)^2+(4-6)^2 = 4\cdot 4 = 16$; switching $= 3\cdot|4-2| = 6$. Total $= 22$.
+
+The smoothed policy wins because the load oscillates faster than the switching cost can profitably track — exactly the SOCO-with-switching trade-off. The Bansal et al. online algorithm interpolates toward the move that balances marginal hitting against marginal switching cost and is provably **2-competitive** against the offline optimum in $1$-D; here it lands near the flat plan rather than the costly chase. A learning-augmented variant would chase only when a trusted forecast says the spike persists.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

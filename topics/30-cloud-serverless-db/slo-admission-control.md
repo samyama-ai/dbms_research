@@ -53,12 +53,22 @@ Theory gives tight bounds only in stylized regimes (single bottleneck, known tra
 - Benchmarks with realistic, reproducible burst traces for percentile-SLO evaluation.
 
 ## 9. Key References
-- **[Foundational]** Frank P. Kelly. *Effective Bandwidths at Multi-Class Queues.* Queueing Systems, 1991.
-- **[Foundational]** Matthew Welsh, David Culler, Eric Brewer. *SEDA: An Architecture for Well-Conditioned, Scalable Internet Services.* SOSP, 2001.
-- **[SOTA]** Inho Cho, Ahmed Saeed, et al. *Overload Control for µs-scale RPCs with Breakwater.* OSDI, 2020.
-- **[Foundational]** Niv Buchbinder, Joseph (Seffi) Naor. *Online Primal-Dual Algorithms for Covering and Packing.* (online knapsack/admission). ESA, 2005 / Math. OR.
-- **[Survey]** Mor Harchol-Balter. *Performance Modeling and Design of Computer Systems: Queueing Theory in Action.* Cambridge Univ. Press, 2013.
-- **[SOTA]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML/JACM, 2018/2021 (learning-augmented framework).
+- **[Foundational]** Frank P. Kelly. *Effective Bandwidths at Multi-Class Queues.* Queueing Systems, 1991. — [DOI](https://doi.org/10.1007/BF01158789)
+- **[Foundational]** Matthew Welsh, David Culler, Eric Brewer. *SEDA: An Architecture for Well-Conditioned, Scalable Internet Services.* SOSP, 2001. — [DOI](https://doi.org/10.1145/502034.502057)
+- **[SOTA]** Inho Cho, Ahmed Saeed, et al. *Overload Control for µs-scale RPCs with Breakwater.* OSDI, 2020. — [DBLP](https://dblp.org/rec/conf/osdi/ChoSFPAB20.html)
+- **[Foundational]** Niv Buchbinder, Joseph (Seffi) Naor. *Online Primal-Dual Algorithms for Covering and Packing.* (online knapsack/admission). ESA, 2005 / Math. OR. — [DOI](https://doi.org/10.1007/11561071_61)
+- **[Survey]** Mor Harchol-Balter. *Performance Modeling and Design of Computer Systems: Queueing Theory in Action.* Cambridge Univ. Press, 2013. — [DBLP search](https://dblp.org/search?q=Performance+Modeling+and+Design+of+Computer+Systems+Harchol-Balter)
+- **[SOTA]** Thodoris Lykouris, Sergei Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML/JACM, 2018/2021 (learning-augmented framework). — [DOI](https://doi.org/10.1145/3447579), [arXiv](https://arxiv.org/abs/1802.05399)
+
+## 10. Worked Example
+
+A warehouse has capacity $C = 100$ "service units." Two tenant classes arrive: class A (interactive, SLO p99 $<200$ ms, effective bandwidth $\alpha_A = 4$ units each) and class B (batch, lax SLO, $\alpha_B = 1$ unit each). The effective-bandwidth admission test admits a set iff
+
+$$\sum_{i\in\text{admitted}} \alpha_i(\theta^\*) \le C.$$
+
+Suppose $20$ class-A and $30$ class-B queries are active: load $=20\times4 + 30\times1 = 110 > 100$ — **infeasible**, the system is overloaded and some p99 SLO will be violated. A new class-A arrival must be **shed or deferred**: admitting it would push load to $114$.
+
+Now apply the **online-knapsack** view: with value-to-size ratios in $[1, R]$ and here $R = 10$ (A is worth 10x B per unit but costs 4 units), the best deterministic online policy is $O(\log R) = O(\log 10) \approx 3.3$-competitive — i.e., worst-case adversarial arrivals can force any online admitter to capture only $\sim 1/3.3$ of the optimal value. A threshold policy admits class A whenever its marginal value density $v/\alpha = 10/4 = 2.5$ exceeds a price threshold $\psi(\text{utilization})$ that rises as load $\to C$; at $110\%$ load $\psi$ exceeds $2.5$, so even class A is rejected — matching the shed decision above. This quantifies why bounded capacity plus bursty load forces unavoidable violation (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

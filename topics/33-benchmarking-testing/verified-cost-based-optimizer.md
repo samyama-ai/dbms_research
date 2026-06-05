@@ -47,12 +47,26 @@ Directions: (1) extending Datacert/DBCert toward a verified *optimizing* path, l
 - Certified *bounds* on cost-model error (where estimators admit any guarantee), separating equivalence from accuracy.
 
 ## 9. Key References
-- **[Foundational]** Leroy. *Formal Verification of a Realistic Compiler (CompCert).* CACM, 2009.
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Benzaken, Contejean, et al. *A Coq Formalization of the Relational Data Model / DBCert verified SQL compilation.* ESOP / journal, 2014–2019.
-- **[SOTA]** Auerbach, Hirzel, et al. *Q*cert: A Verified Query Compiler.* (project / SIGMOD demo), 2017.
-- **[SOTA]** Zhou, Arch, et al. *SPES: Proving Query Equivalence Under Bag Semantics.* VLDB, 2020.
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
+- **[Foundational]** Leroy. *Formal Verification of a Realistic Compiler (CompCert).* CACM, 2009. — [DOI](https://doi.org/10.1145/1538788.1538814) · [PDF](https://xavierleroy.org/publi/compcert-CACM.pdf)
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099) · [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[SOTA]** Benzaken, Contejean, et al. *A Coq Formalization of the Relational Data Model / DBCert verified SQL compilation.* ESOP / journal, 2014–2019. — [DOI](https://doi.org/10.1007/978-3-642-54833-8_11) · [DBLP](https://dblp.org/rec/conf/esop/BenzakenCD14.html)
+- **[SOTA]** Auerbach, Hirzel, et al. *Q*cert: A Verified Query Compiler.* (project / SIGMOD demo), 2017. — [project](https://querycert.github.io/)
+- **[SOTA]** Zhou, Arch, et al. *SPES: Proving Query Equivalence Under Bag Semantics.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2004.00481)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498) · [DBLP](https://dblp.org/rec/journals/tods/IbarakiK84.html)
+
+## 10. Worked Example
+
+A miniature semantics-preservation obligation under K-relation semantics. Consider join associativity, the rule the search engine applies when it reorders a 3-way join. Input plan $P = (R \bowtie S) \bowtie T$; the optimizer's DP picks $P^\star = R \bowtie (S \bowtie T)$.
+
+Denote each relation as a multiplicity function into $\mathbb{N}$. For a tuple $t$ over the combined schema, the join denotation multiplies matching multiplicities:
+$$\llbracket A \bowtie B\rrbracket_D(t) = \llbracket A\rrbracket_D(t|_A)\cdot \llbracket B\rrbracket_D(t|_B).$$
+
+Then
+$$\llbracket P\rrbracket_D(t) = \big(\llbracket R\rrbracket(t|_R)\cdot\llbracket S\rrbracket(t|_S)\big)\cdot\llbracket T\rrbracket(t|_T),$$
+$$\llbracket P^\star\rrbracket_D(t) = \llbracket R\rrbracket(t|_R)\cdot\big(\llbracket S\rrbracket(t|_S)\cdot\llbracket T\rrbracket(t|_T)\big).$$
+By associativity of $\cdot$ in $\mathbb{N}$, these are equal for *all* $t$ and *all* $D$ — the per-rule obligation discharges.
+
+Concretely: $R=\{a\!\mapsto\!2\}$, $S=\{a\!\mapsto\!3\}$, $T=\{a\!\mapsto\!1\}$ on a shared key. $\llbracket P\rrbracket=(2\cdot3)\cdot1=6$; $\llbracket P^\star\rrbracket=2\cdot(3\cdot1)=6$. The *search* proof then inducts over the memo: every group member is built only by such sound rules, so $P^\star\equiv P$ — and this holds *independent of the cost numbers* that chose $P^\star$, which is exactly why equivalence is provable while optimality (NP-hard join ordering) is not.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

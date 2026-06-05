@@ -54,12 +54,18 @@ Genuinely open and **wide**. Upper bounds either assume a realizability property
 
 ## 9. Key References
 
-- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022.
-- **[Foundational]** Jin, Yang, Wang, Jordan. *Provably Efficient Reinforcement Learning with Linear Function Approximation.* COLT, 2020.
-- **[Foundational]** Azar, Osband, Munos. *Minimax Regret Bounds for Reinforcement Learning.* ICML, 2017.
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
+- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
+- **[Foundational]** Jin, Yang, Wang, Jordan. *Provably Efficient Reinforcement Learning with Linear Function Approximation.* COLT, 2020. — [arXiv](https://arxiv.org/abs/1907.05388)
+- **[Foundational]** Azar, Osband, Munos. *Minimax Regret Bounds for Reinforcement Learning.* ICML, 2017. — [arXiv](https://arxiv.org/abs/1703.05449)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+
+## 10. Worked Example
+
+**The MDP blow-up vs. the bandit shortcut, $n=4$ relations.** Plan search for a 4-way join is an MDP whose states are partial plans. The number of left-deep join orders alone is $4! = 24$; counting bushy plans the reachable state count is $\sum_{k} \binom{4}{k}\cdot(\text{sub-plans})$, already in the hundreds, and it grows super-exponentially in $n$. A tabular PAC-MDP bound $\tilde O(|S||A|H^2/\epsilon^2)$ would demand executing thousands of queries just for $n=4$ — and $|S|$ explodes for realistic $n=10$.
+
+**Bao's shortcut.** Restrict the action to choosing one of $K=5$ hint-sets (e.g. {default, no-nestloop, no-hashjoin, no-mergejoin, no-indexscan}) over the *existing* optimizer. This collapses the MDP to a contextual bandit: each query is a context, each arm a hint-set, reward $=-\text{latency}$. LinUCB gives regret $\tilde O(\sqrt{KT})=\tilde O(\sqrt{5T})$. Concretely, after $T=500$ queries the cumulative excess latency is bounded by $\approx c\sqrt{2500}=50c$ — convergence in *hundreds* of queries, matching the empirical Bao result. The trade: we no longer search the full plan space, so optimality is relative to what the base optimizer's hint-sets can express, sidestepping the unproven realizability assumption that full plan-search RL requires.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,13 +41,23 @@ Active threads: instance-adaptive coresets exploiting **intrinsic/fractal** rath
 - Plan-robust optimization: bounding plan regret as a function of estimation error.
 
 ## 9. Key References
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Theodoridis, Sellis. *A Model for the Prediction of R-tree Performance.* PODS, 1996.
-- **[Foundational]** Faloutsos, Kamel. *Beyond Uniformity and Independence: Analysis of R-trees Using the Concept of Fractal Dimension.* PODS, 1994.
-- **[Foundational]** Acharya, Poosala, Ramaswamy. *Selectivity Estimation in Spatial Databases.* SIGMOD, 1999.
-- **[SOTA]** Phillips. *Coresets and Sketches.* In *Handbook of Discrete and Computational Geometry*, 3rd ed., 2017.
-- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019.
-- **[Survey]** Eldawy, Mokbel. *Spatial Join Techniques: A Tutorial / The Era of Big Spatial Data.* (Spatial query processing surveys), ICDE, 2017.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [ACM](https://dl.acm.org/doi/10.1145/582095.582099) · [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[Foundational]** Theodoridis, Sellis. *A Model for the Prediction of R-tree Performance.* PODS, 1996. — [ACM](https://dl.acm.org/doi/10.1145/237661.237705)
+- **[Foundational]** Faloutsos, Kamel. *Beyond Uniformity and Independence: Analysis of R-trees Using the Concept of Fractal Dimension.* PODS, 1994. — [ACM](https://dl.acm.org/doi/10.1145/182591.182593)
+- **[Foundational]** Acharya, Poosala, Ramaswamy. *Selectivity Estimation in Spatial Databases.* SIGMOD, 1999. — [ACM](https://dl.acm.org/doi/10.1145/304182.304184)
+- **[SOTA]** Phillips. *Coresets and Sketches.* In *Handbook of Discrete and Computational Geometry*, 3rd ed., 2017. — [arXiv](https://arxiv.org/abs/1601.00617)
+- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1905.04278) · [DOI](https://doi.org/10.14778/3368289.3368294)
+- **[Survey]** Eldawy, Mokbel. *Spatial Join Techniques: A Tutorial / The Era of Big Spatial Data.* (Spatial query processing surveys), PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137828)
+
+## 10. Worked Example
+
+Consider $N = 10{,}000$ points uniformly distributed in the unit square $[0,1]^2$, indexed by an R-tree with node capacity $b = 50$, so leaves cover $\approx b/N = 0.005$ area each. A square window query $W$ of side $w = 0.1$ (area $0.01$) is issued.
+
+**Selectivity (UIA model):** expected qualifying points $= N \cdot \mu(W) = 10{,}000 \times 0.01 = 100$.
+
+**Node accesses (Minkowski-sum model):** a leaf MBR has side $s \approx \sqrt{0.005} \approx 0.0707$. The query "touches" a leaf when their centers lie within $w + s = 0.171$, so expected leaf accesses $\approx (N/b)\,(w+s)^2 = 200 \times 0.171^2 \approx 5.8$.
+
+**Where it breaks:** if the points instead lie on a fractal line of dimension $D = 1.4$ rather than filling $D = 2$, the Faloutsos–Kamel formula replaces the exponent: accessed leaves scale as $w^{D}$ not $w^{2}$. With $w = 0.1$, $0.1^{1.4} \approx 0.040$ vs. $0.1^{2} = 0.010$ — a $4\times$ underestimate by the uniform model, illustrating why fractal dimension matters under skew.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

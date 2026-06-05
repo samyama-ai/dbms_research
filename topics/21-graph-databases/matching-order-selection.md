@@ -54,12 +54,31 @@ The gap is **open and fundamental**: there is no polynomial-time algorithm with 
 
 ## 9. Key References
 
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS 1984.
-- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT 1995.
-- **[SOTA]** Bi, Chang, Lin, Qin, Zhang. *Efficient Subgraph Matching by Postponing Cartesian Products (CFL-Match).* SIGMOD 2016.
-- **[SOTA]** Han, Kim, Gu, Park, Han. *Efficient Subgraph Matching: Harmonizing Dynamic Programming, Adaptive Matching Order, and Failing Set Together (DAF).* SIGMOD 2019.
-- **[SOTA]** Kim, Choi, Park, Han, et al. *Versatile Equivalences: Speeding up Subgraph Query Processing (VEQ).* SIGMOD 2021.
-- **[Survey]** Sun, Luo. *In-Memory Subgraph Matching: An In-depth Study.* SIGMOD 2020.
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[Foundational]** Cluet, Moerkotte. *On the Complexity of Generating Optimal Left-Deep Processing Trees with Cross Products.* ICDT 1995. — [DOI](https://doi.org/10.1007/3-540-58907-4_6)
+- **[SOTA]** Bi, Chang, Lin, Qin, Zhang. *Efficient Subgraph Matching by Postponing Cartesian Products (CFL-Match).* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915236)
+- **[SOTA]** Han, Kim, Gu, Park, Han. *Efficient Subgraph Matching: Harmonizing Dynamic Programming, Adaptive Matching Order, and Failing Set Together (DAF).* SIGMOD 2019. — [DOI](https://doi.org/10.1145/3299869.3319880)
+- **[SOTA]** Kim, Choi, Park, Han, et al. *Versatile Equivalences: Speeding up Subgraph Query Processing (VEQ).* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3457265)
+- **[Survey]** Sun, Luo. *In-Memory Subgraph Matching: An In-depth Study.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3380581)
+
+## 10. Worked Example
+
+Let $Q$ be the path $a\!-\!b\!-\!c$ (3 query vertices) over data graph $G$ where:
+vertex $b$ has $|C(b)| = 1000$ candidates, $a$ has $|C(a)| = 5$, $c$ has $|C(c)| = 5$; each $b$-candidate connects to ~2 $a$'s and ~2 $c$'s, while each $a$/$c$ candidate connects to ~400 $b$'s.
+
+**Order $\pi_1 = (b, a, c)$ — start from the high-degree hub:**
+- bind $b$: $1000$ partials.
+- extend to $a$: $1000 \times 2 = 2000$.
+- extend to $c$: $2000 \times 2 = 4000$.
+- $\mathrm{cost}(\pi_1) = 1000 + 2000 + 4000 = 7000$.
+
+**Order $\pi_2 = (a, b, c)$ — start from a selective leaf:**
+- bind $a$: $5$ partials.
+- extend to $b$: $5 \times 400 = 2000$.
+- extend to $c$: $2000 \times 2 = 4000$.
+- $\mathrm{cost}(\pi_2) = 5 + 2000 + 4000 = 6005$.
+
+Both yield the same final embeddings, yet differ in intermediate work. With sharper candidate filtering on $a$ (say each $a$ reaches only $10$ valid $b$'s after pruning), $\pi_2$ drops to $5 + 50 + 100 = 155$ — a $\sim 45\times$ reduction. This is exactly the *adaptive, candidate-size-driven* ordering DAF/VEQ exploit, and it illustrates why no single static order dominates: the best $\pi$ depends on the realized candidate-set sizes in $G$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

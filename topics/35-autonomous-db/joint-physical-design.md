@@ -55,12 +55,29 @@ A key theoretical object is the **price of decomposition**: the worst-case ratio
 - Maintenance- and freshness-aware joint design for HTAP/lakehouse engines.
 
 ## 9. Key References
-- **[Foundational]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000.
-- **[Foundational]** D. Zilio, et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004.
-- **[Foundational]** G. Calinescu, C. Chekuri, M. Pál, J. Vondrák. *Maximizing a Monotone Submodular Function Subject to a Matroid Constraint.* SIAM J. Computing, 2011.
-- **[SOTA]** S. Papadomanolakis, A. Ailamaki. *An Integer Linear Programming Approach to Database Design.* ICDE Workshops, 2007.
-- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor (DTA).* Microsoft, 2020.
-- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000. — [PDF](https://www.vldb.org/conf/2000/P496.pdf)
+- **[Foundational]** D. Zilio, et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004. — [DBLP](https://dblp.org/rec/conf/vldb/ZilioRLLSGF04.html)
+- **[Foundational]** G. Calinescu, C. Chekuri, M. Pál, J. Vondrák. *Maximizing a Monotone Submodular Function Subject to a Matroid Constraint.* SIAM J. Computing, 2011. — [DOI](https://doi.org/10.1137/080733991)
+- **[SOTA]** S. Papadomanolakis, A. Ailamaki. *An Integer Linear Programming Approach to Database Design.* ICDE Workshops, 2007. — [PDF](https://www.cs.cmu.edu/~ddash/papers/smdb07.pdf)
+- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor (DTA).* Microsoft, 2020. — [PDF](https://www.microsoft.com/en-us/research/wp-content/uploads/2020/06/Anytime-Algorithm-of-Database-Tuning-Advisor-for-Microsoft-SQL-Server.pdf)
+- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+**Price of decomposition in one instance.** Budget $B=2$ units. Workload has one query $q$. Three candidate structures, each size 1:
+- Index $I$ alone: cost $c(q)=80$.
+- MV $V$ alone: cost $c(q)=80$.
+- Partition $P$ alone: cost $c(q)=80$.
+- But $V{+}P$ together enable a partition-pruned MV plan: $c(q)=10$ (strong **supermodular synergy**).
+- Any other pair ($I{+}V$, $I{+}P$): cost $70$.
+
+Baseline (nothing): $c(q)=100$.
+
+**Serial per-type greedy** picks the single best marginal structure first. Each of $I,V,P$ alone gives the same marginal gain $100-80=20$; say it picks $I$. With 1 unit left it adds the best remaining single structure: $I{+}V$ or $I{+}P$ gives cost $70$. Serial cost $=70$.
+
+**Joint optimum** evaluates pairs directly and picks $V{+}P$: cost $=10$.
+
+Price of decomposition $=\frac{70}{10}=7$. Greedy's first move ($I$) is locally optimal yet poisons the budget: the synergistic pair $V{+}P$ is unreachable once $I$ is fixed. This is exactly the $\Omega(\text{constant})$ separation of §5 — and because $f$ is supermodular here, the $(1-1/e)$ guarantee of §4 does **not** apply.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

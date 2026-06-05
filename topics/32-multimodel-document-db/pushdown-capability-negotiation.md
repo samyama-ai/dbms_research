@@ -47,11 +47,27 @@ The conjunctive, static-capability case is essentially **closed** (complete synt
 - Integration with privacy/cost SLAs: pushdown that respects data-egress and policy constraints, not only execution cost.
 
 ## 9. Key References
-- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995.
-- **[Foundational]** D. Florescu, A. Levy, I. Manolescu, D. Suciu. *Query Optimization in the Presence of Limited Access Patterns.* SIGMOD, 1999.
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** M. Benedikt, J. Leblay, B. ten Cate, E. Tsamoura. *Generating Plans from Proofs: The Interpolation-based Approach to Query Reformulation (PDQ).* Morgan & Claypool / ICDT line, 2016.
-- **[SOTA]** E. Begoli, J. Camacho-Rodríguez, J. Hyde, M. Mior, D. Lemire. *Apache Calcite: A Foundational Framework for Optimized Query Processing Over Heterogeneous Data Sources.* SIGMOD, 2018.
+- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995. — [DBLP search](https://dblp.org/search?q=Answering+Queries+Using+Templates+with+Binding+Patterns)
+- **[Foundational]** D. Florescu, A. Levy, I. Manolescu, D. Suciu. *Query Optimization in the Presence of Limited Access Patterns.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304181.304210)
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** M. Benedikt, J. Leblay, B. ten Cate, E. Tsamoura. *Generating Plans from Proofs: The Interpolation-based Approach to Query Reformulation (PDQ).* Morgan & Claypool / ICDT line, 2016. — [DOI](https://doi.org/10.1007/978-3-031-01856-5)
+- **[SOTA]** E. Begoli, J. Camacho-Rodríguez, J. Hyde, M. Mior, D. Lemire. *Apache Calcite: A Foundational Framework for Optimized Query Processing Over Heterogeneous Data Sources.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190662), [arXiv](https://arxiv.org/abs/1802.10233)
+
+## 10. Worked Example
+
+Query: `SELECT name FROM Orders WHERE region='EU' AND amount > 500 AND descr LIKE '%urgent%'`, where `Orders` lives in a SaaS source.
+
+Capability profile of the source: equality predicates pushable; range `>` pushable; prefix `LIKE 'x%'` pushable; **infix** `LIKE '%x%'` *not* pushable. So the optimizer splits the WHERE conjunction:
+
+- Pushed down: `region='EU' AND amount > 500` → source returns the filtered rows.
+- Residual (evaluated in federation layer): `descr LIKE '%urgent%'`.
+
+Cost trace with $|Orders| = 10^6$ rows, selectivity $\sigma_{\text{region}} = 0.2$, $\sigma_{\text{amount}} = 0.05$:
+
+- Pushdown reduces transferred rows to $10^6 \times 0.2 \times 0.05 = 10^4$.
+- The federation then applies the infix filter on $10^4$ rows instead of $10^6$ — a $100\times$ reduction in both data movement and residual-filter work.
+
+If instead `region` lacked an index and the source refused the equality push (asymmetric capability), the optimizer would push only `amount > 500` ($5\times10^4$ rows) and evaluate the rest centrally. The capability profile, not the logical plan alone, dictates the split.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -54,13 +54,21 @@ Directions: extending algorithms-with-predictions to join ordering and cardinali
 
 ## 9. Key References
 
-- **[Foundational]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM 2021.
-- **[Foundational]** Purohit, Svitkina, Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS 2018.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index.* PVLDB 2020.
-- **[SOTA]** Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS 2018.
-- **[Foundational]** Wolpert. *The Lack of A Priori Distinctions Between Learning Algorithms (No Free Lunch).* Neural Computation, 1996.
-- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC 2006.
-- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* CACM, 2022.
+- **[Foundational]** Lykouris, Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM 2021. — [arXiv](https://arxiv.org/abs/1802.05399) — [DOI](https://doi.org/10.1145/3447579)
+- **[Foundational]** Purohit, Svitkina, Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/73a427badebe0e32caa2e1fc7530b7f3-Abstract.html)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index.* PVLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) — [DBLP](https://dblp.org/rec/journals/pvldb/FerraginaV20.html)
+- **[SOTA]** Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS 2018. — [arXiv](https://arxiv.org/abs/1901.00902) — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/0f49c89d1e7298bb9930789c8ed59d48-Abstract.html)
+- **[Foundational]** Wolpert. *The Lack of A Priori Distinctions Between Learning Algorithms (No Free Lunch).* Neural Computation, 1996. — [DOI](https://doi.org/10.1162/neco.1996.8.7.1341)
+- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC 2006. — [arXiv](https://arxiv.org/abs/cs/0603043) — [DOI](https://doi.org/10.1145/1132516.1132551)
+- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* CACM, 2022. — [arXiv](https://arxiv.org/abs/2006.09123) — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+**When a learned index helps (PGM lens).** Take $n=8$ sorted keys. *Easy case:* nearly uniform keys $[10,20,30,40,50,60,70,80]$. The CDF (position vs. key) is a single straight line, so a learned model $\text{pos}(k)=\lfloor (k-10)/10\rfloor$ predicts every position exactly: PGM uses $s=1$ segment, $O(1)$ space, $O(\log s)=O(1)$ to find the segment, then $O(\log \varepsilon)$ local search. Here $\Delta_q>0$ — learning *helps*.
+
+*Adversarial case:* keys $[1,2,3,100,101,102,10^6,10^6{+}1]$. The CDF has 3 sharp jumps; piecewise-linear $\varepsilon$-approximation needs $s=\Theta(n)$ segments, so the model degenerates to a B-tree and the cell-probe bound $\Omega(\log n/\log\log n)$ bites — no asymptotic win. This is the **no-free-lunch** floor: structure ($s\ll n$) is necessary.
+
+**Consistency/robustness (ski-rental).** Renting costs $1$/day, buying costs $B=10$. A learner predicts the season length; the algorithm-with-predictions rule buys once cumulative rent hits $\lambda B$. With trust parameter $\lambda=0.5$: it is $(1+\lambda)=1.5$-consistent (cost $\le 1.5\cdot\text{OPT}$ when the prediction is correct) and $(1+1/\lambda)=3$-robust (never worse than $3\cdot\text{OPT}$, even on an adversarial prediction). No setting of $\lambda$ achieves both $1$-consistency and $1$-robustness — the provable Pareto frontier, quantifying exactly how much a (possibly wrong) learner can help.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

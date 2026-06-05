@@ -47,12 +47,27 @@ Active directions: (i) **I/O- and cache-oblivious** output-sensitive joins (Arge
 - Dynamic/kinetic versions maintaining the join under moving objects with output-sensitive update.
 
 ## 9. Key References
-- **[Foundational]** H. Edelsbrunner. *A new approach to rectangle intersections.* Int. J. Computer Mathematics, 1983.
-- **[Foundational]** B. Chazelle, H. Edelsbrunner. *An optimal algorithm for intersecting line segments in the plane.* JACM, 1992.
-- **[Foundational]** I. Balaban. *An optimal algorithm for finding segment intersections.* SoCG, 1995.
-- **[SOTA]** T. Brinkhoff, H.-P. Kriegel, B. Seeger. *Efficient processing of spatial joins using R-trees.* SIGMOD, 1993.
-- **[SOTA]** J. M. Patel, D. J. DeWitt. *Partition based spatial-merge join.* SIGMOD/VLDB, 1996.
-- **[Survey]** E. H. Jacox, H. Samet. *Spatial join techniques.* ACM TODS, 2007.
+- **[Foundational]** H. Edelsbrunner. *A new approach to rectangle intersections.* Int. J. Computer Mathematics, 1983. — [DOI](https://doi.org/10.1080/00207168308803364)
+- **[Foundational]** B. Chazelle, H. Edelsbrunner. *An optimal algorithm for intersecting line segments in the plane.* JACM, 1992. — [ACM](https://dl.acm.org/doi/10.1145/147508.147511)
+- **[Foundational]** I. Balaban. *An optimal algorithm for finding segment intersections.* SoCG, 1995. — [ACM](https://dl.acm.org/doi/10.1145/220279.220302)
+- **[SOTA]** T. Brinkhoff, H.-P. Kriegel, B. Seeger. *Efficient processing of spatial joins using R-trees.* SIGMOD, 1993. — [ACM](https://dl.acm.org/doi/10.1145/170035.170075)
+- **[SOTA]** J. M. Patel, D. J. DeWitt. *Partition based spatial-merge join.* SIGMOD/VLDB, 1996. — [ACM](https://dl.acm.org/doi/10.1145/235968.233338) · [DBLP](https://dblp.org/rec/conf/sigmod/PatelD96.html)
+- **[Survey]** E. H. Jacox, H. Samet. *Spatial join techniques.* ACM TODS, 2007. — [ACM](https://dl.acm.org/doi/10.1145/1206049.1206056) · [PDF](http://www.cs.umd.edu/users/hjs//pubs/jacoxtods07.pdf)
+
+## 10. Worked Example
+
+Let $R = \{r_1, r_2\}$ and $S = \{s_1, s_2, s_3\}$ be axis-parallel rectangles ($n = 5$):
+
+- $r_1 = [0,4]\times[0,2]$, $r_2 = [3,6]\times[5,7]$
+- $s_1 = [1,2]\times[1,3]$, $s_2 = [5,7]\times[6,8]$, $s_3 = [10,11]\times[0,1]$
+
+**Plane sweep over $x$.** Sort the $2n=10$ vertical edges by $x$. As the sweep line advances it keeps the **active set** of $y$-intervals of rectangles currently straddling it, stored in an interval tree.
+
+- At $x=1$ ($s_1$ opens): active $x$-overlap with $r_1$ ($[0,4]$). Query the tree for $y$-intervals overlapping $s_1$'s $[1,3]$ → $r_1$'s $[0,2]$ overlaps → report $(r_1,s_1)$. ✓
+- At $x=5$ ($s_2$ opens): $r_2$ ($x=[3,6]$) is active; $s_2$'s $y=[6,8]$ overlaps $r_2$'s $[5,7]$ → report $(r_2,s_2)$. ✓
+- $s_3$ ($x=[10,11]$) is active alone — no overlapping $x$-interval, $0$ reports.
+
+Output $k = 2$. The $\Theta(n^2) = 25$ naive pair tests are avoided; total work is $O(n\log n + k) = O(5\log 5 + 2)$ — the sweep touches each event once and each report once, matching the optimal bound for rectangle reporting.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

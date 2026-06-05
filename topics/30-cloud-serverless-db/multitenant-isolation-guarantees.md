@@ -42,11 +42,19 @@ Active: hardware-assisted isolation (Intel RDT/MBA), interference-aware placemen
 
 ## 9. Key References
 
-- **[Foundational]** Demers, Keshav, Shenker. *Analysis and Simulation of a Fair Queueing Algorithm.* SIGCOMM, 1989.
-- **[Foundational]** Ghodsi, Zaharia, et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011.
-- **[SOTA]** Gulati, Merchant, Varman. *mClock: Handling Throughput Variability for Hypervisor IO Scheduling.* OSDI, 2010.
-- **[SOTA]** Shue, Freedman, Shaikh. *Performance Isolation and Fairness for Multi-Tenant Cloud Storage (Pisces).* OSDI, 2012.
-- **[SOTA]** Lo, Cheng, et al. *Heracles: Improving Resource Efficiency at Scale.* ISCA, 2015.
+- **[Foundational]** Demers, Keshav, Shenker. *Analysis and Simulation of a Fair Queueing Algorithm.* SIGCOMM, 1989. — [DOI](https://doi.org/10.1145/75247.75248) · [DBLP](https://dblp.org/rec/conf/sigcomm/DemersKS89.html)
+- **[Foundational]** Ghodsi, Zaharia, et al. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011. — [DBLP](https://dblp.org/rec/conf/nsdi/GhodsiZHKSS10.html) · [USENIX](https://www.usenix.org/conference/nsdi11/dominant-resource-fairness-fair-allocation-multiple-resource-types)
+- **[SOTA]** Gulati, Merchant, Varman. *mClock: Handling Throughput Variability for Hypervisor IO Scheduling.* OSDI, 2010. — [USENIX](https://www.usenix.org/conference/osdi10/mclock-handling-throughput-variability-hypervisor-io-scheduling) · [DBLP](https://dblp.org/rec/conf/osdi/GulatiMV10.html)
+- **[SOTA]** Shue, Freedman, Shaikh. *Performance Isolation and Fairness for Multi-Tenant Cloud Storage (Pisces).* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/shue)
+- **[SOTA]** Lo, Cheng, et al. *Heracles: Improving Resource Efficiency at Scale.* ISCA, 2015. — [DOI](https://doi.org/10.1145/2749469.2749475) · [DBLP](https://dblp.org/rec/conf/isca/LoCGRK15.html)
+
+## 10. Worked Example
+
+Two tenants share one server delivering $C = 1000$ IOPS. Tenant $A$ reserves weight $w_A = 3$, tenant $B$ reserves $w_B = 1$. Under weighted fair queuing (GPS), the guaranteed rates are
+$$r_A = C\cdot\frac{w_A}{w_A+w_B} = 1000\cdot\frac{3}{4} = 750,\qquad r_B = 250\ \text{IOPS}.$$
+Now $B$ turns adversarial and floods $5000$ IOPS of requests. Under WFQ, $B$ is throttled to its $250$-IOPS share, so $A$ still gets its $750$ — the noisy neighbor is contained, and $A$'s worst-case degradation versus its standalone $1000$ IOPS is bounded by $r_A/C = 0.75$, a function of its own weight, not of $B$'s misbehaviour. The packet-error term adds at most $L_{\max}/C$ of delay jitter.
+
+The cache lower bound bites separately: if $A$'s working set is $700$ MB, $B$'s is $500$ MB, and the shared buffer pool is $M = 1000$ MB, then $\sum_i \text{WS}_i = 1200 > 1000$, so no partitioning can give both tenants their full standalone hit rate — exactly the packing impossibility of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

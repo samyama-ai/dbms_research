@@ -59,13 +59,24 @@ There is **no asymptotic gap to close** for a single rule body (WCOJ is AGM-opti
 
 ## 9. Key References
 
-- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing / FOCS, 2008/2013 (AGM bound).
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Scholz, Jordan, Subotić, Westmann. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016.
-- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case-Optimal and Traditional Joins.* SIGMOD, 2023.
-- **[SOTA]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR, 2013.
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (semi-naive, Datalog complexity).
+- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986. — [DOI](https://doi.org/10.1145/6012.15399)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing / FOCS, 2008/2013 (AGM bound). — [DOI](https://doi.org/10.1109/FOCS.2008.43)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Scholz, Jordan, Subotić, Westmann. *On Fast Large-Scale Program Analysis in Datalog (Soufflé).* CC, 2016. — [DOI](https://doi.org/10.1145/2892208.2892226)
+- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case-Optimal and Traditional Joins.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589295)
+- **[SOTA]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR, 2013. — [DBLP](https://dblp.org/rec/conf/cidr/McSherryMII13.html)
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (semi-naive, Datalog complexity). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+**The triangle query and the AGM bound.** Take the rule body
+$$\mathrm{tri}(x,y,z) \,:\!-\; R(x,y),\, S(y,z),\, T(z,x),$$
+with $|R|=|S|=|T|=N$. The hypergraph has vertices $\{x,y,z\}$ and one edge per relation. A **fractional edge cover** assigns weights $x_R,x_S,x_T\ge 0$ so every vertex is covered: $x$ needs $R,T$; $y$ needs $R,S$; $z$ needs $S,T$. Minimizing $x_R+x_S+x_T$ subject to those three constraints gives the symmetric optimum $x_R=x_S=x_T=\tfrac12$, so $\rho^*=\tfrac32$ and the **AGM bound** on output size is
+$$\prod_e N^{x_e}=N^{1/2}\cdot N^{1/2}\cdot N^{1/2}=N^{3/2}.$$
+
+*Why pairwise joins lose.* Computing $R\bowtie S$ first can yield an intermediate of size $\Theta(N^2)$ (e.g. when $y$ takes few values), even though the final answer is $\le N^{3/2}$. So any binary plan can do $\Theta(N^2)$ work — worse than $N^{3/2}$.
+
+*WCOJ wins.* Generic Join / LeapFrog Triejoin runs in $\tilde O(N^{3/2}+\mathrm{OUT})$, matching the bound. Concretely with $N=10^6$: the binary plan risks $\sim10^{12}$ tuples, while WCOJ is $\sim10^{9}$ — a $1000\times$ gap. Inside a recursive Datalog program (e.g. cyclic graph patterns fired each semi-naive iteration), using WCOJ per rule body is what lets a compiled engine stay AGM-optimal, the one place §4 offers a closed asymptotic guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

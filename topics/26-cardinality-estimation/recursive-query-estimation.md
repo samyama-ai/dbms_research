@@ -52,11 +52,21 @@ Per-distance reachable-set sizes (and total closure size) estimable to relative 
 
 ## 9. Key References
 - **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. *(Datalog, fixpoint semantics, recursion)*
-- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. *(#P-completeness of counting)*
-- **[SOTA]** P. Boldi, M. Rosa, S. Vigna. *HyperANF: Approximating the Neighbourhood Function of Very Large Graphs.* WWW, 2011.
-- **[SOTA]** C. Palmer, P. Gibbons, C. Faloutsos. *ANF: A Fast and Scalable Tool for Data Mining in Massive Graphs.* KDD, 2002.
-- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018. *(AGM bounds underpinning path/join size limits)*
-- **[Survey]** A. Bonifati, G. Fletcher, H. Voigt, N. Yakovets. *Querying Graphs.* Morgan & Claypool, 2018. *(RPQ evaluation and cardinality context)*
+- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. *(#P-completeness of counting)* — [DOI](https://doi.org/10.1137/0208032)
+- **[SOTA]** P. Boldi, M. Rosa, S. Vigna. *HyperANF: Approximating the Neighbourhood Function of Very Large Graphs.* WWW, 2011. — [arXiv](https://arxiv.org/abs/1011.5599) — [PDF](https://ra.ethz.ch/CDstore/www2011/proceedings/p625.pdf)
+- **[SOTA]** C. Palmer, P. Gibbons, C. Faloutsos. *ANF: A Fast and Scalable Tool for Data Mining in Massive Graphs.* KDD, 2002. — [DOI](https://doi.org/10.1145/775047.775059)
+- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018. *(AGM bounds underpinning path/join size limits)* — [arXiv](https://arxiv.org/abs/1203.1952) — [DOI](https://doi.org/10.1145/3180143)
+- **[Survey]** A. Bonifati, G. Fletcher, H. Voigt, N. Yakovets. *Querying Graphs.* Morgan & Claypool, 2018. *(RPQ evaluation and cardinality context)* — [DOI](https://doi.org/10.2200/S00873ED1V01Y201808DTM051) — [DBLP](https://dblp.org/rec/series/synthesis/2018Bonifati.html)
+
+## 10. Worked Example
+
+Take a directed graph on 5 vertices: a 3-cycle $\{a\to b\to c\to a\}$ plus a "bridge" $c\to d$ and $d\to e$. Estimate the transitive-closure size $|q(G)|=\sum_v|\text{Reach}(v)|$ (reachable pairs, excluding self).
+
+Condensation: the SCC $\{a,b,c\}$ is one node; $d$ and $e$ are singletons. Within the SCC every vertex reaches the other two, contributing $3\times2=6$ ordered pairs. Each of $a,b,c$ also reaches $d$ and $e$: $3\times2=6$ more. Then $d$ reaches $e$: $1$ pair. Total $|q(G)|=6+6+1=13$.
+
+**Per-iteration deltas** of semi-naïve closure on edges (length-$\ell$ reachable new pairs): $\Delta_1=$ the 5 edges; $\Delta_2$ adds length-2 reaches ($a\!\to\!c$, $b\!\to\!a$, $c\!\to\!b$, $c\!\to\!e$, ...); the recursion reaches fixpoint at $\ell=$ diameter.
+
+Now delete the single bridge edge $c\to d$. The SCC still gives $6$ pairs, but $\{a,b,c\}$ no longer reach $d,e$, and $d\to e$ stays: $|q(G)|=6+0+1=7$. One edge changed the closure by $\Theta(n^2)$ in the worst case — concretely from $13$ to $7$ here — illustrating §5's "from-local-statistics impossibility": no bounded-radius synopsis around $a$ could have predicted this.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

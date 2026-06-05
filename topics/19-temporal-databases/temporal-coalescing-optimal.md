@@ -42,11 +42,40 @@ Active threads: (i) pushing coalescing into vectorized/columnar execution and av
 - Cost-based optimizer integration so coalescing is reordered with joins and aggregation rather than treated as a post-pass.
 
 ## 9. Key References
-- **[Foundational]** Böhlen, M., Snodgrass, R., Soo, M. *Coalescing in Temporal Databases.* VLDB, 1996.
-- **[Foundational]** Snodgrass, R. T. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000.
-- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J. *Temporal Alignment.* SIGMOD, 2012.
-- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
-- **[Foundational]** Preparata, F., Shamos, M. *Computational Geometry: An Introduction.* Springer, 1985. (interval-union sweep, element-distinctness bounds)
+- **[Foundational]** Böhlen, M., Snodgrass, R., Soo, M. *Coalescing in Temporal Databases.* VLDB, 1996. — [PDF](https://www.vldb.org/conf/1996/P180.PDF)
+- **[Foundational]** Snodgrass, R. T. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000. — [PDF](https://www2.cs.arizona.edu/~rts/tdbbook.pdf)
+- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J. *Temporal Alignment.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213886)
+- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+- **[Foundational]** Preparata, F., Shamos, M. *Computational Geometry: An Introduction.* Springer, 1985. (interval-union sweep, element-distinctness bounds) — [DOI](https://doi.org/10.1007/978-1-4612-1098-6)
+
+## 10. Worked Example
+
+Coalesce a salary-history relation `Sal(emp, period)` (value $=$ emp; periods half-open $[t_s,t_e)$):
+
+| emp | period |
+|---|---|
+| Ann | $[1,4)$ |
+| Ann | $[4,7)$ |
+| Ann | $[9,11)$ |
+| Bob | $[2,5)$ |
+| Bob | $[3,6)$ |
+
+**Step 1 — group + stable-sort** by $(\text{emp}, t_s)$: Ann's rows in order $[1,4),[4,7),[9,11)$; Bob's $[2,5),[3,6)$.
+
+**Step 2 — per-group sweep**, merging while the next start $\le$ current end (they *meet* or *overlap*):
+
+- Ann: $[1,4)$ then $[4,7)$ — $4\le 4$ they **meet**, merge to $[1,7)$. Next $[9,11)$ has $9>7$, gap, so emit $[1,7)$ and start $[9,11)$.
+- Bob: $[2,5)$ then $[3,6)$ — $3\le 5$ they **overlap**, merge to $[2,6)$.
+
+**Result (canonical minimal form):**
+
+| emp | period |
+|---|---|
+| Ann | $[1,7)$ |
+| Ann | $[9,11)$ |
+| Bob | $[2,6)$ |
+
+No two value-equal tuples now have mergeable periods. Cost is dominated by the sort: $O(n\log n)$ comparisons, then one linear sweep. The $\Omega(n\log n)$ lower bound follows by building a single-emp relation from any multiset of $n$ point-intervals $[x_i,x_i{+}1)$ — the coalesced output lists the distinct $x_i$ in sorted order, solving element distinctness / sorting.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

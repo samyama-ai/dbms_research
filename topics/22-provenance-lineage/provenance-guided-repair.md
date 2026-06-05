@@ -55,13 +55,27 @@ Tractable and intractable fragments are sharply separated for *constraint* repai
 
 ## 9. Key References
 
-- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS 1999.
-- **[Foundational]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB 2011.
-- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach.* British J. Philosophy of Science, 2005.
-- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB 2017.
-- **[SOTA]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries under Primary Key Constraints.* PODS 2015 / ACM TODS.
-- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB 2013.
-- **[Survey]** Bertossi. *Database Repairs and Consistent Query Answering.* Morgan & Claypool, 2011.
+- **[Foundational]** Arenas, Bertossi, Chomicki. *Consistent Query Answers in Inconsistent Databases.* PODS 1999. — [DOI](https://doi.org/10.1145/303976.303983)
+- **[Foundational]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB 2011. — [DOI](https://doi.org/10.14778/1880172.1880176), [arXiv](https://arxiv.org/abs/1009.2021)
+- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach.* British J. Philosophy of Science, 2005. — [DOI](https://doi.org/10.1093/bjps/axi147)
+- **[SOTA]** Rekatsinas, Chu, Ilyas, Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* VLDB 2017. — [DOI](https://doi.org/10.14778/3137628.3137631), [arXiv](https://arxiv.org/abs/1702.00820)
+- **[SOTA]** Koutris, Wijsen. *Consistent Query Answering for Self-Join-Free Conjunctive Queries under Primary Key Constraints.* PODS 2015 / ACM TODS. — [DOI](https://doi.org/10.1145/2745754.2745769), [TODS](https://doi.org/10.1145/3068334)
+- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB 2013. — [DOI](https://doi.org/10.14778/2536354.2536356)
+- **[Survey]** Bertossi. *Database Repairs and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+
+## 10. Worked Example
+
+A table `Emp(name, dept, mgr)` with FD $\text{dept}\to\text{mgr}$ holds:
+
+| name | dept | mgr |
+|------|------|-----|
+| Ann  | Sales | Bob |
+| Cy   | Sales | Dee |
+| Eve  | Sales | Bob |
+
+The FD is violated: Sales maps to both Bob (rows Ann, Eve) and Dee (row Cy). The **conflict graph** has an edge between every pair of rows that disagree on `mgr` for the same `dept`: edges $\{$Ann–Cy$\}$ and $\{$Cy–Eve$\}$ (Ann–Eve agree, no edge). A *subset repair* deletes a minimum **vertex cover** of this conflict graph. The cover $\{\text{Cy}\}$ has size 1 and removes both edges, so the minimum-cardinality repair deletes the single row Cy, leaving all-Bob Sales — minimal $|D\triangle D'|=1$.
+
+**Responsibility.** Suppose the analyst flags answer "Sales mgr = Dee" (from Cy) as the error. Cy is a *counterfactual cause*: deleting it (empty contingency set $\Gamma=\varnothing$) removes the answer, so $\rho(\text{Cy})=\frac{1}{1+0}=1$. Ann is only an *actual* cause with $\Gamma=\{\text{Eve}\}$ needed before deleting Ann flips the majority, giving $\rho(\text{Ann})=\frac{1}{1+1}=\tfrac12$. Ranking by $\rho$ correctly puts Cy first — the row a minimal repair should drop.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

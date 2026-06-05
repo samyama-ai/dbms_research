@@ -35,11 +35,21 @@ Threads: learned and reinforcement-learning query re-optimization adapted to str
 - Correct, low-latency state hand-off between plans (links to elastic state migration).
 
 ## 9. Key References
-- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM, 2018).
-- **[SOTA]** T. L. Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm (Leapfrog Triejoin).* ICDT, 2014.
-- **[SOTA]** M. Idris, M. Ugarte, S. Vansummeren. *The Dynamic Yannakakis Algorithm: Compact and Efficient Query Processing under Updates.* SIGMOD, 2017.
-- **[Foundational]** S. Babu, P. Bizarro, D. DeWitt. *Proactive Re-optimization.* SIGMOD, 2005.
+- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM, 2018). — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** T. L. Veldhuizen. *Triejoin: A Simple, Worst-Case Optimal Join Algorithm (Leapfrog Triejoin).* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481)
+- **[SOTA]** M. Idris, M. Ugarte, S. Vansummeren. *The Dynamic Yannakakis Algorithm: Compact and Efficient Query Processing under Updates.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064027)
+- **[Foundational]** S. Babu, P. Bizarro, D. DeWitt. *Proactive Re-optimization.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066171)
+
+## 10. Worked Example
+
+Consider the triangle join $R(a,b) \bowtie S(b,c) \bowtie T(a,c)$ with $|R|=|S|=|T|=N$.
+
+**Binary plan blow-up.** Any binary order, say $(R \bowtie S) \bowtie T$, materializes $R \bowtie S$ first. With every $b$ value shared, $|R \bowtie S|$ can reach $N^2$ intermediate tuples — even though the final triangle output is at most $N^{3/2}$. In a stream, that $N^2$ intermediate state is the live buffer the operator must hold, which is the killer.
+
+**AGM / WCOJ.** The fractional edge cover of the triangle gives $x_e = 1/2$ on each of the 3 edges, so the AGM bound is $\prod_e |R_e|^{1/2} = N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2}$. A worst-case-optimal join (Leapfrog Triejoin / Generic-Join) runs in $\tilde O(N^{3/2})$ with state bounded by the base relations — no $N^2$ intermediate.
+
+**Why runtime re-ordering.** Now suppose $S$'s arrival rate spikes so its live window grows to $10N$ while $R,T$ stay at $N$. The cheapest probe variable order shifts (start from the now-largest relation last). Switching the variable order mid-run incurs a migration cost $d(\pi,\pi')$ to rebuild the trie index; the online question is whether the saved per-tuple cost over the spike's duration exceeds that one-time $d$ — exactly the metrical-task-system tradeoff with diameter-bounded competitiveness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -59,11 +59,27 @@ Algorithms exist and are practical, but the **statistical-significance / multipl
 
 ## 9. Key References
 
-- **[Foundational]** W. Fan, F. Geerts, J. Li, M. Xiong. *Discovering Conditional Functional Dependencies.* IEEE TKDE, 2011 (ICDE 2009).
-- **[SOTA]** S. Kruse, F. Naumann. *Efficient Discovery of Approximate Dependencies (Pyro).* PVLDB, 2018.
-- **[SOTA]** P. Mandros, M. Boley, J. Vreeken. *Discovering Reliable Approximate Functional Dependencies.* ACM SIGKDD, 2017.
-- **[Foundational]** Y. Huhtala, J. Kärkkäinen, P. Porkka, H. Toivonen. *TANE: Discovering Functional and Approximate Dependencies.* The Computer Journal, 1999.
-- **[Survey]** Z. Abedjan, L. Golab, F. Naumann. *Profiling Relational Data: A Survey.* The VLDB Journal, 2015.
+- **[Foundational]** W. Fan, F. Geerts, J. Li, M. Xiong. *Discovering Conditional Functional Dependencies.* IEEE TKDE, 2011 (ICDE 2009). — [DOI](https://doi.org/10.1109/TKDE.2010.154)
+- **[SOTA]** S. Kruse, F. Naumann. *Efficient Discovery of Approximate Dependencies (Pyro).* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3192965.3192968)
+- **[SOTA]** P. Mandros, M. Boley, J. Vreeken. *Discovering Reliable Approximate Functional Dependencies.* ACM SIGKDD, 2017. — [DOI](https://doi.org/10.1145/3097983.3098062), [arXiv](https://arxiv.org/abs/1705.09391)
+- **[Foundational]** Y. Huhtala, J. Kärkkäinen, P. Porkka, H. Toivonen. *TANE: Discovering Functional and Approximate Dependencies.* The Computer Journal, 1999. — [DOI](https://doi.org/10.1093/comjnl/42.2.100), [DBLP](https://dblp.org/rec/journals/cj/HuhtalaKPT99.html)
+- **[Survey]** Z. Abedjan, L. Golab, F. Naumann. *Profiling Relational Data: A Survey.* The VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0389-y)
+
+## 10. Worked Example
+
+Consider a 5-tuple relation `Customer(zip, city, country)`:
+
+| # | zip | city | country |
+|---|------|-----------|---------|
+| 1 | E1 | London | UK |
+| 2 | E1 | London | UK |
+| 3 | E1 | Reading | UK |
+| 4 | 10001| New York | US |
+| 5 | 10001| New York | US |
+
+**AFD via $g_3$.** Test $\text{zip} \to \text{city}$. The partition by `zip` is $\{\{1,2,3\},\{4,5\}\}$. The first block disagrees on `city` (London vs Reading), so the largest consistent subset keeps either the two London rows or the one Reading row from that block — keep $\{1,2\}$, drop tuple 3 — plus both of $\{4,5\}$. Maximal consistent subset size $=4$, so $g_3 = 1 - \frac{4}{5} = 0.2$. At threshold $\varepsilon = 0.25$ the AFD $\text{zip}\to\text{city}$ holds approximately.
+
+**CFD.** The tableau row $[\text{country}=\text{UK}]:\ \text{zip}\to\text{city}$ has support $=\frac{3}{5}$ (tuples 1–3 match `UK`) but confidence $=\frac{2}{3}$ (tuple 3 violates). Restricting further to $[\text{country}=\text{US}]$ gives support $\frac{2}{5}$, confidence $1.0$ — an exact context-specific CFD that plain FD discovery would miss because the global FD fails.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

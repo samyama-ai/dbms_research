@@ -49,12 +49,24 @@ Sub-problems:
 - Online/stochastic variants handling tenant churn and demand drift.
 
 ## 9. Key References
-- **[Foundational]** E. Koutsoupias, C. Papadimitriou. *Worst-Case Equilibria.* STACS, 1999.
-- **[Foundational]** T. Roughgarden. *Intrinsic Robustness of the Price of Anarchy.* JACM, 2015 (STOC, 2009).
-- **[Foundational]** A. Ghodsi, M. Zaharia, B. Hindman, A. Konwinski, S. Shenker, I. Stoica. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011.
-- **[Foundational]** R. Myerson, M. Satterthwaite. *Efficient Mechanisms for Bilateral Trading.* J. Economic Theory, 1983.
-- **[SOTA]** V. Narasayya et al. *SQLVM: Performance Isolation in Multi-Tenant Relational Database-as-a-Service.* CIDR, 2013.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** E. Koutsoupias, C. Papadimitriou. *Worst-Case Equilibria.* STACS, 1999. — [DOI](https://doi.org/10.1007/3-540-49116-3_38)
+- **[Foundational]** T. Roughgarden. *Intrinsic Robustness of the Price of Anarchy.* JACM, 2015 (STOC, 2009). — [DOI](https://doi.org/10.1145/2806883)
+- **[Foundational]** A. Ghodsi, M. Zaharia, B. Hindman, A. Konwinski, S. Shenker, I. Stoica. *Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.* NSDI, 2011. — [DBLP](https://dblp.org/rec/conf/nsdi/GhodsiZHKSS10.html)
+- **[Foundational]** R. Myerson, M. Satterthwaite. *Efficient Mechanisms for Bilateral Trading.* J. Economic Theory, 1983. — [DOI](https://doi.org/10.1016/0022-0531(83)90048-0)
+- **[SOTA]** V. Narasayya et al. *SQLVM: Performance Isolation in Multi-Tenant Relational Database-as-a-Service.* CIDR, 2013. — [Microsoft Research](https://www.microsoft.com/en-us/research/publication/sqlvm-performance-isolation-in-multi-tenant-relational-database-as-a-service/)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [PDF](https://www.cidrdb.org/cidr2017/papers/p42-pavlo-cidr17.pdf)
+
+## 10. Worked Example
+
+**Dominant Resource Fairness on a shared node.** Total capacity: $9$ CPU, $18$ GB RAM. Two tenants issue tuning/query tasks with fixed per-task demand vectors:
+- Tenant A per task: $\langle 1\text{ CPU}, 4\text{ GB}\rangle$ — its **dominant** resource is RAM: $\max(\tfrac19,\tfrac{4}{18})=\tfrac{4}{18}=\tfrac29$.
+- Tenant B per task: $\langle 3\text{ CPU}, 1\text{ GB}\rangle$ — dominant is CPU: $\max(\tfrac39,\tfrac{1}{18})=\tfrac13$.
+
+DRF equalizes **dominant shares**. Let A get $x$ tasks, B get $y$. Dominant shares: A $=\tfrac{4x}{18}=\tfrac{2x}{9}$, B $=\tfrac{3y}{9}=\tfrac{y}{3}$. Set equal: $\tfrac{2x}{9}=\tfrac{y}{3}\Rightarrow y=\tfrac{2x}{3}$.
+
+Capacity (CPU binds first): $1\cdot x + 3\cdot y \le 9 \Rightarrow x + 2x = 3x \le 9 \Rightarrow x=3,\ y=2$. RAM check: $4(3)+1(2)=14\le18$ (slack). Dominant shares: A $=\tfrac{2\cdot3}{9}=\tfrac23$, B $=\tfrac{2}{3}$ — equalized.
+
+A greedy per-tenant tuner would instead grab its dominant resource until exhaustion, starving the co-tenant — the externality of §1. DRF gives the strategy-proof, envy-free split of §4 in polynomial time.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

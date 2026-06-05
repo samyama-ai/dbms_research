@@ -87,15 +87,38 @@ continue refining multiversion and now-relative indexing. Renewed interest in **
 
 ## 9. Key References
 - **[Foundational]** B. Becker, S. Gschwind, T. Ohler, B. Seeger, P. Widmayer. *An Asymptotically
-  Optimal Multiversion B-Tree.* VLDB Journal, 1996.
+  Optimal Multiversion B-Tree.* VLDB Journal, 1996. — [DOI](https://doi.org/10.1007/s007780050028)
 - **[Foundational]** D. Lomet, B. Salzberg. *Access Methods for Multiversion Data (TSB-Tree).*
-  SIGMOD, 1989.
+  SIGMOD, 1989. — [ACM](https://doi.org/10.1145/67544.66956)
 - **[Foundational]** J. Driscoll, N. Sarnak, D. Sleator, R. Tarjan. *Making Data Structures
-  Persistent.* JCSS, 1989.
+  Persistent.* JCSS, 1989. — [DOI](https://doi.org/10.1016/0022-0000(89)90034-2)
 - **[Survey]** V. Tsotras, A. Kumar. *Temporal Database Bibliography Update / Bitemporal Access
   Methods.* SIGMOD Record, 1996; and Salzberg & Tsotras, *Comparison of Access Methods for
-  Time-Evolving Data,* ACM Computing Surveys, 1999.
-- **[Foundational]** M. Pătraşcu. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007.
+  Time-Evolving Data,* ACM Computing Surveys, 1999. — [DOI](https://doi.org/10.1145/319806.319816); Tsotras–Kumar — [DBLP](https://dblp.org/rec/journals/sigmod/TsotrasK96.html)
+- **[Foundational]** M. Pătraşcu. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250797)
+
+## 10. Worked Example
+
+Salary history for employee #7, stored as bitemporal rectangles $[vs,ve)\times[ts,te)$ (times in
+days; $\textsf{NOW}=100$):
+
+| salary | valid $[vs,ve)$ | txn $[ts,te)$ |
+|--------|-----------------|---------------|
+| 50 | $[0,40)$ | $[10,30)$ |
+| 60 | $[40,\infty)$ | $[10,\textsf{NOW})$ |
+| 55 | $[0,40)$ | $[30,\textsf{NOW})$ |
+
+Row 3 is a *retroactive correction*: at transaction time 30 we learned the salary in $[0,40)$ was
+really 55, so row 1's transaction-time period was closed at 30 and row 3 opened.
+
+**Query** "as-of $\tau=35$, what salary held at valid time $\nu=20$?" — a point stab at $(20,35)$.
+Test each rectangle for $vs\le 20<ve$ **and** $ts\le 35<te$:
+row 1 fails ($35\not<30$); row 2 fails ($20\not\ge 40$); row 3 passes ($0\le20<40$, $30\le35<100$).
+Answer: **55**.
+
+Via partial persistence the transaction axis is a version timeline; we navigate to version 35
+($O(\log_B n)$ I/O) landing on the valid-time B-tree slice $\{[0,40)\!\to\!55,\ [40,\infty)\!\to\!60\}$,
+then a single $\log_B$ descent locates $\nu=20$ — total $O(\log_B n)$, the MVBT optimum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

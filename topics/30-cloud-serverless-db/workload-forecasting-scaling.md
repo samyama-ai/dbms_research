@@ -46,11 +46,19 @@ The *online cost* side is closed (tight competitive ratios). The genuinely open,
 - Co-optimizing forecast horizon, snapshot cost, and multi-tenant resume contention.
 
 ## 9. Key References
-- **[Foundational]** Karlin, A., Manasse, M., McGeoch, L., Owicki, S. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental).* Algorithmica, 1994.
-- **[SOTA]** Purohit, M., Svitkina, Z., Kumar, R. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018.
-- **[SOTA]** Lykouris, T., Vassilvitskii, S. *Competitive Caching with Machine Learned Advice.* ICML, 2018.
-- **[Systems]** Agache, A. et al. *Firecracker: Lightweight Virtualization for Serverless Applications.* NSDI, 2020.
-- **[Survey]** Mitzenmacher, M., Vassilvitskii, S. *Algorithms with Predictions.* CACM / Beyond the Worst-Case Analysis of Algorithms, 2021.
+- **[Foundational]** Karlin, A., Manasse, M., McGeoch, L., Owicki, S. *Competitive Randomized Algorithms for Nonuniform Problems (ski-rental).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
+- **[SOTA]** Purohit, M., Svitkina, Z., Kumar, R. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/73a427badebe0e32caa2e1fc7530b7f3-Abstract.html)
+- **[SOTA]** Lykouris, T., Vassilvitskii, S. *Competitive Caching with Machine Learned Advice.* ICML, 2018. — [PMLR](http://proceedings.mlr.press/v80/lykouris18a.html)
+- **[Systems]** Agache, A. et al. *Firecracker: Lightweight Virtualization for Serverless Applications.* NSDI, 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/agache)
+- **[Survey]** Mitzenmacher, M., Vassilvitskii, S. *Algorithms with Predictions.* CACM / Beyond the Worst-Case Analysis of Algorithms, 2021. — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+A serverless DB idles. Keeping compute warm costs $1$ unit/minute; a cold-start resume costs $B = 10$ units (the "buy"). An idle gap of true length $g$ minutes appears.
+
+**Deterministic ski-rental.** Stay warm, paying $1$/min, until accumulated cost reaches $B=10$ (i.e. at $t=10$ min), then pause. Worst case: the gap ends at $g = 10^-$ — we paid $10$ warm but a pause-at-zero policy would have paid $B=10$ on resume too; the adversary makes us pay $10 + $ (resume if traffic returns). Across all $g$ the policy is **2-competitive**: cost $\le 2\cdot\text{OPT}$, where $\text{OPT}=\min(g, B)$. E.g. $g=4$: we pay $4$ (warm, no pause), OPT $=4$, ratio $1$. $g=100$: we pay $10$ (warm) $+10$ (resume) $=20$ vs OPT $=10$, ratio $2$.
+
+**With a predictor.** Suppose a forecaster predicts $\hat g = 30$ (so "pause immediately, it's a long gap"). If true $g=30$ we pay $B=10$ = OPT, **consistency** $\to 1$. If the prediction is wrong ($g=2$) we wrongly paused and ate a cold start: cost $10$ vs OPT $2$. The Purohit–Svitkina–Kumar policy hedges with a trust parameter $\lambda$, capping the worst case at $\tfrac{e}{e-1}\approx1.58$ (**robustness**) while approaching $1$ when $\hat g$ is accurate — interpolating between blind ski-rental and perfect foresight.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

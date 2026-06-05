@@ -47,13 +47,21 @@ In **1-D**, the problem is **largely closed**: matched discrepancy upper/lower b
 
 ## 9. Key References
 
-- **[Foundational]** Hay, Rastogi, Miklau, Suciu. *Boosting the Accuracy of Differentially Private Histograms Through Consistency.* VLDB, 2010.
-- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy Under Continual Observation.* STOC, 2010.
-- **[Foundational]** Chan, Shi, Song. *Private and Continual Release of Statistics.* ICALP, 2010 / ACM TISSEC, 2011 (binary mechanism).
-- **[SOTA]** Nikolov, Talwar, Zhang. *The Geometry of Differential Privacy: The Sparse and Approximate Cases.* STOC, 2013.
-- **[SOTA]** McKenna, Miklau, Hay, Machanavajjhala. *Optimizing Error of High-Dimensional Statistical Queries (HDMM).* VLDB, 2018.
-- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds for Differentially Private Continual Counting.* SODA, 2023.
-- **[Survey]** Abowd et al. *The 2020 Census Disclosure Avoidance System TopDown Algorithm.* Harvard Data Science Review, 2022.
+- **[Foundational]** Hay, Rastogi, Miklau, Suciu. *Boosting the Accuracy of Differentially Private Histograms Through Consistency.* VLDB, 2010. — [arXiv](https://arxiv.org/abs/0904.0942) — [DBLP](https://dblp.org/rec/journals/pvldb/HayRMS10.html)
+- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy Under Continual Observation.* STOC, 2010. — [DOI](https://doi.org/10.1145/1806689.1806787)
+- **[Foundational]** Chan, Shi, Song. *Private and Continual Release of Statistics.* ICALP, 2010 / ACM TISSEC, 2011 (binary mechanism). — [DOI](https://doi.org/10.1007/978-3-642-14162-1_34) — [TISSEC DOI](https://doi.org/10.1145/2043621.2043626)
+- **[SOTA]** Nikolov, Talwar, Zhang. *The Geometry of Differential Privacy: The Sparse and Approximate Cases.* STOC, 2013. — [DOI](https://doi.org/10.1145/2488608.2488652) — [arXiv](https://arxiv.org/abs/1212.0297)
+- **[SOTA]** McKenna, Miklau, Hay, Machanavajjhala. *Optimizing Error of High-Dimensional Statistical Queries (HDMM).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3231751.3231769) — [arXiv](https://arxiv.org/abs/1808.03537)
+- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds for Differentially Private Continual Counting.* SODA, 2023. — [DOI](https://doi.org/10.1137/1.9781611977554.ch183) — [arXiv](https://arxiv.org/abs/2211.05006)
+- **[Survey]** Abowd et al. *The 2020 Census Disclosure Avoidance System TopDown Algorithm.* Harvard Data Science Review, 2022. — [DOI](https://doi.org/10.1162/99608f92.529e3cb9) — [arXiv](https://arxiv.org/abs/2204.08986)
+
+## 10. Worked Example
+
+Consider $n=4$ leaves with true counts $(2,4,1,3)$ (sum $10$). Build a binary tree: leaves $\ell_1..\ell_4$, internal nodes $v_{12}=6$, $v_{34}=4$, root $r=10$. Under $\varepsilon$-DP each node is perturbed with $\mathrm{Lap}(1/\varepsilon)$ independently; a range like $[1,3]$ is answered as $v_{12}+\ell_3 = 6+1 = 7$ using only $2$ noisy nodes instead of $3$ leaves.
+
+Now the **consistency** step. Suppose noisy reads come back $r'=9$, $v'_{12}=6$, $v'_{34}=5$. These are inconsistent: $v'_{12}+v'_{34}=11 \ne 9$. Hay et al.'s two-pass least-squares projection redistributes the residual. The top-down correction sets each child to $v' + \tfrac{1}{2}(r' - (v'_{12}+v'_{34}))$. Here the residual is $9-11=-2$, split as $-1$ each: corrected $\hat v_{12}=6-1=5$, $\hat v_{34}=5-1=4$, which now sum to $9=r'$.
+
+The key wins: a range over $[n]$ costs $O(\log n)$ noisy nodes giving error $O((\log n)^{1.5}/\varepsilon)$ rather than $O(n/\varepsilon)$, and consistency is *free* post-processing — it only reduces variance, never spends extra budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

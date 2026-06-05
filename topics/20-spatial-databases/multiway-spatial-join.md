@@ -40,12 +40,24 @@ This is **genuinely open**. There is no **geometric AGM bound** that tightly cha
 A proven geometric AGM bound and matching algorithm; robust multi-way spatial selectivity estimation; communication-optimal distributed multi-way joins; adaptive/runtime re-optimization when intermediate sizes deviate from estimates.
 
 ## 9. Key References
-- **[Foundational]** Brinkhoff, Kriegel, Seeger. *Efficient Processing of Spatial Joins Using R-trees.* SIGMOD, 1993.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013.
-- **[SOTA]** Mamoulis, Papadias. *Multiway Spatial Joins.* ACM TODS, 2001.
-- **[SOTA]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014.
-- **[SOTA]** Patel, DeWitt. *Partition Based Spatial-Merge Join.* SIGMOD, 1996.
-- **[SOTA]** Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
+- **[Foundational]** Brinkhoff, Kriegel, Seeger. *Efficient Processing of Spatial Joins Using R-trees.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170075)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Mamoulis, Papadias. *Multiway Spatial Joins.* ACM TODS, 2001. — [DOI](https://doi.org/10.1145/503099.503101)
+- **[SOTA]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014. — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[SOTA]** Patel, DeWitt. *Partition Based Spatial-Merge Join.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233338)
+- **[SOTA]** Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+
+## 10. Worked Example
+
+Consider a **triangle** query on three relations of axis-parallel boxes: $R\bowtie S\bowtie T$ where $R$ intersects $S$, $S$ intersects $T$, and $T$ intersects $R$ (a cyclic join graph). Take $n=4$ boxes per relation, arranged so that pairwise intersections are dense but triple intersections are rare.
+
+Say the binary selectivities give $|R\bowtie S| = |S\bowtie T| = 6$ pairs each, while the final triangle output is only $|R\bowtie S\bowtie T| = 2$.
+
+- **Binary plan** $(R\bowtie S)\bowtie T$: materializes the intermediate $R\bowtie S$ of size $6$, then probes $T$. The intermediate ($6$) exceeds the final answer ($2$) — wasted work, and on larger inputs this gap becomes the $\Omega(n^2)$ vs. $O(n^{1.5})$ separation of §5.
+
+- **AGM bound:** the triangle has fractional edge cover $x_e=\tfrac12$ on each of the 3 edges, giving $|{\bowtie}|\le \prod_e n^{1/2} = (n^{1/2})^3 = n^{3/2}$. For $n=4$: $4^{1.5}=8$, so any output is $\le 8$ — consistent with our $2$.
+
+A WCOJ-style plan would attack all three predicates simultaneously, never building the size-$6$ intermediate, bounding work by $\tilde O(n^{3/2})=\tilde O(8)$ rather than $6+\dots$. The open problem (§6) is establishing this $n^{3/2}$ bound *geometrically* for intersects predicates and matching it with an algorithm.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

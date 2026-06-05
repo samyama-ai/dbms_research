@@ -51,12 +51,22 @@ This is **genuinely open**. There is no accepted cost model that *jointly* captu
 
 ## 9. Key References
 
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** T. Akidau, R. Bradshaw, C. Chambers, S. Chernyak, R. Fernández-Moctezuma, R. Lax, S. McVeety, D. Mills, F. Perry, E. Schmidt, S. Whittle. *The Dataflow Model.* PVLDB, 2015.
-- **[Foundational]** D. G. Murray, F. McSherry, R. Isaacs, M. Isard, P. Barham, M. Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013.
-- **[SOTA]** K. Tangwongsan, M. Hirzel, S. Schneider, K.-L. Wu. *General Incremental Sliding-Window Aggregation.* PVLDB, 2015.
-- **[SOTA]** V. Kalavri, J. Liagouris, M. Hoffmann, D. Dimitrova, M. Forshaw, T. Roscoe. *Three Steps is All You Need: Fast, Accurate, Automatic Scaling Decisions for Distributed Streaming Dataflows (DS2).* OSDI, 2018.
-- **[Survey]** M. Hirzel, R. Soulé, S. Schneider, B. Gedik, R. Grimm. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014.
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** T. Akidau, R. Bradshaw, C. Chambers, S. Chernyak, R. Fernández-Moctezuma, R. Lax, S. McVeety, D. Mills, F. Perry, E. Schmidt, S. Whittle. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[Foundational]** D. G. Murray, F. McSherry, R. Isaacs, M. Isard, P. Barham, M. Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522738)
+- **[SOTA]** K. Tangwongsan, M. Hirzel, S. Schneider, K.-L. Wu. *General Incremental Sliding-Window Aggregation.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** V. Kalavri, J. Liagouris, M. Hoffmann, D. Dimitrova, M. Forshaw, T. Roscoe. *Three Steps is All You Need: Fast, Accurate, Automatic Scaling Decisions for Distributed Streaming Dataflows (DS2).* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/kalavri)
+- **[Survey]** M. Hirzel, R. Soulé, S. Schneider, B. Gedik, R. Grimm. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2528412)
+
+## 10. Worked Example
+
+Query: per-key `SUM` over a window, with 4 source partitions each emitting $10^6$ tuples/s over $10^4$ keys, feeding one shuffle then a final aggregator. Compare two placements.
+
+**Late placement** (aggregate only after the shuffle): every source tuple crosses the network. Cross-link volume $= 4 \times 10^6$ tuples/s.
+
+**Early placement** (partial `SUM` pushed before the shuffle): `SUM` is decomposable — it factors as $\langle f_{\text{lift}}{=}\text{id},\ \oplus{=}{+},\ f_{\text{lower}}{=}\text{id}\rangle$ over a commutative monoid — so each source pre-aggregates its $10^6$ tuples into at most $10^4$ partial sums (one per key). Cross-link volume $= 4 \times 10^4$ tuples/s, a $100\times$ reduction.
+
+Cost model: with per-link cost $c_e$, objective $\sum_e c_e\cdot\text{vol}_e(\pi)$ drops by that $100\times$ factor for early placement — but only because `SUM` is associative. Had the aggregate been `MEDIAN` (not decomposable into a small commutative-monoid lift), early partial aggregation would be illegal and the planner must keep the late placement. This is exactly the legality-vs-cost coupling the open problem asks an optimizer to search jointly, and general placement is NP-hard (reduction from quadratic assignment).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

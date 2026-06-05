@@ -45,12 +45,25 @@ For **SPJ and coalesced bitemporal views** the gap is essentially closed: lifted
 
 ## 9. Key References
 
-- **[Foundational]** A. Gupta, I. S. Mumick, V. S. Subrahmanian. *Maintaining Views Incrementally.* ACM SIGMOD, 1993.
-- **[SOTA]** C. Koch, Y. Ahmad, O. Kennedy, M. Nikolic, A. Nötzli, D. Lupei, A. Shaikhha. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 23(2), 2014.
-- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment* / *Overlap Interval Partition Join.* ACM SIGMOD, 2012 / 2014.
-- **[SOTA]** C. Berkholz, J. Keppmann (Gerhardt), N. Schweikardt. *Answering Conjunctive Queries under Updates.* ACM PODS, 2017.
-- **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR, 2013.
-- **[SOTA]** M. Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023.
+- **[Foundational]** A. Gupta, I. S. Mumick, V. S. Subrahmanian. *Maintaining Views Incrementally.* ACM SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170066)
+- **[SOTA]** C. Koch, Y. Ahmad, O. Kennedy, M. Nikolic, A. Nötzli, D. Lupei, A. Shaikhha. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 23(2), 2014. — [DOI](https://doi.org/10.1007/s00778-013-0348-4)
+- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment* / *Overlap Interval Partition Join.* ACM SIGMOD, 2012 / 2014. — [DOI](https://doi.org/10.1145/2213836.2213886)
+- **[SOTA]** C. Berkholz, J. Keppmann (Gerhardt), N. Schweikardt. *Answering Conjunctive Queries under Updates.* ACM PODS, 2017. — [arXiv](https://arxiv.org/abs/1702.06370) · [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
+- **[SOTA]** M. Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [arXiv](https://arxiv.org/abs/2203.16684) · [DOI](https://doi.org/10.14778/3587136.3587137)
+
+## 10. Worked Example
+
+Base relation $\textsf{Emp}(\text{name}, \text{dept}, [\text{vt}_s, \text{vt}_e))$ in valid time, and a coalesced view $V$ = "periods during which $\ge 2$ people work in dept D". Suppose:
+
+- Alice in D over $[1, 6)$
+- Bob in D over $[4, 9)$
+
+Snapshot count $\ge 2$ holds on $[4,6)$, so $V = \{[4,6)\}$.
+
+Now an **incremental update** inserts Carol in D over $[5, 7)$. Recompute via alignment on the change points $C = \{1,4,5,6,7,9\}$. Per split interval the headcount is: $[4,5)\!:2$, $[5,6)\!:3$, $[6,7)\!:2$. All $\ge 2$ and adjacent, so after coalescing $V' = \{[4,7)\}$.
+
+Thus $\Delta V = $ extend the existing period from $[4,6)$ to $[4,7)$ — one endpoint moved, touching only the intervals adjacent to Carol's $[5,7)$. The work is $O(\log n + a)$ with $a=3$ adjacent split intervals, **not** a full re-scan: this is the snapshot-reducible lifted delta of §2/§4 in action, where churn is bounded by $|\Delta C|=2$ new change points.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

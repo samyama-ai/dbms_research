@@ -52,11 +52,30 @@ The problem is **partially solved**: well-validated operator catalogs exist (Tuy
 
 ## 9. Key References
 
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[SOTA]** J. Tuya, M. J. Suárez-Cabal, C. de la Riva. *Mutating Database Queries.* Information and Software Technology, 2007.
-- **[SOTA]** P. McMinn, C. J. Wright, G. M. Kapfhammer et al. *The Effectiveness of Test Coverage Criteria for Relational Database Schema Integrity Constraints (SchemaAnalyst).* ACM TOSEM, 2016.
-- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries (bag semantics).* PODS, 1993.
-- **[Survey]** Y. Jia, M. Harman. *An Analysis and Survey of the Development of Mutation Testing.* IEEE TSE, 2011.
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[SOTA]** J. Tuya, M. J. Suárez-Cabal, C. de la Riva. *Mutating Database Queries.* Information and Software Technology, 2007. — [DOI](https://doi.org/10.1016/j.infsof.2006.06.009)
+- **[SOTA]** P. McMinn, C. J. Wright, G. M. Kapfhammer et al. *The Effectiveness of Test Coverage Criteria for Relational Database Schema Integrity Constraints (SchemaAnalyst).* ACM TOSEM, 2016. — [DOI](https://doi.org/10.1145/2818639)
+- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries (bag semantics).* PODS, 1993. — [DOI](https://doi.org/10.1145/153850.153856)
+- **[Survey]** Y. Jia, M. Harman. *An Analysis and Survey of the Development of Mutation Testing.* IEEE TSE, 2011. — [DOI](https://doi.org/10.1109/TSE.2010.62)
+
+## 10. Worked Example
+
+Take $Q = \texttt{SELECT name FROM Emp WHERE salary > 50000}$ over instance $I$:
+
+| id | name  | salary |
+|----|-------|--------|
+| 1  | Ann   | 60000  |
+| 2  | Bob   | 50000  |
+| 3  | Cara  | 40000  |
+
+$Q(I) = \{\text{Ann}\}$. Two mutants (ROR = relational-operator replacement):
+
+- $Q_1$: `salary >= 50000` $\Rightarrow Q_1(I) = \{\text{Ann}, \text{Bob}\} \neq Q(I)$. **Killed** by $I$ (Bob is the distinguishing row).
+- $Q_2$: `salary <> 50000` ... evaluate: rows with salary $\neq 50000$ are Ann, Cara $\Rightarrow \{\text{Ann},\text{Cara}\}\neq Q(I)$. **Killed**.
+
+Now an **equivalent mutant**: $Q_3$ rewrites `salary > 50000` as `NOT (salary <= 50000)`. For non-NULL salaries this is logically identical, so $Q_3(I)=Q(I)$ on *this* $I$ — and on all NULL-free instances. To certify $Q \equiv Q_3$ in general (it is, only if `salary` is `NOT NULL`) needs a containment check, NP-complete for CQs. If the column allows NULL, a row with `salary = NULL` makes `salary > 50000` UNKNOWN (excluded) while `NOT(NULL <= 50000)` is also UNKNOWN — still equivalent here, but such 3-valued reasoning is exactly why exact equivalent-mutant detection is undecidable for full SQL.
+
+Mutation score on $\{Q_1,Q_2,Q_3\}$ with the single test $I$: $Q_3$ is equivalent (excluded from denominator), so score $= 2/2 = 1.0$ — but only if we correctly classify $Q_3$; mislabeling it "live" would drop the score to $2/3$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

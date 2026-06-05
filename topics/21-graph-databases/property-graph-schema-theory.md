@@ -54,13 +54,23 @@ There is **no canonical model**, so "the" upper/lower bounds depend on which for
 - Reconciling RDF (SHACL) and property-graph constraint theories.
 
 ## 9. Key References
-- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** Angles, R., Bonifati, A., Dumbrava, S., Fletcher, G., Hidders, J., et al. *PG-Schema: Schemas for Property Graphs.* SIGMOD 2023.
-- **[SOTA]** Angles, R., et al. *PG-Keys: Keys for Property Graphs.* SIGMOD 2021.
-- **[SOTA]** Fan, W., Fan, Z., Tian, C., Dong, X. L. *Keys for Graphs.* VLDB 2015.
-- **[Lower bound]** Corman, J., Reutter, J., Savković, O. *Semantics and Validation of Recursive SHACL.* ISWC 2018.
-- **[Survey]** Bonifati, A., Fletcher, G., Voigt, H., Yakovets, N. *Querying Graphs.* Morgan & Claypool Synthesis Lectures, 2018.
+- **[Foundational]** Codd, E. F. *Further Normalization of the Data Base Relational Model.* IBM Research, 1972. — [DBLP](https://dblp.org/rec/persons/Codd71a.html)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** Angles, R., Bonifati, A., Dumbrava, S., Fletcher, G., Hidders, J., et al. *PG-Schema: Schemas for Property Graphs.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2211.10962) · [DOI](https://doi.org/10.1145/3589778)
+- **[SOTA]** Angles, R., et al. *PG-Keys: Keys for Property Graphs.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3457561)
+- **[SOTA]** Fan, W., Fan, Z., Tian, C., Dong, X. L. *Keys for Graphs.* VLDB 2015. — [DOI](https://doi.org/10.14778/2824032.2824056)
+- **[Lower bound]** Corman, J., Reutter, J., Savković, O. *Semantics and Validation of Recursive SHACL.* ISWC 2018. — [DOI](https://doi.org/10.1007/978-3-030-00671-6_19)
+- **[Survey]** Bonifati, A., Fletcher, G., Voigt, H., Yakovets, N. *Querying Graphs.* Morgan & Claypool Synthesis Lectures, 2018. — [DBLP](https://dblp.org/rec/series/synthesis/2018Bonifati.html)
+
+## 10. Worked Example
+
+Consider a property graph of a publication DB with node label `Person` (properties `name`, `email`) and `Paper`, plus `AUTHORED` edges. We want a **graph key**: "a `Person` is identified by their `email`."
+
+**Relational-style key** would just be `email` $\to$ tuple. But a *GKey* (Fan et al.) is a graph pattern + value equalities. Take the pattern $K$: a `Person` node $x$ with property `email = e`. Key satisfaction asks: are there two distinct `Person` nodes $v_1 \ne v_2$ that both match $K$ with the same $e$? Checking this requires finding embeddings of $K$ — i.e., **subgraph isomorphism** — so validation is NP-hard in *combined* complexity, though for this fixed, single-node pattern it is PTIME in data complexity (a single grouping scan over `email`).
+
+Now make the key topological: "a `Review` is identified by `(its Paper, its Reviewer)`." The pattern has 3 nodes and 2 edges; validating it scans for two `Review` nodes sharing both neighbors — still subgraph-iso matching, NP-hard combined.
+
+**Implication:** does $\{$email-key on `Person`$\} \models \{$email-key on `Author` (a subtype)$\}$? Under PG-Schema's *closed*-type semantics with subtyping this can be decided via the type lattice; add recursive SHACL-style shapes referencing each other and satisfiability becomes **undecidable** (Corman–Reutter–Savković) — exactly the fragmentation the open problem targets: no single calculus yet covers keys + topology + recursion with decidable implication.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

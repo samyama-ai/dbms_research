@@ -40,12 +40,27 @@ Active: **HPI (Papenbrock, Schmidl)** on scalable OD discovery (DISTOD) and unif
 - Robust approximate OD/DD discovery on dirty data with statistical confidence.
 
 ## 9. Key References
-- **[Foundational]** J. Szlichta, P. Godfrey, J. Gryz. *Fundamentals of Order Dependencies.* PVLDB, 2012 (and ACM TODS).
-- **[Foundational]** S. Song, L. Chen. *Differential Dependencies: Reasoning and Discovery.* ACM TODS, 2011.
-- **[Foundational]** N. Koudas, A. Saha, D. Srivastava, S. Venkatasubramanian. *Metric Functional Dependencies.* ICDE, 2009.
-- **[SOTA]** S. Schmidl, T. Papenbrock. *Efficient Distributed Discovery of Bidirectional Order Dependencies (DISTOD).* VLDB Journal, 2022.
-- **[Foundational]** S. Ginsburg, R. Hull. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983.
-- **[Survey]** Z. Abedjan, L. Golab, F. Naumann, T. Papenbrock. *Data Profiling.* Morgan & Claypool, 2018.
+- **[Foundational]** J. Szlichta, P. Godfrey, J. Gryz. *Fundamentals of Order Dependencies.* PVLDB, 2012 (and ACM TODS). — [DOI](https://doi.org/10.14778/2350229.2350241) — [arXiv](https://arxiv.org/abs/1208.0084)
+- **[Foundational]** S. Song, L. Chen. *Differential Dependencies: Reasoning and Discovery.* ACM TODS, 2011. — [DOI](https://doi.org/10.1145/2000824.2000826)
+- **[Foundational]** N. Koudas, A. Saha, D. Srivastava, S. Venkatasubramanian. *Metric Functional Dependencies.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.219)
+- **[SOTA]** S. Schmidl, T. Papenbrock. *Efficient Distributed Discovery of Bidirectional Order Dependencies (DISTOD).* VLDB Journal, 2022. — [DOI](https://doi.org/10.1007/s00778-021-00683-4)
+- **[Foundational]** S. Ginsburg, R. Hull. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983. — [DOI](https://doi.org/10.1016/0304-3975(83)90091-X)
+- **[Survey]** Z. Abedjan, L. Golab, F. Naumann, T. Papenbrock. *Data Profiling.* Morgan & Claypool, 2018. — [DOI](https://doi.org/10.2200/S00878ED1V01Y201810DTM052)
+
+## 10. Worked Example
+
+Take a tiny `Tax` relation, attributes $\text{Income}$ and $\text{Tax}$:
+
+| Income | Tax  |
+|--------|------|
+| 30000  | 3000 |
+| 50000  | 6000 |
+| 50000  | 6000 |
+| 80000  | 12000 |
+
+**Order dependency** $\text{Income}\mapsto\text{Tax}$: sort by Income $(30k,50k,50k,80k)$; the corresponding Tax list $(3000,6000,6000,12000)$ is non-decreasing, and ties on Income tie on Tax — so $s\preceq_{\text{Income}} t \Rightarrow s\preceq_{\text{Tax}} t$ holds. Note an FD $\text{Income}\to\text{Tax}$ *also* holds here, but the OD additionally certifies *monotonicity*, justifying a clustered index on Income that yields Tax already sorted (a free "interesting order").
+
+**Differential dependency** with $\phi_X:\,|\Delta\text{Income}|\le 20000 \Rightarrow \phi_Y:\,|\Delta\text{Tax}|\le 6000$: check the pair $(30k,3000)$ vs $(50k,6000)$ — $\Delta\text{Income}=20000\le 20000$ and $\Delta\text{Tax}=3000\le 6000$, satisfied. But $(30k,3000)$ vs $(80k,12000)$ has $\Delta\text{Income}=50000>20000$, so the rule's antecedent is vacuously skipped. The DD holds on all $\binom{4}{2}=6$ pairs — but verifying it is inherently $\Omega(n^2)$ pairwise work, illustrating the lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

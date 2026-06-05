@@ -40,11 +40,21 @@ Active directions: control-theoretic analysis of DB tuning loops (Lyapunov / mar
 - Co-design of stability with drift detection and credit assignment.
 
 ## 9. Key References
-- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** Zhang, J., et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019.
-- **[Foundational]** Schnaitter, K., Abiteboul, S., Milo, T., Polyzotis, N. *COLT: Continuous On-Line Tuning.* SIGMOD, 2006.
-- **[Foundational]** Åström, K. J., Wittenmark, B. *Adaptive Control.* Addison-Wesley, 2nd ed., 1995.
-- **[Survey]** Hazan, E. *Introduction to Online Convex Optimization.* Foundations and Trends in Optimization, 2016.
+- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** Zhang, J., et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300085)
+- **[Foundational]** Schnaitter, K., Abiteboul, S., Milo, T., Polyzotis, N. *COLT: Continuous On-Line Tuning.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142592)
+- **[Foundational]** Åström, K. J., Wittenmark, B. *Adaptive Control.* Addison-Wesley, 2nd ed., 1995. — [DBLP search](https://dblp.org/search?q=Astrom%20Wittenmark%20Adaptive%20Control)
+- **[Survey]** Hazan, E. *Introduction to Online Convex Optimization.* Foundations and Trends in Optimization, 2016. — [DOI](https://doi.org/10.1561/2400000013)
+
+## 10. Worked Example
+
+A bang-bang auto-indexer drops an index when its measured benefit falls below a threshold $\theta=100$ ms saved/min and rebuilds it above. True benefit sits right at $\hat b=100$, but each measurement carries noise $\sigma=15$ ms (one-minute samples).
+
+**No hysteresis.** Each minute the noisy reading $b_t=100+\varepsilon_t$ straddles $\theta$, so $P(\text{flip}) \approx 0.5$ per step: the controller creates/drops on roughly half of all minutes — pure thrash driven by noise, not real change. Over an hour: $\approx 30$ build/drop cycles, each costing real I/O and latency spikes.
+
+**With a deadband** $[\theta-h,\theta+h]$, $h=2\sigma=30$: drop only below 70, build only above 130. Since the true mean is 100 and $|b_t-100|>30$ has probability $\approx 2(1-\Phi(2))\approx 0.046$, the expected flips per hour fall from $\approx 30$ to $\approx 0.046\times 60\approx 3$ — and consecutive same-direction crossings are needed to actually toggle, driving it near zero.
+
+The cost: responsiveness. A *genuine* drift of $+25$ ms now sits inside the band and goes unacted-upon until it exceeds $30$ — illustrating the staleness-vs-stability tradeoff: $h$ must exceed noise amplitude $\sigma$ to kill chatter but is paid for in delayed reaction to real change.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

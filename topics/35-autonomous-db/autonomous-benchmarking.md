@@ -51,12 +51,22 @@ There is no algorithmic "upper bound" here in the complexity sense; the achievab
 - Cost-aware metrics that internalize action overhead and (in shared settings) cross-tenant externalities.
 
 ## 9. Key References
-- **[Foundational]** TPC. *TPC-C / TPC-H / TPC-DS Benchmark Specifications.* Transaction Processing Performance Council.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019.
-- **[Foundational]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* PVLDB, 2013.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** M. Dudík, J. Langford, L. Li. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011.
+- **[Foundational]** TPC. *TPC-C / TPC-H / TPC-DS Benchmark Specifications.* Transaction Processing Performance Council. — [TPC](https://www.tpc.org/)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300085)
+- **[Foundational]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2732240.2732246)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** M. Dudík, J. Langford, L. Li. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011. — [arXiv](https://arxiv.org/abs/1103.4601)
+
+## 10. Worked Example
+
+**Why a replayed trace mis-ranks agents.** Two tuners are compared on a fixed workload trace. Agent $\pi_A$ builds index $I$; agent $\pi_B$ does not. We log $\pi_A$ running, observing mean latency $40$ ms, and want to estimate $\pi_B$'s value by replay.
+
+The catch: under $\pi_A$, the *query optimizer rewrites plans to use $I$*, so the logged query mix and cardinalities differ from what $\pi_B$ would have seen. Naïve replay assigns $\pi_B$ the logged $40$ ms — but $\pi_B$ never built $I$, so its plans would be scans, say $70$ ms. The replay estimate is biased because the two policies induce **different state distributions** (positivity/overlap fails): the log has zero coverage of "no-$I$ plan on this query," so $V^{\pi_B}$ is **not identified** (§5).
+
+**Sample budget.** Suppose the true gap is $\Delta = V^{\pi_A}-V^{\pi_B} = 30$ ms with per-run noise $\sigma = 60$ ms. Distinguishing the two at fixed confidence needs
+$$n \;=\; \Omega\!\left(\frac{\sigma^2}{\Delta^2}\right) \;=\; \Omega\!\left(\frac{60^2}{30^2}\right) \;=\; \Omega(4)$$
+runs *per agent* under paired common-random-number seeds. Halving the gap to $\Delta=15$ quadruples the requirement to $\Omega(16)$ runs — the $1/\Delta^2$ blow-up that makes expensive DB experiments the practical barrier (§4–§5), and why a faithful what-if simulator (which restores coverage and lets regret-vs-clairvoyant be computed) is the lever in §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

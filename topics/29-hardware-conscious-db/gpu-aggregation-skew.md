@@ -45,12 +45,22 @@ Theory says decomposable aggregation is skew-independent at $O(\log n)$ depth. I
 - Cost-model integration so the query optimizer picks hash vs sort vs hybrid from cardinality/skew estimates.
 
 ## 9. Key References
-- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD, 2020. (Crystal operator library.)
-- **[SOTA]** T. Karnagel, R. Mueller, G. Lohman, et al. *Optimizing GPU-accelerated Group-By and Aggregation.* ADMS @ VLDB, 2015.
-- **[SOTA]** B. Rui, Y.-C. Tu. *Fast Equi-Join Algorithms on GPUs: Design and Implementation* / hash-aggregation studies. (GPU contention analysis.)
-- **[Foundational]** G. Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993. (Partial aggregation, decomposable aggregates.)
-- **[Survey]** S. Breß, M. Heimel, N. Siegmund, et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014.
-- **[Foundational]** S. Williams, A. Waterman, D. Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009.
+- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics.* SIGMOD, 2020. (Crystal operator library.) — [DOI](https://doi.org/10.1145/3318464.3380595)
+- **[SOTA]** T. Karnagel, R. Mueller, G. Lohman, et al. *Optimizing GPU-accelerated Group-By and Aggregation.* ADMS @ VLDB, 2015. — [DBLP](https://dblp.org/rec/conf/vldb/KarnagelML15.html)
+- **[SOTA]** R. Rui, Y.-C. Tu. *Fast Equi-Join Algorithms on GPUs: Design and Implementation.* SSDBM, 2017. (GPU contention analysis.) — [DOI](https://doi.org/10.1145/3085504.3085521)
+- **[Foundational]** G. Graefe. *Query Evaluation Techniques for Large Databases.* ACM Computing Surveys, 1993. (Partial aggregation, decomposable aggregates.) — [DOI](https://doi.org/10.1145/152610.152611)
+- **[Survey]** S. Breß, M. Heimel, N. Siegmund, et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-45761-0_1)
+- **[Foundational]** S. Williams, A. Waterman, D. Patterson. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+
+## 10. Worked Example
+
+Take $n = 16$ tuples over $k = 3$ keys $\{A, B, C\}$ computing `SUM`, with heavy skew: $A$ appears 12 times, $B$ twice, $C$ twice, so $\rho = n_1/n = 12/16 = 0.75$ (Zipfian-like).
+
+**Naive global atomics:** every tuple does one `atomicAdd` into a 3-slot table. The 12 updates to $A$ all target one memory location and serialize, giving critical-path depth $D = \Omega(\rho n) = 12$ — the other slots finish in ~2 steps but cannot help the hot key.
+
+**Warp pre-aggregation** with $p = 4$ lanes: partition the 16 tuples into 4 lanes of 4 tuples each. Each lane folds its $A$-tuples locally first. If $A$'s 12 occurrences split as $3,3,3,3$ across lanes, each lane produces one partial sum, then a final reduction combines 4 partials. Hot-key depth drops to $D = \Theta(\log p + n_1/p) = \log 4 + 12/4 = 2 + 3 = 5$, and global atomic traffic to the hot slot falls from 12 writes to 4.
+
+Work stays $\Theta(n)=16$; only the depth — and thus the wall-clock cliff under skew — improves.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

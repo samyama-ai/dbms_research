@@ -46,12 +46,29 @@ The relational MPC theory gives clean load bounds, but **does not capture spatia
 - Integration with moving-object / streaming data (continuous distributed joins).
 
 ## 9. Key References
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication steps for parallel query processing.* PODS, 2013/2014.
-- **[SOTA]** J. Yu, J. Wu, M. Sarwat. *GeoSpark: A cluster computing framework for processing large-scale spatial data.* SIGSPATIAL, 2015 (Apache Sedona).
-- **[SOTA]** A. Eldawy, M. F. Mokbel. *SpatialHadoop: A MapReduce framework for spatial data.* ICDE, 2015.
-- **[SOTA]** D. Xie, F. Li, B. Yao, G. Li, L. Zhou, M. Guo. *Simba: Efficient in-memory spatial analytics.* SIGMOD, 2016.
-- **[SOTA]** X. Hu, K. Yi. *Output-optimal massively parallel algorithms for similarity joins.* ACM TODS, 2019.
-- **[Survey]** A. Eldawy, M. F. Mokbel. *The era of big spatial data.* PVLDB tutorial / survey, 2016.
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication steps for parallel query processing.* PODS, 2013/2014. — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** J. Yu, J. Wu, M. Sarwat. *GeoSpark: A cluster computing framework for processing large-scale spatial data.* SIGSPATIAL, 2015 (Apache Sedona). — [DOI](https://doi.org/10.1145/2820783.2820860)
+- **[SOTA]** A. Eldawy, M. F. Mokbel. *SpatialHadoop: A MapReduce framework for spatial data.* ICDE, 2015. — [DOI](https://doi.org/10.1109/ICDE.2015.7113382)
+- **[SOTA]** D. Xie, F. Li, B. Yao, G. Li, L. Zhou, M. Guo. *Simba: Efficient in-memory spatial analytics.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915237)
+- **[SOTA]** X. Hu, K. Yi. *Output-optimal massively parallel algorithms for similarity joins.* ACM TODS, 2019. — [DOI](https://doi.org/10.1145/3311967)
+- **[Survey]** A. Eldawy, M. F. Mokbel. *The era of big spatial data.* PVLDB tutorial / survey, 2016. — [DOI](https://doi.org/10.14778/3137765.3137828)
+
+## 10. Worked Example
+
+Partition a region into a $2\times2$ grid of cells $c_1,c_2,c_3,c_4$ and join $R\bowtie_\cap S$ across $p=2$ workers. Suppose per-cell input counts (after replicating boundary objects) are:
+
+| cell | $|R_c|$ | $|S_c|$ | pairwise cost $|R_c|\cdot|S_c|$ |
+|------|------|------|------|
+| $c_1$ (downtown) | 400 | 500 | 200{,}000 |
+| $c_2$ | 20 | 30 | 600 |
+| $c_3$ | 10 | 10 | 100 |
+| $c_4$ (ocean) | 2 | 1 | 2 |
+
+Total candidate cost $= 200{,}702$, dominated by the single hot cell $c_1$ (99.7%). A naive round-robin assignment ($\{c_1,c_3\}$ to worker 1, $\{c_2,c_4\}$ to worker 2) gives loads $200{,}100$ vs. $602$ — worker 1 is a **straggler**, makespan $\approx 200{,}100$.
+
+Optimal bin-packing of *whole* cells can do no better, since $c_1$ alone is $200{,}000$: makespan $\ge \max_c(|R_c||S_c|) = 200{,}000$. The only way below that bound is to **split $c_1$ itself** (e.g., partition its $R$ points across both workers and broadcast its $S$ points), illustrating the $\Omega(\sqrt{\mathrm{OUT}})$ single-cell barrier and the replication-vs-balance tension of Sections 5–6.
+
+**Duplicate avoidance:** an $R$–$S$ pair whose objects both straddle into $c_1$ and $c_2$ is emitted only by the cell containing the reference point (top-left of the MBR-intersection), so it is reported exactly once with no cross-worker talk.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

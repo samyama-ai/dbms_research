@@ -48,12 +48,20 @@ With a calibrated benefit estimator and known consultation cost $c_h$, **Chow's 
 - Tie-in with adversarial robustness: deferral as a defense against crafted workloads.
 
 ## 9. Key References
-- **[Foundational]** C. K. Chow. *On Optimum Recognition Error and Reject Tradeoff.* IEEE Trans. Information Theory, 1970.
-- **[SOTA]** H. Mozannar, D. Sontag. *Consistent Estimators for Learning to Defer to an Expert.* ICML, 2020.
-- **[Foundational]** S. Wachter, B. Mittelstadt, C. Russell. *Counterfactual Explanations Without Opening the Black Box.* Harvard JOLT, 2018.
-- **[Foundational]** S. Lundberg, S.-I. Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS, 2017.
-- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** C. K. Chow. *On Optimum Recognition Error and Reject Tradeoff.* IEEE Trans. Information Theory, 1970. — [DOI](https://doi.org/10.1109/TIT.1970.1054406)
+- **[SOTA]** H. Mozannar, D. Sontag. *Consistent Estimators for Learning to Defer to an Expert.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2006.01862)
+- **[Foundational]** S. Wachter, B. Mittelstadt, C. Russell. *Counterfactual Explanations Without Opening the Black Box.* Harvard JOLT, 2018. — [arXiv](https://arxiv.org/abs/1711.00399)
+- **[Foundational]** S. Lundberg, S.-I. Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1705.07874)
+- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+**Chow's rule for an index recommendation.** The agent proposes dropping an "unused" index. Its calibrated estimator says the action's net benefit is a random variable $B$ with $\mathbb{E}[B] = +2$ (units: latency saved) but a fat left tail — with probability $0.15$ the index is actually used by a rare report and dropping it costs $-40$. The expected utility of *acting* is $\mathbb{E}[B]=2$; the utility of *abstaining* (asking the DBA) is $0$ minus a consultation cost $c_h = 0.5$, i.e. $-0.5$.
+
+Chow's rule says *act* iff acting beats abstaining by the consultation cost margin. Here acting ($2$) does beat abstaining ($-0.5$) on the mean — but the deferral trigger should use a *risk-aware* threshold. With a conformal $90\%$ lower bound on benefit $\underline{B} = -40 < 0$, the action can cause harm with non-trivial probability, so a CVaR-style rule defers: expected shortfall $\mathrm{CVaR}_{0.15}(B) = -40$, far below $-c_h$. Decision: **abstain, ask the human**. 
+
+Contrast a clearly-safe action ($\mathbb{E}[B]=2$, $\underline{B}=+1.5$): lower bound positive, so the agent *acts autonomously*. The gap between the two cases is exactly the distribution-free interval width — which conformal guarantees only under exchangeability, the assumption that breaks under workload shift.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

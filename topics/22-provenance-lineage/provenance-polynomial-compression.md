@@ -27,11 +27,23 @@ Amarilli, Bourhis, Capelli, Monet, and Senellart actively push **provenance circ
 Articulated directions: unconditional lower bounds for d-DNNF/SDD provenance of unsafe queries; compression theory for recursive and aggregate provenance; instance-optimal (not just worst-case) factorization; adaptive/lossy provenance compression with accuracy guarantees; and connections between provenance circuit size and the broader arithmetic-circuit-complexity frontier.
 
 ## 9. Key References
-- **[Foundational]** D. Olteanu, J. Závodný. *Factorised Representations of Query Results.* ACM TODS, 2015.
-- **[Foundational]** A. Jha, D. Suciu. *Knowledge Compilation Meets Database Theory.* ICDT, 2011 / ACM TODS.
-- **[SOTA]** A. Amarilli, P. Bourhis, P. Senellart. *Provenance Circuits for Trees and Treelike Instances.* ICALP, 2015.
-- **[SOTA]** A. Amarilli, F. Capelli, M. Monet, P. Senellart. *Connecting Knowledge Compilation Classes and Width Parameters.* Theory of Computing Systems, 2020.
-- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012.
+- **[Foundational]** D. Olteanu, J. Závodný. *Factorised Representations of Query Results.* ACM TODS, 2015. — [DOI](https://doi.org/10.1145/2656335), [arXiv](https://arxiv.org/abs/1104.0867)
+- **[Foundational]** A. Jha, D. Suciu. *Knowledge Compilation Meets Database Theory.* ICDT, 2011 / ACM TODS. — [DOI](https://doi.org/10.1145/1938551.1938574)
+- **[SOTA]** A. Amarilli, P. Bourhis, P. Senellart. *Provenance Circuits for Trees and Treelike Instances.* ICALP, 2015. — [DOI](https://doi.org/10.1007/978-3-662-47666-6_5), [arXiv](https://arxiv.org/abs/1511.08723)
+- **[SOTA]** A. Amarilli, F. Capelli, M. Monet, P. Senellart. *Connecting Knowledge Compilation Classes and Width Parameters.* Theory of Computing Systems, 2020. — [DOI](https://doi.org/10.1007/s00224-019-09930-2), [arXiv](https://arxiv.org/abs/1811.02944)
+- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+
+## 10. Worked Example
+
+Take the path-join query $Q(z) \leftarrow R(z,x), S(x,y), T(y,w)$ over relations each with $n$ tuples sharing a common middle value. Suppose $R$ has tuples annotated $r_1,\dots,r_a$, $S$ has $s_1,\dots,s_b$, $T$ has $t_1,\dots,t_c$, all joining through one hub value. The flat how-provenance polynomial enumerates every derivation:
+$$\Phi \;=\; \sum_{i,j,k} r_i\, s_j\, t_k,$$
+which has $a\cdot b\cdot c$ monomials — $n^3$ when $a=b=c=n$. Writing it out is cubic.
+
+**Factorisation.** Because the query is acyclic, distributivity collapses it:
+$$\Phi \;=\; \Big(\textstyle\sum_i r_i\Big)\cdot\Big(\sum_j s_j\Big)\cdot\Big(\sum_k t_k\Big),$$
+a circuit of just $a+b+c = 3n$ leaves and $2$ product gates — size $O(n)$, *linear*. This matches the factorisation-width bound: this query is **hierarchical** ($s^\uparrow(Q)=1$), so provenance compresses to $O(|D|)$.
+
+**Contrast.** The non-hierarchical query $H \leftarrow R(x), S(x,y), T(y)$ has no read-once factorisation: variables $x$ and $y$ interleave so no variable order avoids repetition, and Jha–Suciu show its lineage needs **super-polynomial OBDD** size — exactly the unsafe/#P-hard side of the Dalvi–Suciu dichotomy. The $n^3 \to 3n$ collapse is possible *only* on the hierarchical side.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

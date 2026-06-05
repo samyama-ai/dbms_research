@@ -36,11 +36,22 @@ Active threads: learned/cost-based tiling extending JSON Tiles to *query-adaptiv
 Provable-ratio approximation for the coupled objective; online/streaming layout adaptation with bounded reorg amortization; unifying factorized-DB variable-order theory with discrete per-field layout; cost models that incorporate compression and vectorized-scan effects; benchmarks with realistic irregularity (heavy-tailed path frequencies).
 
 ## 9. Key References
-- **[SOTA]** Durner, Leis, Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021.
-- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010.
-- **[Foundational]** Olteanu, Schleich. *Factorized Databases.* SIGMOD Record, 2016.
-- **[SOTA]** Tahara, Diamond, Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014.
-- **[Survey]** Idreos et al. *The Periodic Table of Data Structures.* IEEE Data Eng. Bulletin, 2018.
+- **[SOTA]** Durner, Leis, Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452809)
+- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920886)
+- **[Foundational]** Olteanu, Schleich. *Factorized Databases.* SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+- **[SOTA]** Tahara, Diamond, Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612183)
+- **[Survey]** Idreos et al. *The Periodic Table of Data Structures.* IEEE Data Eng. Bulletin, 2018. — [DBLP search](https://dblp.org/search?q=The%20Periodic%20Table%20of%20Data%20Structures%20Idreos)
+
+## 10. Worked Example
+
+A collection of 1000 event documents has three paths with fill rates: `user.id` ($\phi=1.0$, scalar), `tags[]` (repeated, $\phi=0.9$, avg 4 elements), and `debug.trace` ($\phi=0.02$, large blob). A workload of two queries: $q_1$ = "scan `user.id`" ($f=100$), $q_2$ = "filter on `tags[]`" ($f=20$).
+
+Per-path layout decision under a simple cost model (cost $\approx$ bytes scanned):
+- `user.id`: dense and frequently scanned. **Columnar** — $q_1$ reads one tight 1000-value column instead of parsing 1000 whole documents. Saves $\approx 100 \times (|doc| - 4\text{B})$.
+- `tags[]`: repeated, fairly dense, queried. **Columnar with repetition levels** (Dremel striping) so $q_2$ avoids record assembly until needed.
+- `debug.trace`: $\phi=0.02$, never queried. Columnarizing wastes space on 980 nulls. **Native blob inline** — the "tail" residual, exactly JSON Tiles' frequent/tile vs. rare/inline split.
+
+Now the coupling bite: if a query joined `tags[]` back to its parent `user.id`, shredding `tags` into a child table would add a reconstruction join, changing `user.id`'s best layout too. That non-separability is what makes the global assignment NP-hard (section 5), so systems settle for this per-path greedy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

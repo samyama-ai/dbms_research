@@ -53,12 +53,23 @@ This is **empirically-open**: there is no agreed analytical model that predicts,
 
 ## 9. Key References
 
-- **[SOTA]** Tirmazi, M. et al. *Cheetah: Accelerating Database Queries with Switch Pruning.* SIGMOD, 2020.
-- **[SOTA]** Jin, X. et al. *NetChain: Scale-Free Sub-RTT Coordination.* NSDI, 2018.
-- **[SOTA]** Barthels, C. et al. *Distributed Join Algorithms on Thousands of Cores (RDMA radix join).* VLDB, 2017.
-- **[SOTA]** Phothilimthana, P. M. et al. *Floem: A Programming System for NIC-Accelerated Network Applications.* OSDI, 2018.
-- **[Foundational]** Shmoys, D. B., Tardos, É. *An Approximation Algorithm for the Generalized Assignment Problem.* Mathematical Programming, 1993.
-- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999.
+- **[SOTA]** Tirmazi, M. et al. *Cheetah: Accelerating Database Queries with Switch Pruning.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/2004.05076)
+- **[SOTA]** Jin, X. et al. *NetChain: Scale-Free Sub-RTT Coordination.* NSDI, 2018. — [arXiv](https://arxiv.org/abs/1802.08236)
+- **[SOTA]** Barthels, C. et al. *Distributed Join Algorithms on Thousands of Cores (RDMA radix join).* VLDB, 2017. — [DBLP](https://dblp.org/rec/journals/pvldb/BarthelsAHSM17.html)
+- **[SOTA]** Phothilimthana, P. M. et al. *Floem: A Programming System for NIC-Accelerated Network Applications.* OSDI, 2018. — [DBLP](https://dblp.org/rec/conf/osdi/PhothilimthanaL18.html)
+- **[Foundational]** Shmoys, D. B., Tardos, É. *An Approximation Algorithm for the Generalized Assignment Problem.* Mathematical Programming, 1993. — [DOI](https://doi.org/10.1007/BF01585178)
+- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999. — [DOI](https://doi.org/10.1006/jcss.1997.1545)
+
+## 10. Worked Example
+
+A DPU sits on the data path; we decide whether to offload a single **filter** of selectivity $\rho$ over $N = 10^6$ tuples of $s = 64$ bytes each. PCIe link bandwidth $B_{\text{link}} = 16$ GB/s, host scan rate $t_h = 4$ ns/tuple, DPU scan rate $t_d = 12$ ns/tuple (the DPU's weaker ARM core is $3\times$ slower per tuple), fixed control overhead $o_{\text{ctrl}} = 5\ \mu s$.
+
+Per the §2 inequality, offloading the filter avoids DMA-ing the $(1-\rho)N$ rejected tuples to the host.
+
+- **Saved host DMA** $= (1-\rho)\,N\,s / B_{\text{link}} = (1-\rho)\cdot 10^6 \cdot 64 / (16\times10^9)$ s $= (1-\rho)\cdot 4{,}000\ \mu s$.
+- **Added DPU scan** $= N\,t_d = 10^6 \cdot 12\text{ ns} = 12{,}000\ \mu s$, minus the host scan it replaces $N\,t_h = 4{,}000\ \mu s$, net $+8{,}000\ \mu s$.
+
+Break-even: $(1-\rho)\cdot 4{,}000 \ge 8{,}000 + 5$, i.e. $1-\rho \ge 2.0$ — impossible here. So with a $3\times$-slower DPU core, this filter **never** pays off: the device's compute deficit exceeds any DMA savings. Drop $t_d$ to $4.5$ ns/tuple and net DPU cost falls to $+500\ \mu s$, giving break-even at $\rho \le 0.875$ — high-drop filters now win, matching §4's "order-of-magnitude host-CPU reduction at high drop selectivity."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

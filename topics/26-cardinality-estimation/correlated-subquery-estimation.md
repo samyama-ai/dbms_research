@@ -56,12 +56,20 @@ Once unnested, the semijoin/antijoin output is bounded by $\min(|R|, |R\bowtie S
 - Robust (bounded-error) estimators that guarantee plans never blow up, even when point estimates are off.
 
 ## 9. Key References
-- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query.* ACM TODS, 1982.
-- **[Foundational]** U. Dayal. *Of Nests and Trees: A Unified Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers.* VLDB, 1987.
-- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW, 2015.
-- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019.
-- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
+- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query.* ACM TODS, 1982. — [DOI](https://doi.org/10.1145/319732.319745)
+- **[Foundational]** U. Dayal. *Of Nests and Trees: A Unified Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers.* VLDB, 1987. — [DBLP](https://dblp.org/rec/conf/vldb/Dayal87.html)
+- **[SOTA]** T. Neumann, A. Kemper. *Unnesting Arbitrary Queries.* BTW, 2015. — [DBLP](https://dblp.org/rec/conf/btw/0001K15.html)
+- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+
+## 10. Worked Example
+
+Take `SELECT * FROM R WHERE EXISTS (SELECT 1 FROM S WHERE S.k = R.k)`, the semijoin $R \ltimes S$. Let $|R| = 100$ with key column $k$ taking values $\{1,\dots,10\}$, $10$ rows each. Suppose $S$ has $50$ rows but every $S.k = 1$ (extreme skew). The true answer: only $R$'s $10$ rows with $k=1$ survive, so $|R \ltimes S| = 10$.
+
+Now watch a typical optimizer estimate. It treats the semijoin selectivity as the fraction of $R$-keys that appear in $S$. Assuming **uniformity** over $S$'s distinct keys, it sees $|\pi_k(S)|$ — and if its NDV estimate for $S.k$ is, say, $5$ (sampling missed the total skew), it guesses $5/10 = 0.5$ of $R$'s distinct keys match, predicting $\hat{c} = 0.5 \times 100 = 50$.
+
+True $= 10$, estimate $= 50$: a $5\times$ over-estimate, q-error $5$. The error is entirely in the **degree distribution** of $S.k$ — invisible to a per-relation NDV synopsis. If three such correlated subqueries nest, the multiplicative model gives end-to-end q-error up to $5^3 = 125$, the catastrophic blow-up Section 2 warns about.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

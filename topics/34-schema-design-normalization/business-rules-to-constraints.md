@@ -40,12 +40,24 @@ Active directions: **NL-to-SQL / NL-to-constraint** semantic parsing now extende
 - Benchmarks pairing prose rules with ground-truth formal constraints for evaluation.
 
 ## 9. Key References
-- **[Foundational]** W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional Functional Dependencies for Capturing Data Inconsistencies.* ACM TODS, 2008.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** C. Beeri, M. Y. Vardi. *A Proof Procedure for Data Dependencies.* JACM, 1984.
-- **[Foundational]** Object Management Group. *Semantics of Business Vocabulary and Business Rules (SBVR).* OMG Specification, 2008.
-- **[SOTA]** X. Chu, I. F. Ilyas, P. Papotti. *Discovering Denial Constraints.* PVLDB, 2013.
-- **[Survey]** W. Fan, F. Geerts. *Foundations of Data Quality Management.* Morgan & Claypool, 2012.
+- **[Foundational]** W. Fan, F. Geerts, X. Jia, A. Kementsietsidis. *Conditional Functional Dependencies for Capturing Data Inconsistencies.* ACM TODS, 2008. — [DOI](https://doi.org/10.1145/1366102.1366103)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** C. Beeri, M. Y. Vardi. *A Proof Procedure for Data Dependencies.* JACM, 1984. — [DOI](https://doi.org/10.1145/1634.1636)
+- **[Foundational]** Object Management Group. *Semantics of Business Vocabulary and Business Rules (SBVR).* OMG Specification, 2008. — [OMG](https://www.omg.org/spec/SBVR/)
+- **[SOTA]** X. Chu, I. F. Ilyas, P. Papotti. *Discovering Denial Constraints.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536258.2536262)
+- **[Survey]** W. Fan, F. Geerts. *Foundations of Data Quality Management.* Morgan & Claypool, 2012. — [DBLP search](https://dblp.org/search?q=Foundations+of+Data+Quality+Management+Fan+Geerts)
+
+## 10. Worked Example
+
+Take the prose rule *"a discount may not exceed 30% unless approved by a manager"* over `Order(id, discount, approved_by_mgr)`.
+
+**Translation.** This becomes a denial constraint forbidding the bad combination:
+$$\forall t \in \text{Order}:\ \neg\big(t.\text{discount} > 0.30 \ \wedge\ t.\text{approved\_by\_mgr} = \text{false}\big).$$
+In SQL: `CHECK (discount <= 0.30 OR approved_by_mgr = TRUE)`.
+
+**Counterexample certification.** The witness state the rule must forbid is e.g. `(7, 0.40, false)`; the chase/checker confirms the CHECK rejects it, while `(8, 0.40, true)` and `(9, 0.25, false)` are accepted — matching intent.
+
+**Redundancy / minimality.** Suppose a second rule "no discount above 50%" yields $\neg(t.\text{discount} > 0.50)$. Does the first imply the second? No — the first permits `discount = 0.60` when `approved_by_mgr = true`, so neither subsumes the other and both stay in the minimal cover. But adding $\neg(t.\text{discount} > 0.35 \wedge \neg\text{mgr})$ *would* be implied by the first (every state it forbids is already forbidden), so the cover drops it. This implication test is exactly the chase-based check that governs section 2's minimal-cover step.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,11 +46,26 @@ Each *component* (static submodular selection, online weighted caching) is close
 - Workload-drift-robust selection (re-selecting views without thrashing).
 
 ## 9. Key References
-- **[Foundational]** Harinarayan, V., Rajaraman, A., Ullman, J. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[Foundational]** Feige, U. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* FOCS, 2007.
-- **[SOTA]** Ngo, H., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* JACM, 2018.
+- **[Foundational]** Harinarayan, V., Rajaraman, A., Ullman, J. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** Feige, U. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* FOCS, 2007. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[SOTA]** Ngo, H., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* JACM, 2018. — [DOI](https://doi.org/10.1145/3180143)
+
+## 10. Worked Example
+
+**Greedy view selection on a tiny cube.** A sales cube over dimensions {Product, Store, Time} has a small lattice of candidate views with these row counts (the recompute cost of answering a query equals the size of the smallest materialized ancestor):
+
+| View | Rows |
+|------|------|
+| $v_0$ = (P,S,T) base | 6,000,000 |
+| $v_1$ = (P,S) | 800,000 |
+| $v_2$ = (P,T) | 100,000 |
+| $v_3$ = (none) total | 1 |
+
+The base $v_0$ is always materialized (cost 0 to keep). We may materialize **one** extra view to speed every query. Greedy picks the view with the largest *benefit* = (rows saved per dependent query) × (#queries served). Materializing $v_2$ lets queries on (P,T) and (T) read $100{,}000$ rows instead of $6{,}000{,}000$ — benefit $\approx 5.9\text{M}$ per query over $2$ views $= 11.8\text{M}$. Materializing $v_1$ gives $(6\text{M}-0.8\text{M})\times 2 = 10.4\text{M}$. Greedy picks $v_2$.
+
+By Nemhauser–Wolsey–Fisher, because this benefit function is monotone submodular, greedy is within $1 - 1/e \approx 0.63$ of the optimal $k$-view selection; by Feige, no poly-time algorithm beats $1-1/e$ unless P=NP — so $v_2$'s greedy choice is essentially optimal here. Add a per-GB egress price and the same cost-benefit greedy still holds its $(1-1/e)$ guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

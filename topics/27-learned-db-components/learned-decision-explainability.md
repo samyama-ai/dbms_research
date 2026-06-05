@@ -53,12 +53,20 @@ Directions: constrained/interpretable-by-design optimizers (Bao, hint-steering) 
 
 ## 9. Key References
 
-- **[Foundational]** Lundberg, Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS 2017.
-- **[Foundational]** Koh, Liang. *Understanding Black-box Predictions via Influence Functions.* ICML 2017.
-- **[SOTA]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV 2017.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
-- **[Foundational]** Shapley. *A Value for n-Person Games.* In Contributions to the Theory of Games, 1953.
-- **[Survey]** Sundararajan, Taly, Yan. *Axiomatic Attribution for Deep Networks (Integrated Gradients).* ICML 2017.
+- **[Foundational]** Lundberg, Lee. *A Unified Approach to Interpreting Model Predictions (SHAP).* NeurIPS 2017. — [arXiv](https://arxiv.org/abs/1705.07874)
+- **[Foundational]** Koh, Liang. *Understanding Black-box Predictions via Influence Functions.* ICML 2017. — [arXiv](https://arxiv.org/abs/1703.04730)
+- **[SOTA]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Shapley. *A Value for n-Person Games.* In Contributions to the Theory of Games, 1953. — [DOI](https://doi.org/10.1515/9781400881970-018)
+- **[Survey]** Sundararajan, Taly, Yan. *Axiomatic Attribution for Deep Networks (Integrated Gradients).* ICML 2017. — [arXiv](https://arxiv.org/abs/1703.01365)
+
+## 10. Worked Example
+
+A Bao-style optimizer chooses among three hint-sets for a join query; a gradient-boosted model predicts plan cost from three features: $x_1$ = estimated rows of relation $A$, $x_2$ = join selectivity, $x_3$ = whether an index on $B$ exists. For a query it picks **hint-set 2** (force nested-loop), which runs in 9s instead of the optimal 1.2s — a regression. We attribute the cost prediction via Shapley values. Suppose the model's predicted cost (log-seconds) over feature subsets $S$:
+
+$$f(\emptyset)=1.0,\; f(\{1\})=1.0,\; f(\{2\})=2.0,\; f(\{3\})=1.5,\; f(\{1,2,3\})=2.2.$$
+
+Feature 2 (selectivity) alone lifts the prediction from $1.0\to 2.0$. Its Shapley contribution, averaging marginal gains over orderings, dominates: $\phi_2 \approx +1.0$, versus $\phi_1\approx 0$, $\phi_3\approx +0.2$. The explanation: "the model predicted nested-loop was cheap *because* it read selectivity as low ($x_2$)." A DBA checks the true selectivity, finds the estimate was 100× off, and pins the regression to a cardinality-estimation error — not a planning bug. Exact $\phi$ over all $2^3=8$ subsets is cheap here, but grows as $\#$P-hard with feature count, motivating KernelSHAP sampling.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

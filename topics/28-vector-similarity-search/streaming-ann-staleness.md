@@ -53,11 +53,17 @@ The dynamic LSH upper bounds are tight up to the approximation exponent in theor
 
 ## 9. Key References
 
-- **[SOTA]** Aditi Singh, Suhas Jayaram Subramanya, Ravishankar Krishnaswamy, Harsha Vardhan Simhadri. *FreshDiskANN: A Fast and Accurate Graph-Based ANN Index for Streaming Similarity Search.* arXiv:2105.09613, 2021.
-- **[SOTA]** Yuming Xu et al. *SPFresh: Incremental In-Place Update for Billion-Scale Vector Search.* SOSP, 2023.
-- **[Foundational]** Alexandr Andoni, Piotr Indyk. *Near-Optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions.* FOCS / CACM, 2006/2008.
-- **[Foundational]** Yu A. Malkov, D. A. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs.* IEEE TPAMI, 2020.
-- **[Foundational]** Kasper Green Larsen. *The Cell Probe Complexity of Dynamic Range Counting.* STOC, 2012.
+- **[SOTA]** Aditi Singh, Suhas Jayaram Subramanya, Ravishankar Krishnaswamy, Harsha Vardhan Simhadri. *FreshDiskANN: A Fast and Accurate Graph-Based ANN Index for Streaming Similarity Search.* arXiv:2105.09613, 2021. — [arXiv](https://arxiv.org/abs/2105.09613)
+- **[SOTA]** Yuming Xu et al. *SPFresh: Incremental In-Place Update for Billion-Scale Vector Search.* SOSP, 2023. — [arXiv](https://arxiv.org/abs/2410.14452)
+- **[Foundational]** Alexandr Andoni, Piotr Indyk. *Near-Optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions.* FOCS / CACM, 2006/2008. — [DOI](https://doi.org/10.1145/1327452.1327494)
+- **[Foundational]** Yu A. Malkov, D. A. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs.* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[Foundational]** Kasper Green Larsen. *The Cell Probe Complexity of Dynamic Range Counting.* STOC, 2012. — [arXiv](https://arxiv.org/abs/1105.5933)
+
+## 10. Worked Example
+
+Consider a single-node graph index with ingest rate $\lambda = 2{,}000$ vectors/s and a FreshDiskANN-style background merge that runs every $\Delta = 30$ s. Updates land first in an in-memory delta index, then merge into the base Vamana graph. The worst-case staleness equals the merge period plus one query's drain time: $\sigma_{\max} \approx \Delta = 30$ s, so a point ingested at $t$ is guaranteed visible to queries by $t + 30$ s. If the SLA demands $\tau = 10$ s, we must shorten the merge interval to $\Delta \le 10$ s, tripling merge frequency.
+
+Cost check: each insert triggers local edge repair touching $\approx R = 64$ neighbors at $O(R\log n)$ work. With $n = 10^8$, $\log_2 n \approx 27$, that is $\approx 64 \times 27 \approx 1{,}700$ distance ops/insert, or $\lambda \times 1{,}700 \approx 3.4\times10^6$ ops/s of repair load. Tightening $\tau$ from 30 s to 10 s does not change per-insert repair cost but triples merge overhead and write amplification — the concrete (staleness vs. throughput) tension this problem seeks to bound formally.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

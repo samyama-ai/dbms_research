@@ -44,11 +44,25 @@ Directions: formal/property-based specification of rate and time-weighted semant
 - Integration with downsampling so rollups preserve time-weighting (avoid double-weighting).
 
 ## 9. Key References
-- **[SOTA]** Tangwongsan, Hirzel, Schneider, Wu. *General Incremental Sliding-Window Aggregation.* VLDB, 2015.
-- **[SOTA]** TimescaleDB Toolkit. *Time-Weighted Average / Two-Step Aggregates.* (project documentation), 2021–.
-- **[Foundational]** Brewer (Prometheus project). *PromQL `rate()`/`increase()` semantics.* Prometheus documentation, 2015–.
-- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017.
-- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. (mergeable vectorized aggregation)
+- **[SOTA]** Tangwongsan, Hirzel, Schneider, Wu. *General Incremental Sliding-Window Aggregation.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** TimescaleDB Toolkit. *Time-Weighted Average / Two-Step Aggregates.* (project documentation), 2021–. *(unverified)*
+- **[Foundational]** Prometheus project. *PromQL `rate()`/`increase()` semantics.* Prometheus documentation, 2015–. *(unverified)*
+- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017. — [DOI](https://doi.org/10.1109/TKDE.2017.2740932)
+- **[Foundational]** Boncz, Zukowski, Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. (mergeable vectorized aggregation) — [DBLP](https://dblp.uni-trier.de/rec/conf/cidr/BonczZN05.html)
+
+## 10. Worked Example
+
+A thermostat reports temperature irregularly over the window $[0,10]$ (seconds): $(t,v) = (0,20),(2,20),(8,30)$. Compute the average temperature two ways.
+
+**Naive (equal-weight) `avg`:** $\frac{20+20+30}{3}=23.33$ — wrong, because the $30$ reading covers a tiny slice of time but counts as one-third.
+
+**Time-weighted, LOCF interpolation:** each value holds until the next sample, extended to the window end:
+$$\int_0^{10}\hat v\,dt = 20\cdot(2-0)+20\cdot(8-2)+30\cdot(10-8)=40+120+60=220,$$
+so $\bar v_{tw}=220/10=\mathbf{22.0}$. The $20$ held for 8s, the $30$ for 2s — correctly down-weighting the brief spike.
+
+**Linear interpolation** changes the middle segment $[2,8]$ to a trapezoid $\frac{20+30}{2}\cdot6=150$ instead of $120$, giving $\int=40+150+60=250$, $\bar v_{tw}=25.0$ — a different answer from the *same data*, illustrating why the interpolation contract must be specified.
+
+**Mergeability:** splitting at $t=5$ requires each partial to keep its boundary point $(t_{\text{last}},v_{\text{last}})$ so the cross-boundary segment $[2,8]$ is stitched once, not double-counted — the integral-only state is not associative here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

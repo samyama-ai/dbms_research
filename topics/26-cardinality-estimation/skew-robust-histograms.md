@@ -50,12 +50,20 @@ V-optimal $\ell_2$: exact in $O(N^2 B)$ DP; $(1+\varepsilon)$-approx in $\tilde 
 - Drift-robust online histograms with formal regret against the best static histogram.
 
 ## 9. Key References
-- **[Foundational]** V. Poosala, Y. Ioannidis, P. Haas, E. Shekita. *Improved Histograms for Selectivity Estimation of Range Predicates.* SIGMOD, 1996.
-- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees (V-Optimal).* VLDB, 1998.
-- **[SOTA]** M. Garofalakis, A. Kumar. *Deterministic Wavelet Thresholding for Maximum-Error Metrics.* PODS, 2004.
-- **[SOTA]** S. Guha, N. Koudas, K. Shim. *Approximation and Streaming Algorithms for Histogram Construction Problems.* ACM TODS, 2006.
-- **[Foundational]** S. Muthukrishnan, V. Poosala, T. Suel. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT, 1999.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** V. Poosala, Y. Ioannidis, P. Haas, E. Shekita. *Improved Histograms for Selectivity Estimation of Range Predicates.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/233269.233342)
+- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees (V-Optimal).* VLDB, 1998. — [DBLP](https://dblp.org/rec/conf/vldb/JagadishKMPSS98)
+- **[SOTA]** M. Garofalakis, A. Kumar. *Deterministic Wavelet Thresholding for Maximum-Error Metrics.* PODS, 2004. — [DOI](https://doi.org/10.1145/1055558.1055582)
+- **[SOTA]** S. Guha, N. Koudas, K. Shim. *Approximation and Streaming Algorithms for Histogram Construction Problems.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1132863.1132873)
+- **[Foundational]** S. Muthukrishnan, V. Poosala, T. Suel. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_16)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Frequency vector over 6 values: $f=(100, 2, 3, 2, 50, 1)$ — two heavy values (100 at index 1, 50 at index 5) plus a light tail. Budget $B=3$ buckets.
+
+A plain **equi-width** histogram with 3 buckets $\{1,2\},\{3,4\},\{5,6\}$ stores bucket averages $51, 2.5, 25.5$. A point query for $f_2$ returns the bucket average $51$ vs. true $2$ — relative error $\approx 24\times$, because value 1's mass swamps the bucket.
+
+The **MCV + tail** split instead stores the top-2 heavy hitters *exactly* (Misra–Gries / Space-Saving finds $1{\to}100$, $5{\to}50$) and summarizes the residual tail $f_{\text{tail}}=(2,3,2,1)$ with the remaining $B-k=1$ uniform bucket of average $\tfrac{2+3+2+1}{4}=2$. Now $\hat f_2 = 2$ (exact, true 2) and $\hat f_1 = 100$ (exact). The $\ell_\infty$ residual on the tail is $\le \|f_{\text{tail}}\|_1/(B-k) = 8/1 = 8$, a *bounded* guarantee independent of how large the heavy values are — the defining skew-robustness that the equi-width histogram lacks.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

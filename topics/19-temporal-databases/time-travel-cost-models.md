@@ -39,12 +39,28 @@ The gap is **empirical, not a closed/open complexity gap**: optimal access metho
 - Optimizer integration so version pruning and as-of selectivity drive plan choice and partition/file skipping.
 
 ## 9. Key References
-- **[Foundational]** Becker, B., Gschwind, S., Ohler, T., Seeger, B., Widmayer, P. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 1996.
-- **[Foundational]** Lomet, D., Salzberg, B. *The Performance of a Multiversion Access Method (TSB-tree).* SIGMOD, 1990.
-- **[Foundational]** Selinger, P. G., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Armbrust, M., et al. *Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores.* VLDB, 2020.
-- **[SOTA]** *Apache Iceberg: Table Format Specification.* Project documentation, 2018–present. (snapshot/time-travel semantics)
-- **[Survey]** Salzberg, B., Tsotras, V. J. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999.
+- **[Foundational]** Becker, B., Gschwind, S., Ohler, T., Seeger, B., Widmayer, P. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 1996. — [DOI](https://doi.org/10.1007/s007780050028)
+- **[Foundational]** Lomet, D., Salzberg, B. *The Performance of a Multiversion Access Method (TSB-tree).* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93605.98744)
+- **[Foundational]** Selinger, P. G., et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Armbrust, M., et al. *Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415560)
+- **[SOTA]** *Apache Iceberg: Table Format Specification.* Project documentation, 2018–present. (snapshot/time-travel semantics) — [spec](https://iceberg.apache.org/spec/)
+- **[Survey]** Salzberg, B., Tsotras, V. J. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999. — [DOI](https://doi.org/10.1145/319806.319816)
+
+## 10. Worked Example
+
+A row's history in an MVCC/delta layout: key $k$ has 5 versions, each a small delta over the prior, with a fresh base snapshot only at version $1$:
+
+| version | txn time | op |
+|--|--|--|
+| $v_1$ | $t{=}100$ | base (full row) |
+| $v_2$ | $t{=}140$ | $+\Delta$ |
+| $v_3$ | $t{=}180$ | $+\Delta$ |
+| $v_4$ | $t{=}230$ | $+\Delta$ |
+| $v_5$ | $t{=}300$ | $+\Delta$ |
+
+An `AS OF t=200` query reconstructs the state visible at $200$: the live version is $v_3$ (since $180 \le 200 < 230$). In the delta layout, cost $\propto$ base $+ \sum$ deltas up to $v_3 = 1 + 2 = 3$ reads — read amplification grows with chain depth. In a copy-on-write snapshot layout, the same query reads one snapshot, cost $O(|v|)$, $1$ read but more storage.
+
+**As-of cardinality** is a *stabbing count*: $|\{r : \textsf{validfrom}(r) \le 200 < \textsf{validto}(r)\}|$. A static histogram built on the *current* (= $v_5$) population mis-estimates this, because the live tuple set at $t{=}200$ differs — illustrating §2's time-dependent selectivity, the core empirical gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

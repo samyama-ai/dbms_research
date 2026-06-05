@@ -46,12 +46,23 @@ Active directions: (1) **worst-case-optimal join sampling for cyclic queries** v
 - Tight anytime-valid running CIs for random-walk OLA.
 
 ## 9. Key References
-- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016 (extended: ACM TODS, 2019).
-- **[SOTA]** Y. Chen, K. Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT, 2020.
-- **[SOTA]** K. Zhao, R. Christensen, F. Li, X. Hu, K. Yi. *Random Sampling over Joins Revisited.* SIGMOD, 2018.
-- **[Foundational]** D. G. Horvitz, D. J. Thompson. *A Generalization of Sampling Without Replacement from a Finite Universe.* JASA, 1952.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008.
-- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016 (extended: ACM TODS, 2019). — [DOI](https://doi.org/10.1145/2882903.2915235), [TODS](https://doi.org/10.1145/3284551)
+- **[SOTA]** Y. Chen, K. Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT, 2020. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2020.7)
+- **[SOTA]** K. Zhao, R. Christensen, F. Li, X. Hu, K. Yi. *Random Sampling over Joins Revisited.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183739)
+- **[Foundational]** D. G. Horvitz, D. J. Thompson. *A Generalization of Sampling Without Replacement from a Finite Universe.* JASA, 1952. — [DOI](https://doi.org/10.1080/01621459.1952.10483446)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991), [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Take a 3-chain $R_1(A) \bowtie R_2(A,B) \bowtie R_3(B)$ and estimate `COUNT`. Say $|R_1| = 4$. We start a walk by picking a tuple $t_1 \in R_1$ uniformly, so $\Pr[t_1] = 1/4$. From $t_1$ there are $d_2(t_1) = 5$ matching tuples in $R_2$; pick one uniformly, $\Pr = 1/5$. From that $R_2$ tuple there are $d_3 = 2$ matches in $R_3$; pick one, $\Pr = 1/2$. The path probability is
+$$p(\gamma) = \tfrac14 \cdot \tfrac15 \cdot \tfrac12 = \tfrac{1}{40}.$$
+
+For a `COUNT`, $f(\gamma) = 1$ on every valid path, so each successful walk contributes the inverse probability:
+$$\hat\theta_{\text{walk}} = \frac{1}{p(\gamma)} = 40.$$
+Averaging $m$ such walks gives an unbiased estimate of $|R_1\bowtie R_2\bowtie R_3|$.
+
+Now suppose one $R_2$ tuple is a heavy hitter with $d_3 = 100$ instead of $2$: a walk through it has $p = \tfrac14\cdot\tfrac15\cdot\tfrac1{100} = \tfrac{1}{2000}$ and contributes $2000$ — a 50$\times$ spike. This single high-degree node blows up $\sum_\gamma f(\gamma)^2/p(\gamma)$, illustrating the skew-driven variance of Section 2 and why degree-aware biasing toward $p \propto f$ is needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

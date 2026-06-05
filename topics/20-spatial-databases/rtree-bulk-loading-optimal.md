@@ -38,11 +38,27 @@ Active threads: **learned spatial indexes** (Kraska, Kipf, Nathan, Ding lineage)
 - Provable guarantees for learned-partition bulk-loaders under bounded query-distribution drift.
 
 ## 9. Key References
-- **[Foundational]** I. Kamel, C. Faloutsos. *On Packing R-trees.* CIKM, 1993.
-- **[SOTA]** S. Leutenegger, M. Lopez, J. Edgington. *STR: A Simple and Efficient Algorithm for R-Tree Packing.* ICDE, 1997.
-- **[Foundational]** Y. García, M. López, S. Leutenegger. *A Greedy Algorithm for Bulk Loading R-trees (TGS).* ACM GIS, 1998.
-- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020.
-- **[SOTA]** J. Qi, G. Liu, C. S. Jensen, et al. *Effectively Learning Spatial Indices (RSMI / LISA-lineage).* PVLDB, 2020.
+- **[Foundational]** I. Kamel, C. Faloutsos. *On Packing R-trees.* CIKM, 1993. — [DOI](https://doi.org/10.1145/170088.170403)
+- **[SOTA]** S. Leutenegger, M. Lopez, J. Edgington. *STR: A Simple and Efficient Algorithm for R-Tree Packing.* ICDE, 1997. — [DOI](https://doi.org/10.1109/ICDE.1997.582015)
+- **[Foundational]** Y. García, M. López, S. Leutenegger. *A Greedy Algorithm for Bulk Loading R-trees (TGS).* ACM GIS, 1998. — [DBLP search](https://dblp.org/search?q=A+Greedy+Algorithm+for+Bulk+Loading+R-trees)
+- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380579), [arXiv](https://arxiv.org/abs/1912.01668)
+- **[SOTA]** J. Qi, G. Liu, C. S. Jensen, et al. *Effectively Learning Spatial Indices (RSMI / LISA-lineage).* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3407790.3407829)
+
+## 10. Worked Example
+
+**STR on 9 points, page capacity $B=3$.** Points: $(1,1),(2,5),(3,3),(4,8),(5,2),(6,6),(7,4),(8,9),(9,7)$, so $N=9$.
+
+STR builds $\lceil N/B\rceil = 3$ leaves, arranged as $\sqrt{3}\approx 1.7\to$ we use $P=\lceil\sqrt{N/B}\rceil=2$ vertical slices each holding $\lceil P\cdot B\rceil$... for clarity take the standard recipe: number of leaves $L=3$, slices $S=\lceil\sqrt{L}\rceil=2$.
+
+Step 1 — sort by $x$ and cut into $S=2$ slices of $\lceil L/S\rceil\cdot B = 2\cdot3=6$ then $3$ points:
+- Slice A (smallest 6 by $x$): $(1,1),(2,5),(3,3),(4,8),(5,2),(6,6)$.
+- Slice B (remaining): $(7,4),(8,9),(9,7)$.
+
+Step 2 — within each slice sort by $y$ and pack runs of $B=3$ into leaves:
+- A sorted by $y$: $(1,1),(3,3),(5,2)\to$ **Leaf 1**, MBR $[1,5]\times[1,3]$; $(2,5),(6,6),(4,8)\to$ **Leaf 2**, MBR $[2,6]\times[5,8]$.
+- B sorted by $y$: $(7,4),(9,7),(8,9)\to$ **Leaf 3**, MBR $[7,9]\times[4,9]$.
+
+The three leaf MBRs barely overlap ($x$-ranges $[1,5],[2,6],[7,9]$), giving low query cost. Under the Kamel–Faloutsos model a window query of side $(a,b)=(0,0)$ (a point stab) costs $\sum_i(x_i+0)(y_i+0)$ of intersecting leaves; the tiling minimizes total margin $\sum(x_i+y_i)=(4+2)+(4+3)+(2+5)=20$, which STR's sort-tile structure keeps near-minimal versus a naive insertion order.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

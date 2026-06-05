@@ -44,11 +44,26 @@ Active directions: shielding/CMDP applied to DB knob tuning with verified safe s
 - Composing per-action safety into horizon-level cumulative-risk budgets.
 
 ## 9. Key References
-- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G., Zhang, B. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[Foundational]** Wu, Y., Shariff, R., Lattimore, T., Szepesvári, C. *Conservative Bandits.* ICML, 2016.
-- **[SOTA]** Alshiekh, M., Bloem, R., Ehlers, R., Könighofer, B., Niekum, S., Topcu, U. *Safe Reinforcement Learning via Shielding.* AAAI, 2018.
-- **[Foundational]** Altman, E. *Constrained Markov Decision Processes.* Chapman & Hall, 1999.
+- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** Van Aken, D., Pavlo, A., Gordon, G., Zhang, B. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[Foundational]** Wu, Y., Shariff, R., Lattimore, T., Szepesvári, C. *Conservative Bandits.* ICML, 2016. — [arXiv](https://arxiv.org/abs/1602.04282)
+- **[SOTA]** Alshiekh, M., Bloem, R., Ehlers, R., Könighofer, B., Niekum, S., Topcu, U. *Safe Reinforcement Learning via Shielding.* AAAI, 2018. — [arXiv](https://arxiv.org/abs/1708.08611)
+- **[Foundational]** Altman, E. *Constrained Markov Decision Processes.* Chapman & Hall, 1999. — [DBLP search](https://dblp.org/search?q=Altman%20Constrained%20Markov%20Decision%20Processes)
+
+## 10. Worked Example
+
+A controller deploys a knob change to a live instance. Baseline throughput is $r^0 = 100$ tps each round; the conservative budget is $\alpha = 0.05$, so the constraint of Section 2 demands $\sum_{t\le T} r_t \ge 0.95\sum_{t\le T} r^0_t = 95T$.
+
+Round-by-round, suppose the new config under-performs at first while warming caches:
+
+| round $t$ | $r_t$ | cumulative $\sum r_t$ | floor $95t$ | slack |
+|---|---|---|---|---|
+| 1 | 80 | 80 | 95 | $-15$ |
+| 2 | 90 | 170 | 190 | $-20$ |
+
+After round 2 the cumulative $170$ has already breached the floor $190$: the deployment violated the bounded-regression guarantee. A **conservative** controller instead tracks the running budget *before* committing: entering round 1 it has banked surplus $0$, so a config expected to dip below $95$ may only be applied if banked slack covers the shortfall. Lacking slack, the shield **rolls back** to baseline (cost = inverse-DDL cost, $O(1)$), keeping $r_t = 100$ and the constraint intact.
+
+The Section 5 lower bound bites here: to *know* the new config was bad, the controller had to run it for $\Omega(1/\Delta^2)$ rounds with $\Delta = 20$, so a small, bounded exposure to the $-20$ regression was information-theoretically unavoidable — but the budget caps it and rollback prevents unbounded damage.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

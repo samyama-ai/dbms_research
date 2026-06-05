@@ -47,11 +47,24 @@ Classical multidim histograms are increasingly superseded by **learned density/s
 - Tight bounds relating bucket budget $B$, dimensionality $d$, and achievable range-query error.
 
 ## 9. Key References
-- **[Foundational]** Jagadish, H.V., Koudas, N., Muthukrishnan, S., Poosala, V., Sevcik, K., Suel, T. *Optimal Histograms with Quality Guarantees.* VLDB 1998.
-- **[Foundational]** Muthukrishnan, S., Poosala, V., Suel, T. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT 1999.
-- **[SOTA]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD 2001.
-- **[SOTA]** Garofalakis, M., Kumar, A. *Deterministic Wavelet Thresholding for Maximum-Error Metrics.* PODS 2004.
-- **[SOTA]** McKenna, R., Miklau, G., Hay, M., Machanavajjhala, A. *Optimizing Error of High-Dimensional Statistical Queries Under Differential Privacy (HDMM).* VLDB 2018.
+- **[Foundational]** Jagadish, H.V., Koudas, N., Muthukrishnan, S., Poosala, V., Sevcik, K., Suel, T. *Optimal Histograms with Quality Guarantees.* VLDB 1998. — [DOI](https://doi.org/10.5555/645924.671191)
+- **[Foundational]** Muthukrishnan, S., Poosala, V., Suel, T. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_16)
+- **[SOTA]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[SOTA]** Garofalakis, M., Kumar, A. *Deterministic Wavelet Thresholding for Maximum-Error Metrics.* PODS 2004. — [DOI](https://doi.org/10.1145/1055558.1055582)
+- **[SOTA]** McKenna, R., Miklau, G., Hay, M., Machanavajjhala, A. *Optimizing Error of High-Dimensional Statistical Queries Under Differential Privacy (HDMM).* VLDB 2018. — [DOI](https://doi.org/10.14778/3231751.3231769) · [arXiv](https://arxiv.org/abs/1808.03537)
+
+## 10. Worked Example
+
+**1-D v-optimal DP, then why 2-D is hard.** Data values $f=(1,1,8,9)$ over 4 cells; budget $B=2$ buckets, minimize SSE. A bucket's optimal constant is its mean, and its SSE is its within-bucket variance times its size.
+
+Candidate splits (contiguous):
+- $[1{,}1\,|\,8{,}9]$: bucket means $1$ and $8.5$; SSE $=0 + (0.5^2+0.5^2)=0.5$.
+- $[1\,|\,1{,}8{,}9]$: mean $6$; SSE $=0 + (25+4+9)=38$.
+- $[1{,}1{,}8\,|\,9]$: mean $10/3$; SSE $=(5.44+5.44+21.78)+0\approx 32.7$.
+
+DP picks the first, SSE $=0.5$, in $O(n^2 B)$ time (Jagadish et al.). The optimum cleanly separates the two modes $\{1\}$ and $\{8,9\}$.
+
+**In 2-D** the same data laid on a $2\times 2$ grid cannot always be cut by axis-aligned rectangles into $B$ low-variance buckets without conflict: a checkerboard pattern $\begin{smallmatrix}1&9\\9&1\end{smallmatrix}$ has every $1\times 2$ or $2\times 1$ rectangle straddling a $1$ and a $9$ (SSE $16$ each). Choosing the best $B$-rectangle partition over arbitrary rectangles is exactly the NP-hard problem of Section 5 (Muthukrishnan–Poosala–Suel), so 2-D restricts to grid/hierarchical families with approximation guarantees.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

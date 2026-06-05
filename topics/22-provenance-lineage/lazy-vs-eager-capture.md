@@ -35,11 +35,23 @@ The *theoretical* competitive question (rent-or-buy) is **closed** (tight 2 / 1.
 A public benchmark fixing $(e_i,\ell_i,r_i,p_i)$ measurements across engines. Per-operator (not per-query) granularity — eager for cheap-to-annotate filters, lazy for blow-up joins. Online learning of $p_i$ with regret guarantees coupled to ski-rental robustness. Integration with time-travel storage so lazy replay is cheap.
 
 ## 9. Key References
-- **[Foundational]** Boris Glavic, Gustavo Alonso. *Perm: Processing Provenance and Data on the Same Data Model through Query Rewriting.* ICDE, 2009.
-- **[SOTA]** Bahareh Arab, Su Feng, Boris Glavic, Seokki Lee, Xing Niu, Qitian Zeng. *GProM — A Swiss Army Knife for Your Provenance Needs / Reenactment.* IEEE Data Eng. Bulletin, 2018.
-- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018.
-- **[Foundational]** Manish Purohit, Zoya Svitkina, Ravi Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018.
-- **[Survey]** Boris Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021.
+- **[Foundational]** Boris Glavic, Gustavo Alonso. *Perm: Processing Provenance and Data on the Same Data Model through Query Rewriting.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.15)
+- **[SOTA]** Bahareh Arab, Su Feng, Boris Glavic, Seokki Lee, Xing Niu, Qitian Zeng. *GProM — A Swiss Army Knife for Your Provenance Needs / Reenactment.* IEEE Data Eng. Bulletin, 2018. — [PDF](http://sites.computer.org/debull/A18mar/p51.pdf)
+- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3199517.3199522) · [arXiv](https://arxiv.org/abs/1801.07237)
+- **[Foundational]** Manish Purohit, Zoya Svitkina, Ravi Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/73a427badebe0e32caa2e1fc7530b7f3-Abstract.html)
+- **[Survey]** Boris Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
+
+## 10. Worked Example
+
+A reporting query $Q$ runs $1000$ times/day. Eager capture costs $e = 8$ ms per run (annotation propagation). If provenance is later requested, an eager read costs $r = 1$ ms; a lazy replay costs $\ell = 200$ ms (re-running the join). Provenance is requested with probability $p$ per run.
+
+*Per-query crossover.* Lazy wins iff $p\,\ell < e + p\,r$, i.e.
+$$ p < \frac{e}{\ell - r} = \frac{8}{200 - 1} \approx 0.040. $$
+So if fewer than $4\%$ of runs are ever explained, skip eager capture and replay on demand.
+
+*Numbers.* At $p = 0.01$: $C_{\text{lazy}} = 1000 \cdot 0.01 \cdot 200 = 2000$ ms vs. $C_{\text{eager}} = 1000\cdot 8 + 1000\cdot 0.01\cdot 1 = 8010$ ms — lazy wins $4\times$. At $p = 0.20$: $C_{\text{lazy}} = 40{,}000$ ms vs. $C_{\text{eager}} = 8200$ ms — eager wins decisively.
+
+*Online, $p$ unknown.* Treat it as ski-rental: keep replaying lazily, and once accumulated lazy cost reaches the eager "buy-in" $e$, switch to eager. The deterministic rule is $2$-competitive; the randomized variant is $\tfrac{e}{e-1}\approx 1.58$-competitive — and a learned estimate $\hat p$ feeding learning-augmented ski-rental approaches consistency $1$ as $\hat p \to p$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

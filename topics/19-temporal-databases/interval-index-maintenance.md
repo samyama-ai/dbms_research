@@ -45,12 +45,22 @@ The **static and amortized I/O-optimal** picture is closed (interval tree, exter
 
 ## 9. Key References
 
-- **[Foundational]** L. Arge, J. S. Vitter. *Optimal External Memory Interval Management.* SIAM Journal on Computing, 32(6), 2003.
-- **[Foundational]** B. Becker, S. Gschwind, T. Ohler, B. Seeger, P. Widmayer. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 5(4), 1996.
-- **[Foundational]** D. Lomet, B. Salzberg. *The Performance of a Multiversion Access Method (Time-Split B-tree).* ACM SIGMOD, 1990.
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* ACM STOC, 2006 (cell-probe lower bounds).
-- **[Survey]** B. Salzberg, V. J. Tsotras. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 31(2), 1999.
-- **[Foundational]** H. Edelsbrunner. *Dynamic Data Structures for Orthogonal Intersection Queries.* TR, TU Graz, 1980 (interval tree).
+- **[Foundational]** L. Arge, J. S. Vitter. *Optimal External Memory Interval Management.* SIAM Journal on Computing, 32(6), 2003. — [DOI](https://doi.org/10.1137/S009753970240481X)
+- **[Foundational]** B. Becker, S. Gschwind, T. Ohler, B. Seeger, P. Widmayer. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 5(4), 1996. — [DOI](https://doi.org/10.1007/s007780050028)
+- **[Foundational]** D. Lomet, B. Salzberg. *The Performance of a Multiversion Access Method (Time-Split B-tree).* ACM SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93605.98744)
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* ACM STOC, 2006 (cell-probe lower bounds). — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Survey]** B. Salzberg, V. J. Tsotras. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 31(2), 1999. — [DOI](https://doi.org/10.1145/319806.319816)
+- **[Foundational]** H. Edelsbrunner. *Dynamic Data Structures for Orthogonal Intersection Queries.* TR, TU Graz, 1980 (interval tree). — [PDF](https://pub.ista.ac.at/~edels/Papers/1980-01-R-OrthogonalIntersectionQueries.pdf)
+
+## 10. Worked Example
+
+Consider a transaction-time table with one long-lived row and a torrent of short ones. At version $0$ insert the "fat" interval $F=[0,\infty)$ (still open). Then at each version $i=1,\dots,6$ insert a "thin" row valid for one tick: $T_i=[i,i+1)$, closing each at the next version.
+
+Stabbing query "what is live at $t=3.5$?" should return $\{F, T_3\}$.
+
+Cost in a naive MVBT with **copy-on-version-split**: every page split that occurs while $F$ is open must copy $F$ into the new page. With $6$ insertions triggering, say, $3$ splits, $F$ is replicated $3$ times — its storage is $O(\#\text{splits})$, not $O(1)$. Over $n$ insertions this can reach $\Theta(n)$ copies of one interval, breaking the amortized $O(\log_B n)$ space-charging argument.
+
+The **fat/thin separation** fix: route $F$ to a tiny overflow list of size $\ell=1$; the main index holds only the $T_i$ with clean $O(n/B)$ space and $O(\log_B n + k/B)$ queries. The stab at $t=3.5$ pays the main-index cost plus an additive scan of the $\ell=1$ overflow, returning $\{T_3\}\cup\{F\}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

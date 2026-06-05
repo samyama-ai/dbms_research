@@ -41,12 +41,23 @@ The I/O-complexity theory is closed (tight bounds), but **systems remain empiric
 - Belady-imitation / learned eviction with regret bounds for analytic access patterns.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** L. Belady. *A Study of Replacement Algorithms for a Virtual-Storage Computer.* IBM Systems Journal, 1966. (MIN / optimal eviction.)
-- **[SOTA]** P. Sioulas, P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *Hardware-conscious Hash-Joins on GPUs.* ICDE, 2019.
-- **[SOTA]** P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019.
-- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. (Competitive caching / spill.)
-- **[Survey]** S. Breß, et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** L. Belady. *A Study of Replacement Algorithms for a Virtual-Storage Computer.* IBM Systems Journal, 1966. (MIN / optimal eviction.) — [DOI](https://doi.org/10.1147/sj.52.0078)
+- **[SOTA]** P. Sioulas, P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *Hardware-conscious Hash-Joins on GPUs.* ICDE, 2019. — [DOI](https://doi.org/10.1109/ICDE.2019.00068)
+- **[SOTA]** P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3303753.3303760)
+- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. (Competitive caching / spill.) — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Survey]** S. Breß, et al. *GPU-Accelerated Database Systems: Survey and Open Challenges.* TLDKS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-45761-0_1)
+
+## 10. Worked Example
+
+A GPU buffer holds $M = 3$ column chunks; PCIe bandwidth $B$. A query accesses chunks in the sequence
+$$1,\,2,\,3,\,4,\,1,\,2,\,5,\,1,\,2,\,3,\,4,\,5.$$
+
+**Belady MIN (offline optimal):** on each miss, evict the resident chunk reused farthest in the future. Trace (cache shown after each access): faults at $1,2,3$ (cold), then $4$ evicts $3$ (next use of $3$ is latest) → $\{1,2,4\}$; $1,2$ hit; $5$ evicts $4$ → $\{1,2,5\}$; $1,2$ hit; $3$ evicts $5$ → $\{1,2,3\}$; $4$ evicts $3$ → $\{1,2,4\}$; $5$ evicts $4$ → $\{1,2,5\}$. Total **8 faults**.
+
+**LRU on the same trace** faults additionally because it evicts the least-recently-used rather than the farthest-future chunk: it gives **10 faults** here.
+
+Each fault re-fetches one chunk across PCIe, so spill time $\approx \text{faults} \times (\text{chunk}/B)$. The ratio $10/8 = 1.25$ is well within LRU's worst-case $k$-competitiveness ($k=M=3$). The lesson: when the live working set ($\{1,2\}$ plus a rotating third) marginally exceeds $M$, every extra fault is a full interconnect round-trip — the thrashing cliff.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

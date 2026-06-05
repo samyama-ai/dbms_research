@@ -61,12 +61,20 @@ Cross-engine adds a **cost-model mismatch**: even a perfectly transferred cardin
 
 ## 9. Key References
 
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[Foundational]** Bar-Yossef, Jayram, Kumar, Sivakumar, Trevisan. *Counting Distinct Elements in a Data Stream.* RANDOM, 2002.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DBLP](https://dblp.org/rec/journals/jal/CormodeM05.html)
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[Foundational]** Bar-Yossef, Jayram, Kumar, Sivakumar, Trevisan. *Counting Distinct Elements in a Data Stream.* RANDOM, 2002. — [DOI](https://doi.org/10.1007/3-540-45726-7_1)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Consider transferring an NDV (distinct-count) statistic across engines via a **mergeable sketch** — the clean case from Section 3. Engine A holds partition $P_1$ of a column, engine B holds partition $P_2$, and we want the global NDV of $P_1 \cup P_2$ without re-scanning.
+
+Use HyperLogLog with $m = 1024$ registers. HLL's relative standard error is $\approx 1.04/\sqrt{m} = 1.04/32 = 3.25\%$. Each engine builds its own sketch locally; register $j$ stores the max leading-zero count seen. Merging is register-wise max: $\text{HLL}_{\cup}[j] = \max(\text{HLL}_{P_1}[j], \text{HLL}_{P_2}[j])$. This is exact — the merged sketch is byte-identical to one built over $P_1 \cup P_2$ in a single pass, because "max of maxes" is associative and idempotent. So if true global NDV $= 1{,}000{,}000$, the estimate lands within $\approx \pm 32{,}500$ with the same $3.25\%$ guarantee regardless of where it was merged.
+
+Contrast a **learned density model** trained on $P_1$'s schema: applied to $P_2$'s differently-distributed column it has no such guarantee — its error is bounded only by the domain-adaptation inequality $\epsilon_T \le \epsilon_S + \tfrac12 d_{\mathcal H\Delta\mathcal H}(P_1,P_2) + \lambda$, which is vacuous when the distributions diverge. This is exactly why mergeable sketches are the reliable cross-engine substrate.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,22 @@ The detection sub-problem (is there a change in a known error stream?) has match
 - Distribution-free, task-aware drift signals with provable false-trigger budgets.
 
 ## 9. Key References
-- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971.
-- **[Foundational]** G. V. Moustakides. *Optimal Stopping Times for Detecting Changes in Distributions.* Annals of Statistics, 1986.
-- **[Foundational]** A. Shiryaev. *On Optimum Methods in Quickest Detection Problems.* Theory of Probability & Its Applications, 1963.
-- **[SOTA]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007.
-- **[SOTA]** L. Ma et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018.
-- **[Survey]** V. Veeravalli, T. Banerjee. *Quickest Change Detection.* Academic Press Library in Signal Processing, 2014.
+- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971. — [DOI](https://doi.org/10.1214/aoms/1177693055)
+- **[Foundational]** G. V. Moustakides. *Optimal Stopping Times for Detecting Changes in Distributions.* Annals of Statistics, 1986. — [DOI](https://doi.org/10.1214/aos/1176350164)
+- **[Foundational]** A. Shiryaev. *On Optimum Methods in Quickest Detection Problems.* Theory of Probability & Its Applications, 1963. — [DOI](https://doi.org/10.1137/1108002)
+- **[SOTA]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007. — [DOI](https://doi.org/10.1137/1.9781611972771.42)
+- **[SOTA]** L. Ma et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[Survey]** V. Veeravalli, T. Banerjee. *Quickest Change Detection.* Academic Press Library in Signal Processing, 2014. — [arXiv](https://arxiv.org/abs/1210.5552)
+
+## 10. Worked Example
+
+A cost model's prediction error is monitored to trigger retraining. Pre-drift, per-query absolute error is Gaussian $F_0=\mathcal N(\mu_0{=}1.0,\sigma{=}0.2)$; after an undetected schema shift at time $\tau$ it jumps to $F_1=\mathcal N(\mu_1{=}1.4,\sigma{=}0.2)$. We want a CUSUM trigger with mean-time-between-false-alarms $\gamma=10^4$ samples.
+
+**KL divergence** between the two normals (same variance): $D(F_1\Vert F_0)=\dfrac{(\mu_1-\mu_0)^2}{2\sigma^2}=\dfrac{0.4^2}{2(0.2)^2}=\dfrac{0.16}{0.08}=2.0$ nats.
+
+**Expected detection delay** (Lorden/Moustakides asymptotics): $\mathbb E[\text{delay}]\approx\dfrac{\log\gamma}{D(F_1\Vert F_0)}=\dfrac{\ln 10^4}{2.0}=\dfrac{9.21}{2.0}\approx 4.6$ samples.
+
+So with a false alarm only every $10{,}000$ queries, the controller detects this drift within $\sim 5$ queries — fast, because the shift is large ($D=2$). Halve the shift to $\mu_1=1.2$ and $D$ drops to $0.5$, pushing delay to $\approx 18$ samples; a subtle shift with $D=0.05$ needs $\approx 184$ — illustrating the lower bound $\text{delay}\to\infty$ as $D\to 0$: small drifts are provably slow to detect at any fixed false-alarm budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -54,12 +54,23 @@ The *theory* gap (no constant-factor approximation for joint NUMA placement) coe
 
 ## 9. Key References
 
-- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014.
-- **[SOTA]** Albutiu, Kemper, Neumann. *Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems.* VLDB, 2012.
-- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013.
-- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM, 1999.
-- **[Foundational]** Lenstra, Shmoys, Tardos. *Approximation Algorithms for Scheduling Unrelated Parallel Machines.* Math. Programming, 1990.
-- **[Survey]** Psaroudakis et al. *Scaling Up Concurrent Main-Memory Column-Store Scans: Towards Adaptive NUMA-aware Data and Task Placement.* VLDB, 2015.
+- **[Foundational]** Leis, Boncz, Kemper, Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507) — [DBLP](https://dblp.org/rec/conf/sigmod/LeisBK014.html)
+- **[SOTA]** Albutiu, Kemper, Neumann. *Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2336664.2336678) — [arXiv](https://arxiv.org/abs/1207.0145)
+- **[SOTA]** Balkesen, Teubner, Alonso, Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013. — [DBLP](https://dblp.org/rec/conf/icde/BalkesenTAO13.html)
+- **[Foundational]** Blumofe, Leiserson. *Scheduling Multithreaded Computations by Work Stealing.* JACM, 1999. — [DOI](https://doi.org/10.1145/324133.324234)
+- **[Foundational]** Lenstra, Shmoys, Tardos. *Approximation Algorithms for Scheduling Unrelated Parallel Machines.* Math. Programming, 1990. — [DOI](https://doi.org/10.1007/BF01585745) — [DBLP](https://dblp.org/rec/journals/mp/LenstraST90.html)
+- **[Survey]** Psaroudakis et al. *Scaling Up Concurrent Main-Memory Column-Store Scans: Towards Adaptive NUMA-aware Data and Task Placement.* VLDB, 2015. — [DBLP](https://dblp.org/rec/journals/pvldb/PsaroudakisSMSA15.html)
+
+## 10. Worked Example
+
+Take a 2-socket box. Per-byte costs: local $c_{00}=c_{11}=1$, remote $c_{01}=c_{10}=3$. We run a hash join where the build side $R$ (1 GB) lives entirely on node 0, and two probe operators $o_1,o_2$ each scan $S$ and probe $R$, touching $a=2\text{ GB}$ of $R$ each.
+
+**Placement A (locality-blind round-robin):** put $o_1$ on node 0, $o_2$ on node 1. Remote traffic $= a\cdot c_{00} \cdot 0 + a\cdot c_{01}$ for $o_2$'s probes into node-0's $R$:
+$$\text{cost} = \underbrace{2(1)}_{o_1\,\text{local}} + \underbrace{2(3)}_{o_2\,\text{remote}} = 2 + 6 = 8.$$
+
+**Placement B (build-local):** co-locate both probe threads on node 0. Cost $=2(1)+2(1)=4$ — half the weighted bytes. But node 0 now serves $4$ GB of read bandwidth alone while node 1 sits idle: if a socket sustains only $3$ GB at full speed, B *saturates* node 0 and makespan rises even though weighted-byte cost fell.
+
+This tension — minimizing $\sum a_o(f)\,c_{nm}$ (favors B) versus balancing load $\sum_o x_{o,n}d_o \le C_n$ (favors A) — is exactly the QAP/contention coupling of section 2. Morsel-driven scheduling resolves it dynamically: it dispatches NUMA-local morsels of $R$ first, and only lets node 1 steal once node 0's bandwidth is the bottleneck.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

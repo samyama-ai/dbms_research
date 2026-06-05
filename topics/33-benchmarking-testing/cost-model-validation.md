@@ -53,12 +53,23 @@ Open. The validation *methodology* exists (Leis et al., Picasso) and shows the d
 
 ## 9. Key References
 
-- **[SOTA]** V. Leis, A. Gubichev, A. Mirchev, P. Boncz, A. Kemper, T. Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[Foundational]** P. G. Selinger, M. Astrahan, D. Chamberlin, R. Lorie, T. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** N. Reddy, J. R. Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005.
-- **[Foundational]** T. Ibaraki, T. Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[SOTA]** R. Marcus, P. Negi, H. Mao, N. Tatbul, M. Alizadeh, T. Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019.
+- **[SOTA]** V. Leis, A. Gubichev, A. Mirchev, P. Boncz, A. Kemper, T. Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594) · [DBLP](https://dblp.org/rec/journals/pvldb/LeisGMBK015.html)
+- **[Foundational]** P. G. Selinger, M. Astrahan, D. Chamberlin, R. Lorie, T. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** N. Reddy, J. R. Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[Foundational]** T. Ibaraki, T. Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498)
+- **[SOTA]** R. Marcus, P. Negi, H. Mao, N. Tatbul, M. Alizadeh, T. Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677) · [DBLP](https://dblp.org/rec/conf/cidr/KipfKRLBK19.html)
+
+## 10. Worked Example
+
+Consider a 3-table join with two candidate plans for $R\bowtie S\bowtie T$. The optimizer's cost model $C$ and the *measured* runtimes $T$ (ms):
+
+| Plan | feature: page reads $\phi_1$ | feature: tuples $\phi_2$ | $C_\theta$ (with $\theta=(0.5,\,0.002)$) | measured $T$ |
+|------|------|------|------|------|
+| $A$: $(R\bowtie S)\bowtie T$ | 1000 | 50000 | $500+100=600$ | 540 |
+| $B$: $R\bowtie(S\bowtie T)$ | 4000 | 80000 | $2000+160=2160$ | 410 |
+
+The model picks $\hat p=A$ (lower $C$), but measurement shows $B$ is faster. **Regret** $=T(A)-\min(T)=540-410=130$ ms. Crucially, ordering is *inverted* even though both cost numbers are internally plausible — so RMSE on $C$ would not reveal the failure; **Kendall's $\tau$** between $(C_A,C_B)$ and $(T_A,T_B)$ is $-1$ (perfectly anti-correlated on this pair). Diagnosis: plan $B$'s inner join $S\bowtie T$ was badly *under-estimated* in cardinality (the 80000 feature was actually ~20000 at runtime, fitting in cache), so the error is **cardinality-driven**, not a cost-constant defect — refitting $\theta$ won't fix it, matching the Leis et al. finding that cardinality dominates.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

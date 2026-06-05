@@ -42,12 +42,26 @@ Active threads: (1) **denial-constraint and approximate-FD discovery** feeding r
 - Incremental reconciliation as new sources join a data lake.
 
 ## 9. Key References
-- **[Foundational]** Fagin, R., Kolaitis, P., Miller, R.J., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS, 2005.
-- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Comput., 1985.
-- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS 2004 / TODS, 2005.
-- **[SOTA]** Geerts, F., Mecca, G., Papotti, P., Santoro, D. *That's All Folks! LLUNATIC Goes Open Source.* PVLDB, 2014.
-- **[SOTA]** Rekatsinas, T., Chu, X., Ilyas, I., Ré, C. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017.
-- **[Survey]** Doan, A., Halevy, A., Ives, Z. *Principles of Data Integration.* Morgan Kaufmann, 2012.
+- **[Foundational]** Fagin, R., Kolaitis, P., Miller, R.J., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT 2003 / TCS, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Comput., 1985. — [DOI](https://doi.org/10.1137/0214049)
+- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* PODS 2004 / TODS, 2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[SOTA]** Geerts, F., Mecca, G., Papotti, P., Santoro, D. *That's All Folks! LLUNATIC Goes Open Source.* PVLDB, 2014. — [DOI](https://doi.org/10.14778/2733004.2733031)
+- **[SOTA]** Rekatsinas, T., Chu, X., Ilyas, I., Ré, C. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631), [arXiv](https://arxiv.org/abs/1702.00820)
+- **[Survey]** Doan, A., Halevy, A., Ives, Z. *Principles of Data Integration.* Morgan Kaufmann, 2012. — [DBLP](https://dblp.org/rec/books/daglib/0029346.html)
+
+## 10. Worked Example
+
+Two source schemas describe employees:
+- $\mathcal{S}_1$: `Emp(eid, email, dept)` with key `eid` and FD `email → eid` (email is also unique).
+- $\mathcal{S}_2$: `Staff(login, dept)` with key `login`.
+
+Mapping $M$ (a source-to-target tgd) ties them: $\text{Emp}(e, m, d) \to \exists\, \text{Staff}(m, d)$ — i.e., the email becomes the `login`.
+
+**Constraint propagation.** Does the key `eid` survive on the target? No directly, because `eid` is projected away. But `email → eid` plus the key on `eid` makes `email` a key of `Emp`, and since `email` maps to `login`, the target inherits key `login` — consistent with $\mathcal{S}_2$'s declared key. So far reconcilable.
+
+**Conflict.** Now add source rows producing `Staff(alice@x, Sales)` and `Staff(alice@x, Legal)` (same email, two departments). The target key `login` is an egd $\text{login} \to \text{dept}$. The chase fires it on these two tuples, forcing $\text{Sales} = \text{Legal}$ — distinct constants, so the **chase fails**: the mapped constraint set is inconsistent.
+
+**Repair (optimization variant).** Minimum repair: relax `login` from a hard key to a *soft* key (drop $\text{login}\to\text{dept}$), or drop one offending source tuple — a min-cost choice over a MaxSAT instance with one conflicting pair.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

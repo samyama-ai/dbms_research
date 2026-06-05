@@ -66,12 +66,22 @@ The gap is wide and empirical. We have (a) provably-isolating-but-costly designs
 
 ## 9. Key References
 
-- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** Goguen, J., Meseguer, J. *Security Policies and Security Models.* IEEE S&P, 1982.
-- **[SOTA]** Zheng, W., et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
-- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2019.
-- **[Survey]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009.
-- **[Survey]** Köpf, B., Basin, D. *An Information-Theoretic Model for Adaptive Side-Channel Attacks.* CCS, 2007.
+- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Goguen, J., Meseguer, J. *Security Policies and Security Models.* IEEE S&P, 1982. — [DOI](https://doi.org/10.1109/SP.1982.10014)
+- **[SOTA]** Zheng, W., et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [DBLP](https://dblp.org/rec/conf/nsdi/ZhengDBPGS17.html)
+- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364331)
+- **[Survey]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009. — [DOI](https://doi.org/10.1007/978-3-642-00596-1_21)
+- **[Survey]** Köpf, B., Basin, D. *An Information-Theoretic Model for Adaptive Side-Channel Attacks.* CCS, 2007. — [DOI](https://doi.org/10.1145/1315245.1315282)
+
+## 10. Worked Example
+
+**A buffer-pool timing channel.** Tenants $A$ and $B$ share a buffer pool. $B$'s secret is one bit $d\in\{0,1\}$: whether a specific row $R$ is currently cached. $A$ cannot read $B$'s data, but $A$ can *time* a query that touches $R$'s page: a cache **hit** returns in $\approx 0.1$ ms, a **miss** (disk fetch) in $\approx 10$ ms.
+
+Model this as a binary channel $C: \{0,1\}\to\{\text{fast},\text{slow}\}$. With a clean threshold the channel is near-noiseless, so one probe leaks essentially $1$ bit: min-entropy leakage $\mathcal{L}_\infty = \log_2 \frac{\sum_o \max_d P(o\mid d)}{1}$. Take uniform prior $P(d)=\tfrac12$ and $P(\text{fast}\mid 1)=P(\text{slow}\mid 0)=0.95$. Then $\sum_o \max_d P(o\mid d) = 0.95+0.95 = 1.9$ and
+
+$$\mathcal{L}_\infty = \log_2(1.9) \approx 0.926 \text{ bits per probe}.$$
+
+By Goldreich–Ostrovsky, making the access pattern *independent* of $d$ (so $P(o\mid d)$ is constant) requires $\Omega(\log n)$ overhead — e.g., constant-time padding every access to $10$ ms, collapsing $\mathcal{L}_\infty\to 0$ at the cost of $100\times$ latency. This is the exact "no free lunch" tradeoff of Section 5: sharing the pool gives speed but a $\approx0.93$-bit/probe channel; closing it forfeits the sharing benefit.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

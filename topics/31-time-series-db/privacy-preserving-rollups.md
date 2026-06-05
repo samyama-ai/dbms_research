@@ -38,13 +38,23 @@ Directions: near-optimal factorization mechanisms for continual release applied 
 - Utility characterization for high-cardinality, label-partitioned telemetry; local vs. central tradeoffs at the edge.
 
 ## 9. Key References
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy under Continual Observation.* STOC, 2010.
-- **[Foundational]** Dinur, Nissim. *Revealing Information while Preserving Privacy.* PODS, 2003.
-- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds for Differentially Private Continual Release.* SODA, 2023.
-- **[SOTA]** Kellaris, Papadopoulos, Xiao, Papadias. *Differentially Private Event Sequences over Infinite Streams (w-event).* VLDB, 2014.
-- **[Foundational]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries under Differential Privacy (The Matrix Mechanism).* PODS, 2010.
-- **[Survey]** Dwork, Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy under Continual Observation.* STOC, 2010. — [DOI](https://doi.org/10.1145/1806689.1806787)
+- **[Foundational]** Dinur, Nissim. *Revealing Information while Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173), [DBLP](https://dblp.org/rec/conf/pods/DinurN03.html)
+- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds on Differentially Private Continual Counting.* SODA, 2023. — [DOI](https://doi.org/10.1137/1.9781611977554.ch183)
+- **[SOTA]** Kellaris, Papadopoulos, Xiao, Papadias. *Differentially Private Event Sequences over Infinite Streams (w-event).* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732977.2732989), [DBLP](https://dblp.org/rec/journals/pvldb/KellarisPXP14.html)
+- **[Foundational]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries under Differential Privacy (The Matrix Mechanism).* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104)
+- **[Survey]** Dwork, Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+
+## 10. Worked Example
+
+Publish a **running count** of logins over $T=8$ rollup buckets, true increments $c=(1,0,1,1,0,1,0,1)$, so the prefix sums are $S=(1,1,2,3,3,4,4,5)$. Each user contributes to one bucket, so per-step sensitivity is $\Delta=1$. Target $\epsilon=1$ pure DP.
+
+**Naive per-step Laplace.** Add $\mathrm{Lap}(1/\epsilon)$ independently to each of the $T$ released prefix sums. But the prefixes overlap, so to keep the *whole sequence* $\epsilon$-DP you must split the budget: each release gets $\epsilon/T = 1/8$, hence noise scale $T/\epsilon = 8$ and per-prefix variance $2(T/\epsilon)^2 = 128$. Error grows **linearly** in $T$.
+
+**Binary-tree mechanism.** Build a tree of partial sums over the 8 buckets: 8 leaves, 4 pair-nodes, 2 quad-nodes, 1 root — height $\log_2 8 = 3$. Each bucket participates in only $3$ tree nodes, so the budget splits just $3$ ways: noise scale $3/\epsilon = 3$ per node. Any prefix $S_k$ is reconstructed by summing at most $\log_2 T = 3$ noisy nodes, giving variance $\approx 3\cdot 2\cdot 3^2 = 54$, and asymptotically error $O\!\big(\tfrac{1}{\epsilon}\log^{1.5}T\big)$ — **polylogarithmic**, not linear.
+
+For $S_7=4$ the released value might be $4 + \text{Lap}(3)\approx 4.6$. The matching lower bound says no mechanism beats $\Omega(\log T)$ error, so the tree is order-optimal — the gap is closed for this primitive.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

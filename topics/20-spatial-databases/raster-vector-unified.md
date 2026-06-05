@@ -38,12 +38,31 @@ Active directions: DGGS-based common substrates (H3, S2, rHEALPix) as the discre
 - Accuracy/uncertainty propagation across $\rho$/$\nu$ conversions in the optimizer.
 
 ## 9. Key References
-- **[Foundational]** Güting. *An Introduction to Spatial Database Systems.* VLDB Journal, 1994.
-- **[Foundational]** Tomlin. *Geographic Information Systems and Cartographic Modeling (Map Algebra).* Prentice Hall, 1990.
-- **[Foundational]** Baumann. *A Database Array Algebra for Spatio-Temporal Data and Beyond.* NGITS, 1999 (rasdaman).
-- **[SOTA]** Stonebraker et al. *The Architecture of SciDB.* SSDBM, 2011.
-- **[SOTA]** Doraiswamy, Freire. *A GPU-Friendly Geometric Data Model and Algebra for Spatial Queries.* SIGMOD, 2020.
-- **[Survey]** OGC. *Topic 6: Coverages / Abstract Specification & DGGS.* Open Geospatial Consortium, 2017–2024.
+- **[Foundational]** Güting. *An Introduction to Spatial Database Systems.* VLDB Journal, 1994. — [DOI](https://doi.org/10.1007/BF01231602)
+- **[Foundational]** Tomlin. *Geographic Information Systems and Cartographic Modeling (Map Algebra).* Prentice Hall, 1990. — [Internet Archive](https://archive.org/details/geographicinform00toml)
+- **[Foundational]** Baumann. *A Database Array Algebra for Spatio-Temporal Data and Beyond.* NGITS, 1999 (rasdaman). — [DOI](https://doi.org/10.1007/3-540-48521-X_7)
+- **[SOTA]** Stonebraker et al. *The Architecture of SciDB.* SSDBM, 2011. — [DOI](https://doi.org/10.1007/978-3-642-22351-8_1)
+- **[SOTA]** Doraiswamy, Freire. *A GPU-Friendly Geometric Data Model and Algebra for Spatial Queries.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389774)
+- **[Survey]** OGC. *Topic 6: Coverages / Abstract Specification & DGGS.* Open Geospatial Consortium, 2017–2024. — [OGC DGGS](https://www.ogc.org/standards/dggs/)
+
+## 10. Worked Example
+
+**Zonal statistics across the divide.** Vector side: two administrative polygons, $P_1$ and $P_2$. Raster side: a $4\times 4$ NDVI grid (each cell value in $[0,1]$):
+
+```
+0.2 0.3 | 0.8 0.9
+0.1 0.4 | 0.7 0.6
+--------+--------
+0.5 0.6 | 0.2 0.3
+0.7 0.8 | 0.1 0.2
+```
+
+Say $P_1$ covers the left half (8 cells), $P_2$ the right half. Query: *average NDVI inside each polygon* — a cross-paradigm `aggregate(mask(raster, polygon))`.
+
+- $\text{avg}(P_1) = (0.2{+}0.3{+}0.1{+}0.4{+}0.5{+}0.6{+}0.7{+}0.8)/8 = 3.6/8 = 0.45$.
+- $\text{avg}(P_2) = (0.8{+}0.9{+}0.7{+}0.6{+}0.2{+}0.3{+}0.1{+}0.2)/8 = 3.8/8 = 0.475$.
+
+**Why the algebra matters.** A naive *vectorize-everything* plan converts all 16 cells to 16 point/box objects, then does a spatial join — $O(\text{cells}\times\text{polygons})$ geometry tests. The optimizer's better choice is *rasterize the polygon* into a cell mask once, then a single tiled raster scan: cost $O(\text{cells} + \text{boundary}) = O(16 + 4)$. The open problem (§6) is a cost model that can *prove* the second plan cheaper and a rewrite rule `aggregate∘mask ⟶ masked-scan` that is sound over the field semantics — neither exists in a closed, optimizable unified algebra today.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

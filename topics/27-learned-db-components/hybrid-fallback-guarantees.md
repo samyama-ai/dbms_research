@@ -44,12 +44,22 @@ Active directions: (a) provably-safe learned indexes under adversarial updates, 
 - Lower bounds specific to the *hybrid* (advice-augmented) model rather than the base problem.
 
 ## 9. Key References
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020.
-- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[Foundational]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (ICML 2018).
-- **[Survey]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM / Beyond the Worst-Case Analysis book chapter, 2020–2022.
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[Foundational]** T. Kraska, A. Beutel, E. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196909) · [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389711) · [arXiv](https://arxiv.org/abs/1905.08898)
+- **[Foundational]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (ICML 2018). — [DOI](https://doi.org/10.1145/3447579) · [arXiv](https://arxiv.org/abs/1802.05399)
+- **[Survey]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM / Beyond the Worst-Case Analysis book chapter, 2020–2022. — [DOI](https://doi.org/10.1145/3528087) · [arXiv](https://arxiv.org/abs/2006.09123)
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [DOI](https://doi.org/10.1145/1132516.1132551) · [arXiv](https://arxiv.org/abs/cs/0603043)
+
+## 10. Worked Example
+
+A learned index over $n=10^6$ sorted keys uses model $f$ to predict a key's position, then does local binary search in a window of size $2\varepsilon+1$ around the prediction.
+
+**On-distribution.** Suppose the trained model has max error $\varepsilon=15$. Lookup cost $=\underbrace{1}_{\text{model eval}}+\underbrace{\lceil\log_2(2\cdot15+1)\rceil}_{\text{window search}}=1+5=6$ probes — versus a B-tree's $\lceil\log_2 10^6\rceil=20$ probes. A $\sim 3.3\times$ speedup.
+
+**Adversarial / off-distribution.** A poisoned key shifts so $f$ mispredicts by $400{,}000$. Naively searching a window of $2\cdot 4\times10^5$ would be catastrophic. **Guaranteed fallback:** cap the window; if the key is not found within $\pm\varepsilon$, fall back to the classical B-tree path, costing $20$ probes. So worst-case stays $O(\log n)=20$ — never worse than the safe structure.
+
+**Algorithms-with-predictions framing.** With prediction error $\eta=|f(k)-\mathrm{rank}(k)|$, cost $\le\min(1+\log(2\eta+1),\ \log n)$. This is $(1+\varepsilon)$-**consistent** (near-optimal as $\eta\to0$, the 6-probe case) and $O(1)$-**robust** (capped at the 20-probe B-tree bound), exactly the consistency/robustness Pareto guarantee.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

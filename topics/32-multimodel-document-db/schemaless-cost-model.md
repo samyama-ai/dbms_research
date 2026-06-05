@@ -42,12 +42,22 @@ The status is **empirically-open**: the building blocks (sketches, sampling, AGM
 - A public benchmark for document-store cardinality/cost-model accuracy (analogous to the relational JOB benchmark).
 
 ## 9. Key References
-- **[Foundational]** P. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007.
-- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013.
-- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015.
+- **[Foundational]** P. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099) · [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166v2) · [DOI](https://doi.org/10.46298/dmtcs.3545)
+- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1905.04278) · [DOI](https://doi.org/10.14778/3368289.3368294)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Survey]** V. Leis et al. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594) · [PDF](https://www.vldb.org/pvldb/vol9/p204-leis.pdf)
+
+## 10. Worked Example
+
+A collection of $N = 1000$ documents. The field path `a.b` is **present** in only 600 of them; among those present, 150 satisfy `a.b > 5`. Estimate the selectivity of `WHERE a.b > 5`.
+
+The naive relational view ("every tuple has `a.b`") with the AVI independence assumption would compute $\sigma = P(\texttt{a.b}>5) \approx 150/1000 = 0.15$. The document-aware factorization separates presence from value:
+
+$$\sigma(\phi) = P(\text{present}) \cdot P(\text{value}>5 \mid \text{present}) = \frac{600}{1000}\cdot\frac{150}{600} = 0.6 \times 0.25 = 0.15.$$
+
+Here the numbers coincide, but the *structure* matters: change the predicate to `EXISTS(a.b) AND a.b > 5` over a corpus where presence is correlated with large values, and the factors no longer multiply naively. Suppose we sample only $s = 100$ documents to estimate $P(\text{present})$. By Hoeffding, the additive error is $\approx 1/\sqrt{s} = 0.1$ at fixed confidence — so a single-path estimate is cheap and provably bounded, while the *joint* presence+value correlation (the hard case of Section 5) is what resists small-space guarantees.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -48,12 +48,23 @@ The gap is **open** on the utility frontier. We have a *correct* notion (simulat
 
 ## 9. Key References
 
-- **[Foundational]** Kleinberg, Papadimitriou, Raghavan. *Auditing Boolean Attributes.* PODS, 2000.
-- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003.
-- **[Foundational]** Kenthapadi, Mishra, Nissim. *Simulatable Auditing.* PODS, 2005.
-- **[SOTA]** Nabar, Marthi, Kenthapadi, Mishra, Motwani. *Towards Robustness in Query Auditing.* VLDB, 2006.
-- **[SOTA]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016.
-- **[Survey]** Adam, Worthmann. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989.
+- **[Foundational]** Kleinberg, Papadimitriou, Raghavan. *Auditing Boolean Attributes.* PODS, 2000. — [DOI](https://doi.org/10.1016/S0022-0000(02)00036-3) — [DBLP](https://dblp.org/rec/conf/pods/KleinbergPR00.html)
+- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
+- **[Foundational]** Kenthapadi, Mishra, Nissim. *Simulatable Auditing.* PODS, 2005. — [DOI](https://doi.org/10.1145/1065167.1065183)
+- **[SOTA]** Nabar, Marthi, Kenthapadi, Mishra, Motwani. *Towards Robustness in Query Auditing.* VLDB, 2006. — [DBLP search](https://dblp.org/search?q=Towards+Robustness+in+Query+Auditing)
+- **[SOTA]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1605.08294)
+- **[Survey]** Adam, Wortmann. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989. — [DOI](https://doi.org/10.1145/76894.76895)
+
+## 10. Worked Example
+
+A salary table holds private values $x_1,x_2,x_3$. An analyst issues sum queries and the auditor answers exactly:
+- $q_1: x_1+x_2+x_3 = 150$ (answered)
+- $q_2: x_1+x_2 = 110$ (answered)
+- $q_3: x_3 = ?$
+
+The auditor checks $q_3$: from $q_1$ and $q_2$, $x_3 = 150-110 = 40$ is *uniquely determined* by the feasible region $\{x: q_1(x)=150,\,q_2(x)=110\}$. So answering $q_3$ compromises $x_3$ — a naïve auditor **denies** it.
+
+But here is the **simulatable-auditing leak**: the denial itself is informative. The adversary reasons: "it was denied only because $x_3$ is already pinned down" — i.e., the denial *confirms* $x_3=40$ without the value ever being returned. A *simulatable* auditor instead decides using only the queries and prior answers (public info), e.g. it would have flagged $q_3$ as redundant regardless of the secret data, so the deny reveals nothing new. Equivalently, a DP odometer simply tracks spent budget and refuses once $\varepsilon$ is exhausted — a public function of the query stream. The Dinur–Nissim bound caps the analyst at $O(n)$ accurate sum answers before $1-o(1)$ of the table reconstructs.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -28,11 +28,25 @@ Directions: learning-augmented portfolio selection with consistency/robustness g
 Tight consistency-robustness frontiers for learning-augmented sample selection; budget sharing across samples, aggregates, and caches; selection that co-optimizes with the optimizer's plan choices; privacy-aware selection where each artifact has a privacy cost.
 
 ## 9. Key References
-- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978.
-- **[Foundational]** Chaudhuri, Das, Narasayya. *Optimized Stratified Sampling for Approximate Query Processing.* ACM TODS, 2007.
-- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB.* EuroSys 2013.
-- **[SOTA]** Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004.
-- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* Comm. ACM, 2022.
+- **[Foundational]** Nemhauser, Wolsey, Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Math. Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** Chaudhuri, Das, Narasayya. *Optimized Stratified Sampling for Approximate Query Processing.* ACM TODS, 2007. — [DOI](https://doi.org/10.1145/1242524.1242526)
+- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB.* EuroSys 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* Comm. ACM, 2022. — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+**Greedy portfolio selection under budget.** Budget $B=3$ units. Three candidate samples, each cost 1 unit (so pick 3... but say cost 2 for $S_3$, total budget 3). Workload $\mathcal W$ has 4 equally-likely query classes; the table gives utility $u(S,q)$ (error reduction):
+
+| | $q_1$ | $q_2$ | $q_3$ | $q_4$ | cost |
+|----|----|----|----|----|----|
+| $S_1$ (uniform) | 3 | 3 | 1 | 1 | 1 |
+| $S_2$ (strat. on col A) | 6 | 0 | 0 | 0 | 1 |
+| $S_3$ (strat. on col B) | 0 | 0 | 5 | 5 | 2 |
+
+$U(\mathcal S)=\tfrac14\sum_q \max_{S\in\mathcal S}u(S,q)$. Greedy with cost-benefit ratio: round 1 picks the best $U/\text{cost}$. Alone, $U(\{S_1\})=\tfrac14(3{+}3{+}1{+}1)=2$ at cost 1; $U(\{S_2\})=\tfrac14(6)=1.5$; $U(\{S_3\})=\tfrac14(10)/2=1.25$ per unit. Pick $S_1$ (ratio 2). Remaining budget 2.
+
+Round 2 marginal gains over $S_1$: adding $S_2$ gains $\tfrac14(6{-}3)=0.75$ at cost 1; adding $S_3$ gains $\tfrac14((5{-}1){+}(5{-}1))=2$ at cost 2 (ratio 1). Pick $S_3$. Final $\mathcal S=\{S_1,S_3\}$, $U=\tfrac14(3{+}3{+}5{+}5)=4$, exhausting $B=3$. The $(1-1/e)\approx0.63$ guarantee certifies this greedy value is within that factor of the optimum portfolio.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

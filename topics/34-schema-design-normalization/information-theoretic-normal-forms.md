@@ -52,11 +52,23 @@ The FD case is essentially closed (well-designed $\equiv$ BCNF). The genuine gap
 
 ## 9. Key References
 
-- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003; JACM, 2005.
-- **[SOTA]** S. Kolahi, L. Libkin. *On Redundancy vs Dependency Preservation in Normalization: An Information-Theoretic Study of 3NF.* PODS 2006.
-- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemes.* ACM TODS, 1979.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** C. E. Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948.
+- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003; JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
+- **[SOTA]** S. Kolahi, L. Libkin. *On Redundancy vs Dependency Preservation in Normalization: An Information-Theoretic Study of 3NF.* PODS 2006. — [DOI](https://doi.org/10.1145/1142351.1142369)
+- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemes.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320066)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [full text](http://webdam.inria.fr/Alice/)
+- **[Foundational]** C. E. Shannon. *A Mathematical Theory of Communication.* Bell System Technical Journal, 1948. — [DOI](https://doi.org/10.1002/j.1538-7305.1948.tb01338.x)
+
+## 10. Worked Example
+
+Consider $R(\text{Course},\text{Teacher},\text{Dept})$ with FD $\text{Course}\to\text{Teacher},\text{Dept}$ and instance:
+
+| Course | Teacher | Dept |
+|--------|---------|------|
+| CS101  | Alice   | CS   |
+| CS101  | Alice   | CS   |
+| DB200  | Bob     | CS   |
+
+This schema is in 3NF (Course is the key, so every FD's LHS is a superkey — actually BCNF too here). Now take the *bad* design $R'(\text{Course},\text{Teacher},\text{Student})$ with FD $\text{Course}\to\text{Teacher}$ but key $\{\text{Course},\text{Student}\}$. The Teacher cell is redundant: in any row, its value is forced by Course. Information-theoretically, with domain size $n$, the conditional entropy of a Teacher cell given the rest is $H(p\mid I_{-p})=0$, so $\mathrm{RIA}=\lim_{n\to\infty}\frac{0}{\log n}=0<1$ — flagging redundancy. By contrast a Student cell is unconstrained: $H=\log n$, giving $\mathrm{RIA}=1$. Because $R'$ has a position with $\mathrm{RIA}<1$, it is *not* well-designed, matching the syntactic verdict that $\text{Course}\to\text{Teacher}$ violates BCNF (Course is not a superkey). The two criteria coincide exactly, as Arenas–Libkin prove.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

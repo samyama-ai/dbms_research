@@ -49,12 +49,22 @@ Theory (MPC/AGM/WCOJ) gives tight single-round bounds in an *abstract* cost mode
 
 ## 9. Key References
 
-- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (JACM 2018).
-- **[SOTA]** Barthels, Müller, Schneider, Alonso, Hoefler. *Distributed Join Algorithms on Thousands of Cores.* VLDB, 2017.
-- **[SOTA]** Rödiger, Idicula, Kemper, Neumann. *Flow-Join: Adaptive Skew Handling for Distributed Joins over High-Speed Networks.* ICDE, 2016.
-- **[Foundational]** Dragojević, Narayanan, Castro, Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014.
-- **[Survey]** Atikoglu/Binnig et al. and Zamanian et al. *The End of Slow Networks: It's Time for a Redesign.* VLDB, 2016.
+- **[Foundational]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing.* PODS, 2013. — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (JACM 2018). — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Barthels, Müller, Schneider, Alonso, Hoefler. *Distributed Join Algorithms on Thousands of Cores.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3055540.3055545)
+- **[SOTA]** Rödiger, Idicula, Kemper, Neumann. *Flow-Join: Adaptive Skew Handling for Distributed Joins over High-Speed Networks.* ICDE, 2016. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/RodigerIK016.html)
+- **[Foundational]** Dragojević, Narayanan, Castro, Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87)
+- **[Survey]** Binnig, Crotty, Galakatos, Kraska, Zamanian et al. *The End of Slow Networks: It's Time for a Redesign.* VLDB, 2016. — [arXiv](https://arxiv.org/abs/1504.01048)
+
+## 10. Worked Example
+
+*Single equi-join, $R(a,b)\bowtie S(b,c)$.* Take $|R|=|S|=10^9$ tuples over $p=100$ machines on an RDMA cluster. Hash both inputs on the join key $b$ and shuffle: in **one round** each machine receives $\tilde O((|R|+|S|)/p) = \tilde O(2\times10^7)$ tuples — matching the MPC single-round load lower bound for a 2-relation join (edge cover $\rho^*=1$, so load $\propto \text{IN}/p^{1/\rho^*}=\text{IN}/p$).
+
+*Triangle (multiway, cyclic).* Now compute $R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ with $|R|=|S|=|T|=N$. The fractional edge cover number is $\rho^* = 3/2$ (each of three edges weighted $1/2$ covers all vertices). The AGM bound caps output at $\prod_e N^{1/2}=N^{3/2}$. HyperCube/Shares arranges the $p$ machines on a $p^{1/3}\times p^{1/3}\times p^{1/3}$ cube; single-round per-machine load is
+$$\tilde O\!\big(N/p^{1/\rho^*}\big)=\tilde O\!\big(N/p^{2/3}\big).$$
+For $N=10^9$, $p=1000$: load $\approx 10^9/1000^{2/3}=10^9/100=10^7$ tuples — vs. $10^9/1000=10^6$ for the (cheaper) acyclic single-join case. The extra $p^{1/3}$ factor is the unavoidable price of the cyclic query's higher $\rho^*$.
+
+*RDMA twist.* A one-sided semi-join variant pulls only matching $T$-tuples, trading $\approx$ output-size **bytes** for one extra **round trip per probe** — the rounds-vs-bytes tension Section 6 flags as lacking a tight RDMA-faithful bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

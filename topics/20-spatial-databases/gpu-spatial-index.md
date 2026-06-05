@@ -40,11 +40,26 @@ Directions: ray-tracing-core (RT-core) repurposing — encoding spatial range/$k
 - Exploiting tensor/RT cores for spatial predicates; energy-per-query as an objective.
 
 ## 9. Key References
-- **[Foundational]** Guttman. *R-trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984.
-- **[Foundational]** Karras. *Maximizing Parallelism in the Construction of BVHs, Octrees, and k-d Trees.* High-Performance Graphics, 2012.
-- **[SOTA]** Doraiswamy, Freire. *A GPU-Friendly Geometric Data Model and Algebra for Spatial Queries.* SIGMOD, 2020.
-- **[SOTA]** RAPIDS cuSpatial. *GPU-Accelerated Spatial and Trajectory Data Management.* NVIDIA, 2019–2024.
-- **[Survey]** Blelloch, Maggs. *Parallel Algorithms.* (work–depth model), ACM Computing Surveys lineage.
+- **[Foundational]** Guttman. *R-trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/971697.602266)
+- **[Foundational]** Karras. *Maximizing Parallelism in the Construction of BVHs, Octrees, and k-d Trees.* High-Performance Graphics, 2012. — [DBLP](https://dblp.org/rec/conf/egh/Karras12.html)
+- **[SOTA]** Doraiswamy, Freire. *A GPU-Friendly Geometric Data Model and Algebra for Spatial Queries.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/2004.03630), [DOI](https://doi.org/10.1145/3318464.3389774)
+- **[SOTA]** RAPIDS cuSpatial. *GPU-Accelerated Spatial and Trajectory Data Management.* NVIDIA, 2019–2024. — [docs](https://docs.rapids.ai/api/cuspatial/stable/)
+- **[Survey]** Blelloch, Maggs. *Parallel Algorithms.* (work–depth model), ACM Computing Surveys lineage. — [DBLP search](https://dblp.org/search?q=Blelloch+Maggs+Parallel+Algorithms)
+
+## 10. Worked Example
+
+Consider 4 points on a $4\times4$ grid, indexed by 2-bit-per-axis **Z-order (Morton)** codes, interleaving bits as $z = y_1x_1y_0x_0$:
+
+| point | $(x,y)$ | bits $x{=}x_1x_0,\,y{=}y_1y_0$ | Morton $z$ |
+|-------|---------|------------------|-----------|
+| A | $(0,0)$ | $00,00$ | $0000=0$ |
+| B | $(1,0)$ | $01,00$ | $0001=1$ |
+| C | $(0,1)$ | $00,01$ | $0100=4$ |
+| D | $(3,3)$ | $11,11$ | $1111=15$ |
+
+Sorting by $z$ gives order $A(0),B(1),C(4),D(15)$ — contiguous in memory, so a warp reading them is **coalesced**. A range query for the box $x\in[0,1],y\in[0,1]$ covers Morton interval $[0,5]$, which is *one* contiguous run capturing $A,B,C$ (and correctly excludes $D$ at $z=15$). One contiguous interval = zero divergence: every thread in the warp does identical work.
+
+As a contrast, the geometrically adjacent cells $(1,1)$ and $(2,0)$ have Morton codes $z=0011=3$ and $z=0010=2$, yet the also-adjacent cell $(2,1)$ has $z=0110=6$ — the curve "jumps" by 4. So a wider query box can split into **several disjoint Morton runs**, each a separate coalesced segment. This is the **dilation/locality** term of Section 2: a geometrically simple query can fragment into up to $O(n^{1-1/d})$ runs, the unavoidable SFC penalty that pushes warp work above the ideal single-run case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

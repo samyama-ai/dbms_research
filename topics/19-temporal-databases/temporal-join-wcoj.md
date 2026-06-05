@@ -47,12 +47,25 @@ For **binary** overlap the gap is closed ($\Theta(n \log n + k)$). For **multiwa
 - I/O-optimal external-memory and parallel/distributed WCOJ temporal joins.
 
 ## 9. Key References
-- **[Foundational]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013 (FOCS 2008).
-- **[SOTA]** Abo Khamis, M., Ngo, H. Q., Rudra, A. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[SOTA]** Dignós, A., Böhlen, M., Gamper, J. *Overlap Interval Partition Join.* SIGMOD, 2014.
-- **[SOTA]** Kaufmann, M. et al. *Timeline Index: A Unified Data Structure for Processing Queries on Temporal Data in SAP HANA.* SIGMOD, 2013.
-- **[Survey]** Ngo, H. Q. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS (tutorial), 2018.
+- **[Foundational]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013 (FOCS 2008). — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Abo Khamis, M., Ngo, H. Q., Rudra, A. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[SOTA]** Dignós, A., Böhlen, M., Gamper, J. *Overlap Interval Partition Join.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612175)
+- **[SOTA]** Kaufmann, M. et al. *Timeline Index: A Unified Data Structure for Processing Queries on Temporal Data in SAP HANA.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465293)
+- **[Survey]** Ngo, H. Q. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS (tutorial), 2018. — [arXiv](https://arxiv.org/abs/1803.09930)
+
+## 10. Worked Example
+
+**Binary overlap join.** $R=\{[1,4),[6,9)\}$, $S=\{[2,3),[3,7),[8,10)\}$. Overlap predicate $a_s<b_e \wedge b_s<a_e$.
+
+Plane-sweep: sort all $2(|R|+|S|)=10$ endpoints, sweep left-to-right maintaining the set of currently "open" intervals from each side; emit a pair when an interval opens while an opposite-side interval is open.
+
+- $[1,4)$ open. $[2,3)$ opens → pair $([1,4),[2,3))$. $[3,7)$ opens while $[1,4)$ open → pair $([1,4),[3,7))$.
+- $[1,4)$ closes at 4; $[3,7)$ still open. $[6,9)$ opens while $[3,7)$ open → pair $([6,9),[3,7))$. $[8,10)$ opens while $[6,9)$ open → pair $([6,9),[8,10))$.
+
+Output $k=4$ pairs in $O(n\log n + k)$ — the sort dominates, matching the $\Omega(n\log n + k)$ lower bound, so binary overlap is closed.
+
+**Why multiway is open.** Chain $R(x)\bowtie S(x)\bowtie T(x)$ where all three must mutually overlap: this is a *temporal triangle*. The AGM equi-join bound (fractional cover $=3/2$, giving $\sqrt{|R||S||T|}$) does not directly apply because overlap is two inequalities, not equality — so no closed-form WCOJ output bound parameterized by interval geometry is yet known.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

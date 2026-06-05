@@ -106,11 +106,22 @@ heavy-hitter lower bound.
 
 ## 9. Key References
 
-- **[Foundational]** M. Anthony, P. Bartlett. *Neural Network Learning: Theoretical Foundations.* Cambridge Univ. Press, 1999.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS 2008 / SICOMP 2013.
-- **[SOTA]** Z. Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* VLDB 2021.
-- **[SOTA]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM 2022.
-- **[Survey]** X. Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021.
+- **[Foundational]** M. Anthony, P. Bartlett. *Neural Network Learning: Theoretical Foundations.* Cambridge Univ. Press, 1999. — [DOI](https://doi.org/10.1017/CBO9780511624216)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS 2008 / SICOMP 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Z. Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* VLDB 2021. — [arXiv](https://arxiv.org/abs/2006.08109)
+- **[SOTA]** M. Mitzenmacher, S. Vassilvitskii. *Algorithms with Predictions.* CACM 2022. — [DOI](https://doi.org/10.1145/3528087)
+- **[Survey]** X. Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+
+## 10. Worked Example
+
+Suppose the estimator class is "axis-parallel range predicates on $d=3$ attributes," whose pseudo-dimension is $D=2d=6$. We want expected q-error within $\varepsilon=0.1$ (in log-loss units) with confidence $1-\delta=0.95$, so $\delta=0.05$.
+
+The uniform-convergence upper bound (Section 4) gives the required number of labeled training queries:
+$$m = O\!\Big(\tfrac{1}{\varepsilon^2}\big(D + \ln\tfrac1\delta\big)\Big) = \tfrac{1}{0.01}\big(6 + \ln 20\big) \approx 100\,(6 + 3.0) = 900.$$
+
+So $\approx 900$ training queries suffice — *as long as* test queries are i.i.d. from the same distribution $\mathcal{Q}$.
+
+Now the lower-bound caveat. Add one **join** to an unqueried table whose key correlates with a planted heavy hitter covering 1 unqueried selectivity cell out of $\sim N$. No training set of single-table range queries can reveal that cell, so an adversary makes the true cardinality jump from $\hat c=10$ to $c=10^6$: q-error $=10^5$ on an input the $m=900$-sample bound never controls. This is the gap (Section 6): the clean $O(\varepsilon^{-2}D)$ rate holds only within the trained predicate family; one unseen join topology voids it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

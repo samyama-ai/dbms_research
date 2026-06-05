@@ -47,13 +47,23 @@ LDP imposes a fundamental $\Omega(\sqrt{n})$ penalty even for single-bit means (
 
 ## 9. Key References
 
-- **[Foundational]** Kasiviswanathan, Lee, Nissim, Raskhodnikova, Smith. *What Can We Learn Privately? (Local model).* FOCS, 2008.
-- **[Foundational]** Duchi, Jordan, Wainwright. *Local Privacy and Statistical Minimax Rates.* FOCS, 2013.
-- **[Foundational]** Erlingsson, Pihur, Korolova. *RAPPOR: Randomized Aggregatable Privacy-Preserving Ordinal Response.* CCS, 2014.
-- **[SOTA]** Cheu, Smith, Ullman, Zeber, Zhilyaev. *Distributed Differential Privacy via Shuffling.* EUROCRYPT, 2019.
-- **[SOTA]** Imola, Murakami, Chaudhuri. *Locally Differentially Private Analysis of Graph Statistics (Triangle/Subgraph Counting).* USENIX Security, 2021.
-- **[SOTA]** Joseph, Mao, Neel, Roth. *The Role of Interactivity in Local Differential Privacy.* FOCS, 2019.
-- **[Survey]** Cormode, Jha, Kulkarni, Li, Srivastava, Wang. *Privacy at Scale: Local Differential Privacy in Practice.* SIGMOD Tutorial, 2018.
+- **[Foundational]** Kasiviswanathan, Lee, Nissim, Raskhodnikova, Smith. *What Can We Learn Privately? (Local model).* FOCS, 2008. — [DOI](https://doi.org/10.1109/FOCS.2008.27) · [arXiv](https://arxiv.org/abs/0803.0924)
+- **[Foundational]** Duchi, Jordan, Wainwright. *Local Privacy and Statistical Minimax Rates.* FOCS, 2013. — [DOI](https://doi.org/10.1109/FOCS.2013.53) · [arXiv](https://arxiv.org/abs/1302.3203)
+- **[Foundational]** Erlingsson, Pihur, Korolova. *RAPPOR: Randomized Aggregatable Privacy-Preserving Ordinal Response.* CCS, 2014. — [DOI](https://doi.org/10.1145/2660267.2660348) · [arXiv](https://arxiv.org/abs/1407.6981)
+- **[SOTA]** Cheu, Smith, Ullman, Zeber, Zhilyaev. *Distributed Differential Privacy via Shuffling.* EUROCRYPT, 2019. — [DOI](https://doi.org/10.1007/978-3-030-17653-2_13) · [arXiv](https://arxiv.org/abs/1808.01394)
+- **[SOTA]** Imola, Murakami, Chaudhuri. *Locally Differentially Private Analysis of Graph Statistics (Triangle/Subgraph Counting).* USENIX Security, 2021. — [USENIX](https://www.usenix.org/conference/usenixsecurity21/presentation/imola)
+- **[SOTA]** Joseph, Mao, Neel, Roth. *The Role of Interactivity in Local Differential Privacy.* FOCS, 2019. — [arXiv](https://arxiv.org/abs/1904.03564) · [IEEE](https://ieeexplore.ieee.org/document/8948625/)
+- **[Survey]** Cormode, Jha, Kulkarni, Li, Srivastava, Wang. *Privacy at Scale: Local Differential Privacy in Practice.* SIGMOD Tutorial, 2018. — [DOI](https://doi.org/10.1145/3183713.3197390)
+
+## 10. Worked Example
+
+Why an inner-join `COUNT(*)` is hard under LDP. Imagine $n=6$ users, each holding one private key value; the aggregator wants the **self-join size** $J=\sum_{i<j}\mathbb{1}[k_i=k_j]$ (number of matching pairs).
+
+True data (hidden): keys $=(a,a,a,b,b,c)$. Matching pairs: $\binom{3}{2}=3$ among the $a$'s, $\binom{2}{2}=1$ among the $b$'s, $0$ for $c$ → $J=4$.
+
+Each user must run an $\varepsilon$-LDP randomizer on her key *before* sending. With a domain of, say, 4 possible keys and $\varepsilon=1$, a randomized-response report is correct with probability $\frac{e^{\varepsilon}}{e^{\varepsilon}+3}=\frac{2.72}{5.72}\approx 0.48$ and otherwise uniform. The aggregator only sees noisy keys; the *coincidence* it must count is precisely what randomization destroys.
+
+Concretely, estimating $J$ requires estimating the second moment $\sum_v p_v^2$ of the key distribution. LDP frequency estimation gives each $\hat p_v$ with standard error $\Theta(\sqrt{n}/\varepsilon)$; squaring and summing makes the variance of $\hat J$ scale like $\Theta(n)$ — the **same order as $J$ itself in the worst case**. So the signal-to-noise ratio stays $O(1)$: no nontrivial accuracy, matching the $\Omega(\sqrt{n})$ correlation lower bound that makes pure single-message LDP joins essentially infeasible.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

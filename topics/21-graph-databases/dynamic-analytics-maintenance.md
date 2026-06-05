@@ -52,13 +52,24 @@ Active groups: Saranurak/Nanongkai (expander-based dynamic algorithms), Dhulipal
 - A unified incremental-view-maintenance framework covering analytics inside graph DBs.
 
 ## 9. Key References
-- **[Foundational]** Holm, de Lichtenberg, Thorup. *Poly-logarithmic deterministic fully-dynamic algorithms for connectivity, MST, 2-edge and biconnectivity.* JACM, 2001.
-- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and strengthening hardness for dynamic problems via the online matrix-vector multiplication conjecture.* STOC, 2015.
-- **[SOTA]** Chuzhoy, Gao, Li, Nanongkai, Peng, Saranurak. *A deterministic algorithm for balanced cut with applications to dynamic connectivity.* FOCS, 2020.
-- **[SOTA]** Sariyüce, Gedik, Jacques-Silva, Wu, Çatalyürek. *Streaming algorithms for k-core decomposition.* PVLDB, 2013.
-- **[SOTA]** Vora, Gupta, et al. *KickStarter: Fast and accurate computations on streaming graphs via trimmed approximations.* ASPLOS, 2017.
-- **[SOTA]** Dhulipala, Blelloch, Shun. *Low-latency graph streaming using compressed purely-functional trees (Aspen).* PLDI, 2019.
-- **[Survey]** Bergamini, Meyerhenke. *Approximating betweenness centrality in fully dynamic networks.* Internet Mathematics, 2016.
+- **[Foundational]** Holm, de Lichtenberg, Thorup. *Poly-logarithmic deterministic fully-dynamic algorithms for connectivity, MST, 2-edge and biconnectivity.* JACM, 2001. — [DOI](https://doi.org/10.1145/502090.502095)
+- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and strengthening hardness for dynamic problems via the online matrix-vector multiplication conjecture.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1511.06773)
+- **[SOTA]** Chuzhoy, Gao, Li, Nanongkai, Peng, Saranurak. *A deterministic algorithm for balanced cut with applications to dynamic connectivity.* FOCS, 2020. — [arXiv](https://arxiv.org/abs/1910.08025)
+- **[SOTA]** Sariyüce, Gedik, Jacques-Silva, Wu, Çatalyürek. *Streaming algorithms for k-core decomposition.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536336.2536344)
+- **[SOTA]** Vora, Gupta, et al. *KickStarter: Fast and accurate computations on streaming graphs via trimmed approximations.* ASPLOS, 2017. — [DOI](https://doi.org/10.1145/3093337.3037748)
+- **[SOTA]** Dhulipala, Blelloch, Shun. *Low-latency graph streaming using compressed purely-functional trees (Aspen).* PLDI, 2019. — [arXiv](https://arxiv.org/abs/1904.08380)
+- **[Survey]** Bergamini, Meyerhenke. *Approximating betweenness centrality in fully dynamic networks.* Internet Mathematics, 2016. — [arXiv](https://arxiv.org/abs/1510.07971)
+
+## 10. Worked Example
+
+Illustrate the **bounded-shift** property of $k$-core under one edge insertion. Start with a path $1\!-\!2\!-\!3\!-\!4$ plus an extra edge $2\!-\!4$, so degrees are $\deg(1)=1,\deg(2)=3,\deg(3)=2,\deg(4)=2$. Coreness (max $k$ such that the vertex survives repeatedly peeling all vertices of degree $<k$):
+
+- Peel $k=1$: remove vertex 1 (degree 1). Remaining $\{2,3,4\}$ form a triangle, each degree 2.
+- So core numbers are $\text{core}(1)=1$, $\text{core}(2)=\text{core}(3)=\text{core}(4)=2$.
+
+Now **insert edge $1\!-\!3$**. Vertex 1's degree rises to 2. The theorem (section 2) guarantees no core number changes by more than $1$. Indeed only the "affected subgraph" reachable from the endpoints is re-examined: vertex 1 can now survive the $k=1$ peel, and the new graph $\{1,2,3,4\}$ with edges $\{12,23,34,24,13\}$ has every vertex of degree $\ge 2$, so $\text{core}(1)$ shifts $1\to 2$; all others stay $2$.
+
+The update touched only $O(|\text{affected}|)=O(1)$ vertices here — but in a star where the hub gains an edge, the affected set can cascade to $\Theta(n)$ vertices, which is exactly why a worst-case sublinear guarantee (section 6) remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

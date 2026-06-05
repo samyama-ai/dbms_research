@@ -58,11 +58,22 @@ For a **single segment class, segment-count objective**: the gap is **closed** (
 
 ## 9. Key References
 
-- **[Foundational]** J. O'Rourke. *An on-line algorithm for fitting straight lines between data ranges.* Communications of the ACM, 1981.
-- **[Foundational]** H. Elmeleegy, A. Elmagarmid, E. Cecchet, W. Aref, W. Zwaenepoel. *Online Piece-wise Linear Approximation of Numerical Streams with Precision Guarantees.* VLDB, 2009.
-- **[SOTA]** X. Kitsios, P. Liakos, K. Papakonstantinou, M. Terrovitis. *Sim-Piece: Highly Accurate Piecewise Linear Approximation through Similar Segment Merging.* VLDB, 2023.
-- **[Foundational]** I. Lazaridis, S. Mehrotra. *Capturing Sensor-Generated Time Series with Quality Guarantees.* ICDE, 2003.
-- **[Survey]** P. Esling, C. Agon. *Time-Series Data Mining.* ACM Computing Surveys, 2012.
+- **[Foundational]** J. O'Rourke. *An on-line algorithm for fitting straight lines between data ranges.* Communications of the ACM, 1981. — [DOI](https://doi.org/10.1145/358746.358758)
+- **[Foundational]** H. Elmeleegy, A. Elmagarmid, E. Cecchet, W. Aref, W. Zwaenepoel. *Online Piece-wise Linear Approximation of Numerical Streams with Precision Guarantees.* VLDB, 2009. — [VLDB PDF](https://www.cs.purdue.edu/homes/ake/pub/online_vldb09.pdf)
+- **[SOTA]** X. Kitsios, P. Liakos, K. Papakonstantinou, M. Terrovitis. *Sim-Piece: Highly Accurate Piecewise Linear Approximation through Similar Segment Merging.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3594512.3594521)
+- **[Foundational]** I. Lazaridis, S. Mehrotra. *Capturing Sensor-Generated Time Series with Quality Guarantees.* ICDE, 2003. — [IEEE](https://ieeexplore.ieee.org/document/1260811/)
+- **[Survey]** P. Esling, C. Agon. *Time-Series Data Mining.* ACM Computing Surveys, 2012. — [DOI](https://doi.org/10.1145/2379776.2379788)
+
+## 10. Worked Example
+
+Piecewise-constant fit, tolerance $\varepsilon = 1.0$, stream $v = [10,\,10.5,\,11,\,11.8,\,3,\,3.2]$.
+
+A constant segment $[s,e]$ is $\varepsilon$-feasible iff $\max_{[s,e]} v - \min_{[s,e]} v \le 2\varepsilon = 2.0$ (the band $[\,\mu-\varepsilon,\mu+\varepsilon\,]$ must cover every point). Greedy "extend while feasible":
+
+- Start at $v_1=10$. Range over $\{10\}=0$, add $10.5$ → range $0.5$, add $11$ → range $1.0$, add $11.8$ → range $1.8 \le 2.0$ ✓. Try $3$ → range $11{-}3=8.8 > 2.0$ ✗. **Commit segment 1** = indices $1..4$, value $\tfrac{11.8+10}{2}=10.9$.
+- New segment at $v_5=3$. Add $3.2$ → range $0.2$ ✓, stream ends. **Commit segment 2**, value $3.1$.
+
+Result: $k=2$ segments. Because feasibility here is **prefix-monotone** (any sub-interval of a feasible run is feasible), maximal-greedy is provably 1-competitive — it equals offline OPT. The hardness only appears under *bit*-minimization: if segments could share a coded value, committing index 4 to segment 1 versus starting a new segment early could change total bits, and no online rule is known to be constant-competitive there.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

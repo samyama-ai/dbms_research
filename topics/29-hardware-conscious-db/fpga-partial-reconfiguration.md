@@ -48,12 +48,31 @@ For the pure caching view the gap is *closed up to logs*: $\Omega(\log k)$ vs $O
 
 ## 9. Key References
 
-- **[Foundational]** Sleator, D. D., Tarjan, R. E. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* FOCS, 2007 / JACM.
-- **[SOTA]** Istvan, Z., Sidler, D., Alonso, G. *Caribou / Doppio: Active Storage and FPGA Operators for Databases.* VLDB / FPGA, 2017–2020.
-- **[SOTA]** Khawaja, A., et al. *Sharing, Protection, and Compatibility for Reconfigurable Fabric with AmorphOS.* OSDI, 2018.
-- **[SOTA]** Korolija, D., Roscoe, T., Alonso, G. *Do OS Abstractions Make Sense on FPGAs? (Coyote).* OSDI, 2020.
-- **[Survey]** Fang, J., Mulder, Y. T. B., Hidders, J., Lee, J., Hofstee, H. P. *In-Memory Database Acceleration on FPGAs: A Survey.* VLDB Journal, 2020.
+- **[Foundational]** Sleator, D. D., Tarjan, R. E. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** Bansal, N., Buchbinder, N., Naor, J. *A Primal-Dual Randomized Algorithm for Weighted Paging.* FOCS, 2007 / JACM. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[SOTA]** Istvan, Z., Sidler, D., Alonso, G. *Caribou / Doppio: Active Storage and FPGA Operators for Databases.* VLDB / FPGA, 2017–2020. — [DOI](https://doi.org/10.14778/3137628.3137632)
+- **[SOTA]** Khawaja, A., et al. *Sharing, Protection, and Compatibility for Reconfigurable Fabric with AmorphOS.* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/khawaja)
+- **[SOTA]** Korolija, D., Roscoe, T., Alonso, G. *Do OS Abstractions Make Sense on FPGAs? (Coyote).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/roscoe)
+- **[Survey]** Fang, J., Mulder, Y. T. B., Hidders, J., Lee, J., Hofstee, H. P. *In-Memory Database Acceleration on FPGAs: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00581-w)
+
+## 10. Worked Example
+
+Model the fabric as $k = 2$ identical reconfigurable regions (cache slots), each holding one operator bitstream; loading a bitstream (a "page fault") costs $r = 5$ ms. The query stream demands this operator sequence:
+
+$$ \text{filter},\ \text{join},\ \text{filter},\ \text{sort},\ \text{join},\ \text{sort},\ \text{filter} $$
+
+Run **LRU** (= the move-to-front paging rule of Sleator–Tarjan), regions start empty:
+- filter → miss (load), regions {filter}
+- join → miss (load), {filter, join}
+- filter → **hit**
+- sort → miss, evict LRU=join → {filter, sort}
+- join → miss, evict LRU=filter → {sort, join}
+- sort → **hit**
+- filter → miss, evict LRU=join → {sort, filter}
+
+LRU faults = 5, costing $5 \times 5 = 25$ ms of reconfiguration.
+
+Belady's optimal offline (evict the operator reused farthest in the future) on the same trace: filter(miss), join(miss), filter(hit), sort(miss, evict join), join(miss, evict sort), sort(miss), filter(hit with {join... }) — careful accounting gives 5 faults here too, since every operator recurs. The point: with $k=2$ slots and 3 distinct operators cycling, thrashing is unavoidable, and LRU is $k$-competitive — no deterministic policy beats ratio $k=2$ in the worst case. Adding a third region ($k=3$) would let all of {filter, join, sort} stay resident, dropping steady-state faults to zero — illustrating why region count, not just policy, governs amortized reconfiguration cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

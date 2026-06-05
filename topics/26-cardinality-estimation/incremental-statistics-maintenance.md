@@ -59,12 +59,24 @@ Distinct counting requires $\Omega(\varepsilon^{-2} + \log n)$ bits (Indyk–Woo
 
 ## 9. Key References
 
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[Foundational]** Gibbons, Matias. *New Sampling-Based Summary Statistics for Improving Approximate Query Answers.* SIGMOD, 1998.
-- **[SOTA]** Ben-Eliezer, Jayaram, Woodruff, Yogev. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166v1)
+- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Foundational]** Gibbons, Matias. *New Sampling-Based Summary Statistics for Improving Approximate Query Answers.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276334)
+- **[SOTA]** Ben-Eliezer, Jayaram, Woodruff, Yogev. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020. — [arXiv](https://arxiv.org/abs/2003.14265)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Maintain a Count-Min sketch with $w = 4$ columns and $d = 2$ rows (hash functions $h_1, h_2$) over a frequency stream. Linearity is the key: an insert of key $x$ adds $+1$ to one cell per row; a delete subtracts $1$ — no rescan.
+
+Process inserts of keys with hashes
+$$h_1(a)=0,\ h_2(a)=2;\quad h_1(b)=0,\ h_2(b)=1;\quad h_1(c)=3,\ h_2(c)=2.$$
+After inserting $a,a,b,c$ the two rows hold
+$$\text{row}_1 = [\,3,\,0,\,0,\,1\,],\qquad \text{row}_2 = [\,0,\,1,\,3,\,0\,].$$
+(Row 1 col 0 = count of $a$+$b$ = 3; row 2 col 2 = count of $a$+$c$ = 3.)
+
+Query frequency of $a$: $\hat f(a) = \min(\text{row}_1[0], \text{row}_2[2]) = \min(3,3) = 3$ — exact here, but the estimate is $\ge$ the truth because of collisions ($a$ and $b$ collide in row 1). Now **delete** one $a$: subtract $1$ at cols $0$ and $2$ giving $\text{row}_1=[2,0,0,1]$, $\text{row}_2=[0,1,2,0]$, and $\hat f(a)=2$ in $O(d)=O(1)$ work. The error bound $\hat f(x) \le f(x) + \varepsilon\lVert f\rVert_1$ holds with $w = \lceil e/\varepsilon\rceil$, matching the $\Omega(\varepsilon^{-1})$ space floor up to the $1/\varepsilon$ vs $1/\varepsilon^2$ regime for point vs distinct queries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -34,12 +34,32 @@ Active: **e-value online testing under dependence** for correlated series (Ramda
 - Standardized labeled benchmarks at realistic cardinality and dependence (beyond NAB/Yahoo S5).
 
 ## 9. Key References
-- **[Foundational]** Y. Benjamini, Y. Hochberg. *Controlling the False Discovery Rate.* JRSS-B, 1995.
-- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971.
-- **[SOTA]** A. Ramdas, T. Zrnic, M. Wainwright, M. Jordan. *SAFFRON: An Adaptive Algorithm for Online Control of the False Discovery Rate.* ICML, 2018.
-- **[SOTA]** A. Javanmard, A. Montanari. *Online Rules for Control of False Discovery Rate (LORD).* Annals of Statistics, 2018.
-- **[SOTA]** R. Wang, A. Ramdas. *False Discovery Rate Control with E-values.* JRSS-B, 2022.
-- **[SOTA]** S. Bates, E. Candès, L. Lei, Y. Romano, M. Sesia. *Testing for Outliers with Conformal p-values.* Annals of Statistics, 2023.
+- **[Foundational]** Y. Benjamini, Y. Hochberg. *Controlling the False Discovery Rate.* JRSS-B, 1995. — [DOI](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x)
+- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971. — [DOI](https://doi.org/10.1214/aoms/1177693055)
+- **[SOTA]** A. Ramdas, T. Zrnic, M. Wainwright, M. Jordan. *SAFFRON: An Adaptive Algorithm for Online Control of the False Discovery Rate.* ICML, 2018. — [arXiv](https://arxiv.org/abs/1802.09098)
+- **[SOTA]** A. Javanmard, A. Montanari. *Online Rules for Control of False Discovery Rate (LORD).* Annals of Statistics, 2018. — [DOI](https://doi.org/10.1214/17-AOS1559)
+- **[SOTA]** R. Wang, A. Ramdas. *False Discovery Rate Control with E-values.* JRSS-B, 2022. — [DOI](https://doi.org/10.1111/rssb.12489)
+- **[SOTA]** S. Bates, E. Candès, L. Lei, Y. Romano, M. Sesia. *Testing for Outliers with Conformal p-values.* Annals of Statistics, 2023. — [DOI](https://doi.org/10.1214/22-AOS2244)
+
+## 10. Worked Example
+
+Suppose a 5-minute monitoring window produced $m=10$ anomaly $p$-values, one per series, sorted:
+
+$$0.001,\ 0.008,\ 0.012,\ 0.021,\ 0.030,\ 0.18,\ 0.25,\ 0.41,\ 0.63,\ 0.90.$$
+
+Apply **Benjamini–Hochberg** at $\alpha=0.05$ (batch view). Find the largest $k$ with $p_{(k)}\le \frac{k}{m}\alpha=\frac{k}{10}(0.05)=0.005k$:
+
+| $k$ | $p_{(k)}$ | $0.005k$ | $p_{(k)}\le$? |
+|----|-----------|----------|----|
+| 1 | 0.001 | 0.005 | yes |
+| 2 | 0.008 | 0.010 | yes |
+| 3 | 0.012 | 0.015 | yes |
+| 4 | 0.021 | 0.020 | no |
+| 5 | 0.030 | 0.025 | no |
+
+Largest passing $k=3$, so BH rejects the 3 smallest — alert on those series. A naive per-series cut at $0.05$ would have fired on 5 series (through $p=0.030$), inflating false alarms.
+
+Now stream it: at test $t$ an **online** rule (LORD/SAFFRON) cannot peek ahead, so it spends a wealth-budgeted level $\alpha_t$ — e.g. starting wealth $0.025$, paying $\alpha_1=0.005$ on the first test and *earning back* budget only when a rejection occurs, keeping $\mathrm{FDR}(t)\le0.05$ for every $t$ on the never-ending series $\times$ time grid.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

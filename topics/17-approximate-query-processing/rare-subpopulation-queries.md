@@ -28,11 +28,23 @@ Directions: learned predicate-importance sampling that predicts which rare regio
 Budgeted coverage of exponentially many selective conjunctions; provable guarantees for unanticipated rare predicates via adaptive indexing; unifying outlier indexes with sketches and samples under one error model; private rare-subpopulation estimation with utility floors.
 
 ## 9. Key References
-- **[Foundational]** Chaudhuri, Das, Datar, Motwani, Narasayya. *Overcoming Limitations of Sampling for Aggregation Queries.* ICDE 2001.
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS 2000.
-- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016.
-- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** Metwally, Agrawal, El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (SpaceSaving).* ICDT 2005.
+- **[Foundational]** Chaudhuri, Das, Datar, Motwani, Narasayya. *Overcoming Limitations of Sampling for Aggregation Queries.* ICDE 2001. — [DBLP](https://dblp.org/rec/conf/icde/ChaudhuriDMN01.html)
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS 2000. — [DOI](https://doi.org/10.1145/335168.335230)
+- **[SOTA]** Ding, Huang, Chaudhuri, Chakkappen, Zhou. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915249)
+- **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Metwally, Agrawal, El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (SpaceSaving).* ICDT 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+
+## 10. Worked Example
+
+Table $T$ has $N = 10^8$ rows. The query is `SELECT AVG(amount) FROM T WHERE country='Tuvalu' AND fraud=true`, whose answer set has just $|\sigma_P(T)| = 50$ rows, so selectivity $s = 50/10^8 = 5\times10^{-7}$.
+
+Draw a uniform sample of $n = 10^6$ rows (1% of the table). The expected number of matching rows is
+$$\mathbb{E}[n_s] = n\,s = 10^6 \times 5\times10^{-7} = 0.5,$$
+and the probability the sample contains **zero** matches is
+$$\Pr[n_s = 0] = (1-s)^n \approx e^{-ns} = e^{-0.5} \approx 0.607.$$
+So a 1%-sample misses the subpopulation entirely more than 60% of the time — and even when it hits, $n_s \le 1$ gives no usable estimate (relative standard error $\Theta(1/\sqrt{n_s})$).
+
+To get $\mathbb{E}[n_s] = 30$ matches (for ~18% relative error) we'd need $n = 30/s = 6\times10^7$ rows — 60% of the whole table. This is the $\Omega(1/s)$ barrier of Section 5: for an unknown rare predicate, no sublinear sample suffices, motivating outlier indexes and exact-tail stores.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

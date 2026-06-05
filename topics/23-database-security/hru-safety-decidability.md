@@ -72,12 +72,30 @@ Decidability is settled at the two extremes: undecidable for general HRU/TAM, tr
 
 ## 9. Key References
 
-- **[Foundational]** Michael A. Harrison, Walter L. Ruzzo, Jeffrey D. Ullman. *Protection in Operating Systems.* Communications of the ACM, 1976.
-- **[Foundational]** Richard J. Lipton, Lawrence Snyder. *A Linear Time Algorithm for Deciding Subject Security.* Journal of the ACM, 1977.
-- **[Foundational]** Ravi S. Sandhu. *The Typed Access Matrix Model.* IEEE Symposium on Security and Privacy, 1992.
-- **[SOTA]** Ninghui Li, Mahesh V. Tripunitara. *Security Analysis in Role-Based Access Control.* ACM Transactions on Information and System Security (TISSEC), 2006.
-- **[Foundational]** Ravi S. Sandhu. *The Schematic Protection Model: Its Definition and Analysis for Acyclic Attenuating Schemes.* Journal of the ACM, 1988.
-- **[SOTA]** R. Pang et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019.
+- **[Foundational]** Michael A. Harrison, Walter L. Ruzzo, Jeffrey D. Ullman. *Protection in Operating Systems.* Communications of the ACM, 1976. — [DOI](https://doi.org/10.1145/360303.360333)
+- **[Foundational]** Richard J. Lipton, Lawrence Snyder. *A Linear Time Algorithm for Deciding Subject Security.* Journal of the ACM, 1977. — [DOI](https://doi.org/10.1145/322017.322025)
+- **[Foundational]** Ravi S. Sandhu. *The Typed Access Matrix Model.* IEEE Symposium on Security and Privacy, 1992. — [DBLP](https://dblp.org/rec/conf/sp/Sandhu92.html)
+- **[SOTA]** Ninghui Li, Mahesh V. Tripunitara. *Security Analysis in Role-Based Access Control.* ACM Transactions on Information and System Security (TISSEC), 2006. — [DOI](https://doi.org/10.1145/1187441.1187442)
+- **[Foundational]** Ravi S. Sandhu. *The Schematic Protection Model: Its Definition and Analysis for Acyclic Attenuating Schemes.* Journal of the ACM, 1988. — [DOI](https://doi.org/10.1145/42282.42286)
+- **[SOTA]** R. Pang et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/pang)
+
+## 10. Worked Example
+
+A tiny HRU system shows how grant-option propagation *leaks* a right. Rights $R=\{\textsf{own},\textsf{read},\textsf{r*}\}$, where `r*` is "read with grant option." Single command:
+
+$$\textbf{command } \mathsf{grantRead}(X,Y,F)\ \textbf{if } \textsf{r*}\in M[X,F]\ \textbf{then } \textsf{enter read into } M[Y,F].$$
+
+Initial matrix over subjects $\{A,B,C\}$ and object $F$:
+
+| | $F$ |
+|---|---|
+| $A$ | own, r* |
+| $B$ | r* |
+| $C$ | — |
+
+Ask: *is this system safe for `read` w.r.t. cell $M[C,F]$?* Run reachability. $A$ holds `r*`, so $\mathsf{grantRead}(A,C,F)$ fires and enters `read` into $M[C,F]$ — leaked in one step. Safety answer: **unsafe**. Note `B`'s `r*` would equally suffice, so even revoking $A$ does not help: the leak is structural.
+
+Because this command is **mono-operational** (one primitive op, `enter`), HRU's decision procedure applies: safety is decidable here, requiring at most $\mathcal{O}(|R|\cdot|S|\cdot|O|)$ command instantiations to test — but it is NP-complete in general. Allowing `create subject` plus multi-op commands is exactly what pushes the model into Turing-completeness and undecidability.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

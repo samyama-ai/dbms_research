@@ -41,12 +41,30 @@ Active: formally verified constant-time operator compilers; **page-oblivious + c
 - Quantitative information-flow accounting so a query's residual leakage is measured, not assumed zero.
 
 ## 9. Key References
-- **[Foundational]** Xu, Cui, Peinado. *Controlled-Channel Attacks: Deterministic Side Channels for Untrusted Operating Systems.* IEEE S&P, 2015.
-- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[SOTA]** Zheng, Dave, Beekman, et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
-- **[SOTA]** Mishra, Poddar, Chen, et al. *Oblix: An Efficient Oblivious Search Index.* IEEE S&P, 2018.
-- **[SOTA]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[Survey]** Van Bulck, Minkin, Weisse, et al. *Foreshadow: Extracting the Keys to the Intel SGX Kingdom.* USENIX Security, 2018.
+- **[Foundational]** Xu, Cui, Peinado. *Controlled-Channel Attacks: Deterministic Side Channels for Untrusted Operating Systems.* IEEE S&P, 2015. — [DOI](https://doi.org/10.1109/SP.2015.45)
+- **[Foundational]** Goldreich, Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[SOTA]** Zheng, Dave, Beekman, et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [DBLP](https://dblp.org/rec/conf/nsdi/ZhengDBPGS17.html)
+- **[SOTA]** Mishra, Poddar, Chen, et al. *Oblix: An Efficient Oblivious Search Index.* IEEE S&P, 2018. — [DOI](https://doi.org/10.1109/SP.2018.00045)
+- **[SOTA]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[Survey]** Van Bulck, Minkin, Weisse, et al. *Foreshadow: Extracting the Keys to the Intel SGX Kingdom.* USENIX Security, 2018. — [USENIX](https://www.usenix.org/conference/usenixsecurity18/presentation/bulck)
+
+## 10. Worked Example
+
+Consider a filter inside an enclave: `SELECT * FROM T WHERE salary > 100k` over $n=4$ encrypted rows. A naive plan branches on the secret predicate and only writes matching rows to an output buffer:
+
+```
+for r in T: if r.salary > 100k: out.append(r)
+```
+
+The page-fault controlled channel (Xu–Cui–Peinado) lets a malicious OS observe whether the `out.append` page is touched on each iteration. The touch-pattern $(0,1,0,1)$ directly reveals *which* rows matched — leaking the predicate's truth value per row even though data is encrypted.
+
+The oblivious fix removes the secret branch with constant-time select. For each row compute a flag $b=(\text{salary}>100k)$ and write **every** iteration, using `cmov` to pick payload-or-dummy:
+
+```
+out[i] = cmov(b, r, dummy)   // always touches out[i]
+```
+
+Now the access trace is $(1,1,1,1)$ regardless of data — page- and cache-oblivious — then an oblivious compaction packs the real matches in $O(n)$. Cost: a constant-factor `cmov` tax plus $O(n)$ compaction, versus the $\log n$ ORAM floor (Larsen–Nielsen) for full random-access hiding.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

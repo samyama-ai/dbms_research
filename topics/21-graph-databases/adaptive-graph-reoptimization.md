@@ -44,12 +44,20 @@ Active directions: extending SkinnerDB-style regret-bounded execution to *graph*
 - Reoptimization that is also provenance/incremental-maintenance friendly under updates.
 
 ## 9. Key References
-- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998.
-- **[SOTA]** Trummer, Wang, Maram, Moseley, Jo, Antonakakis. *SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning.* SIGMOD, 2019 (ACM TODS, 2021).
-- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Performance Robustness via Cost-Greedy Plan Selection.* SIGMOD, 2014.
-- **[SOTA]** Mhedhbi, Salihoglu. *Optimizing Subgraph Queries by Combining Binary and Worst-Case Optimal Joins.* VLDB, 2019.
-- **[Foundational]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276315)
+- **[SOTA]** Trummer, Wang, Maram, Moseley, Jo, Antonakakis. *SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning.* SIGMOD, 2019 (ACM TODS, 2021). — [arXiv](https://arxiv.org/abs/1901.05152)
+- **[SOTA]** Dutt, Haritsa. *Plan Bouquets: Query Performance Robustness via Cost-Greedy Plan Selection.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588566) *(published as "Plan Bouquets: Query Processing without Selectivity Estimation")*
+- **[SOTA]** Mhedhbi, Salihoglu. *Optimizing Subgraph Queries by Combining Binary and Worst-Case Optimal Joins.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1903.02076)
+- **[Foundational]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Consider the triangle query $T(a,b,c) \leftarrow E(a,b), E(b,c), E(a,c)$ on a graph where vertex $u$ is a hub with degree $10^6$ but most vertices have degree $\approx 10$. The optimizer, trusting a uniform-degree estimate, picks the left-deep binary-join order $E(a,b) \bowtie E(b,c)$ first, estimating the intermediate $|E\bowtie E|\approx |E|\cdot 10 = 10^7$.
+
+At runtime the eddy/monitor observes that after binding $a=u$, the partial join has already produced $10^6 \cdot 10 = 10^7$ tuples from a *single* source binding — q-error blows up because $u$'s true degree was mis-estimated by $10^5\times$. A regret-bounded reoptimizer reacts: the remaining work is re-routed to a **worst-case-optimal** generic join over $\{a,b,c\}$, whose AGM ceiling is $|E|^{3/2}$. With $|E|\approx 10^6$, AGM $=10^9$, versus the binary plan's runaway $\gg 10^{10}$ on the skewed instance.
+
+The switching decision is ski-rental: pay re-plan cost $c$ only once the observed surplus exceeds $c$, guaranteeing competitive ratio $\le 2$ against having switched optimally in hindsight, while the WCOJ fallback caps the worst case at $\tilde{O}(\mathrm{AGM})$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

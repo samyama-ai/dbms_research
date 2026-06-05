@@ -29,11 +29,19 @@ Senellart's group (Inria/ENS) and Ramusat continue the algebraic-path view, opti
 Open directions: tight circuit-size bounds for recursive provenance; efficient incremental maintenance of cyclic provenance circuits; provenance for recursive *aggregate* Datalog with guaranteed convergence; approximate/top-$k$ provenance with error bounds on huge graphs; and unifying Newtonian program analysis with database provenance tooling.
 
 ## 9. Key References
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** D. Deutch, T. Milo, S. Roy, V. Tannen. *Circuits for Datalog Provenance.* ICDT, 2014.
-- **[SOTA]** Y. Ramusat, S. Maniu, P. Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT, 2021.
-- **[SOTA]** J. Esparza, S. Kiefer, M. Luttenberger. *Newtonian Program Analysis.* J. ACM, 2010.
-- **[Survey]** B. Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021.
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** D. Deutch, T. Milo, S. Roy, V. Tannen. *Circuits for Datalog Provenance.* ICDT, 2014. — [DBLP](https://dblp.org/rec/conf/icdt/DeutchMRT14.html)
+- **[SOTA]** Y. Ramusat, S. Maniu, P. Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT, 2021. — [DOI](https://doi.org/10.5441/002/edbt.2021.08)
+- **[SOTA]** J. Esparza, S. Kiefer, M. Luttenberger. *Newtonian Program Analysis.* J. ACM, 2010. — [DOI](https://doi.org/10.1145/1857914.1857917)
+- **[Survey]** B. Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
+
+## 10. Worked Example
+
+Reachability Datalog: $T(x,y) \leftarrow E(x,y);\quad T(x,y) \leftarrow E(x,z), T(z,y).$ Take a 2-node graph with a self-loop on $a$: edges $E(a,a)$ annotated $p$ and $E(a,b)$ annotated $q$.
+
+**Non-absorptive $\mathbb{N}[X]$ (how-provenance).** The provenance of $T(a,b)$ enumerates every path $a\!\to\!a\!\to\dots\to\!a\!\to\!b$: $q + pq + p^2q + p^3q + \cdots$. The loop makes this an *infinite* power series — no finite polynomial exists, confirming the Section-5 impossibility. It is finitely captured only as the fixpoint equation $t = q + p\cdot t$ (a cyclic circuit).
+
+**Absorptive semiring (e.g. tropical / access-control).** Adopt $\mathrm{Trop} = (\mathbb{R}_{\ge0}\cup\{\infty\}, \min, +)$ with edge *costs* $p=2$, $q=5$. Now $a+ab=a$-style absorption keeps only the cheapest derivation. Kleene iteration converges in $\le n=2$ steps: the loop $a\to a$ never lowers cost, so $t = \min(5,\ 2+t) = 5$. The least fixpoint is reached finitely, and the algebraic-path (Floyd–Warshall) computation runs in $O(n^3)$ — exactly the tractable regime of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -50,11 +50,26 @@ Active directions: (i) **cost-aware autoscaling + watermark co-tuning** with SLA
 
 ## 9. Key References
 
-- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015.
-- **[Foundational]** Joseph M. Hellerstein, Peter J. Haas, Helen J. Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** Sameer Agarwal, Barzan Mozafari, Aurojit Panda, Henry Milner, Samuel Madden, Ion Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[Foundational]** Noga Alon, Yossi Matias, Mario Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[SOTA]** Mihai Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023.
+- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[Foundational]** Joseph M. Hellerstein, Peter J. Haas, Helen J. Wang. *Online Aggregation.* SIGMOD, 1997. — [DBLP](https://dblp.org/rec/conf/sigmod/HellersteinHW97.html)
+- **[SOTA]** Sameer Agarwal, Barzan Mozafari, Aurojit Panda, Henry Milner, Samuel Madden, Ion Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Foundational]** Noga Alon, Yossi Matias, Mario Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[SOTA]** Mihai Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+
+## 10. Worked Example
+
+A 1-minute tumbling count over events whose lateness $D$ (seconds past event-time end) is exponential, $\bar F_D(\delta)=e^{-\delta/10}$ (mean 10 s). With a watermark-lag policy and no retraction, latency $L=\delta$ and completeness $C(\delta)=F_D(\delta)=1-e^{-\delta/10}$:
+
+| Lag $\delta$ | Latency $L$ | Completeness $C$ |
+|---|---|---|
+| 5 s | 5 s | $1-e^{-0.5}=0.393$ |
+| 10 s | 10 s | $1-e^{-1}=0.632$ |
+| 20 s | 20 s | $1-e^{-2}=0.865$ |
+| 30 s | 30 s | $1-e^{-3}=0.950$ |
+
+The curve is exactly the delay CDF — concave, with sharply diminishing returns: going from 20 s to 30 s of latency buys only $+8.5$ points of completeness. No policy beats this without retraction (the lower bound from delay-tail impossibility).
+
+**Cost axis.** Holding window state until lag $\delta$ gives retention cost $R \propto \delta$. So $\delta=30$ s costs $3\times$ the state-time of $\delta=10$ s for a marginal completeness gain — illustrating the latency–completeness–cost tension and why the knee sits near $\delta \approx$ one or two mean-delays. Retractions (emit at 5 s, correct later) push $C\to 1$ but add a result-churn (revision) axis.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

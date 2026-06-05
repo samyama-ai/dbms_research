@@ -31,11 +31,21 @@ Parallel-join theory by **Koutris, Suciu, Beame** (Washington), **Hu, Yi, Tao** 
 - Factorized/compressed output to reduce shuffle for high-AGM patterns.
 
 ## 9. Key References
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / J. ACM 2018.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM Bound).* FOCS 2008 / SIAM J. Comput. 2013.
-- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing (HyperCube/Shares).* PODS 2013 / J. ACM 2017.
-- **[SOTA]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT 2016.
-- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS 2019.
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS 2012 / J. ACM 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM Bound).* FOCS 2008 / SIAM J. Comput. 2013. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** Beame, Koutris, Suciu. *Communication Steps for Parallel Query Processing (HyperCube/Shares).* PODS 2013 / J. ACM 2017. — [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** Koutris, Beame, Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT 2016. — [arXiv](https://arxiv.org/abs/1604.01848)
+- **[SOTA]** Hu, Yi. *Instance and Output Optimal Parallel Algorithms for Acyclic Joins.* PODS 2019. — [arXiv](https://arxiv.org/abs/1903.09717)
+
+## 10. Worked Example
+
+Consider the **triangle query** $Q(a,b,c) = E(a,b) \wedge E(b,c) \wedge E(c,a)$ over an edge relation with $|E|$ tuples. The optimal fractional edge cover assigns $x_e = 1/2$ to each of the three edges, so $\rho^* = 3/2$ and the AGM bound is $|E|^{3/2}$ — a serial WCOJ (e.g. Generic Join) enumerates all triangles in $\tilde O(|E|^{3/2})$.
+
+Now distribute over $p$ servers via **HyperCube**: arrange servers as a $p^{1/3}\times p^{1/3}\times p^{1/3}$ cube over the three coordinates $(a,b,c)$, hashing each value into $p^{1/3}$ buckets. An edge $E(u,v)$ must be sent to every cube cell consistent with $(u,v)$ on the $(a,b)$ face — that is $p^{1/3}$ cells (the free third coordinate). So each edge is replicated $\approx 3p^{1/3}$ times, giving per-server load
+
+$$L \approx \frac{3\,|E|\cdot p^{1/3}}{p} = \frac{3\,|E|}{p^{2/3}} = \tilde O\!\big(|E|/p^{1/\psi^*}\big),\quad \psi^*=3/2.$$
+
+With $|E|=10^6$ edges and $p=64$ servers, $p^{2/3}=16$, so each server holds $\approx 1.9\times10^5$ edges in **one round** — and this matches the $\Omega(|E|/p^{2/3})$ lower bound (section 5) on skew-free inputs. A single heavy-hitter vertex of degree $\sqrt{|E|}$, however, lands all its edges in one slice and breaks the bound, which is exactly the open skew issue.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

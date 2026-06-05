@@ -1,6 +1,7 @@
 # Range-aggregate query lower bounds
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/range-aggregate-lower-bounds` · **Status:** partially-solved
+> **Verification note:** The Pătraşcu–Demaine tight partial-sums bound appeared at SODA 2004 (the "STOC 2004" attribution in §2/§5 is a venue slip; the result itself is correct).
 
 ## 1. Problem Statement
 
@@ -62,12 +63,22 @@ For **static, uncompressed** arrays the picture is essentially tight: $O(1)$/$\T
 
 ## 9. Key References
 
-- **[Foundational]** A. C. Yao. *Space-Time Tradeoff for Answering Range Queries.* STOC, 1982.
-- **[Foundational]** M. Pătraşcu, E. Demaine. *Lower Bounds for Dynamic Connectivity / Tight Bounds for the Partial-Sums Problem.* STOC, 2004.
-- **[Foundational]** N. Alon, B. Schieber. *Optimal Preprocessing for Answering On-Line Product Queries.* TR, 1987.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[Foundational]** M. Pătraşcu. *Succincter.* FOCS, 2008.
-- **[Survey]** P. Bose et al. / G. Navarro. *Compact Data Structures.* Cambridge Univ. Press, 2016.
+- **[Foundational]** A. C. Yao. *Space-Time Tradeoff for Answering Range Queries.* STOC, 1982. — [DOI](https://doi.org/10.1145/800070.802185)
+- **[Foundational]** M. Pătraşcu, E. Demaine. *Lower Bounds for Dynamic Connectivity / Tight Bounds for the Partial-Sums Problem.* SODA, 2004. — [arXiv](https://arxiv.org/abs/cs/0502041) — [ACM](https://dl.acm.org/doi/10.5555/982792.982796)
+- **[Foundational]** N. Alon, B. Schieber. *Optimal Preprocessing for Answering On-Line Product Queries.* TR 71/87, Tel Aviv Univ., 1987. — [arXiv (2024 repost)](https://arxiv.org/abs/2406.06321)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Foundational]** M. Pătraşcu. *Succincter.* FOCS, 2008. — [DOI](https://doi.org/10.1109/FOCS.2008.83) — [DBLP](https://dblp.org/rec/conf/focs/Patrascu08.html)
+- **[Survey]** P. Bose et al. / G. Navarro. *Compact Data Structures: A Practical Approach.* Cambridge Univ. Press, 2016. — [ACM](https://dl.acm.org/doi/book/10.5555/3092586)
+
+## 10. Worked Example
+
+Take $n=8$ values $x = [3,1,4,1,5,9,2,6]$ and query $\text{sum}[3,6]$ (1-indexed, inclusive), i.e. $x_3+x_4+x_5+x_6 = 4+1+5+9 = 19$.
+
+**Group / prefix-sum route (sum is invertible).** Precompute prefix sums $P[i]=\sum_{j\le i}x_j = [3,4,8,9,14,23,25,31]$. Then $\text{sum}[3,6]=P[6]-P[2]=23-4=19$ in exactly **2 probes**, $O(1)$ regardless of range width — matching the upper bound.
+
+**Semigroup / non-invertible route (min over $[3,6]$).** Here subtraction is unavailable, so $O(1)$ prefix tricks fail. A sparse table precomputes mins over dyadic intervals of length $2^k$. For $[3,6]$ (width 4) it reads one block $\min(x_3..x_6)=\min(4,1,5,9)=1$ — idempotent min lets the two covering power-of-two blocks overlap, giving $O(1)$. A general (non-idempotent) semigroup cannot overlap and pays $\Theta(\alpha(n))$.
+
+**Dynamic twist.** Update $x_5\mathrel{+}=10$. Prefix sums force rebuilding $P[5..8]$ ($O(n)$); a Fenwick tree absorbs it in $O(\log n)=3$ probes — the Pătraşcu–Demaine $\Omega(\log n/\log(w/\delta))$ lower bound says you cannot do asymptotically better.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

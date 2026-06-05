@@ -31,12 +31,22 @@ Directions: TLB- and prefetch-aware refined cost models; cache-oblivious layouts
 A memory-hierarchy model that prices TLB and prefetch so cache-oblivious optimality claims transfer to wall-clock; cache-oblivious worst-case-optimal multi-way joins; adaptive algorithms that detect the hierarchy at runtime; tiered-memory (DRAM/CXL/PMEM) oblivious joins.
 
 ## 9. Key References
-- **[Foundational]** M. Frigo, C. E. Leiserson, H. Prokop, S. Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** G. S. Brodal, R. Fagerberg. *On the Limits of Cache-Obliviousness.* STOC, 2003.
-- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013.
-- **[SOTA]** S. Blanas, Y. Li, J. M. Patel. *Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs.* SIGMOD, 2011.
-- **[Survey]** S. Schuh, X. Chen, J. Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD, 2016.
+- **[Foundational]** M. Frigo, C. E. Leiserson, H. Prokop, S. Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DOI](https://doi.org/10.1109/SFFCS.1999.814600) · [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** G. S. Brodal, R. Fagerberg. *On the Limits of Cache-Obliviousness.* STOC, 2003. — [DOI](https://doi.org/10.1145/780542.780589) · [DBLP](https://dblp.org/rec/conf/stoc/BrodalF03.html)
+- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544839) · [DBLP](https://dblp.org/rec/conf/icde/BalkesenTAO13.html)
+- **[SOTA]** S. Blanas, Y. Li, J. M. Patel. *Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs.* SIGMOD, 2011. — [DOI](https://doi.org/10.1145/1989323.1989328)
+- **[Survey]** S. Schuh, X. Chen, J. Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882917) · [DBLP](https://dblp.org/rec/conf/sigmod/SchuhCD16.html)
+
+## 10. Worked Example
+
+Join build-relation $R$ ($|R| = N = 64$M tuples, 8 B each = 512 MB) against probe $S$, with cache $M = 32$ MB (L3) and line $B = 64$ B (8 tuples).
+
+**No-partition hash join.** The hash table on $R$ is 512 MB $\gg M = 32$ MB. Each probe of $S$ touches a random bucket $\Rightarrow$ almost every probe is an L3 miss, $\approx 1$ cache transfer *and* a TLB miss per tuple: $\Theta(|S|)$ transfers, latency-bound.
+
+**Cache-conscious radix join.** Partition both relations into $P = \lceil 512/32 \rceil = 16$ parts so each $R$-partition (32 MB) fits in L3. Partitioning costs $2\lceil N/B \rceil$ sequential transfers per pass; with fan-out limited to keep within TLB reach, the join phase then runs cache-resident. Total $\approx \Theta\big(\frac{N}{B}\log_{M/B}\frac{N}{B}\big)$ — but tuned to the *one* level $M = 32$ MB.
+
+**Cache-oblivious (funnelsort merge-join).** Hits the *same* $\Theta\big(\frac{N}{B}\log_{M/B}\frac{N}{B}\big)$ bound — but simultaneously for L1 ($M\approx 32$ KB), L2, *and* L3, with no $M,B$ in the code. Plugging numbers: $\log_{M/B}(N/B) = \log_{2^{19}}(2^{23}) = 23/19 \approx 1.2$, so $\sim 1.2$ merge passes. The radix join wins on TLB/prefetch constants (Section 5), but the oblivious version needs no per-level tuning — exactly the tradeoff in question.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

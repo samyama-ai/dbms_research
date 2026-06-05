@@ -41,12 +41,24 @@ Directions: (1) coverage-guided + symbolic hybrid generators that lift SQLancer-
 - Co-generation targeting *physical* corner cases (spills, NUMA imbalance, lock escalation), not just logical plans.
 
 ## 9. Key References
-- **[Foundational]** Binnig, Kossmann, Lo, Özsu. *QAGen: Generating Query-Aware Test Databases.* SIGMOD, 2007.
-- **[SOTA]** Sanghi, Sood, Haritsa, et al. *Scalable and Dynamic Regeneration of Big Data Volumes (Hydra).* VLDB/EDBT, 2018.
-- **[SOTA]** Li, Zhang, Chen, et al. *Touchstone: Generating Enormous Query-Aware Test Databases.* USENIX ATC, 2018.
-- **[SOTA]** Rigger, Su. *Finding Bugs in Database Systems via Query Partitioning (SQLancer/TLP).* OOPSLA, 2020.
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (chase, dependencies, decidability)
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013.
+- **[Foundational]** Binnig, Kossmann, Lo, Özsu. *QAGen: Generating Query-Aware Test Databases.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247520) · [DBLP](https://dblp.org/rec/conf/sigmod/BinnigKLO07.html)
+- **[SOTA]** Sanghi, Sood, Haritsa, et al. *Scalable and Dynamic Regeneration of Big Data Volumes (Hydra).* VLDB/EDBT, 2018. — [DOI](https://doi.org/10.14778/3229863.3236238) · [PDF](https://openproceedings.org/2018/conf/edbt/paper-114.pdf)
+- **[SOTA]** Li, Zhang, Chen, et al. *Touchstone: Generating Enormous Query-Aware Test Databases.* USENIX ATC, 2018. — [USENIX](https://www.usenix.org/conference/atc18/presentation/li-yuming) · [DBLP](https://dblp.org/rec/conf/usenix/LiZYZZ18.html)
+- **[SOTA]** Rigger, Su. *Finding Bugs in Database Systems via Query Partitioning (SQLancer/TLP).* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (chase, dependencies, decidability) — [book site](http://webdam.inria.fr/Alice/)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440) · [arXiv](https://arxiv.org/abs/1711.03860)
+
+## 10. Worked Example
+
+Target corner case $\phi$: "the hash join on $R \bowtie_{R.a = S.b} S$ spills because the build side exceeds a 2-tuple memory budget." We must co-generate schema, data, and a query that *provably* triggers it.
+
+Schema $\mathcal{S}$: $R(a\ \text{int})$, $S(b\ \text{int})$, no keys. Query $Q$: `SELECT * FROM R JOIN S ON R.a = S.b`.
+
+Build side is $R$. The optimizer builds a hash table over the distinct join keys of $R$. To force a spill we need $|\pi_a(R)| > 2$. Minimal witness: choose $R = \{(1),(2),(3)\}$ (3 distinct keys $> 2$ budget) and $S = \{(1),(1)\}$ so the probe also exercises a duplicate-key bucket.
+
+Trace: build phase inserts keys $1,2,3$ → table size $3 > 2$ → spill predicate fires (this is $\phi$). Probe phase: $S$'s two rows with $b=1$ each match the single $R$ row $a=1$, output multiplicity $2$. Result $= \{(1,1),(1,1)\}$, $|A| = 2$.
+
+This is a *minimal* witness: dropping any $R$ tuple gives $|\pi_a(R)| \le 2$ and the spill no longer provably fires, so no smaller $D$ triggers $\phi$. Solver encoding: assert $\big|\{x : R(x)\}\big| \ge 3$ as the cardinality constraint, hand to an SMT backend, read off a model.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

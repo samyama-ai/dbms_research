@@ -59,12 +59,21 @@ Relevant theory:
 - Layout co-design with indexes/MVs (feeds *joint-physical-design*).
 
 ## 9. Key References
-- **[Foundational]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing (the MPC model).* PODS, 2013 / JACM, 2017.
-- **[Foundational]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment (Shares/HyperCube).* EDBT, 2010.
-- **[SOTA]** M. Serafini, et al. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016.
-- **[SOTA]** R. Krauthgamer, J. Naor, R. Schwartz. *Partitioning Graphs into Balanced Components.* SODA, 2009.
-- **[Survey]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing (the MPC model).* PODS, 2013 / JACM, 2017. — [DOI](https://doi.org/10.1145/3125644)
+- **[Foundational]** F. N. Afrati, J. D. Ullman. *Optimizing Joins in a Map-Reduce Environment (Shares/HyperCube).* EDBT, 2010. — [DOI](https://doi.org/10.1145/1739041.1739056)
+- **[SOTA]** M. Serafini, et al. *Clay: Fine-Grained Adaptive Partitioning for General Database Schemas.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3025111.3025125)
+- **[SOTA]** R. Krauthgamer, J. Naor, R. Schwartz. *Partitioning Graphs into Balanced Components.* SODA, 2009. — [DOI](https://doi.org/10.1137/1.9781611973068.102)
+- **[Survey]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+**MPC load for a co-partitioned join.** Consider the triangle query $R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ run on $N$ servers in one round, with each relation of size $|\mathrm{IN}|=M$ tuples. The hypergraph has three edges over three variables; its fractional edge-cover number is $\tau^*=3/2$ (put weight $1/2$ on each edge). The MPC one-round load lower bound (§5) is
+$$L \;=\; \Omega\!\left(\frac{M}{N^{1/\tau^*}}\right) \;=\; \Omega\!\left(\frac{M}{N^{2/3}}\right).$$
+
+The HyperCube/Shares scheme matches it: arrange the $N$ servers as a $p\times p\times p$ cube with $p=N^{1/3}$, hashing each variable $a,b,c$ into $p$ buckets. Tuple $R(a,b)$ is sent to every server whose $(a\text{-coord},b\text{-coord})$ matches — i.e. $p$ servers (one per $c$-bucket), so each tuple replicates $p=N^{1/3}$ times. Total bytes moved $= 3 M N^{1/3}$, giving per-server load $\approx 3MN^{1/3}/N = 3M/N^{2/3}$, meeting the bound.
+
+**Why skew breaks it.** If one value $b_0$ appears in $M/2$ tuples of both $R$ and $S$, the $b$-slice $b_0$ alone routes to only $p^2=N^{2/3}$ servers, each receiving $\Omega(M/N^{2/3})$ heavy-hitter tuples — and the makespan/bin-packing floor (§5) means no co-partition layout removes that hot slice without extra replication or a second round. This is precisely the joint communication-plus-skew obstruction of §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

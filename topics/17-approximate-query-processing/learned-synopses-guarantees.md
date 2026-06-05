@@ -51,12 +51,20 @@ Active: **conformalized AQP** giving distribution-free intervals over learned es
 
 ## 9. Key References
 
-- **[Foundational]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011.
-- **[SOTA]** B. Hilprecht, A. Schmidt, M. Kulessa, A. Molina, K. Kersting, C. Binnig. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020.
-- **[SOTA]** Q. Ma, P. Triantafillou. *DBEst: Revisiting Approximate Query Processing Engines with Machine Learning Models.* SIGMOD, 2019.
-- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019.
-- **[SOTA]** J. Wang, C. Chai, J. Liu, G. Li. *FACE: A Normalizing Flow based Cardinality Estimator.* VLDB, 2021.
-- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005.
+- **[Foundational]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+- **[SOTA]** B. Hilprecht, A. Schmidt, M. Kulessa, A. Molina, K. Kersting, C. Binnig. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [DOI](https://doi.org/10.14778/3384345.3384349) · [arXiv](https://arxiv.org/abs/1909.00607)
+- **[SOTA]** Q. Ma, P. Triantafillou. *DBEst: Revisiting Approximate Query Processing Engines with Machine Learning Models.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3324958)
+- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019. — [DOI](https://doi.org/10.14778/3368289.3368294) · [arXiv](https://arxiv.org/abs/1905.04278)
+- **[SOTA]** J. Wang, C. Chai, J. Liu, G. Li. *FACE: A Normalizing Flow based Cardinality Estimator.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3485450.3485458)
+- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+
+## 10. Worked Example
+
+Table $R$ has $N=1000$ rows; column $X$ takes values in $\{1,\dots,10\}$ with true counts $f=(50,50,50,50,50,50,50,50,300,300)$ — most mass piled on $X\in\{9,10\}$. Query: $\texttt{SELECT COUNT(*) WHERE } X=9$, true answer $A=300$.
+
+A **learned synopsis** fits a density $\hat p_\theta$ and (say) over-smooths the spike, estimating $\hat p_\theta(9)=0.27$, so $\hat A=N\hat p_\theta(9)=270$ — error $30$, with no certificate.
+
+**Model + residual.** Keep a Count-Min sketch of the residual $g = f - N\hat p_\theta$ over the 10 cells. Here $g(9)=300-270=30$. A CM sketch of width $w$ answers $\hat g(9)$ with error $\le \varepsilon\|g\|_1$ where $\varepsilon=e/w$. With $\|g\|_1=\sum_x|f(x)-N\hat p_\theta(x)|$; suppose the model is good elsewhere so $\|g\|_1=80$. Choosing $w=e/\varepsilon$ with $\varepsilon=0.05$ gives additive error $\le 0.05\cdot 80=4$. Final estimate $\hat A = 270 + \hat g(9) \in [296,304]$ — a *worst-case* bound the bare model could not give. The residual, not the model, carries the proof, illustrating Section 4's hybrid construction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

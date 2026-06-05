@@ -48,12 +48,20 @@ For a *single* opaque predicate, the gap is **closed in the worst case**: sampli
 - Cost models for UDFs whose cost itself is data-dependent (e.g. early-exit models).
 
 ## 9. Key References
-- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993.
-- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[SOTA]** M. Stillger, G. Lohman, V. Markl, M. Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001.
-- **[SOTA]** S. Chaudhuri, V. Narasayya, R. Ramamurthy. *Estimating Progress of Long Running SQL Queries.* SIGMOD, 2004. *(feedback/runtime estimation context)*
-- **[SOTA]** C. Patel et al. *Semantic Operators / LLM-as-filter selectivity.* (recent CIDR/SIGMOD-track work) *(frontier — verify)*
-- **[Survey]** S. Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998.
+- **[Foundational]** J. M. Hellerstein, M. Stonebraker. *Predicate Migration: Optimizing Queries with Expensive Predicates.* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170036.170078)
+- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[SOTA]** M. Stillger, G. Lohman, V. Markl, M. Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01)
+- **[SOTA]** S. Chaudhuri, V. Narasayya, R. Ramamurthy. *Estimating Progress of Long Running SQL Queries.* SIGMOD, 2004. *(feedback/runtime estimation context)* — [DOI](https://doi.org/10.1145/1007568.1007659)
+- **[SOTA]** L. Patel et al. *Semantic Operators: A Declarative Model for Rich, AI-based Data Processing.* (LLM-as-filter selectivity; LOTUS line) *(frontier — verify)* — [arXiv](https://arxiv.org/abs/2407.11418)
+- **[Survey]** S. Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275492)
+
+## 10. Worked Example
+
+A table $R$ with $|R|=1{,}000{,}000$ rows and a black-box predicate `WHERE is_spam(t)` (an ML classifier — no histogram available). We estimate $s = \Pr[\texttt{is\_spam}]$ by uniform sampling.
+
+Draw $n=400$ rows, evaluate the classifier, and find 32 flagged: $\hat s = 32/400 = 0.08$. Hoeffding bounds the error: for confidence $1-\delta = 0.95$, the additive half-width is $\varepsilon = \sqrt{\tfrac{1}{2n}\ln\tfrac{2}{\delta}} = \sqrt{\tfrac{\ln 40}{800}} \approx \sqrt{0.00461} \approx 0.068$. So $s \in [0.08 \pm 0.068]$ — wide because $n$ is small. To tighten to $\varepsilon=0.01$ we need $n \ge \tfrac{1}{2\varepsilon^2}\ln\tfrac2\delta = \tfrac{\ln 40}{2(0.01)^2} \approx 18{,}444$ samples — *independent* of $|R|$.
+
+Expensive-predicate ordering: suppose a second cheap predicate $p_2$ has $s_2=0.5$, cost $c_2=1$, while `is_spam` has $s_1=0.08$, cost $c_1=20$. Hellerstein–Stonebraker rank $=(1-s)/c$: $p_1 \to 0.92/20 = 0.046$, $p_2 \to 0.5/1 = 0.5$. Higher rank first, so evaluate the cheap, more-selective $p_2$ before the costly classifier — pruning $\sim$half the rows before paying for `is_spam`.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

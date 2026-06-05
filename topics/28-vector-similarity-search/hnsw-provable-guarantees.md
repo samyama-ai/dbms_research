@@ -46,12 +46,20 @@ Active threads: graph-ANN theory under intrinsic-dimension models (Prokhorenkova
 - Tighten the dependence on intrinsic vs. ambient dimension.
 
 ## 9. Key References
-- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320).
-- **[Foundational]** J. Kleinberg. *The Small-World Phenomenon: An Algorithmic Perspective.* STOC, 2000.
-- **[SOTA]** L. Prokhorenkova, A. Shekhovtsov. *Graph-based Nearest Neighbor Search: From Practice to Theory.* ICML, 2020.
-- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004.
-- **[SOTA]** S. J. Subramanya, F. Devvrit, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Foundational]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
+- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320). — [arXiv](https://arxiv.org/abs/1603.09320) · [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[Foundational]** J. Kleinberg. *The Small-World Phenomenon: An Algorithmic Perspective.* STOC, 2000. — [DOI](https://doi.org/10.1145/335305.335325)
+- **[SOTA]** L. Prokhorenkova, A. Shekhovtsov. *Graph-based Nearest Neighbor Search: From Practice to Theory.* ICML, 2020. — [arXiv](https://arxiv.org/abs/1907.00845) · [PMLR](https://proceedings.mlr.press/v119/prokhorenkova20a.html)
+- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004. — [ACM DL](https://dl.acm.org/doi/10.5555/982792.982913)
+- **[SOTA]** S. J. Subramanya, F. Devvrit, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
+- **[Foundational]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062) · [DOI](https://doi.org/10.1145/2746539.2746553)
+
+## 10. Worked Example
+
+**Greedy search can get stuck — why monotonicity matters.** Place 5 points on a line $\mathbb{R}^1$: $A=0,\ B=3,\ C=4,\ D=6,\ E=10$, query $q=5$ (true NN is $C=4$, distance $1$). Build a degree-1 graph with edges $A\!-\!B,\ B\!-\!D,\ D\!-\!E,\ A\!-\!C$ (note $C$ hangs off $A$, not off $B$ or $D$).
+
+Greedy best-first search from entry point $E=10$ (distance to $q$: $5$): neighbors of $E=\{D\}$, $|D-q|=1<5$, move to $D$. Neighbors of $D=\{B,E\}$: $|B-q|=2,\ |E-q|=5$; best is $B$, $2<1$? No — $2>1$ is false, $2<$ current $1$? Current distance at $D$ is $|6-5|=1$. Neither neighbor improves on $1$, so greedy **halts at $D=6$**, returning $D$ with distance $1$ — but it misses the true NN $C=4$ (also distance $1$, a tie here, yet on a graph where $C$ were strictly closer greedy would still fail because no edge leads toward it).
+
+This graph is **not monotonic**: from $D$ there is no strictly-distance-decreasing path to $C$. HNSW's pruning heuristic tries to approximate the monotonic (Delaunay-like) structure that would guarantee greedy reaches the true NN, but as §2 notes, that guarantee is not proven — exactly the gap. Add edge $D\!-\!C$ (Delaunay neighbor) and greedy descends $E\to D\to C$, succeeding.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

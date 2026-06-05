@@ -58,12 +58,24 @@ The gap is **conceptual, not algorithmic**: we can compute any interpolation che
 
 ## 9. Key References
 
-- **[Foundational]** E. F. Codd. *Extending the Database Relational Model to Capture More Meaning (NULLs / missing information).* ACM TODS, 1979.
-- **[Foundational]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000.
-- **[Foundational]** J. F. Allen. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983.
-- **[Foundational]** C. E. Rasmussen, C. K. I. Williams. *Gaussian Processes for Machine Learning.* MIT Press, 2006.
-- **[SOTA]** W. Cao et al. *BRITS: Bidirectional Recurrent Imputation for Time Series.* NeurIPS, 2018.
-- **[Survey]** R. T. Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995.
+- **[Foundational]** E. F. Codd. *Extending the Database Relational Model to Capture More Meaning (NULLs / missing information).* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320107.320109)
+- **[Foundational]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000. — [DBLP search](https://dblp.org/search?q=Developing%20Time-Oriented%20Database%20Applications%20in%20SQL)
+- **[Foundational]** J. F. Allen. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983. — [DOI](https://doi.org/10.1145/182.358434)
+- **[Foundational]** C. E. Rasmussen, C. K. I. Williams. *Gaussian Processes for Machine Learning.* MIT Press, 2006. — [book site](https://gaussianprocess.org/gpml/)
+- **[SOTA]** W. Cao et al. *BRITS: Bidirectional Recurrent Imputation for Time Series.* NeurIPS, 2018. — [arXiv](https://arxiv.org/abs/1805.10572)
+- **[Survey]** R. T. Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP search](https://dblp.org/search?q=The%20TSQL2%20Temporal%20Query%20Language)
+
+## 10. Worked Example
+
+A sensor reports at $t=\{0,2,5\}$ with values $\{4,\;?,\;10\}$ — we want the value at $t=2$ and a 5-minute bucket average over $[0,5)$.
+
+| policy | $\tilde x(2)$ | meaning |
+|---|---|---|
+| NULL/none | $\bot$ | "no reading recorded" |
+| LOCF | $4$ | carry last (state signal) |
+| linear | $4 + \tfrac{2-0}{5-0}(10-4)=6.4$ | interpolate (rate signal) |
+
+Now the **non-commutativity** bite. Average the *raw* samples in $[0,5)$ (only $t{=}0$): $\mathrm{avg}=4$. But gap-fill first onto grid $\{0,1,2,3,4\}$ with LOCF (all $=4$) then average: still $4$; with linear fill the grid is $\{4,5.2,6.4,7.6,8.8\}$, average $=6.4$. So $\mathrm{avg}\circ\mathrm{gapfill}_{\text{lin}} = 6.4 \ne 4 = \mathrm{avg}\circ\mathrm{gapfill}_{\text{none}}$ — the *same query text* yields different numbers purely from the fill choice, and neither equals $\mathrm{gapfill}\circ\mathrm{avg}$. This is exactly the composability gap: without typing the series as sample / state / rate, the query's meaning is underdetermined. A GP prior with kernel $K$ would instead return $\hat x(2)$ *plus* a posterior variance, surfacing that the $t{=}2$ value is an estimate, not a fact.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

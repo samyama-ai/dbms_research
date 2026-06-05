@@ -46,11 +46,21 @@ The gap is between **achieved scan throughput and the roofline**, and it is **cl
 
 ## 9. Key References
 
-- **[Foundational]** Boncz, P., Zukowski, M., Nes, N. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model.* CACM, 2009.
-- **[SOTA]** Lang, H., Mühlbauer, T., Funke, F., Boncz, P., Neumann, T., Kemper, A. *Data Blocks: Hybrid OLTP and OLAP on Compressed Storage.* SIGMOD, 2016.
-- **[SOTA]** Kuschewski, M., Sauerwein, D., Alhomssi, A., Leis, V. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[SOTA]** Afroozeh, A., Boncz, P. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB, 2023.
+- **[Foundational]** Boncz, P., Zukowski, M., Nes, N. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html) · [PDF](https://www.cidrdb.org/cidr2005/papers/P19.pdf)
+- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+- **[SOTA]** Lang, H., Mühlbauer, T., Funke, F., Boncz, P., Neumann, T., Kemper, A. *Data Blocks: Hybrid OLTP and OLAP on Compressed Storage.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882925)
+- **[SOTA]** Kuschewski, M., Sauerwein, D., Alhomssi, A., Leis, V. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** Afroozeh, A., Boncz, P. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+
+## 10. Worked Example
+
+Scan a column of $N = 10^9$ 32-bit integers, dictionary-encoded to $b = 10$ bits/value (1024 distinct keys), evaluating predicate `x = 42`. Compressed size: $\kappa^{-1} N b / 8 = 10^9 \cdot 10 / 8 = 1.25$ GB. On a core with single-channel $\beta = 20$ GB/s, the roofline floor is
+
+$$T \ge \frac{1.25\text{ GB}}{20\text{ GB/s}} = 62.5\text{ ms}.$$
+
+To stay bandwidth-bound the kernel must do few instructions per byte. The ridge point of the roofline sits at operational intensity $I^\star = \pi/\beta$; with scalar peak $\pi = 4$ Gops/s, $I^\star = 4/20 = 0.2$ ops/byte. A *branchy* predicate doing $\sim 3$ ops/value over $10/8 = 1.25$ bytes/value gives $I = 3/1.25 = 2.4$ ops/byte $\gg I^\star$ — compute-bound, so the scan runs at $\pi$-limited $10^9 \cdot 3 / 4\text{e9} = 750$ ms, $12\times$ slower than the floor.
+
+Switching to a **branch-free SIMD mask** (one compare + one mask-store, auto-vectorized 8-wide) drops effective ops/byte below $I^\star$, so $\beta$ binds and we approach 62.5 ms. Finally, with a **zone map** marking that 90% of blocks never contain key 42, we skip them and read only $0.125$ GB $\Rightarrow$ $\approx 6.25$ ms — beating the full-scan roofline entirely by avoiding I/O.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

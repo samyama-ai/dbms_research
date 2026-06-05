@@ -52,12 +52,23 @@ Directions: branch-free and SIMD-vectorized learned indexes; quantized/distilled
 
 ## 9. Key References
 
-- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index.* PVLDB 2020.
-- **[SOTA]** Kipf, Marcus, van Renen, et al. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD 2020.
-- **[SOTA]** Hilprecht, Schmidt, Kulessa, et al. *DeepDB: Learn from Data, not from Queries!* PVLDB 2020.
-- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC 2006.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
+- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018. — [arXiv](https://arxiv.org/abs/1712.01208) — [DOI](https://doi.org/10.1145/3183713.3196909)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index.* PVLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) — [DBLP](https://dblp.org/rec/journals/pvldb/FerraginaV20.html)
+- **[SOTA]** Kipf, Marcus, van Renen, et al. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD 2020. — [arXiv](https://arxiv.org/abs/2004.14541) — [DOI](https://doi.org/10.1145/3401071.3401659)
+- **[SOTA]** Hilprecht, Schmidt, Kulessa, et al. *DeepDB: Learn from Data, not from Queries!* PVLDB 2020. — [arXiv](https://arxiv.org/abs/1909.00607) — [DOI](https://doi.org/10.14778/3384345.3384349)
+- **[Foundational]** Pătrașcu, Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC 2006. — [arXiv](https://arxiv.org/abs/cs/0603043) — [DBLP](https://dblp.org/rec/conf/stoc/PatrascuT06.html)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+
+## 10. Worked Example
+
+Consider a sorted array of $n = 10^6$ keys and a point lookup. A B-tree pays $\log_2 n \approx 20$ comparisons; assume each branch-predicted comparison costs $\approx 2$ ns, so $\approx 40$ ns total.
+
+Now a learned index. A linear segment predicts position $\hat p$, then we do a local binary search within an $\varepsilon$-window to correct the error.
+
+- **Tiny model (RadixSpline-style).** Inference is one multiply-add plus a radix-table lookup, say $C_{\text{inf}} \approx 5$ ns. With $\varepsilon = 32$, local search costs $\log_2 32 = 5$ comparisons $\approx 10$ ns. Total $\approx 15$ ns — a $2.7\times$ win.
+- **Deep model.** A width-$w=64$, depth-$L=3$ MLP costs $\Theta(Lw^2) = 3 \cdot 64^2 \approx 12{,}288$ FLOPs. Even at 0.1 ns/FLOP that is $\approx 1200$ ns $\gg 40$ ns — the inference alone erases the win.
+
+The lesson: on the per-tuple critical path the bias–capacity trade-off must keep $C_{\text{inf}} + O(\log\varepsilon)$ below the $\Theta(\log n)$ baseline. Batching $b = 1000$ tuples amortizes a fixed dispatch cost $\kappa = 5000$ ns to $\kappa/b = 5$ ns/tuple — which is why estimators are invoked per-query, not per-tuple.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

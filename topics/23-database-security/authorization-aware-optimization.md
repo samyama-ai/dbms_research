@@ -49,12 +49,26 @@ Active threads: **policy-agnostic / faceted execution** brought into databases (
 
 ## 9. Key References
 
-- **[Foundational]** Rizvi, S., Mendelzon, A., Sudarshan, S., Roy, P. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004.
-- **[Foundational]** Selinger, P.G., Astrahan, M., Chamberlin, D., Lorie, R., Price, T. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Wang, Q., Yu, T., Li, N., Lobo, J., Bertino, E., Irwin, K., Byun, J.-W. *On the Correctness Criteria of Fine-Grained Access Control in Relational Databases.* VLDB, 2007.
-- **[SOTA]** Yang, J., Yessenov, K., Solar-Lezama, A. *A Language for Automatically Enforcing Privacy Policies.* POPL, 2012.
-- **[Survey]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009.
-- **[Foundational]** Sabelfeld, A., Myers, A.C. *Language-Based Information-Flow Security.* IEEE JSAC, 2003.
+- **[Foundational]** Rizvi, S., Mendelzon, A., Sudarshan, S., Roy, P. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007631)
+- **[Foundational]** Selinger, P.G., Astrahan, M., Chamberlin, D., Lorie, R., Price, T. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Wang, Q., Yu, T., Li, N., Lobo, J., Bertino, E., Irwin, K., Byun, J.-W. *On the Correctness Criteria of Fine-Grained Access Control in Relational Databases.* VLDB, 2007. — [PDF](https://www.vldb.org/conf/2007/papers/research/p555-wang.pdf)
+- **[SOTA]** Yang, J., Yessenov, K., Solar-Lezama, A. *A Language for Automatically Enforcing Privacy Policies.* POPL, 2012. — [DOI](https://doi.org/10.1145/2103656.2103669)
+- **[Survey]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009. — [DOI](https://doi.org/10.1007/978-3-642-00596-1_21)
+- **[Foundational]** Sabelfeld, A., Myers, A.C. *Language-Based Information-Flow Security.* IEEE JSAC, 2003. — [DOI](https://doi.org/10.1109/JSAC.2002.806121)
+
+## 10. Worked Example
+
+**A leaky predicate ordering.** Table $\textsf{Accounts}(id, owner, balance, region)$. User $u$'s row-level policy restricts visibility to the security predicate $\phi \equiv (region = \texttt{'EU'})$. The user issues:
+
+```sql
+SELECT id FROM Accounts WHERE 1000000 / balance > 5;
+```
+
+The user predicate $p \equiv (10^6 / balance > 5)$ contains a division. If the optimizer pushes $p$ below the security predicate $\phi$ for speed, then a non-EU row with $balance = 0$ is evaluated, raising **division-by-zero** — a visible error. The very *occurrence* of that error tells $u$ "there exists a non-EU account with zero balance," leaking the existence of a tuple $u$ may not see. This is a confidentiality violation even though no forbidden row is returned.
+
+**Secure ordering.** Mark $p$ as non-leakproof. The dominance constraint forces $\phi$ above $p$ on every path, so $p$ runs only on already-authorized (EU) rows:
+$$\sigma_{p}\big(\sigma_{\phi}(\textsf{Accounts})\big),\quad\text{never}\quad \sigma_{\phi}\big(\sigma_{p}(\textsf{Accounts})\big).$$
+PostgreSQL implements exactly this: only `LEAKPROOF`-tagged functions may be evaluated before an RLS predicate. The cost is the lost pushdown of $p$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

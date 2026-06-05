@@ -56,12 +56,28 @@ For RA and NRA the picture is **closed**: tight equivalences and independence/co
 
 ## 9. Key References
 
-- **[Foundational]** Codd. *Relational Completeness of Data Base Sublanguages.* Database Systems (Courant), 1972.
-- **[Foundational]** Paredaens, Van Gucht. *Converting Nested Algebra Expressions into Flat Algebra Expressions.* ACM TODS, 1992 (conservativity).
-- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types.* TCS, 1995.
-- **[Survey]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, RA = FO, inexpressibility).
-- **[SOTA]** Brijder, Geerts, Van den Bussche, Weerwag. *On the Expressive Power of Query Languages for Matrices (MATLANG).* ACM TODS, 2019.
-- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016 (algebraic aggregation framework spanning relational and tensor computation).
+- **[Foundational]** Codd. *Relational Completeness of Data Base Sublanguages.* Database Systems (Courant), 1972. — [DBLP](https://dblp.org/rec/conf/codd/Codd72.html)
+- **[Foundational]** Paredaens, Van Gucht. *Converting Nested Algebra Expressions into Flat Algebra Expressions.* ACM TODS, 1992 (conservativity). — [DOI](https://doi.org/10.1145/128765.128768)
+- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types.* TCS, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00024-Q)
+- **[Survey]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, RA = FO, inexpressibility). — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[SOTA]** Brijder, Geerts, Van den Bussche, Weerwag. *On the Expressive Power of Query Languages for Matrices (MATLANG).* ACM TODS, 2019. — [arXiv](https://arxiv.org/abs/1709.08359) · [DOI](https://doi.org/10.1145/3331445)
+- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016 (algebraic aggregation framework spanning relational and tensor computation). — [arXiv](https://arxiv.org/abs/1504.04044) · [DOI](https://doi.org/10.1145/2902251.2902280)
+
+## 10. Worked Example
+
+**NRA nesting is convenient but not extra flat power.** Take $\mathrm{Enroll}(\text{student},\text{course})$:
+
+| student | course |
+|---------|--------|
+| Ann | DB |
+| Ann | OS |
+| Bo  | DB |
+
+A natural NRA query nests courses per student: $\nu_{\text{course}}(\mathrm{Enroll})$ yields the nested relation $\{(\text{Ann},\{\text{DB},\text{OS}\}),\ (\text{Bo},\{\text{DB}\})\}$. Now suppose we want a *flat* output: pairs of students sharing a course. Going through the nested value, we could intersect course-sets. But the conservativity theorem (Paredaens–Van Gucht) says any flat-to-flat NRA query is already flat-RA expressible: the shared-pair query is just
+$$\pi_{s_1,s_2}\big(\rho_{s_1/\text{student}}(\mathrm{Enroll}) \bowtie_{\text{course}} \rho_{s_2/\text{student}}(\mathrm{Enroll})\big),$$
+giving $\{(\text{Ann},\text{Ann}),(\text{Ann},\text{Bo}),(\text{Bo},\text{Ann}),(\text{Bo},\text{Bo})\}$ — no nesting needed.
+
+**Where powerset crosses the line.** "Is the course-graph connected?" requires transitive closure, which flat RA/FO *cannot* express (locality). Adding $\mathrm{powerset}$ lets NRA build the set of all student-subsets and test closure properties, jumping strictly above RA — the unconditional separation of §5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

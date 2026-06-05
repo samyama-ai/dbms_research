@@ -50,11 +50,25 @@ The ceiling ($\rho$) is **known and tight in theory**, but real systems achieve 
 
 ## 9. Key References
 
-- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009.
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Do, J., Kee, Y.-S., Patel, J. M., Park, C., Kim, K., DeWitt, D. J. *Query Processing on Smart SSDs.* SIGMOD, 2013.
-- **[SOTA]** Yu, X., Lu, Y., Stonebraker, M., et al. *PushdownDB: Accelerating a DBMS Using S3 Computation.* ICDE, 2020.
-- **[Survey]** Barbalace, A., Do, J. *Computational Storage: Where Are We Today?* CIDR, 2021.
+- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Do, J., Kee, Y.-S., Patel, J. M., Park, C., Kim, K., DeWitt, D. J. *Query Processing on Smart SSDs.* SIGMOD, 2013. — [DOI](https://doi.org/10.1145/2463676.2465295)
+- **[SOTA]** Yu, X., Lu, Y., Stonebraker, M., et al. *PushdownDB: Accelerating a DBMS Using S3 Computation.* ICDE, 2020. — [DOI](https://doi.org/10.1109/ICDE48307.2020.00174) · [arXiv](https://arxiv.org/abs/2002.05837)
+- **[Survey]** Barbalace, A., Do, J. *Computational Storage: Where Are We Today?* CIDR, 2021. — [DBLP](https://dblp.org/rec/conf/cidr/BarbalaceD21.html) · [PDF](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper29.pdf)
+
+## 10. Worked Example
+
+A computational SSD holds a 100 GB table; we run `SELECT COUNT(*) WHERE region = 'EU'`, a bandwidth-bound aggregation. Device-internal bandwidth $\beta_{\text{int}} = 8$ GB/s (8 NAND channels), host interface $\beta_{io} = 2$ GB/s (saturated PCIe lane share), so amplification $\rho = 8/2 = 4$. Selectivity $\sigma$ varies; the aggregate result is a single scalar, so $\sigma N \to 0$ bytes returned.
+
+**Host execution** must drag all 100 GB across the interface: $T_{\text{host}} = N/\beta_{io} = 100/2 = 50$ s.
+
+**Pushdown** reads internally and returns ~nothing: $T_{\text{dev}} = N/\beta_{\text{int}} + \sigma N/\beta_{io} \approx 100/8 = 12.5$ s. Speedup $= 50/12.5 = 4 = \rho$ — hitting the Amdahl-type ceiling exactly (Section 4).
+
+Now a **filter** returning $\sigma = 0.5$ of the rows. $T_{\text{dev}} = 100/8 + (0.5\cdot 100)/2 = 12.5 + 25 = 37.5$ s vs host 50 s — speedup only $1.33$. Solving the crossover $T_{\text{host}} = T_{\text{dev}}$:
+
+$$\frac{N}{\beta_{io}} = \frac{N}{\beta_{\text{int}}} + \frac{\sigma^\star N}{\beta_{io}} \;\Rightarrow\; \sigma^\star = 1 - \frac{\beta_{io}}{\beta_{\text{int}}} = 1 - \tfrac14 = 0.75.$$
+
+So pushdown wins only when selectivity $\sigma < 0.75$; above that, shipping raw is no worse. This closed-form $\sigma^\star$ is precisely the optimizer-driving crossover the problem seeks.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

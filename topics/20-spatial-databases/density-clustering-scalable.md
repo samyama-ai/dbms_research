@@ -38,11 +38,27 @@ For $d=2$ the bound is **closed**: $\Theta(n\log n)$. For $d\ge3$ there is a gen
 Provably exact distributed HDBSCAN\*; tight communication lower bounds for exact distributed DBSCAN; auto-selection of exact vs. $\rho$-approximate by data characteristics; index structures co-designed for the connected-components phase.
 
 ## 9. Key References
-- **[Foundational]** Ester, Kriegel, Sander, Xu. *A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise.* KDD, 1996.
-- **[SOTA]** Gan, Tao. *DBSCAN Revisited: Mis-Claim, Un-Fixability, and Approximation.* SIGMOD, 2015.
-- **[SOTA]** Song, Lee. *RP-DBSCAN: A Superfast Parallel DBSCAN Algorithm Based on Random Partitioning.* SIGMOD, 2018.
-- **[SOTA]** Patwary et al. *A New Scalable Parallel DBSCAN Algorithm Using the Disjoint-Set Data Structure.* SC, 2012.
-- **[SOTA]** Campello, Moulavi, Sander. *Density-Based Clustering Based on Hierarchical Density Estimates (HDBSCAN\*).* PAKDD, 2013.
+- **[Foundational]** Ester, Kriegel, Sander, Xu. *A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise.* KDD, 1996. — [ACM](https://dl.acm.org/doi/10.5555/3001460.3001507)
+- **[SOTA]** Gan, Tao. *DBSCAN Revisited: Mis-Claim, Un-Fixability, and Approximation.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2737792)
+- **[SOTA]** Song, Lee. *RP-DBSCAN: A Superfast Parallel DBSCAN Algorithm Based on Random Partitioning.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196887)
+- **[SOTA]** Patwary et al. *A New Scalable Parallel DBSCAN Algorithm Using the Disjoint-Set Data Structure.* SC, 2012. — [DOI](https://doi.org/10.1109/SC.2012.9)
+- **[SOTA]** Campello, Moulavi, Sander. *Density-Based Clustering Based on Hierarchical Density Estimates (HDBSCAN\*).* PAKDD, 2013. — [DOI](https://doi.org/10.1007/978-3-642-37456-2_14)
+
+## 10. Worked Example
+
+Run DBSCAN with $\varepsilon = 1.5$ and $\mathit{minPts} = 3$ on 7 points in $\mathbb{R}^2$:
+$$A(0,0),\ B(1,0),\ C(0,1),\ D(1,1),\ E(5,5),\ F(6,5),\ G(10,10).$$
+
+**Step 1 — core test** ($|N_\varepsilon(p)|$ includes $p$ itself):
+- $A$: neighbors within $1.5$ are $A,B,C,D$ (e.g. $\|A-D\|=\sqrt2\approx1.41\le1.5$) $\Rightarrow 4 \ge 3$, **core**. By symmetry $B,C,D$ are all **core**.
+- $E$: neighbors $E,F$ ($\|E-F\|=1$) $\Rightarrow 2 < 3$, **not core**. Same for $F$.
+- $G$: only itself $\Rightarrow 1 < 3$, **not core**.
+
+**Step 2 — union-find over core points within $\varepsilon$:** $A,B,C,D$ are mutually reachable, so they merge into one connected component $\Rightarrow$ **Cluster 1** $=\{A,B,C,D\}$.
+
+**Step 3 — border/noise:** $E,F$ are not core and have no core point within $\varepsilon$, so they are **noise**; $G$ is **noise**.
+
+Result: one cluster $\{A,B,C,D\}$ plus noise $\{E,F,G\}$. Note the boundary subtlety driving Section 6: if $A$–$D$ were split across two partitions, an exact distributed scheme must still discover the $A$–$D$ edge ($\sqrt2 \le \varepsilon$) crossing the cut, or it would wrongly emit two clusters.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

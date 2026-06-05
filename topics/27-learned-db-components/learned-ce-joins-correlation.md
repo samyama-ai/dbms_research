@@ -101,11 +101,22 @@ residual mutual information certify the estimator's accuracy.
 
 ## 9. Key References
 
-- **[Foundational]** M. Abo Khamis, H. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS 2016.
-- **[Foundational]** D. Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries (submodular width).* J. ACM, 2013.
-- **[SOTA]** Z. Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* VLDB 2021.
-- **[SOTA]** Z. Wu et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD 2023.
-- **[Survey]** Y. Han et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation.* VLDB 2022.
+- **[Foundational]** M. Abo Khamis, H. Ngo, A. Rudra. *FAQ: Questions Asked Frequently.* PODS 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[Foundational]** D. Marx. *Tractable Hypergraph Properties for Constraint Satisfaction and Conjunctive Queries (submodular width).* J. ACM, 2013. — [DOI](https://doi.org/10.1145/2535926)
+- **[SOTA]** Z. Yang et al. *NeuroCard: One Cardinality Estimator for All Tables.* VLDB 2021. — [arXiv](https://arxiv.org/abs/2006.08109)
+- **[SOTA]** Z. Wu et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2212.05526)
+- **[Survey]** Y. Han et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation.* VLDB 2022. — [arXiv](https://arxiv.org/abs/2109.05877)
+
+## 10. Worked Example
+
+Consider the join $R(k,A)\bowtie_k S(k,B)$ where the join key $k\in\{1,2\}$ and a filter $B=b_0$ is applied on $S$. Let $|R|=|S|=100$.
+
+Per-key counts: $R$ has $r_1=90,\,r_2=10$; $S$ (after $B=b_0$) has $s_1=2,\,s_2=18$. True join size is the per-key product summed:
+$$c = \sum_k r_k\,s_k = 90\cdot2 + 10\cdot18 = 180+180 = 360.$$
+
+A classic estimator assuming **independence/uniformity** uses only marginals: it estimates selectivity of $B=b_0$ as $\tfrac{20}{100}=0.2$, and join size $\approx \tfrac{|R|\,|S|}{\max|\text{dom}(k)|}\cdot 0.2 = \tfrac{100\cdot100}{2}\cdot0.2 = 1000$ — off by $2.8\times$ because it ignores that the filter $B=b_0$ concentrates on key $2$, which is *rare* in $R$.
+
+A FactorJoin-style model keeps the **per-key conditional histograms** $r_k$ and $s_k$ and multiplies key-by-key, recovering $360$ exactly. The cost: storing two pairwise factors of size $|\text{dom}(k)|=2$ instead of the full $2\times|\text{dom}(B)|$ joint. Here mutual information $I(k;B)>0$ is exactly what the independence estimator threw away — and what bounds the bits the synopsis must keep (Section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

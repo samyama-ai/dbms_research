@@ -1,6 +1,7 @@
 # End-to-End Plan-Cost Sensitivity to CE Error
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/plan-cost-sensitivity` · **Status:** empirically-open
+> **Verification note:** The third author of the Moerkotte–Neumann VLDB 2009 q-error paper is Gabriele Steidl (not "Steinbrunn"); corrected in §9.
 
 ## 1. Problem Statement
 
@@ -62,12 +63,27 @@ We know (empirically, JOB) that *few* errors matter, but we lack a cheap, predic
 
 ## 9. Key References
 
-- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* VLDB, 2015.
-- **[Foundational]** Moerkotte, Neumann, Steinbrunn. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009.
-- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984.
-- **[Foundational]** Hulgeri, Sudarshan. *Parametric Query Optimization for Linear and Nonlinear Cost Functions.* VLDB, 2003.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
+- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* VLDB, 2015. — [PDF](https://www.vldb.org/pvldb/vol9/p204-leis.pdf) — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [PDF](http://www.vldb.org/pvldb/vol2/vldb09-657.pdf) — [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
+- **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498) — [DBLP](https://dblp.org/rec/journals/tods/IbarakiK84.html)
+- **[Foundational]** Hulgeri, Sudarshan. *Parametric Query Optimization for Linear and Piecewise Linear Cost Functions.* VLDB, 2002. — [PDF](https://www.vldb.org/conf/2002/S06P01.pdf)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838) — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711) — [DOI](https://doi.org/10.14778/3342263.3342644)
+
+## 10. Worked Example
+
+Consider joining $R\bowtie S\bowtie T$ where only the join *order* matters and the cost model charges the size of the single materialized intermediate. Two plans:
+
+- $p_A=(R\bowtie S)\bowtie T$, intermediate cost $=|R\bowtie S|$;
+- $p_B=(S\bowtie T)\bowtie R$, intermediate cost $=|S\bowtie T|$.
+
+Truth: $|R\bowtie S|=1{,}000$, $|S\bowtie T|=1{,}200$, so $p^\star=p_A$ (cost $1000$).
+
+Now the optimizer underestimates $|R\bowtie S|$ as $\hat c=900$ — a q-error of only $1000/900\approx1.11$. Still $900<1200$, so it picks $p_A$: **regret $=0$**. The estimate is *harmless* despite being wrong.
+
+Push the error: $\hat c=1{,}300$ (q-error $1.3$). Now $1300>1200$, the optimizer flips to $p_B$, whose *true* cost is $1200$. Plan regret $=1200-1000=200$ (20% worse), even though the q-error is tiny.
+
+The **robustness radius** of this estimate is the distance to the decision boundary $\hat c=|S\bowtie T|=1200$: from the true $1000$ it tolerates $+200$ before the plan flips. Same q-error, opposite consequences — illustrating why per-estimate *leverage*, not q-error, predicts regret.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

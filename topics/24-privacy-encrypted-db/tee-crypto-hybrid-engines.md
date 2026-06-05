@@ -41,12 +41,27 @@ Directions: **compositional leakage frameworks** extending SSE leakage profiles 
 - Benchmarks that score systems on a (cost, leakage, trust) triple, not cost alone.
 
 ## 9. Key References
-- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[Foundational]** Popa, Redfield, Zeldovich, Balakrishnan. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011.
-- **[SOTA]** Priebe, Vaswani, Costa. *EnclaveDB: A Secure Database Using SGX.* IEEE S&P, 2018.
-- **[SOTA]** Eskandarian, Zaharia. *ObliDB: Oblivious Query Processing for Secure Databases.* PVLDB, 2019.
-- **[SOTA]** Arasu, Eguro, Kaushik, et al. *Transaction Processing on Confidential Data using Cipherbase.* ICDE, 2015.
-- **[Survey]** Fuller, Varia, Hamlin, et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017.
+- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417) · [DBLP](https://dblp.org/rec/conf/ccs/CurtmolaGKO06.html)
+- **[Foundational]** Popa, Redfield, Zeldovich, Balakrishnan. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043566) · [DBLP](https://dblp.org/rec/conf/sosp/PopaRZB11.html)
+- **[SOTA]** Priebe, Vaswani, Costa. *EnclaveDB: A Secure Database Using SGX.* IEEE S&P, 2018. — [DOI](https://doi.org/10.1109/SP.2018.00025)
+- **[SOTA]** Eskandarian, Zaharia. *ObliDB: Oblivious Query Processing for Secure Databases.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364331) · [DBLP](https://dblp.org/rec/journals/pvldb/EskandarianZ19.html)
+- **[SOTA]** Arasu, Eguro, Kaushik, et al. *Transaction Processing on Confidential Data using Cipherbase.* ICDE, 2015. — [DOI](https://doi.org/10.1109/ICDE.2015.7113304)
+- **[Survey]** Fuller, Varia, Hamlin, et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017. — [arXiv](https://arxiv.org/abs/1703.02014) · [DBLP](https://dblp.org/rec/conf/sp/FullerVYSHGSMC17.html)
+
+## 10. Worked Example
+
+**Operator placement for a two-operator plan.** Query: `SELECT AVG(salary) FROM emp WHERE dept = 'ENG'`. Plan = $\sigma_{dept}$ (filter) $\to$ AVG (aggregate). Each operator has two implementations:
+
+| Operator | Impl. | cost (units) | leakage $\ell$ |
+|---|---|---|---|
+| filter | DET-encrypted index | 1 | equality pattern (which rows share a dept) |
+| filter | oblivious enclave | 8 | none (data-oblivious) |
+| AVG | enclave (non-oblivious) | 2 | branch/page trace $\propto$ #matching rows (volume) |
+| AVG | FHE | 50 | none |
+
+With budget $\mathcal{B}=$ "no volume leakage," the cheapest *per-operator* choice is DET-filter (cost 1) + enclave-AVG (cost 2) $=3$. But composition bites: the DET filter leaks the *equality partition* and the non-oblivious AVG leaks the *count of matching rows* — together this is exactly access-pattern + volume, which (KKNO'16, Grubbs et al. CCS'18) reconstructs the `dept` column. So the naively optimal plan **violates** $\mathcal{B}$ superadditively.
+
+A budget-feasible plan must break the chain: e.g. oblivious-enclave filter (8) + enclave-AVG (2) $=10$, or DET-filter (1) + FHE-AVG (50) $=51$. The optimizer picks cost-$10$. The example shows why $\mathrm{Leak}(\text{plan})\not\preceq\sum_i\ell(I_i)$ makes "optimal placement" ill-posed without a composition theorem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

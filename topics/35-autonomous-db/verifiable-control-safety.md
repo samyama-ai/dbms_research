@@ -43,11 +43,21 @@ Threads: (a) **runtime shielding / safe filters** wrapping learned tuners — ve
 - Compositional verification across the tuning, scheduling, and recovery loops (no harmful interaction).
 
 ## 9. Key References
-- **[Foundational]** A. D. Ames, X. Xu, J. W. Grizzle, P. Tabuada. *Control Barrier Functions: Theory and Applications.* European Control Conference, 2019.
-- **[SOTA]** M. Alshiekh, R. Bloem, R. Ehlers, B. Könighofer, S. Niekum, U. Topcu. *Safe Reinforcement Learning via Shielding.* AAAI, 2018.
-- **[SOTA]** G. Katz, C. Barrett, D. Dill, K. Julian, M. Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017.
-- **[Foundational]** R. Alur et al. *The Algorithmic Analysis of Hybrid Systems.* Theoretical Computer Science, 1995.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** A. D. Ames, X. Xu, J. W. Grizzle, P. Tabuada. *Control Barrier Functions: Theory and Applications.* European Control Conference, 2019. — [PDF](https://coogan.ece.gatech.edu/papers/amesecc19.html)
+- **[SOTA]** M. Alshiekh, R. Bloem, R. Ehlers, B. Könighofer, S. Niekum, U. Topcu. *Safe Reinforcement Learning via Shielding.* AAAI, 2018. — [arXiv](https://arxiv.org/abs/1708.08611)
+- **[SOTA]** G. Katz, C. Barrett, D. Dill, K. Julian, M. Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
+- **[Foundational]** R. Alur et al. *The Algorithmic Analysis of Hybrid Systems.* Theoretical Computer Science, 1995. — [PDF](https://www.cis.upenn.edu/~alur/TCS95.pdf)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [PDF](https://www.cidrdb.org/cidr2017/papers/p42-pavlo-cidr17.pdf)
+
+## 10. Worked Example
+
+Consider a disk-usage invariant. Let state $s_t$ = free disk in GB. The tuner's actions: build an index ($-20$ GB) or drop one ($+20$ GB); background ingest consumes $5$ GB/round (the disturbance $w_t\in[3,7]$, worst case $7$). Unsafe set $\mathcal U=\{s<0\}$ (disk full).
+
+Define a barrier $h(s)=s$ (safe $\Leftrightarrow h\ge0$). The shield admits action $a$ only if the worst-case next state stays safe: $s_t - 20\cdot\mathbb 1[\text{build}] - 7 \ge 0$.
+
+Trace from $s_0=30$: the learned tuner proposes "build index." Worst-case successor $=30-20-7=3\ge0$ — admitted. Now $s_1=30-20-5=5$. Next round it again proposes "build": worst-case $5-20-7=-22<0$ — the shield **vetoes** it and substitutes the least-restrictive safe action (skip build), so $s_2=5-5=0$, still safe.
+
+This shows forward-invariance: the reachable set never enters $\mathcal U$ *under the assumed model*. The catch (section 6): if real ingest spikes to $12$ GB (outside $W=[3,7]$), the certificate breaks — the guarantee is only as sound as the disturbance bound, the heart of the modeling gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

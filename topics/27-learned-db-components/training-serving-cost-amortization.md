@@ -56,12 +56,24 @@ Active directions: *algorithms-with-predictions* costing for learned components;
 
 ## 9. Key References
 
-- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
-- **[SOTA]** Ding, Minhas, Yu, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB 2020.
-- **[Foundational]** Karlin, Manasse, Rudolph, Sleator. *Competitive Snoopy Caching* (ski-rental / rent-or-buy). Algorithmica 1988.
-- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* Communications of the ACM, 2022.
+- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018. — [arXiv](https://arxiv.org/abs/1712.01208) — [DOI](https://doi.org/10.1145/3183713.3196909)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838) — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[SOTA]** Ding, Minhas, Yu, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020. — [arXiv](https://arxiv.org/abs/1905.08898) — [DOI](https://doi.org/10.1145/3318464.3389711)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index with provable worst-case bounds.* PVLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) — [DBLP](https://dblp.org/rec/journals/pvldb/FerraginaV20.html)
+- **[Foundational]** Karlin, Manasse, Rudolph, Sleator. *Competitive Snoopy Caching* (ski-rental / rent-or-buy). Algorithmica 1988. — [DOI](https://doi.org/10.1007/BF01762111)
+- **[Survey]** Mitzenmacher, Vassilvitskii. *Algorithms with Predictions.* Communications of the ACM, 2022. — [arXiv](https://arxiv.org/abs/2006.09123) — [DOI](https://doi.org/10.1145/3528087)
+
+## 10. Worked Example
+
+A learned cardinality estimator costs $C_{\text{train}}=2{,}000$ ms to collect data and fit, and $C_{\text{inf}}=0.2$ ms per query. On the current workload it saves $\Delta_0=3$ ms per query versus the histogram baseline (better plans). Net after $N$ queries, no retraining:
+
+$$\mathrm{Net}(N)=N(\Delta_0-C_{\text{inf}})-C_{\text{train}}=N(3-0.2)-2000=2.8N-2000.$$
+
+Break-even: $N^\*=\lceil 2000/2.8\rceil=715$ queries. Below that the learned component is a net loss.
+
+Now add drift. Suppose the realized speedup decays as $\Delta_{q_i}=3-\lambda\,d_i$ with $\lambda=10$ and divergence growing $d_i=0.0005\,i$ (TV distance from the training distribution). The per-query net contribution hits zero when $3-0.2-10(0.0005\,i)=0\Rightarrow i=560$; past query $560$ each query *loses* money even though build cost is sunk. Cumulative net peaks around there, well before the static $N^\*=715$ is reached — so under this drift the model **never** breaks even and must be retrained earlier.
+
+Retraining cadence as ski-rental: paying $C_{\text{inf}}$-degradation repeatedly vs. paying $C_{\text{train}}$ once to reset accuracy. The deterministic $2$-competitive rule retrains once accumulated degradation reaches $C_{\text{train}}=2000$ ms, guaranteeing total cost within $2\times$ the drift-aware offline optimum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

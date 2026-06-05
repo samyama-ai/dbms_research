@@ -44,13 +44,27 @@ Directions: (a) closing the Type-I cost gap with lighter oblivious maps and lazy
 - Standardized leakage profiles + attack benchmarks for production encrypted search.
 
 ## 9. Key References
-- **[Foundational]** R. Curtmola, J. Garay, S. Kamara, R. Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[Foundational]** R. Bost. *$\Sigma o\phi o\varsigma$: Forward Secure Searchable Encryption.* CCS, 2016.
-- **[SOTA]** R. Bost, B. Minaud, O. Ohrimenko. *Forward and Backward Private Searchable Encryption from Constrained Cryptographic Primitives.* CCS, 2017.
-- **[SOTA]** J. Ghareh Chamani, D. Papadopoulos, C. Papamanthou, R. Jalili. *New Constructions for Forward and Backward Private Symmetric Searchable Encryption.* CCS, 2018.
-- **[Attack]** Y. Zhang, J. Katz, C. Papamanthou. *All Your Queries Are Belong to Us: The Power of File-Injection Attacks on Searchable Encryption.* USENIX Security, 2016.
-- **[Lower bound]** D. Cash, S. Tessaro. *The Locality of Searchable Symmetric Encryption.* EUROCRYPT, 2014.
-- **[SOTA]** Z. Gui, K. Paterson, S. Patranabis, et al. *SWiSSSE: System-Wide Security for Searchable Symmetric Encryption.* PoPETs, 2024.
+- **[Foundational]** R. Curtmola, J. Garay, S. Kamara, R. Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417)
+- **[Foundational]** R. Bost. *$\Sigma o\phi o\varsigma$: Forward Secure Searchable Encryption.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978303) · [ePrint](https://eprint.iacr.org/2016/728)
+- **[SOTA]** R. Bost, B. Minaud, O. Ohrimenko. *Forward and Backward Private Searchable Encryption from Constrained Cryptographic Primitives.* CCS, 2017. — [DOI](https://doi.org/10.1145/3133956.3133980) · [ePrint](https://eprint.iacr.org/2017/805)
+- **[SOTA]** J. Ghareh Chamani, D. Papadopoulos, C. Papamanthou, R. Jalili. *New Constructions for Forward and Backward Private Symmetric Searchable Encryption.* CCS, 2018. — [DOI](https://doi.org/10.1145/3243734.3243833)
+- **[Attack]** Y. Zhang, J. Katz, C. Papamanthou. *All Your Queries Are Belong to Us: The Power of File-Injection Attacks on Searchable Encryption.* USENIX Security, 2016. — [USENIX](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/zhang) · [ePrint](https://eprint.iacr.org/2016/172)
+- **[Lower bound]** D. Cash, S. Tessaro. *The Locality of Searchable Symmetric Encryption.* EUROCRYPT, 2014. — [DOI](https://doi.org/10.1007/978-3-642-55220-5_20) · [ePrint](https://eprint.iacr.org/2014/308)
+- **[SOTA]** Z. Gui, K. Paterson, S. Patranabis, et al. *SWiSSSE: System-Wide Security for Searchable Symmetric Encryption.* PoPETs, 2024. — [PoPETs](https://petsymposium.org/popets/2024/popets-2024-0032.pdf) · [ePrint](https://eprint.iacr.org/2020/1328)
+
+## 10. Worked Example
+
+Consider keyword $w =$ `"oncology"` over a tiny encrypted index. The client issues this update/search history:
+
+1. `add(w, doc3)` 2. `add(w, doc7)` 3. `search(w)` 4. `add(w, doc9)` 5. `del(w, doc7)` 6. `search(w)`
+
+The current (non-deleted) result set after step 6 is $\{doc3, doc9\}$, so $a_w = 2$, while the total historical insertions $n_w = 3$.
+
+- **Search cost:** a backward-private scheme returns step 6 in work $O(a_w)=O(2)$, *not* $O(n_w)=O(3)$ — it never streams the cancelled $doc7$.
+- **Forward privacy:** at step 4, the server cannot link the new `add(w,doc9)` token to the earlier `search(w)` at step 3 (update tokens are keyword-independent), defeating a file-injection adversary who injected a probe document at step 4.
+- **Backward-privacy levels for the step-6 search:** *Type-I* reveals only $\{doc3,doc9\}$ plus their insertion timestamps $\{1,4\}$; *Type-II* additionally leaks that *some* update happened at times $\{2,5\}$; *Type-III* further leaks that the deletion at step 5 cancels the insertion at step 2 (the $doc7$ pair).
+
+So the same trace leaks strictly more as we weaken from Type-I to Type-III, while search stays $O(a_w)$ — the cost/leakage frontier this problem studies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

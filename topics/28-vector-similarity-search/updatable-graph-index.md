@@ -41,12 +41,22 @@ Active: streaming/fresh graph indexes (FreshDiskANN line, Microsoft Research; St
 - Eliminate periodic full rebuilds with guaranteed incremental repair.
 
 ## 9. Key References
-- **[SOTA]** A. Singh, S. J. Subramanya, R. Krishnaswamy, H. V. Simhadri. *FreshDiskANN: A Fast and Accurate Graph-Based ANN Index for Streaming Similarity Search.* arXiv:2105.09613, 2021.
-- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and robust approximate nearest neighbor search using HNSW graphs.* IEEE TPAMI, 2020.
-- **[Foundational]** S. J. Subramanya, et al. *DiskANN.* NeurIPS, 2019.
-- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006.
-- **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021.
-- **[Survey]** H. V. Simhadri, et al. *Results of the NeurIPS Big-ANN Benchmarks (Streaming/OOD tracks).* NeurIPS Competition Track, 2023.
+- **[SOTA]** A. Singh, S. J. Subramanya, R. Krishnaswamy, H. V. Simhadri. *FreshDiskANN: A Fast and Accurate Graph-Based ANN Index for Streaming Similarity Search.* arXiv:2105.09613, 2021. — [arXiv](https://arxiv.org/abs/2105.09613)
+- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and robust approximate nearest neighbor search using HNSW graphs.* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[Foundational]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)
+- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857)
+- **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457550)
+- **[Survey]** H. V. Simhadri, et al. *Results of the NeurIPS Big-ANN Benchmarks (Streaming/OOD tracks).* NeurIPS Competition Track, 2023. — [arXiv](https://arxiv.org/abs/2409.17424)
+
+## 10. Worked Example
+
+A tiny Vamana-style graph on points on a line, $a{=}0,\ b{=}1,\ c{=}2,\ d{=}3,\ e{=}4$, with directed edges forming a navigable chain plus a few "long" shortcuts:
+
+$a\to b,\ b\to c,\ c\to d,\ d\to e$ (chain), and shortcut $a\to c,\ c\to e$.
+
+A greedy search for query $q{=}3.4$ starting at $a$ takes $a\to c\to e$ (since $|e-q|{=}0.6 < |d-q|{=}0.4$? no — $d$ at distance $0.4$ is nearer), so the walk actually wants $c\to d$. It reaches $d$ correctly because $c\to d$ exists.
+
+Now **delete $c$**. Naive tombstoning leaves $a\to c$ and $c\to d$ dangling: a query routing into $c$ is stuck — $d$ and $e$ become unreachable from $a$, recall collapses. **Edge repair** ($\alpha$-RNG consolidation) reconnects $c$'s in-neighbors to its out-neighbors: add $a\to d$ (and prune for diversity). The repair touches only $\deg^-(c)+\deg^+(c)$ nodes — here $2+1=3$ edge updates — restoring navigability locally. This is the $O(\text{degree})$ per-deletion repair cost the lower-bound discussion refers to; the open question is bounding cumulative recall drift after many such interleaved repairs.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

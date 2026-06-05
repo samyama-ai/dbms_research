@@ -42,12 +42,23 @@ Active: (i) **reenactment-based** transaction-time provenance and "what-if"/"how
 - Provenance-driven explanation/debugging of sequenced-semantics rewrites and window analytics, with privacy-budget accounting.
 
 ## 9. Key References
-- **[Foundational]** Green, T. J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** Arab, B., Gawlick, D., Krishnaswamy, V., Radhakrishnan, V., Glavic, B. *Reenactment for Read-Committed Snapshot Isolation (Transaction Provenance).* VLDB / TaPP, 2018.
-- **[SOTA]** Senellart, P. et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB (demo), 2018.
-- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
-- **[Foundational]** Glavic, B., Alonso, G. *Perm: Processing Provenance and Data on the Same Data Model through Query Rewriting.* ICDE, 2009.
+- **[Foundational]** Green, T. J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011. — [DOI](https://doi.org/10.1145/1989284.1989302)
+- **[SOTA]** Arab, B., Gawlick, D., Krishnaswamy, V., Radhakrishnan, V., Glavic, B. *Reenactment for Read-Committed Snapshot Isolation (Transaction Provenance).* VLDB / TaPP, 2018. — [arXiv](https://arxiv.org/abs/1608.08258)
+- **[SOTA]** Senellart, P. et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB (demo), 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+- **[Foundational]** Glavic, B., Alonso, G. *Perm: Processing Provenance and Data on the Same Data Model through Query Rewriting.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.15)
+
+## 10. Worked Example
+
+Take two interval-annotated relations. $R$ ("on shift") has tuple $r$ over $[0,8)$; $S$ ("in building") has tuple $s$ over $[3,10)$. Annotate base tuples with semiring variables: $r\mapsto x$, $s\mapsto y$.
+
+**Sequenced join** $R\bowtie S$ over the period intersection produces one result tuple valid on $[0,8)\cap[3,10)=[3,8)$. Lifting provenance into the timed semiring $K^T$, the join contributes $x\otimes y$ but *only* on the overlap, so the annotation is the timed product
+$$\text{prov} = (x\otimes y)\big|_{[3,8)},\qquad \text{i.e. } t\mapsto\begin{cases} x\cdot y & t\in[3,8)\\ 0 & \text{otherwise.}\end{cases}$$
+
+Now ask the **decision variant** of §1: *does the output depend on $s$ during $[6,7)$?* Since $[6,7)\subseteq[3,8)$ and the coefficient of $y$ there is $x\neq 0$, the answer is yes. But during $[0,3)$ the annotation is $0$ — $s$ contributes nothing, correctly reflecting that the two facts did not co-occur before $t=3$.
+
+This shows the homomorphism property: $\otimes$ acts on annotations while interval intersection acts on time, and the two commute — exactly the correctness criterion of §2. A plain (non-timed) semiring would wrongly report provenance $x\cdot y$ over all of $[0,8)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -28,12 +28,24 @@ Directions: conformal-prediction AQP CIs (distribution-free finite-sample covera
 Anytime-valid confidence sequences inside online aggregation; automatic detection/reporting of non-diagnosable queries; CIs that compose operator-by-operator across an AQP plan; joint CIs over sampling noise plus differential-privacy noise.
 
 ## 9. Key References
-- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD 1997.
-- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times.* EuroSys 2013.
-- **[SOTA]** Zeng, Gao, Mozafari, Zaniolo. *The Analytical Bootstrap: A New Method for Fast Error Estimation in AQP.* SIGMOD 2014.
-- **[SOTA]** Agarwal, Milner, Kleiner, Talwalkar, Jordan, Madden, Mozafari, Stoica. *Knowing When You're Wrong: Building Fast and Reliable AQP Systems.* SIGMOD 2014.
-- **[SOTA]** Park, Mozafari, Sorenson, Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD 2018.
-- **[Foundational]** Politis, Romano, Wolf. *Subsampling.* Springer, 1999.
+- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD 1997. — [DOI](https://doi.org/10.1145/253262.253291)
+- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times.* EuroSys 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Zeng, Gao, Mozafari, Zaniolo. *The Analytical Bootstrap: A New Method for Fast Error Estimation in AQP.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2588579)
+- **[SOTA]** Agarwal, Milner, Kleiner, Talwalkar, Jordan, Madden, Mozafari, Stoica. *Knowing When You're Wrong: Building Fast and Reliable AQP Systems.* SIGMOD 2014. — [DOI](https://doi.org/10.1145/2588555.2593667)
+- **[SOTA]** Park, Mozafari, Sorenson, Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[Foundational]** Politis, Romano, Wolf. *Subsampling.* Springer, 1999. — [DOI](https://doi.org/10.1007/978-1-4612-1554-7)
+
+## 10. Worked Example
+
+**Delta method for a ratio.** Query: `SELECT SUM(revenue)/SUM(cost) FROM sales` — a derived ratio $\theta = \mu_x/\mu_y$. From a sample of $n = 400$ rows we get per-row means $\hat\mu_x = 50$, $\hat\mu_y = 20$, so $\hat\theta = 2.5$. Sample (co)variances per row: $s_x^2 = 900$, $s_y^2 = 100$, $s_{xy} = 150$.
+
+The delta method linearizes $g(\mu_x,\mu_y)=\mu_x/\mu_y$ with gradient $\nabla g = (1/\mu_y,\ -\mu_x/\mu_y^2) = (0.05,\ -0.125)$. The variance of $\hat\theta$ is
+
+$$\widehat{\mathrm{Var}}(\hat\theta) = \tfrac1n\,\nabla g^\top \Sigma\, \nabla g = \tfrac1{400}\big(0.05^2\cdot 900 + (-0.125)^2\cdot 100 + 2(0.05)(-0.125)\cdot 150\big).$$
+
+Compute: $0.0025\cdot900 = 2.25$; $0.015625\cdot100 = 1.5625$; cross term $2(-0.00625)(150) = -1.875$. Sum $= 1.9375$, divided by $400$ gives $0.00484$, so $\mathrm{SE} = 0.0696$. The $95\%$ CI is $2.5 \pm 1.96(0.0696) = [2.36,\ 2.64]$.
+
+Note the negative cross term ($s_{xy}>0$): positively correlated numerator and denominator **shrink** the interval — ignoring $\Sigma$'s off-diagonal (treating the two `SUM`s as independent) would overstate the width to $\sqrt{(2.25+1.5625)/400}=0.0977$. This is exactly the correlation-among-sub-aggregates effect of section 2; it also fails for non-smooth $g$ (e.g. `MIN/MAX`), motivating the open cases in section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

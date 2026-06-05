@@ -63,13 +63,28 @@ Status is **partially-solved**: there is a well-characterized **Pareto frontier*
 
 ## 9. Key References
 
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Schnell, Bachteler, Reiher. *Privacy-Preserving Record Linkage Using Bloom Filters.* BMC Medical Informatics and Decision Making, 2009.
-- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003.
-- **[SOTA]** Chen, Laine, Rindal. *Fast Private Set Intersection from Homomorphic Encryption.* ACM CCS, 2017.
-- **[SOTA]** Christen, Ranbaduge, Vatsalan, et al. *Pattern-Mining Based Cryptanalysis of Bloom Filters for PPRL.* (PAKDD/IEEE), 2018.
-- **[Survey]** Vatsalan, Christen, Verykios. *A Taxonomy of Privacy-Preserving Record Linkage Techniques.* Information Systems, 2013.
-- **[Survey]** Gkoulalas-Divanis, Vatsalan, Karapiperis, Kantarcioglu. *Modern Privacy-Preserving Record Linkage Techniques: An Overview.* IEEE TIFS, 2021.
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Schnell, Bachteler, Reiher. *Privacy-Preserving Record Linkage Using Bloom Filters.* BMC Medical Informatics and Decision Making, 2009. — [DOI](https://doi.org/10.1186/1472-6947-9-41)
+- **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
+- **[SOTA]** Chen, Laine, Rindal. *Fast Private Set Intersection from Homomorphic Encryption.* ACM CCS, 2017. — [DOI](https://doi.org/10.1145/3133956.3134061)
+- **[SOTA]** Christen, Ranbaduge, Vatsalan, et al. *Pattern-Mining Based Cryptanalysis of Bloom Filters for PPRL.* (PAKDD/IEEE), 2018. — [DOI](https://doi.org/10.1007/978-3-319-93040-4_42)
+- **[Survey]** Vatsalan, Christen, Verykios. *A Taxonomy of Privacy-Preserving Record Linkage Techniques.* Information Systems, 2013. — [DOI](https://doi.org/10.1016/j.is.2012.11.005)
+- **[Survey]** Gkoulalas-Divanis, Vatsalan, Karapiperis, Kantarcioglu. *Modern Privacy-Preserving Record Linkage Techniques: An Overview.* IEEE TIFS, 2021. — [DOI](https://doi.org/10.1109/TIFS.2021.3114026)
+
+## 10. Worked Example
+
+Two hospitals want to match patient "SMITH" vs. "SMYTH" without revealing names. Use bigram Bloom filters of length $m=14$, $k=2$ hashes.
+
+Pad and split into bigrams: `SMITH` → {`SM`, `MI`, `IT`, `TH`}; `SMYTH` → {`SM`, `MY`, `YT`, `TH`}. Each bigram sets 2 bits (toy hashes shown):
+
+- A (SMITH): bits {1,3, 4,6, 7,9, 10,12} → 8 set bits.
+- B (SMYTH): bits {1,3, 5,8, 9,11, 10,12} → set bits {1,3,5,8,9,10,11,12}, 8 set bits.
+
+Shared bigrams `SM` and `TH` set {1,3} and {10,12} in both. Intersection of set bits $|A\cap B| = \{1,3,10,12\}$, so $|A\cap B|=4$.
+
+Dice coefficient: $D = \dfrac{2|A\cap B|}{|A|+|B|} = \dfrac{2\cdot 4}{8+8} = 0.5$.
+
+With a match threshold $t=0.4$, the pair is declared a match — typo tolerated — yet neither party ever sent the cleartext name, only the bit array. The leak: an adversary seeing the bit arrays can mount frequency cryptanalysis on common bigrams like `TH`, which is exactly the BFE weakness section 5 describes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

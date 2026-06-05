@@ -35,11 +35,24 @@ Active: semantic-equivalence checking for incremental/streaming dataflow plans t
 - A complete, implemented decision procedure for the maximal practical decidable fragment, wired into a streaming optimizer for safe caching/rewriting.
 
 ## 9. Key References
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** A. Arasu, S. Babu, J. Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006.
-- **[Foundational]** Y. Sagiv, M. Yannakakis. *Equivalences among Relational Expressions with the Union and Difference Operators.* JACM, 1980.
-- **[Survey]** R. van der Meyden. *The Complexity of Querying Indefinite Data about Linearly Ordered Domains.* JCSS, 1997.
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** A. Arasu, S. Babu, J. Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+- **[Foundational]** Y. Sagiv, M. Yannakakis. *Equivalences among Relational Expressions with the Union and Difference Operators.* JACM, 1980. — [DOI](https://doi.org/10.1145/322217.322221)
+- **[Survey]** R. van der Meyden. *The Complexity of Querying Indefinite Data about Linearly Ordered Domains.* JCSS, 1997. — [DOI](https://doi.org/10.1006/jcss.1997.1455)
+
+## 10. Worked Example
+
+**Conjunctive-query containment via homomorphism (Chandra–Merlin).** Over a graph relation $E(x,y)$, consider two CQs asking "which nodes start a path":
+
+$$Q_1(a) \leftarrow E(a,b),\, E(b,c) \qquad\text{(a path of length 2 from }a)$$
+$$Q_2(a) \leftarrow E(a,b) \qquad\text{(an edge out of }a)$$
+
+Claim: $Q_1 \sqsubseteq Q_2$. By the Chandra–Merlin theorem, $Q_1 \sqsubseteq Q_2$ iff there is a **containment homomorphism** $h$ from $Q_2$'s body to $Q_1$'s body that fixes the head variable. Map $h: a \mapsto a,\ b \mapsto b$. Then $Q_2$'s atom $E(a,b)$ maps to $E(a,b)$, which appears in $Q_1$'s body — homomorphism found, so $Q_1 \sqsubseteq Q_2$. ✓ (Intuitively, every node with an outgoing length-2 path also has an outgoing edge.)
+
+The converse fails: no homomorphism maps $Q_1$'s two atoms into $Q_2$'s single atom while preserving the chain $a\!\to\!b\!\to\!c$, so $Q_2 \not\sqsubseteq Q_1$ — witnessed by the database $\{E(1,2)\}$, where $Q_2$ returns $\{1\}$ but $Q_1$ returns $\varnothing$.
+
+Finding $h$ is NP-complete (it is essentially a homomorphism/embedding search). **Streaming twist:** add a $5$-second sliding window so each atom carries a timestamp predicate $|t_a - t_b| \le 5$. Containment now must hold on *every snapshot*, and the homomorphism must respect the window/inequality constraints — pushing the problem from NP toward $\Pi^p_2$ and, once order-sensitive timestamps enter, toward the undecidable timed-automata regime.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

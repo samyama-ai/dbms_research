@@ -40,12 +40,20 @@ Directions: (i) intrinsic-dimension-parameterized ANN, formalizing why real embe
 - Bridging the theory of graph indices (HNSW) — empirically dominant — with LSH-style provable exponents.
 
 ## 9. Key References
-- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[SOTA]** A. Andoni, P. Indyk, T. Laarhoven, I. Razenshteyn, L. Schmidt. *Practical and Optimal LSH for Angular Distance.* NeurIPS, 2015.
-- **[Foundational]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing.* ITCS, 2014.
-- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006.
-- **[Survey]** T. Roughgarden (ed.). *Beyond the Worst-Case Analysis of Algorithms.* Cambridge University Press, 2021.
+- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876) · [DBLP](https://dblp.org/rec/conf/stoc/IndykM98.html)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[SOTA]** A. Andoni, P. Indyk, T. Laarhoven, I. Razenshteyn, L. Schmidt. *Practical and Optimal LSH for Angular Distance.* NeurIPS, 2015. — [arXiv](https://arxiv.org/abs/1509.02897)
+- **[Foundational]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing.* ITCS, 2014. — [arXiv](https://arxiv.org/abs/0912.0250) · [DOI (TOCT)](https://doi.org/10.1145/2578221)
+- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857) · [DBLP](https://dblp.org/rec/conf/icml/BeygelzimerKL06.html)
+- **[Survey]** T. Roughgarden (ed.). *Beyond the Worst-Case Analysis of Algorithms.* Cambridge University Press, 2021. — [DOI](https://doi.org/10.1017/9781108637435)
+
+## 10. Worked Example
+
+Take approximation $c=2$ in Euclidean $\ell_2$. The **data-oblivious / data-dependent optimal exponent** is
+$$\rho=\frac{1}{2c^2-1}=\frac{1}{2\cdot4-1}=\frac{1}{7}\approx 0.143.$$
+So an LSH index answers $(c,r)$-ANN on $n$ points in query time $\tilde O(n^{1/7})$ with space $\tilde O(n^{1+1/7})=\tilde O(n^{8/7})$. For $n=10^9$: $n^{1/7}=10^{9/7}\approx 10^{1.29}\approx 19$ — roughly 19 hash-table probes, versus $10^9$ for a linear scan.
+
+**Beyond worst case.** Suppose instead the data has bounded **doubling dimension** $\lambda=4$ with spread $\Phi=10^6$. A navigating net answers $(1+\epsilon)$-NN in $2^{O(\lambda)}\log\Phi$ time — say $\approx 2^4\cdot\log_2(10^6)\approx 16\cdot 20=320$ distance computations — **independent of $n$**. Compare across scales: at $n=10^9$, $n^\rho\approx 19$ beats 320, but at $n=10^{15}$, $n^{1/7}=10^{15/7}\approx 10^{2.14}\approx 138$ — still below 320, yet the net's cost has not grown at all. The crossover point ($n^{1/7}=320 \Rightarrow n=320^7\approx 3.4\times10^{17}$) is exactly where low-doubling-dimension structure begins to dominate the worst-case exponent — the kind of instance-parameterized statement the open problem seeks to make rigorous and tight.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

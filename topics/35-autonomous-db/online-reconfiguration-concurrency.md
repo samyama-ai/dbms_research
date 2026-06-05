@@ -51,12 +51,20 @@ For *single-table, single-version-step* changes, the F1 staged protocol gives a 
 - Formal guarantees for *logical* (application-visible) schema evolution, not just physical.
 
 ## 9. Key References
-- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987.
-- **[Foundational]** K. Eswaran, J. Gray, R. Lorie, I. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976.
-- **[SOTA]** I. Rae, E. Rollins, J. Shute, S. Sodhi, R. Vingralek. *Online, Asynchronous Schema Change in F1.* PVLDB / VLDB, 2013.
-- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[SOTA]** N. Bruno, S. Chaudhuri. *An Online Approach to Physical Design Tuning.* ICDE, 2007.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
+- **[Foundational]** K. Eswaran, J. Gray, R. Lorie, I. Traiger. *The Notions of Consistency and Predicate Locks in a Database System.* CACM, 1976. — [DOI](https://doi.org/10.1145/360363.360369)
+- **[SOTA]** I. Rae, E. Rollins, J. Shute, S. Sodhi, R. Vingralek. *Online, Asynchronous Schema Change in F1.* PVLDB / VLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536230)
+- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[SOTA]** N. Bruno, S. Chaudhuri. *An Online Approach to Physical Design Tuning.* ICDE, 2007. — [DBLP](https://dblp.org/rec/conf/icde/BrunoC07.html)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+Take F1's "add a secondary index $I$ on column $c$" as a single logical change, and watch why one staged step is insufficient. Suppose servers may sit one schema version apart. If we jumped directly from state $S_0$ (*no index*) to $S_2$ (*index public, used for reads*), a server still on $S_0$ that **inserts** row $r$ writes no entry into $I$; a server on $S_2$ then **reads via $I$** and misses $r$ — an *orphaned* / missing-data anomaly.
+
+F1 inserts the intermediate **`delete-only`** state $S_1$: in $S_1$ a server maintains $I$ on deletes/updates but does not serve reads from it. The staged sequence is
+$$S_0 \;(\text{absent}) \to S_1 \;(\text{delete-only}) \to S_{1.5}\;(\text{write-only, backfill}) \to S_2\;(\text{public}).$$
+Now any two co-existing states differ by at most one step, and every adjacent pair is mutually consistent: a writer always at least maintains entries a reader might rely on. With $N$ servers the protocol needs only $3$ catalog transitions plus one idempotent backfill scan — $O(1)$ version steps, no global lock — illustrating the upper bound of Section 4 and the multi-version-jump impossibility of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

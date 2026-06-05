@@ -68,12 +68,22 @@ The complexity is *known* at the extremes (coNP data complexity for monotone fra
 
 ## 9. Key References
 
-- **[Foundational]** Tomasz Imieliński, Witold Lipski. *Incomplete Information in Relational Databases.* Journal of the ACM, 1984.
-- **[Foundational]** Serge Abiteboul, Oliver M. Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS, 1998.
-- **[SOTA]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM Transactions on Database Systems (TODS), 2010.
-- **[Foundational]** Joachim Biskup, Piero A. Bonatti. *Controlled Query Evaluation for Enforcing Confidentiality in Complete Information Systems.* International Journal of Information Security, 2004.
-- **[Survey]** Csilla Farkas, Sushil Jajodia. *The Inference Problem: A Survey.* ACM SIGKDD Explorations, 2002.
-- **[Foundational]** Serge Abiteboul, Richard Hull, Victor Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[Foundational]** Tomasz Imieliński, Witold Lipski. *Incomplete Information in Relational Databases.* Journal of the ACM, 1984. — [DOI](https://doi.org/10.1145/1634.1886)
+- **[Foundational]** Serge Abiteboul, Oliver M. Duschka. *Complexity of Answering Queries Using Materialized Views.* PODS, 1998. — [DBLP search](https://dblp.org/search?q=Complexity+of+Answering+Queries+Using+Materialized+Views+Abiteboul)
+- **[SOTA]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM Transactions on Database Systems (TODS), 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[Foundational]** Joachim Biskup, Piero A. Bonatti. *Controlled Query Evaluation for Enforcing Confidentiality in Complete Information Systems.* International Journal of Information Security, 2004. — [DOI](https://doi.org/10.1007/s10207-004-0032-1)
+- **[Survey]** Csilla Farkas, Sushil Jajodia. *The Inference Problem: A Survey.* ACM SIGKDD Explorations, 2002. — [DOI](https://doi.org/10.1145/772862.772864)
+- **[Foundational]** Serge Abiteboul, Richard Hull, Victor Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP search](https://dblp.org/search?q=Foundations+of+Databases+Abiteboul+Hull+Vianu)
+
+## 10. Worked Example
+
+Let the base relation be $\mathsf{Emp}(\text{name},\text{dept},\text{salary})$ with the **functional dependency** $\Sigma=\{\text{dept}\to\text{salary}\}$ (everyone in a department earns the same). The secret is the Boolean $Q_s$: *"Alice's salary $= 100$k."*
+
+Authorized views:
+- $V_1 = \pi_{\text{name},\text{dept}}(\mathsf{Emp})$, returning $v_1=\{(\text{Alice},\text{Sales}),(\text{Bob},\text{Sales})\}$.
+- $V_2 = \pi_{\text{dept},\text{salary}}(\mathsf{Emp})$, returning $v_2=\{(\text{Sales},100\text{k})\}$.
+
+Neither view names *both* Alice and a salary, so no single view discloses $Q_s$. But every possible world $D'\in\mathcal{W}$ must satisfy $v_1,v_2$ **and** $\text{dept}\to\text{salary}$. From $v_1$, Alice is in Sales; from $v_2$, Sales pays $100$k; the FD forces Alice's salary to equal the Sales salary $=100$k. Thus $Q_s$ holds in *all* $D'\in\mathcal{W}$ — a **certain disclosure** via the join $V_1\bowtie_{\text{dept}} V_2$ that the FD makes lossless. Drop the FD and $\mathcal{W}$ contains worlds where Alice earns $\neq100$k, so $Q_s$ is no longer certain — illustrating how the constraint class $\Sigma$, not just the view language, determines leakage.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

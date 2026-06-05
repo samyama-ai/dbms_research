@@ -41,11 +41,19 @@ Partly closed. The segmentation and single-level tradeoff are solved optimally; 
 - Online re-optimization as data and hardware change.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020.
-- **[SOTA]** A. Galakatos, M. Markovitch, C. Binnig, R. Fonseca, T. Kraska. *FITing-Tree.* SIGMOD, 2019.
-- **[SOTA]** R. Marcus, E. Zhang, T. Kraska. *CDFShop: Exploring and Optimizing Learned Index Structures.* DEEM @ SIGMOD, 2020.
-- **[Foundational]** J. O'Rourke. *An On-Line Algorithm for Fitting Straight Lines Between Data Ranges.* CACM, 1981.
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** A. Galakatos, M. Markovitch, C. Binnig, R. Fonseca, T. Kraska. *FITing-Tree.* SIGMOD, 2019. — [arXiv](https://arxiv.org/abs/1801.10207)
+- **[SOTA]** R. Marcus, E. Zhang, T. Kraska. *CDFShop: Exploring and Optimizing Learned Index Structures.* SIGMOD (demo), 2020. — [DOI](https://doi.org/10.1145/3318464.3384706)
+- **[Foundational]** J. O'Rourke. *An On-Line Algorithm for Fitting Straight Lines Between Data Ranges.* CACM, 1981. — [DOI](https://doi.org/10.1145/358746.358758)
+
+## 10. Worked Example
+
+Take $n=10^8$ sorted keys, cache line = 64 B = 8 keys, so a last-mile scan of $\varepsilon$ keys costs $\gamma\varepsilon$ with $\gamma = 1/8$ cache miss per key. Suppose the best piecewise-linear approximation gives error $\varepsilon(s) = n/s$ for $s$ segments (each segment covers $n/s$ keys at error $\sim n/s$). Model traversal of a one-level array of $s$ segments is a single lookup: $\alpha\log_f s$ with $f=s$ (flat), so $\approx \alpha$, a constant. Then
+
+$$C(s) \approx \alpha + \beta\log_2\!\frac{n}{s} + \gamma\frac{n}{s}.$$
+
+Setting $dC/ds = 0$: $\;\dfrac{dC}{ds} = -\dfrac{\beta}{s\ln 2} + \beta\cdot 0 - \gamma\dfrac{n}{s^2}$. The dominant cache term $\gamma n/s$ drives the optimum: it shrinks until last-mile cost $\gamma\varepsilon \approx$ one cache line, i.e. $\varepsilon^\* \approx 8$, giving $s^\* \approx n/8 = 1.25\times10^7$ segments. Pushing $s$ higher buys no scan savings (already one line) but adds space; pushing lower makes the $\gamma n/s$ scan term explode. This is exactly the convex knee FITing-tree/PGM exploit: pick $\varepsilon$ near one cache line, then size the model to hit it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

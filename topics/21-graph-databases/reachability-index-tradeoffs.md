@@ -49,13 +49,26 @@ For **road-network-like** graphs the problem is *practically solved* (HL/CH, the
 - External-memory and compressed (succinct) reachability indexes.
 
 ## 9. Key References
-- **[Foundational]** Cohen, E., Halperin, E., Kaplan, H., Zwick, U. *Reachability and Distance Queries via 2-Hop Labels.* SODA 2002 / SICOMP 2003.
-- **[Foundational]** Thorup, M., Zwick, U. *Approximate Distance Oracles.* STOC 2001 / JACM 2005.
-- **[SOTA]** Akiba, T., Iwata, Y., Yoshida, Y. *Fast Exact Shortest-Path Distance Queries on Large Networks by Pruned Landmark Labeling.* SIGMOD 2013.
-- **[SOTA]** Abraham, I., Delling, D., Fiat, A., Goldberg, A., Werneck, R. *Highway Dimension and Provably Efficient Shortest Path Algorithms.* SODA 2010 / JACM 2016.
-- **[Lower bound]** Henzinger, M., Krinninger, S., Nanongkai, D., Saranurak, T. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC 2015.
-- **[Lower bound]** Pătraşcu, M., Roditty, L. *Distance Oracles Beyond the Thorup–Zwick Bound.* FOCS 2010.
-- **[Survey]** Sommer, C. *Shortest-Path Queries in Static Networks.* ACM Computing Surveys, 2014.
+- **[Foundational]** Cohen, E., Halperin, E., Kaplan, H., Zwick, U. *Reachability and Distance Queries via 2-Hop Labels.* SODA 2002 / SICOMP 2003. — [DBLP](https://dblp.org/rec/conf/soda/CohenHKZ02.html) — [DOI](https://doi.org/10.1137/S0097539702403098)
+- **[Foundational]** Thorup, M., Zwick, U. *Approximate Distance Oracles.* STOC 2001 / JACM 2005. — [DOI](https://doi.org/10.1145/1044731.1044732)
+- **[SOTA]** Akiba, T., Iwata, Y., Yoshida, Y. *Fast Exact Shortest-Path Distance Queries on Large Networks by Pruned Landmark Labeling.* SIGMOD 2013. — [arXiv](https://arxiv.org/abs/1304.4661) — [DOI](https://doi.org/10.1145/2463676.2465315)
+- **[SOTA]** Abraham, I., Delling, D., Fiat, A., Goldberg, A., Werneck, R. *Highway Dimension and Provably Efficient Shortest Path Algorithms.* SODA 2010 / JACM 2016. — [DOI](https://doi.org/10.1145/2985473)
+- **[Lower bound]** Henzinger, M., Krinninger, S., Nanongkai, D., Saranurak, T. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC 2015. — [DOI](https://doi.org/10.1145/2746539.2746609) — [DBLP](https://dblp.org/rec/conf/stoc/HenzingerKNS15.html)
+- **[Lower bound]** Pătraşcu, M., Roditty, L. *Distance Oracles Beyond the Thorup–Zwick Bound.* FOCS 2010. — [DOI](https://doi.org/10.1109/FOCS.2010.83)
+- **[Survey]** Sommer, C. *Shortest-Path Queries in Static Networks.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2530531)
+
+## 10. Worked Example
+
+Consider the directed chain-with-shortcut graph $V=\{a,b,c,d\}$ with edges $a\to b,\ b\to c,\ c\to d,\ a\to c$. Build a **2-hop reachability labeling**. Pick $c$ as the highest-rank landmark. Pruned BFS gives:
+
+| $v$ | $L_{\text{out}}(v)$ | $L_{\text{in}}(v)$ |
+|----|----|----|
+| $a$ | $\{a,c\}$ | $\{a\}$ |
+| $b$ | $\{b,c\}$ | $\{a,b\}$ |
+| $c$ | $\{c\}$   | $\{a,b,c\}$ |
+| $d$ | $\{d\}$   | $\{c,d\}$ |
+
+Query $a\rightsquigarrow d$: test $L_{\text{out}}(a)\cap L_{\text{in}}(d)=\{a,c\}\cap\{c,d\}=\{c\}\neq\emptyset$ → **reachable** (witness hub $c$, matching path $a\to c\to d$). Query $b\rightsquigarrow a$: $\{b,c\}\cap\{a\}=\emptyset$ → **not reachable**, correct. Total label size here is $14$ entries versus the full transitive closure's $\Theta(|V|^2)=16$ reachable-pair slots — and on a graph where one hub covers $k$ sources and $k$ sinks, 2-hop replaces $\Theta(k^2)$ closure pairs with $\Theta(k)$ labels, the savings that make PLL scale.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

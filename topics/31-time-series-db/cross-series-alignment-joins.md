@@ -44,12 +44,29 @@ Directions: native worst-case-optimal temporal joins in columnar engines (DataFu
 - Cost/cardinality estimation for band joins feeding the TSDB optimizer.
 
 ## 9. Key References
-- **[Foundational]** Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (JACM 2018).
-- **[SOTA]** Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014.
-- **[Foundational]** Atallah, Tsotras et al.; and DeWitt, Naughton, Schneider. *An Evaluation of Non-Equijoin (Band Join) Algorithms.* VLDB, 1991.
-- **[SOTA]** Whitehouse (kdb+/q). *As-of Joins (`aj`).* Kx documentation. (canonical systems reference)
-- **[Survey]** Jensen, Snodgrass. *Temporal Database Management.* (entry in Encyclopedia of Database Systems), 2009.
+- **[Foundational]** Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP search](https://dblp.org/search?q=The%20TSQL2%20Temporal%20Query%20Language)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (JACM 2018). — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481)
+- **[Foundational]** Atallah, Tsotras et al.; and DeWitt, Naughton, Schneider. *An Evaluation of Non-Equijoin (Band Join) Algorithms.* VLDB, 1991. — [VLDB PDF](https://www.vldb.org/conf/1991/P443.PDF)
+- **[SOTA]** Whitehouse (kdb+/q). *As-of Joins (`aj`).* Kx documentation. (canonical systems reference) — [Kx docs](https://code.kx.com/q/ref/aj/)
+- **[Survey]** Jensen, Snodgrass. *Temporal Database Management.* (entry in Encyclopedia of Database Systems), 2009. — [DBLP search](https://dblp.org/search?q=Jensen%20Snodgrass%20Temporal%20Database%20Encyclopedia)
+
+## 10. Worked Example
+
+Series $A$ (a price probe) and $B$ (a slower index) on different grids:
+
+| $A$: time | $x$ | | $B$: time | $y$ |
+|---|---|---|---|---|
+| 10 | 100 | | 8 | 50 |
+| 14 | 102 | | 13 | 52 |
+| 21 | 99 | | 19 | 55 |
+
+**As-of join** (pair each $a_i$ with most recent $b_j \le a_i$, tolerance $\tau=6$):
+- $a=10$: latest $b\le10$ is $t{=}8\ (y{=}50)$, gap $2\le6$ → $(100,50)$.
+- $a=14$: latest is $t{=}13\ (y{=}52)$, gap $1$ → $(102,52)$.
+- $a=21$: latest is $t{=}19\ (y{=}55)$, gap $2$ → $(99,55)$.
+
+A single forward merge over the two sorted timestamp lists touches each row once: $O(|A|+|B|)=O(6)$ comparisons, $O(1)$ lookback state. Now contrast a **band join** with the same $\tau=6$ but *all* pairs within tolerance: $a{=}10$ matches $b{\in}\{8,13\}$, $a{=}14$ matches $\{8,13,19\}$, $a{=}21$ matches $\{19\}$ — output size $6 > |A|+|B|$ already, illustrating why band-join cost is $O(|A|+|B|+\mathrm{OUT})$ and why the as-of variant's single-match rule is the cheap special case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

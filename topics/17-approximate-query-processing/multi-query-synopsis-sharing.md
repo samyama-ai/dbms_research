@@ -34,11 +34,21 @@ Active directions: learned/data-driven models (`DeepDB`, sum-product networks) a
 - Online, drift-aware shared-synopsis maintenance with regret bounds against the best fixed allocation.
 
 ## 9. Key References
-- **[Foundational]** Acharya, S., Gibbons, P., Poosala, V. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD, 2000.
-- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times.* EuroSys, 2013.
-- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[SOTA]** Hilprecht, B., Schmidt, A., Kulessa, M., Molina, A., Kersting, K., Binnig, C. *DeepDB: Learn from Data, Not from Queries!* VLDB, 2020.
-- **[Survey]** Chaudhuri, S., Ding, B., Kandula, S. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017.
+- **[Foundational]** Acharya, S., Gibbons, P., Poosala, V. *Congressional Samples for Approximate Answering of Group-By Queries.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335450)
+- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Hilprecht, B., Schmidt, A., Kulessa, M., Molina, A., Kersting, K., Binnig, C. *DeepDB: Learn from Data, Not from Queries!* VLDB, 2020. — [DOI](https://doi.org/10.14778/3384345.3384349) · [arXiv](https://arxiv.org/abs/1909.00607)
+- **[Survey]** Chaudhuri, S., Ding, B., Kandula, S. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056097)
+
+## 10. Worked Example
+
+**Neyman vs. uniform allocation for a group-by workload.** A table has $g=2$ groups: group 1 with $N_1=900$ rows, std dev $\sigma_1=1$; group 2 with $N_2=100$ rows, $\sigma_2=9$. Workload weights are equal ($w_1=w_2$). Total sample budget $n=100$.
+
+**Uniform/proportional split** by size: $n_1=90,\,n_2=10$. The per-group mean's variance is $\sigma_j^2/n_j$: group 1 gives $1/90\approx 0.011$, group 2 gives $81/10=8.1$ — the rare, high-variance group dominates total error $\approx 8.11$.
+
+**Neyman allocation** sets $n_j\propto N_j\sigma_j$. Compute $N_1\sigma_1=900$, $N_2\sigma_2=900$ — equal, so $n_1=n_2=50$. Now variances are $1/50=0.02$ and $81/50=1.62$, total $\approx 1.64$ — a $\approx 5\times$ reduction over proportional, by funding the noisy small group. This is the closed-form optimum of Section 4.
+
+The multi-query twist: a *second* query grouping by a different column needs its own stratification of the same sample. Re-stratifying for query 2 perturbs $n_1,n_2$ above — the coupling that breaks per-query optimality and makes the joint allocation NP-hard (Section 5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

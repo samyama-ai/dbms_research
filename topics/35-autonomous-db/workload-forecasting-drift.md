@@ -41,11 +41,19 @@ Active threads: decision-aware / "end-to-end" forecasting where the loss is the 
 - Forecasting query *shape* (parameter distributions), not just arrival/mix.
 
 ## 9. Key References
-- **[Foundational]** Ma, L., Van Aken, D., Hefny, A., Mezerhane, G., Pavlo, A., Gordon, G. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018.
-- **[Foundational]** Gibbs, I., Candès, E. *Adaptive Conformal Inference Under Distribution Shift.* NeurIPS, 2021.
-- **[SOTA]** Zhang, L., Lu, S., Zhou, Z.-H. *Adaptive Online Learning in Dynamic Environments.* NeurIPS, 2018.
-- **[Foundational]** Lorden, G. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971.
-- **[SOTA]** Poppe, O., et al. *Seagull / Resource forecasting for cloud databases.* (Microsoft) PVLDB, 2020–2022.
+- **[Foundational]** Ma, L., Van Aken, D., Hefny, A., Mezerhane, G., Pavlo, A., Gordon, G. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [PDF](https://www.pdl.cmu.edu/PDL-FTP/Database/sigmod18-ma.pdf), [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[Foundational]** Gibbs, I., Candès, E. *Adaptive Conformal Inference Under Distribution Shift.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2106.00170)
+- **[SOTA]** Zhang, L., Lu, S., Zhou, Z.-H. *Adaptive Online Learning in Dynamic Environments.* NeurIPS, 2018. — [arXiv](https://arxiv.org/abs/1810.10815)
+- **[Foundational]** Lorden, G. *Procedures for Reacting to a Change in Distribution.* Annals of Mathematical Statistics, 1971. — [DOI](https://doi.org/10.1214/aoms/1177693055)
+- **[SOTA]** Poppe, O., et al. *Seagull / Resource forecasting for cloud databases.* (Microsoft) PVLDB, 2020–2022. — [PDF](http://vldb.org/pvldb/vol14/p154-poppe.pdf)
+
+## 10. Worked Example
+
+A reporting workload runs at arrival rate $\lambda_0=10$ queries/min. At an unknown time a new dashboard ships and the rate jumps to $\lambda_1=20$/min — a regime change the autoscaler must catch to pre-provision.
+
+**Change detection (CUSUM).** Model per-minute counts as Poisson. The CUSUM statistic accumulates the log-likelihood ratio $s_t=\log\frac{p_{\lambda_1}(x_t)}{p_{\lambda_0}(x_t)}$ and alarms when $S_t=\max(0,S_{t-1}+s_t)$ crosses threshold $h$. By **Lorden's bound**, the expected detection delay is $\approx h/D_{KL}(\lambda_1\Vert\lambda_0)$. Here $D_{KL}=\lambda_1\log\frac{\lambda_1}{\lambda_0}-(\lambda_1-\lambda_0)=20\ln2-10\approx3.86$ nats. To hold an average-run-length-to-false-alarm of ARL $=1000$, set $h\approx\ln(1000)\approx6.9$, giving delay $\approx6.9/3.86\approx1.8$ min — you *cannot* reliably detect faster than this, the section-5 lower bound.
+
+**Calibrated coverage (ACI).** Meanwhile the forecaster's $90\%$ interval $\hat C_t$ momentarily under-covers right after the jump. ACI updates $\theta_{t+1}=\theta_t+\eta(\alpha-\mathbb 1[y_t\notin\hat C_t])$ with $\alpha=0.1$; each miss nudges $\theta$ to widen the interval, restoring long-run coverage $\frac1T\sum_t\mathbb 1[y_t\in\hat C_t]\to0.9$ within $O(1/T)$ — but during the transient the interval may widen to near-vacuous, exactly the width-vs-coverage open gap of section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

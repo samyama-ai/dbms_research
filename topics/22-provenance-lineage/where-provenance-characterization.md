@@ -55,11 +55,26 @@ Active threads: integrating where-provenance into **provenance for SQL with bag 
 
 ## 9. Key References
 
-- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001.
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
-- **[SOTA]** Bhagwat, Chiticariu, Tan, Vijayvargiya. *An Annotation Management System for Relational Databases (DBNotes).* VLDB Journal, 2005.
-- **[SOTA]** Arab, Glavic, et al. *GProM: A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018.
+- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001. — [DBLP](https://dblp.org/rec/conf/icdt/BunemanKT01.html)
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)
+- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+- **[SOTA]** Bhagwat, Chiticariu, Tan, Vijayvargiya. *An Annotation Management System for Relational Databases (DBNotes).* VLDB Journal, 2005. — [DOI](https://doi.org/10.1007/s00778-005-0156-6)
+- **[SOTA]** Arab, Glavic, et al. *GProM: A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018. — [PDF](http://sites.computer.org/debull/A18mar/p51.pdf)
+
+## 10. Worked Example
+
+Let $R(A,B)$ have one tuple at locations $\ell_1,\ell_2$:
+
+| | A | B |
+|---|---|---|
+| | $5_{\ell_1}$ | $7_{\ell_2}$ |
+
+Consider two queries that return the same answer relation $\{(5)\}$ on every database where $A=5$:
+
+- $Q_1 = \pi_A(\sigma_{A=5}(R))$ — the output value $5$ is **copied** from cell $\ell_1$, so $\omega_{Q_1} = \{\ell_1\}$.
+- $Q_2 = \pi_A(\sigma_{A=5}(R)) \cup \{(5)\}$ where the constant $5$ is supplied by the query literal — that output value is copied from *no input cell*, so $\omega_{Q_2} = \varnothing$ (or a constant location).
+
+Although $Q_1(D) = Q_2(D)$ as relations for all such $D$, their where-provenance differs: $\omega_{Q_1} \ne \omega_{Q_2}$. This is the **non-invariance** pathology — where-provenance is not a function of input/output relations alone. It also shows why $\omega$ cannot be recovered from the how-provenance polynomial (both queries have the same $\mathbb{N}[X]$ annotation $x_{\text{tuple}}$), placing where-provenance strictly below the semiring. An invariant characterization must quotient queries by a *location-preserving* equivalence so that rewrites preserving answers also preserve $\omega$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

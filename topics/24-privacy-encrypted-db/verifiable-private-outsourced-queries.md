@@ -48,12 +48,22 @@ Privacy side: hiding access patterns inherits the **$\Omega(\log n)$ ORAM bandwi
 
 ## 9. Key References
 
-- **[Foundational]** Li, Hadjieleftheriou, Kollios, Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006.
-- **[Foundational]** Parno, Howell, Gentry, Raykova. *Pinocchio: Nearly Practical Verifiable Computation.* IEEE S&P, 2013.
-- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Zhang, Katz, Papamanthou. *IntegriDB: Verifiable SQL for Outsourced Databases.* CCS, 2015.
-- **[SOTA]** Zhang, Genkin, Katz, Papadopoulos, Papamanthou. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017.
-- **[Foundational]** Gentry, Wichs. *Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions.* STOC, 2011.
+- **[Foundational]** Li, Hadjieleftheriou, Kollios, Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142488) · [DBLP](https://dblp.org/rec/conf/sigmod/LiHKR06.html)
+- **[Foundational]** Parno, Howell, Gentry, Raykova. *Pinocchio: Nearly Practical Verifiable Computation.* IEEE S&P, 2013. — [DOI](https://doi.org/10.1109/SP.2013.47) · [ePrint](https://eprint.iacr.org/2013/279)
+- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) · [DBLP](https://dblp.org/rec/conf/crypto/LarsenN18.html)
+- **[SOTA]** Zhang, Katz, Papamanthou. *IntegriDB: Verifiable SQL for Outsourced Databases.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813711) · [DBLP](https://dblp.org/rec/conf/ccs/ZhangKP15.html)
+- **[SOTA]** Zhang, Genkin, Katz, Papadopoulos, Papamanthou. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017. — [DBLP](https://dblp.org/rec/conf/sp/ZhangGKPP17.html) · [ePrint](https://eprint.iacr.org/2017/1145)
+- **[Foundational]** Gentry, Wichs. *Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions.* STOC, 2011. — [DOI](https://doi.org/10.1145/1993636.1993651) · [DBLP](https://dblp.org/rec/conf/stoc/GentryW11.html)
+
+## 10. Worked Example
+
+**Why a completeness proof leaks a boundary.** A Merkle B+-tree authenticates a salary column sorted as leaves $\langle 30, 45, 52, 70, 88\rangle$, each leaf hashed and combined up to a root digest $h_{\text{root}}$ the client signed. Query: `WHERE salary BETWEEN 50 AND 60`. The true answer is the single tuple $52$.
+
+To prove **completeness** (nothing in $[50,60]$ was dropped), the server's verification object must show the *immediate neighbors* straddling the range: the predecessor $45 < 50$ and the successor $70 > 60$. The client recomputes hashes along the two boundary paths up to $h_{\text{root}}$ and checks the signature — this proves $45$ and $70$ are adjacent in the real tree, so no qualifying value hides between them.
+
+VO cost: the answer $k=1$ plus $O(\log n)$ hashes per boundary path, i.e. $O(\log n + k)$ — here about $\lceil\log_2 5\rceil=3$ sibling hashes each side.
+
+**The privacy leak:** the proof *revealed the exact values $45$ and $70$* — neighbors outside the query — to the verifier/server view. An access-pattern-hiding scheme must not expose them, so completeness witnesses must be wrapped in ORAM (paying the $\Omega(\log n)$ Larsen–Nielsen overhead) or a ZK proof. That tension is the open core of this problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

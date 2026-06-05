@@ -48,12 +48,22 @@ The *worst-case* gap is essentially **closed** for enumeration (WCOJ matches AGM
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[Foundational]** Abo Khamis, Ngo, Rudra. *Computing Joins in Loops: PANDA / submodular width.* PODS 2016.
-- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS 2017.
-- **[SOTA]** Mhedhbi, Salihoglu. *Optimizing Subgraph Queries by Combining Binary and Worst-Case Optimal Joins.* PVLDB 2019.
-- **[Survey]** Sun, Luo. *In-Memory Subgraph Matching: An In-depth Study.* SIGMOD 2020.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA / submodular width).* PODS 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* ACM TODS 2017. — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Mhedhbi, Salihoglu. *Optimizing Subgraph Queries by Combining Binary and Worst-Case Optimal Joins.* PVLDB 2019. — [DOI](https://doi.org/10.14778/3342263.3342643)
+- **[Survey]** Sun, Luo. *In-Memory Subgraph Matching: An In-depth Study.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3380581)
+
+## 10. Worked Example
+
+The triangle query, binary-join vs. WCOJ. Pattern $Q$ is the triangle $R(a,b)\bowtie S(b,c)\bowtie T(c,a)$. Take $G$ with $N$ edges arranged so each relation has $N$ tuples.
+
+**AGM bound.** The fractional edge cover $x_R{=}x_S{=}x_T{=}\tfrac12$ satisfies $\sum_{e\ni v}x_e\ge1$ at every vertex, so the optimal LP value is $\tfrac32$ and $|\mathrm{out}|\le N^{3/2}$. WCOJ (Generic Join / LFTJ) runs in $\tilde O(N^{3/2})$.
+
+**Why binary joins can blow up.** Consider a "double star": vertex $b_0$ has $\sqrt N$ neighbours on each side, and likewise vertex $c_0$. The intermediate join $R\bowtie S$ materializes all 2-paths $a\!-\!b\!-\!c$, of which there are $\Theta(N^2/\,?)$ — concretely if $R$ and $S$ each route $\sqrt N$ edges through a shared hub, $R\bowtie S$ produces up to $\sqrt N \cdot \sqrt N=N$ partial tuples per hub, summing to $\Theta(N^{2})$ before the final join with $T$ prunes back to $\le N^{3/2}$. So the binary plan touches $\Theta(N^2)$ rows vs. the WCOJ optimum $N^{3/2}$.
+
+**The catch (Section 6).** On a *uniform* graph with no hubs the same triangle query has tiny intermediate results, and binary-join's better constants/cache behavior win — which is exactly the unresolved instance-optimality gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -56,13 +56,23 @@ The **static** cache-oblivious search problem is essentially **closed** (vEB mat
 
 ## 9. Key References
 
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Frigo, M., Leiserson, C. E., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999.
-- **[Foundational]** Bender, M. A., Demaine, E. D., Farach-Colton, M. *Cache-Oblivious B-Trees.* FOCS, 2000.
-- **[SOTA]** Kim, C. et al. *FAST: Fast Architecture Sensitive Tree Search on Modern CPUs and GPUs.* SIGMOD, 2010.
-- **[SOTA]** Rao, J., Ross, K. A. *Making B+-Trees Cache Conscious in Main Memory (CSB+-trees).* SIGMOD, 2000.
-- **[SOTA]** Ferragina, P., Vinciguerra, G. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[Foundational]** Pătraşcu, M., Thorup, M. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Frigo, M., Leiserson, C. E., Prokop, H., Ramachandran, S. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DOI](https://doi.org/10.1109/SFFCS.1999.814600) · [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
+- **[Foundational]** Bender, M. A., Demaine, E. D., Farach-Colton, M. *Cache-Oblivious B-Trees.* FOCS, 2000. — [DBLP](https://dblp.org/rec/conf/focs/BenderDF00.html) · [PDF](https://erikdemaine.org/papers/FOCS2000b/paper.pdf)
+- **[SOTA]** Kim, C. et al. *FAST: Fast Architecture Sensitive Tree Search on Modern CPUs and GPUs.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807206) · [DBLP](https://dblp.org/rec/conf/sigmod/KimCSSNKLBD10.html)
+- **[SOTA]** Rao, J., Ross, K. A. *Making B+-Trees Cache Conscious in Main Memory (CSB+-trees).* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335449)
+- **[SOTA]** Ferragina, P., Vinciguerra, G. *The PGM-index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) · [DBLP](https://dblp.org/rec/journals/pvldb/FerraginaV20.html)
+- **[Foundational]** Pătraşcu, M., Thorup, M. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [DOI](https://doi.org/10.1145/1132516.1132551) · [arXiv](https://arxiv.org/abs/cs/0603043)
+
+## 10. Worked Example
+
+Take $n = 15$ keys in a perfect binary search tree (height 4) and a cache line holding $B = 4$ nodes. Compare two array layouts under the DAM model.
+
+**BFS / level-order layout** $[8,4,12,2,6,10,14,1,3,5,7,9,11,13,15]$. A search for key 7 visits nodes $8\to4\to6\to7$, at array indices $0,1,5,12$. Lines are $\{0\!-\!3\},\{4\!-\!7\},\{8\!-\!11\},\{12\!-\!15\}$. Index 0, 1 share a line; 5 is another; 12 a third $\Rightarrow$ **3 transfers**. Deep in a large tree, *every* level past the first $\log_2 B$ costs a fresh line, giving $\approx \log_2 n - \log_2 B = \log_2(n/B)$ transfers.
+
+**van Emde Boas layout.** Split the height-4 tree at the middle: a height-2 top tree (3 nodes) and four height-2 bottom trees (3 nodes each), each block laid out *contiguously*. Now the root-block $\{8,4,12\}$ fits in one line, and the relevant bottom block $\{6,5,7\}$ in another $\Rightarrow$ the same search for 7 costs only **2 transfers**.
+
+The vEB advantage is $\log_B n = \log_2 n / \log_2 B$ rather than $\log_2 n - \log_2 B$ transfers — and crucially it holds for *every* $B$ simultaneously without the layout knowing $B$, matching the $\Omega(\log_B n)$ information-theoretic floor of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

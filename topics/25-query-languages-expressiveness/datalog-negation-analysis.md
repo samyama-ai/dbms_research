@@ -64,13 +64,28 @@ The gap is one of **characterization**, not just numbers. General containment/eq
 
 ## 9. Key References
 
-- **[Foundational]** O. Shmueli. *Decidability and expressiveness aspects of logic queries.* PODS 1987. (Undecidability of Datalog containment.)
-- **[Foundational]** A. Van Gelder, K. Ross, J. Schlipf. *The well-founded semantics for general logic programs.* JACM, 1991.
-- **[Foundational]** M. Gelfond, V. Lifschitz. *The stable model semantics for logic programming.* ICLP/SLP 1988.
-- **[SOTA]** V. Lifschitz, D. Pearce, A. Valverde. *Strongly equivalent logic programs.* ACM TOCL, 2001.
-- **[SOTA]** T. Eiter, M. Fink, S. Woltran. *Semantical characterizations and complexity of equivalences in answer set programming.* ACM TOCL, 2007.
-- **[Foundational]** S. Chaudhuri, M. Vardi. *On the equivalence of recursive and nonrecursive Datalog programs.* PODS 1992.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (negation chapters).
+- **[Foundational]** O. Shmueli. *Decidability and expressiveness aspects of logic queries.* PODS 1987. (Undecidability of Datalog containment.) — [DOI](https://doi.org/10.1145/28659.28685)
+- **[Foundational]** A. Van Gelder, K. Ross, J. Schlipf. *The well-founded semantics for general logic programs.* JACM, 1991. — [DOI](https://doi.org/10.1145/116825.116838)
+- **[Foundational]** M. Gelfond, V. Lifschitz. *The stable model semantics for logic programming.* ICLP/SLP 1988. — [DBLP](https://dblp.org/rec/conf/iclp/GelfondL88.html)
+- **[SOTA]** V. Lifschitz, D. Pearce, A. Valverde. *Strongly equivalent logic programs.* ACM TOCL, 2001. — [DOI](https://doi.org/10.1145/383779.383783)
+- **[SOTA]** T. Eiter, M. Fink, S. Woltran. *Semantical characterizations and complexity of equivalences in answer set programming.* ACM TOCL, 2007. — [DBLP](https://dblp.org/rec/journals/tocl/EiterFW07.html)
+- **[Foundational]** S. Chaudhuri, M. Vardi. *On the equivalence of recursive and nonrecursive Datalog programs.* PODS 1992. — [DOI](https://doi.org/10.1145/137097.137109)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (negation chapters). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+**One program, three semantics — and why static analysis is hard.** Take the normal program with a single negative cycle:
+```
+a :- not b.
+b :- not a.
+p :- a.
+p :- b.
+```
+- **Stratified:** *undefined* — the dependency graph has a negative edge inside the cycle $a\leftrightarrow b$, so the program is **not stratifiable**. A stratified analyzer simply refuses it.
+- **Well-founded semantics:** the alternating fixpoint leaves $a,b$ both **undefined** (neither forced true nor false), and since $p$ depends only on $a,b$, $p$ is **undefined** too. The unique 3-valued model is $\{a{=}u,\,b{=}u,\,p{=}u\}$.
+- **Stable models / answer sets:** *two* models, $M_1=\{a,p\}$ and $M_2=\{b,p\}$. Check $M_1$: the GL reduct $P^{M_1}$ drops `not a` (since $a\in M_1$) and keeps `a :- ` (since $b\notin M_1$), yielding reduct rules $\{a,\ p\!:\!-\!a,\ p\!:\!-\!b\}$ whose least fixpoint is exactly $\{a,p\}=M_1$. Symmetrically for $M_2$.
+
+Now contrast with $P'$ obtained by adding the fact `a.`. Under **cautious** (skeptical) ASP, $p$ is entailed by both $P$ and $P'$ — yet $P\not\equiv P'$ under brave reasoning ($P$ has a model without $a$). This shows containment/equivalence flips with the choice of semantics and reasoning mode: the same syntactic edit is answer-preserving under one notion and not another. Because homomorphisms no longer characterize containment once `not` appears (no monotonicity), deciding such equivalences is undecidable in general — strong equivalence (co-NP via here-and-there) is the rare tractable island of §4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

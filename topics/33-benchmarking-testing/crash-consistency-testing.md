@@ -69,11 +69,25 @@ There is no theoretical "closing" here: completeness is impossible at scale, so 
 
 ## 9. Key References
 
-- **[Foundational]** T. S. Pillai et al. *All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-Consistent Applications (ALICE).* OSDI, 2014.
-- **[SOTA]** J. Mohan, A. Martinez, S. Ponnapalli, P. Raju, V. Chidambaram. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (ACE/CrashMonkey).* OSDI, 2018.
-- **[Foundational]** H. Chen, D. Ziegler, T. Chajed, A. Chlipala, M. F. Kaashoek, N. Zeldovich. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015.
-- **[Foundational]** J. Yang, P. Twohey, D. Engler, M. Musuvathi. *Using Model Checking to Find Serious File System Errors (FiSC/eXplode).* OSDI, 2004/2006.
-- **[SOTA]** K. Kingsbury. *Jepsen* analyses (ongoing). jepsen.io.
+- **[Foundational]** T. S. Pillai et al. *All File Systems Are Not Created Equal: On the Complexity of Crafting Crash-Consistent Applications (ALICE).* OSDI, 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/pillai)
+- **[SOTA]** J. Mohan, A. Martinez, S. Ponnapalli, P. Raju, V. Chidambaram. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (ACE/CrashMonkey).* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/mohan) · [arXiv](https://arxiv.org/abs/1810.02904)
+- **[Foundational]** H. Chen, D. Ziegler, T. Chajed, A. Chlipala, M. F. Kaashoek, N. Zeldovich. *Using Crash Hoare Logic for Certifying the FSCQ File System.* SOSP, 2015. — [DOI](https://doi.org/10.1145/2815400.2815402)
+- **[Foundational]** J. Yang, P. Twohey, D. Engler, M. Musuvathi. *Using Model Checking to Find Serious File System Errors (FiSC/eXplode).* OSDI, 2004/2006. — [USENIX](https://www.usenix.org/conference/osdi-04/using-model-checking-find-serious-file-system-errors)
+- **[SOTA]** K. Kingsbury. *Jepsen* analyses (ongoing). jepsen.io. — [Jepsen](https://jepsen.io/analyses)
+
+## 10. Worked Example
+
+A WAL-based commit issues four writes then an `fsync`, then updates a header:
+
+$$\sigma = w_1\,w_2\,w_3\,w_4\ \underbrace{\mathsf{fsync}}_{\text{barrier}}\ w_5$$
+
+where $w_1..w_4$ are log-record writes and $w_5$ flips the "committed" header bit. The barrier guarantees $w_1..w_4$ are durable before $w_5$. Crash points and reachable states:
+
+- **Crash before the barrier:** any subset of $\{w_1,w_2,w_3,w_4\}$ may have persisted, in any order — that is $2^4=16$ reachable disk states. Recovery must see the header *un-set*, so $\Phi$ requires the transaction be treated as *absent* in all 16. A bug: recovery scans a partially-written log and replays a torn record.
+- **Crash after the barrier, before $w_5$:** log fully durable, header unset → transaction still absent (correct: no ack was returned).
+- **Crash after $w_5$:** committed; recovery must replay → fully present.
+
+The danger state is the un-barriered window: $|\mathrm{Reach}_{\mathcal P}|=2^{(\text{writes between barriers})}$. With 4 writes that's 16 cases; with 20 writes it is $2^{20}\approx10^6$ — exhaustive replay is feasible only at small bounds, which is exactly why ACE bounds workloads to $\le 3$ operations and CrashMonkey replays each resulting crash state.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

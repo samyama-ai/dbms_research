@@ -62,12 +62,33 @@ The gap is qualitative, not a constant factor: between **partial sound oracles**
 
 ## 9. Key References
 
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis.* OSDI, 2020.
-- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020.
-- **[SOTA]** M. Rigger, Z. Su. *Detecting Optimization Bugs via Non-optimizing Reference Engine Construction (NoREC).* ESEC/FSE, 2020.
-- **[Foundational]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI, 2017.
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Data Bases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [book site](http://webdam.inria.fr/Alice/)
+- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger)
+- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
+- **[SOTA]** M. Rigger, Z. Su. *Detecting Optimization Bugs via Non-optimizing Reference Engine Construction (NoREC).* ESEC/FSE, 2020. — [DOI](https://doi.org/10.1145/3368089.3409710) · [arXiv](https://arxiv.org/abs/2007.08292)
+- **[Foundational]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI, 2017. — [DOI](https://doi.org/10.1145/3062341.3062348) · [arXiv](https://arxiv.org/abs/1607.04822)
+
+## 10. Worked Example
+
+A TLP (Ternary Logic Partitioning) oracle in action — no reference engine needed. Table $t(c)$:
+
+| c |
+|---|
+| 1 |
+| NULL |
+| 3 |
+
+Original query $Q_0$: `SELECT c FROM t` returns $\{1, \text{NULL}, 3\}$ (3 rows).
+
+Pick predicate $p \equiv (c > 1)$. TLP runs three partition queries with a `WHERE` clause:
+- $Q_T$: `WHERE c > 1` → $\{3\}$ (1 row; $1>1$ is false, NULL$>1$ is unknown).
+- $Q_F$: `WHERE NOT (c > 1)` → $\{1\}$ (1 row).
+- $Q_N$: `WHERE (c > 1) IS NULL` → $\{\text{NULL}\}$ (1 row; the NULL row).
+
+Oracle invariant: $Q_T \cup_{\text{ALL}} Q_F \cup_{\text{ALL}} Q_N \equiv Q_0$ as multisets. Here $\{3\} \uplus \{1\} \uplus \{\text{NULL}\} = \{1,3,\text{NULL}\}$, which equals $Q_0$. **Pass.**
+
+Now suppose a buggy optimizer mishandled 3-valued logic and evaluated $Q_N$ as empty (treating `IS NULL` on the predicate as always false). Then the union has 2 rows $\ne 3$ rows — a *sound* failure flagged with zero false positives, because the invariant $|σ_p| + |σ_{¬p}| + |σ_{p\,\text{IS UNKNOWN}}| = |R|$ is a theorem of bag semantics.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -55,11 +55,26 @@ For **independent blocks** the gap is essentially closed offline (trial encoding
 
 ## 9. Key References
 
-- **[SOTA]** M. Kuschewski, D. Sauerwein, A. Alhomssi, V. Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023.
-- **[SOTA]** A. Afroozeh, P. Boncz. *The FastLanes Compression Layout.* VLDB, 2023.
-- **[Foundational]** N. Cesa-Bianchi, G. Lugosi. *Prediction, Learning, and Games.* Cambridge University Press, 2006.
-- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998.
-- **[Foundational]** M. Herbster, M. Warmuth. *Tracking the Best Expert.* Machine Learning, 1998.
+- **[SOTA]** M. Kuschewski, D. Sauerwein, A. Alhomssi, V. Leis. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
+- **[SOTA]** A. Afroozeh, P. Boncz. *The FastLanes Compression Layout.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+- **[Foundational]** N. Cesa-Bianchi, G. Lugosi. *Prediction, Learning, and Games.* Cambridge University Press, 2006. — [ACM](https://dl.acm.org/doi/book/10.5555/1137817)
+- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998. — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
+- **[Foundational]** M. Herbster, M. Warmuth. *Tracking the Best Expert.* Machine Learning, 1998. — [DOI](https://doi.org/10.1023/A:1007424614876)
+
+## 10. Worked Example
+
+Palette $\mathcal{C}=\{\text{Delta},\text{RLE}\}$, four blocks of 100 integers each. Trial-encode sizes (bytes):
+
+| Block | Delta | RLE | per-block best |
+|-------|------|-----|----------------|
+| $B_1$ (smooth ramp) | 40 | 180 | Delta (40) |
+| $B_2$ (constant 7) | 120 | 6 | RLE (6) |
+| $B_3$ (constant 7) | 120 | 6 | RLE (6) |
+| $B_4$ (noisy ramp) | 55 | 200 | Delta (55) |
+
+Offline per-block optimum $=40+6+6+55=107$ bytes, computed in $O(T\,|\mathcal{C}|)=O(4\cdot2)=8$ encode trials.
+
+Online with Multiplicative Weights ($\eta$ tuned) competing against the best *single fixed* codec: best fixed codec is Delta with $40+120+120+55=335$, so MW pays $\approx(1+\eta)\cdot335$ — far worse than 107 because no single codec fits all blocks. To approach 107 you need the *per-block* comparator: Fixed-Share tracks the $B_2\!\to\!B_3$ run as RLE and the ramps as Delta. Here there are $m=2$ codec switches ($B_1\!\to\!B_2$, $B_3\!\to\!B_4$), so the tracking regret is $O(m\log(|\mathcal{C}|T))=O(2\log 8)$ additive bytes over the 107 optimum — showing why switching cost, not raw codec count, drives the online gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

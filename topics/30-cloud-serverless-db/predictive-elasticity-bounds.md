@@ -48,13 +48,22 @@ Active: **learning-augmented online algorithms** specialized to autoscaling with
 
 ## 9. Key References
 
-- **[Foundational]** M. Lin, A. Wierman, L. L. H. Andrew, E. Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* INFOCOM 2011 / IEEE-ACM ToN, 2013.
-- **[SOTA]** M. Lin, Z. Liu, A. Wierman, L. L. H. Andrew. *Online Algorithms for Geographical Load Balancing / Averaging Fixed Horizon Control.* IGCC, 2012.
-- **[SOTA]** M. Purohit, Z. Svitkina, R. Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018.
-- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM, 2021.
-- **[SOTA]** C. J. Argue, A. Gupta, G. Guruganesh, Z. Tang. *Chasing Convex Bodies with Linear Competitive Ratio.* SODA, 2020.
-- **[SOTA]** K. Rzadca et al. *Autopilot: Workload Autoscaling at Google.* EuroSys, 2020.
-- **[SOTA]** E. Cortez et al. *Resource Central: Understanding and Predicting Workloads for Improved Resource Management in Large Cloud Platforms.* SOSP, 2017.
+- **[Foundational]** M. Lin, A. Wierman, L. L. H. Andrew, E. Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* INFOCOM 2011 / IEEE-ACM ToN, 2013. — [DOI](https://doi.org/10.1109/TNET.2012.2226216) · [DBLP](https://dblp.org/rec/journals/ton/LinWAT13.html)
+- **[SOTA]** M. Lin, Z. Liu, A. Wierman, L. L. H. Andrew. *Online Algorithms for Geographical Load Balancing / Averaging Fixed Horizon Control.* IGCC, 2012. — [DOI](https://doi.org/10.1109/IGCC.2012.6322266) · [DBLP](https://dblp.org/rec/conf/green/LinLWA12.html)
+- **[SOTA]** M. Purohit, Z. Svitkina, R. Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/73a427badebe0e32caa2e1fc7530b7f3-Abstract.html)
+- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* ICML 2018 / JACM, 2021. — [DOI](https://doi.org/10.1145/3447579) · [arXiv](https://arxiv.org/abs/1802.05399)
+- **[SOTA]** C. J. Argue, A. Gupta, G. Guruganesh, Z. Tang. *Chasing Convex Bodies with Linear Competitive Ratio.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1905.11877) · [DBLP](https://dblp.org/rec/journals/jacm/ArgueGTG21.html)
+- **[SOTA]** K. Rzadca et al. *Autopilot: Workload Autoscaling at Google.* EuroSys, 2020. — [DOI](https://doi.org/10.1145/3342195.3387524) · [DBLP](https://dblp.org/rec/conf/eurosys/RzadcaFSZBKNSWH20.html)
+- **[SOTA]** E. Cortez et al. *Resource Central: Understanding and Predicting Workloads for Improved Resource Management in Large Cloud Platforms.* SOSP, 2017. — [DOI](https://doi.org/10.1145/3132747.3132772) · [DBLP](https://dblp.org/rec/conf/sosp/CortezBMRFB17.html)
+
+## 10. Worked Example
+
+Model right-sizing as ski-rental with switching cost. Keeping one warm DB worker idle costs $1$/min; a cold start (spin up + warm cache) costs a one-time $B = 10$ min-equivalents. Load drops to zero for an unknown gap of $G$ minutes, then returns.
+
+- **Reactive (pure online):** the deterministic break-even rule keeps the worker warm for $B=10$ min, then releases it. Worst case (load returns at $t=10^+$): pay $10$ idle + $10$ cold restart $= 20$, versus the offline optimum of $\min(G, B)$. At $G=10$ the optimum is $10$, giving competitive ratio $20/10 = 2$ here; the canonical bound is $\le 2$ randomized, $\le 3$ deterministic — and no online policy beats these (section 5 lower bound).
+- **Predictive:** a forecast says the gap is $G = 3$ min ($< B$). The policy keeps the worker warm through the gap (cost $3$) instead of paying the $10$ restart. If the forecast is right, ratio $= 1$; the learning-augmented guarantee is consistency $\approx 1+O(\eta)$ with robustness still $O(1)$, so even a wrong forecast cannot exceed the $\sim 2$–$3$ reactive bound.
+
+If bursts are infinite-variance Pareto, no finite warm pool bounds worst-case SLO cost — prediction cannot beat tail unpredictability.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

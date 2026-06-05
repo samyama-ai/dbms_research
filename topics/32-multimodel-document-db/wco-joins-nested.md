@@ -37,11 +37,17 @@ Directions: extending PANDA/polymatroid bounds to nested and degree-constrained 
 A clean nested-AGM theorem; WCO algorithms whose cost is the factorized output size including re-nesting; degree/FD-aware bounds for array containment; integration with property-graph pattern matching (GQL) so multi-model joins share one optimality theory; practical WCO operators in document engines.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound).
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM 2018).
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 (JACM 2018). — [arXiv](https://arxiv.org/abs/1203.1952) · [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503) · [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions Asked Frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044) · [DOI](https://doi.org/10.1145/2902251.2902280)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314) · [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+The classic **triangle query** $Q = R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ over three relations each of size $N$. The hypergraph has vertices $\{a,b,c\}$ and edges $\{ab, bc, ca\}$. The fractional edge cover LP minimizes $x_{ab}+x_{bc}+x_{ca}$ subject to each vertex being covered, e.g. for $a$: $x_{ab}+x_{ca}\ge 1$. The symmetric optimum is $x_e = \tfrac12$ for all edges, giving $\rho^* = \tfrac32$, so the AGM bound is $N^{3/2}$. A worst-case-optimal algorithm (Generic-Join) runs in $\tilde O(N^{3/2})$, whereas any binary-join plan first materializes an intermediate of size up to $\Theta(N^2)$ — provably worse.
+
+Now make it **nested**: let $T$'s `a`-column instead be an *array* `a_list`, and the third join be `a ∈ T.a_list` (array containment) rather than equality. A single $T$ tuple with a length-$k$ list now behaves like $k$ flat tuples, so unnest-first inflates $|T|$ from $N$ to $\sum_t k_t$. The flat AGM exponent $\tfrac32$ no longer prices this blow-up directly — and the *re-nested* output may be far smaller than its flat unnesting. This is exactly the open gap of Section 6: the cover LP must be redefined over a typed nested hypergraph.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

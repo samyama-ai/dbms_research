@@ -34,12 +34,20 @@ Directions: degree-aware and *colorful* sampling that adapts to skew for self-jo
 - Composable error algebra spanning positive *and* negative subexpressions of a query plan.
 
 ## 9. Key References
-- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[Foundational]** Razborov, A. *On the Distributional Complexity of Disjointness.* Theoretical Computer Science, 1992.
-- **[SOTA]** Li, F., Wu, B., Yi, K., Zhao, Z. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[Foundational]** Acharya, S., Gibbons, P., Poosala, V., Ramaswamy, S. *Join Synopses for Approximate Query Answering.* SIGMOD, 1999.
-- **[SOTA]** Jowhari, H., Sağlam, M., Tardos, G. *Tight Bounds for $L_p$ Samplers, Finding Duplicates in Streams, and Related Problems.* PODS, 2011.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008.
+- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[Foundational]** Razborov, A. *On the Distributional Complexity of Disjointness.* Theoretical Computer Science, 1992. — [DOI](https://doi.org/10.1016/0304-3975(92)90260-M)
+- **[SOTA]** Li, F., Wu, B., Yi, K., Zhao, Z. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[Foundational]** Acharya, S., Gibbons, P., Poosala, V., Ramaswamy, S. *Join Synopses for Approximate Query Answering.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304207)
+- **[SOTA]** Jowhari, H., Sağlam, M., Tardos, G. *Tight Bounds for $L_p$ Samplers, Finding Duplicates in Streams, and Related Problems.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1012.4889)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008. — [DOI](https://doi.org/10.1109/FOCS.2008.43)
+
+## 10. Worked Example
+
+**Why a small inner-product join is hard to sketch.** Take join key domain $\{1,2,3\}$. Relation $R$ has frequencies $f=(100,100,0)$ and $S$ has $g=(0,0,100)$, plus one accidental shared tuple making $g=(1,0,100)$. The true join size is $\langle f,g\rangle = 100\cdot1 + 100\cdot0 + 0\cdot100 = 100$.
+
+Self-join $F_2$ of $R$ is $\|f\|_2^2 = 100^2+100^2 = 20000$, so $\|f\|_2 \approx 141$; similarly $\|g\|_2 \approx 100$. An AMS inner-product estimator is unbiased for $\langle f,g\rangle=100$ but its standard deviation scales like $\|f\|_2\|g\|_2/\sqrt{m} \approx 14100/\sqrt{m}$ for $m$ projections.
+
+To get relative error $\varepsilon=0.1$ on the answer 100, we need std $\le 10$, i.e. $\sqrt{m}\ge 1410$, so $m \ge 2\times10^6$ projections — the blow-up factor $\|f\|_2\|g\|_2/\langle f,g\rangle = 14100/100 = 141$ squared. This is exactly the $\Omega(\|f\|_2\|g\|_2/\langle f,g\rangle)$ penalty of Section 5: when the true join is a tiny sliver of the norm product, linear-sketch variance swamps it, and an antijoin ($R\setminus S$, here keys $\{1,2\}$) is even harder — disjointness forces $\Omega(n)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

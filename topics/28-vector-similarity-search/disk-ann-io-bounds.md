@@ -40,12 +40,22 @@ Active threads: (i) layout optimization to minimize random reads via graph-parti
 - Extending bounds to filtered/hybrid ANN where predicates restrict the candidate set.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** J. M. Hellerstein, E. Koutsoupias, C. H. Papadimitriou. *On the Analysis of Indexing Schemes.* PODS, 1997.
-- **[SOTA]** S. J. Subramanya, Devvrit, R. Kadekodi, R. Krishnaswamy, H. V. Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[SOTA]** Q. Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021.
-- **[SOTA]** M. Wang et al. *Starling: An I/O-Efficient Disk-Resident Graph Index Framework.* SIGMOD, 2024.
-- **[Foundational]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** J. M. Hellerstein, E. Koutsoupias, C. H. Papadimitriou. *On the Analysis of Indexing Schemes.* PODS, 1997. — [DOI](https://doi.org/10.1145/263661.263688) · [PDF](http://gist.cs.berkeley.edu/PODS97.pdf)
+- **[SOTA]** S. J. Subramanya, Devvrit, R. Kadekodi, R. Krishnaswamy, H. V. Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [PDF](https://suhasjs.github.io/files/diskann_neurips19.pdf)
+- **[SOTA]** Q. Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2111.08566)
+- **[SOTA]** M. Wang et al. *Starling: An I/O-Efficient Disk-Resident Graph Index Framework.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2401.02116) · [DOI](https://doi.org/10.1145/3639269)
+- **[Foundational]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+
+## 10. Worked Example
+
+Why the in-RAM PQ navigator collapses random reads. Consider $n=10^9$ vectors in $d=128$, page size $B=4$ KB. A Vamana graph walk visits $L\approx 12$ nodes to reach the answer.
+
+**Pure-EM (no compression in RAM):** each visited node needs its full vector ($128\times4$ B $=512$ B) and adjacency list, scattered across the SSD — so $\approx L = 12$ random 4 KB reads/query just to navigate, plus $k$ reads to fetch the top-$k$ results.
+
+**DiskANN trick:** keep a PQ-compressed copy of *all* vectors in RAM. At $m=32$ subspaces, $b=8$ bits, each vector is $32$ B, so the navigator is $10^9\times32\text{ B}=32$ GB — fits in RAM. Navigation now scores PQ codes in memory with **zero I/O**; only the final $k=10$ full vectors are read from SSD for re-rank: $\lceil k\cdot 512\text{ B}/B\rceil \approx 2$ page reads. Total query I/O drops from $\sim$12 to $O(1)$ ($\approx 2$ reads), the empirically observed "single-digit reads."
+
+The lower-bound gap: this $O(1)$-reads result is *bought with* $M=32$ GB of RAM. A meaningful lower bound must charge for that $M$ jointly with recall $\rho$ — pure-EM bounds (assuming no such RAM) are too weak to forbid it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

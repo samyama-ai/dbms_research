@@ -51,11 +51,19 @@ This is **partially solved**: balanced assignment and certified adaptive probing
 
 ## 9. Key References
 
-- **[SOTA]** Ruiqi Guo, Philip Sun, Erik Lindgren, Quan Geng, David Simcha, Felix Chern, Sanjiv Kumar. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (SCANN).* ICML, 2020.
-- **[SOTA]** Jeff Johnson, Matthijs Douze, Hervé Jégou. *Billion-scale Similarity Search with GPUs (Faiss).* IEEE Big Data / arXiv:1702.08734, 2017.
-- **[Foundational]** Hervé Jégou, Matthijs Douze, Cordelia Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[Foundational]** Paul S. Bradley, Kristin P. Bennett, Ayhan Demiriz. *Constrained K-Means Clustering.* Microsoft Research TR, 2000.
-- **[SOTA]** Qi Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021.
+- **[SOTA]** Ruiqi Guo, Philip Sun, Erik Lindgren, Quan Geng, David Simcha, Felix Chern, Sanjiv Kumar. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (SCANN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396)
+- **[SOTA]** Jeff Johnson, Matthijs Douze, Hervé Jégou. *Billion-scale Similarity Search with GPUs (Faiss).* IEEE Big Data / arXiv:1702.08734, 2017. — [arXiv](https://arxiv.org/abs/1702.08734)
+- **[Foundational]** Hervé Jégou, Matthijs Douze, Cordelia Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57) · [HAL](https://inria.hal.science/inria-00514462)
+- **[Foundational]** Paul S. Bradley, Kristin P. Bennett, Ayhan Demiriz. *Constrained K-Means Clustering.* Microsoft Research TR, 2000. — [MSR TR-2000-65](https://www.microsoft.com/en-us/research/publication/constrained-k-means-clustering/)
+- **[SOTA]** Qi Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2111.08566)
+
+## 10. Worked Example
+
+$n=12$ vectors, $C=3$ centroids, query $q$. Cell distances from $q$ to centroids: $\|q-c_1\|=0.5,\ \|q-c_2\|=0.9,\ \|q-c_3\|=1.6$. Cell sizes (after balanced assignment): $|P_1|=|P_2|=|P_3|=4$.
+
+**Global `n_probe`=1** scans only $P_1$ (4 vectors). Suppose the true 2-NN of $q$ are one point in $P_1$ at distance 0.4 and one in $P_2$ at distance 0.7 — the second neighbor is *missed*, recall@2 $=0.5$. Spillover across the $P_1/P_2$ boundary caused the miss.
+
+**Certified adaptive probing.** After scanning $P_1$, the current 2nd-best candidate is at distance $0.85$. The nearest *unprobed* cell boundary is bounded below by $\|q-c_2\| - \tfrac12\max_i\|q-c_i\|$-style geometry; concretely the lower bound on any point in $P_2$ is $\approx 0.9 - r$. Since $0.85 >$ this bound cannot be certified, the rule probes $P_2$ (now 8 vectors scanned), finds the 0.7 point, and recall@2 $=1.0$. It then checks $P_3$: lower bound $1.6 > 0.85$, so $P_3$ provably cannot improve the top-2 — **stop**. Total scanned $=8$ of 12, certified correct, versus a naive full scan of 12. The adaptive rule touched exactly the cells it could not rule out.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

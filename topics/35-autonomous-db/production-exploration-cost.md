@@ -40,11 +40,19 @@ Directions: (a) **safe RL / constrained MDPs** for tuning with high-probability 
 - Formal "blast-radius" metrics and reversibility guarantees integrated into the acquisition function.
 
 ## 9. Key References
-- **[Foundational]** P. Auer, N. Cesa-Bianchi, P. Fischer. *Finite-time Analysis of the Multiarmed Bandit Problem.* Machine Learning, 2002.
-- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015.
-- **[SOTA]** A. Kazerouni, M. Ghavamzadeh, Y. Abbasi-Yadkori, B. Van Roy. *Conservative Contextual Linear Bandits.* NeurIPS, 2017.
-- **[SOTA]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting (GP-UCB).* ICML, 2010.
-- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** P. Auer, N. Cesa-Bianchi, P. Fischer. *Finite-time Analysis of the Multiarmed Bandit Problem.* Machine Learning, 2002. — [DOI](https://doi.org/10.1023/A:1013689704352)
+- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/sui15.html)
+- **[SOTA]** A. Kazerouni, M. Ghavamzadeh, Y. Abbasi-Yadkori, B. Van Roy. *Conservative Contextual Linear Bandits.* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1611.06426)
+- **[SOTA]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting (GP-UCB).* ICML, 2010. — [arXiv](https://arxiv.org/abs/0912.3995)
+- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+A tuner chooses among $K=3$ knob settings. The baseline (incumbent) yields throughput $r^0 = 100$ tps. The arms' true means are $\mu_1 = 100$ (baseline), $\mu_2 = 130$ (the hidden optimum), $\mu_3 = 40$ (a harmful misconfiguration that thrashes the buffer pool). Gaps: $\Delta_2 = 30$, $\Delta_3 = 60$.
+
+**Plain UCB** must pull arm $3$ enough to rule it out: $O(\log T / \Delta_3^2)$ times. Over $T = 10{,}000$ rounds that is roughly $\tfrac{8\ln T}{\Delta_3^2}\approx \tfrac{8\cdot 9.2}{3600}\approx 0.02$ in *normalized* units — but in raw tps each pull of arm $3$ costs $100-40 = 60$ tps below baseline, and several pulls happen before the confidence bound excludes it. That live damage is the production cost.
+
+**Conservative UCB** with budget $\alpha = 0.1$ enforces $\sum_t r_t \ge 0.9\sum_t r^0_t$. It refuses to play arm $3$ once doing so would push the cumulative average below $90$ tps, capping the worst-case live regression while still letting it discover arm $2$ and eventually earn $+30$ tps. The lower bound of Section 5 says it cannot avoid *all* exposure: distinguishing $\mu_3=40$ from $\mu_3=100$ provably needs $\Omega(1/\Delta_3^2)$ samples, so at least a few harmful pulls are unavoidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

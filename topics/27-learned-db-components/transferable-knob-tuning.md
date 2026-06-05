@@ -39,11 +39,23 @@ Directions: (a) pretrained "foundation tuners" trained on large workload corpora
 - Joint transfer of multiple learned components (links to multi-component co-learning).
 
 ## 9. Key References
-- **[Foundational]** S. Ben-David, J. Blitzer, K. Crammer, A. Kulesza, F. Pereira, J. Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021.
-- **[SOTA]** S. Cereda, S. Valladares, P. Cremonesi, S. Doni. *CGPTuner: a Contextual Gaussian Process Bandit Approach for the Automatic Tuning of IT Configurations.* PVLDB, 2021.
-- **[Foundational]** A. Maurer, M. Pontil, B. Romera-Paredes. *The Benefit of Multitask Representation Learning.* JMLR, 2016.
-- **[SOTA]** D. Van Aken, A. Pavlo, et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
+- **[Foundational]** S. Ben-David, J. Blitzer, K. Crammer, A. Kulesza, F. Pereira, J. Wortman Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457291)
+- **[SOTA]** S. Cereda, S. Valladares, P. Cremonesi, S. Doni. *CGPTuner: a Contextual Gaussian Process Bandit Approach for the Automatic Tuning of IT Configurations.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3457390.3457404) — [PDF](http://www.vldb.org/pvldb/vol14/p1401-cereda.pdf)
+- **[Foundational]** A. Maurer, M. Pontil, B. Romera-Paredes. *The Benefit of Multitask Representation Learning.* JMLR, 2016. — [arXiv](https://arxiv.org/abs/1505.06279) — [JMLR](https://jmlr.org/papers/v17/15-242.html)
+- **[SOTA]** D. Van Aken, A. Pavlo, et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+
+## 10. Worked Example
+
+A tuner is trained on a source context $x_s$: a read-heavy TPC-H workload on a 16-core/64 GB box. Its learned policy sets `effective_cache_size` $\approx 0.7\times$RAM and `max_parallel_workers` $\approx \frac{1}{2}\times$cores. On source, post-tuning error $\mathrm{err}_s(\pi)=0.05$ (5% off optimal latency).
+
+Target context $x^\*$: same workload but a 4-core/8 GB box. Using the Ben-David bound
+
+$$\mathrm{err}_t(\pi)\le \mathrm{err}_s(\pi)+\tfrac12 d_{\mathcal{H}\Delta\mathcal{H}}(D_s,D_t)+\lambda^\*,$$
+
+if **hardware-normalized** features ($0.7\times$RAM, $0.5\times$cores as *ratios*) make the divergence small, say $d=0.1$ and $\lambda^\*=0.02$, the zero-shot target error is bounded by $0.05+0.05+0.02=0.12$ — a usable warm start. The policy proposes `effective_cache_size`$=5.6$ GB, `max_parallel_workers`$=2$.
+
+Contrast: if instead the policy had memorized **absolute** values (44 GB cache), transferring to an 8 GB box yields a config that exceeds RAM — negative transfer, and the unbounded-divergence regime where $d_{\mathcal{H}\Delta\mathcal{H}}\to 1$ forces $\mathrm{err}_t\to$ arbitrary. A few-shot budget of $b=3$ target executions then fine-tunes from the $0.12$ warm start toward the cold-start optimum that otherwise needs dozens of trials — the meta-learning $O(\sqrt{C/k})$ gain materializing as fewer target probes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

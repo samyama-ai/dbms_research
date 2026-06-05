@@ -50,11 +50,24 @@ The gap is **genuinely open**. We have (a) clean convex-program allocators for t
 
 ## 9. Key References
 
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[Foundational]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016.
-- **[SOTA]** Lécuyer, Spahn, Vodrahalli, Geambasu, Hsu. *Privacy Accounting and Quality Control in the Sage Differentially Private ML Platform / PrivateKube.* SOSP, 2019.
-- **[SOTA]** Pujol, McKenna, Kuppam, Hay, Machanavajjhala, Miklau. *Fair Decision Making Using Privacy-Protected Data.* ACM FAT\*, 2020.
-- **[Foundational]** Eisenberg, Gale. *Consensus of Subjective Probabilities: The Pari-Mutuel Method (Nash welfare / market equilibrium).* Annals of Mathematical Statistics, 1959.
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[Foundational]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1605.08294)
+- **[SOTA]** Lécuyer, Spahn, Vodrahalli, Geambasu, Hsu. *Privacy Accounting and Quality Control in the Sage Differentially Private ML Platform / PrivateKube.* SOSP, 2019. — [DOI](https://doi.org/10.1145/3341301.3359639) — [arXiv](https://arxiv.org/abs/1909.01502)
+- **[SOTA]** Pujol, McKenna, Kuppam, Hay, Machanavajjhala, Miklau. *Fair Decision Making Using Privacy-Protected Data.* ACM FAT\*, 2020. — [DOI](https://doi.org/10.1145/3351095.3372872) — [arXiv](https://arxiv.org/abs/1905.12744)
+- **[Foundational]** Eisenberg, Gale. *Consensus of Subjective Probabilities: The Pari-Mutuel Method (Nash welfare / market equilibrium).* Annals of Mathematical Statistics, 1959. — [DOI](https://doi.org/10.1214/aoms/1177706098)
+
+## 10. Worked Example
+
+A dataset has global zCDP budget $\rho_{\text{global}} = 1.0$. Three analysts share it; analyst $i$'s Gaussian-mechanism error is $\mathrm{err}_i(\rho_i) = c_i/\sqrt{\rho_i}$ with weights/scales $c_1=1,\;c_2=2,\;c_3=4$. We minimize total error $\sum_i c_i/\sqrt{\rho_i}$ subject to $\rho_1+\rho_2+\rho_3 = 1$.
+
+**Water-filling via KKT.** Set the Lagrangian $\sum_i c_i\rho_i^{-1/2} + \lambda(\sum_i\rho_i - 1)$. Stationarity: $-\tfrac12 c_i\rho_i^{-3/2} + \lambda = 0 \Rightarrow \rho_i \propto c_i^{2/3}$.
+
+Compute $c_i^{2/3}$: $1^{2/3}=1,\;2^{2/3}\approx1.587,\;4^{2/3}\approx2.520$; sum $\approx5.107$. Normalize:
+$$\rho_1\approx0.196,\quad \rho_2\approx0.311,\quad \rho_3\approx0.493.$$
+
+The analyst with the largest noise scale ($c_3=4$) rightly gets the most budget, but spread is sublinear in $c$ (exponent $2/3$, not $1$) — the convex program tempers, not amplifies, demand. Resulting errors: $1/\sqrt{0.196}\approx2.26$, $2/\sqrt{0.311}\approx3.59$, $4/\sqrt{0.493}\approx5.70$.
+
+**Where it breaks:** if analyst 3 *lies*, overstating $c_3$ to grab more budget, nothing in this cooperative water-filling penalizes the misreport — that is exactly the truthfulness gap (Section 6) that a pricing/mechanism-design layer must close.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

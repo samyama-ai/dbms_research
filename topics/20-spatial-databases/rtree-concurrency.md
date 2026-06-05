@@ -44,12 +44,23 @@ This is **partially solved**: correct, high-performance concurrent R-trees exist
 - Formal verification (linearizability proofs) of deployed GiST/R-link concurrency.
 
 ## 9. Key References
-- **[Foundational]** P. L. Lehman, S. B. Yao. *Efficient locking for concurrent operations on B-trees.* ACM TODS, 1981.
-- **[Foundational]** M. Kornacker, D. Banks. *High-concurrency locking in R-trees.* VLDB, 1995.
-- **[Foundational]** M. Kornacker, C. Mohan, J. M. Hellerstein. *Concurrency and recovery in generalized search trees (GiST).* SIGMOD, 1997.
-- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for new hardware platforms.* ICDE, 2013.
-- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic lock coupling: a scalable and efficient general-purpose synchronization method.* IEEE Data Eng. Bull., 2019.
-- **[Foundational]** A. Israeli, L. Rappoport. *Disjoint-access-parallel implementations of strong shared memory primitives.* PODC, 1994.
+- **[Foundational]** P. L. Lehman, S. B. Yao. *Efficient locking for concurrent operations on B-trees.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319663)
+- **[Foundational]** M. Kornacker, D. Banks. *High-concurrency locking in R-trees.* VLDB, 1995. — [PDF](https://www.vldb.org/conf/1995/P134.PDF)
+- **[Foundational]** M. Kornacker, C. Mohan, J. M. Hellerstein. *Concurrency and recovery in generalized search trees (GiST).* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253262.253272)
+- **[SOTA]** J. Levandoski, D. Lomet, S. Sengupta. *The Bw-Tree: A B-tree for new hardware platforms.* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544834)
+- **[SOTA]** V. Leis, M. Haubenschild, T. Neumann. *Optimistic lock coupling: a scalable and efficient general-purpose synchronization method.* IEEE Data Eng. Bull., 2019. — [PDF](http://sites.computer.org/debull/A19mar/p73.pdf), [DBLP](https://dblp.org/rec/journals/debu/LeisH019.html)
+- **[Foundational]** A. Israeli, L. Rappoport. *Disjoint-access-parallel implementations of strong shared memory primitives.* PODC, 1994. — [DOI](https://doi.org/10.1145/197917.198079)
+
+## 10. Worked Example
+
+**The root-MBR hotspot in two columns.** Consider a 2-level R-tree, root $R$ with two leaves $L_1$ (MBR $[0,10]\times[0,10]$) and $L_2$ (MBR $[20,30]\times[0,10]$). Root MBR $=[0,30]\times[0,10]$. Two threads insert into *spatially disjoint* leaves:
+
+- Thread $T_1$ inserts point $(5,5)$ — inside $L_1$. No MBR enlargement: $(5,5)\in[0,10]\times[0,10]$. $T_1$ touches only $L_1$.
+- Thread $T_2$ inserts point $(35,5)$ — outside $L_2$. $L_2$'s MBR must grow to $[20,35]\times[0,10]$, and the **root MBR must grow** to $[0,35]\times[0,10]$.
+
+Now compare contention. Under ideal disjoint-access parallelism (DAP), $T_1$ and $T_2$ touch disjoint data and should never coordinate. But $T_2$'s root-MBR update writes the *same* root summary $R$. If $T_1$ had instead inserted $(-5,5)$ (also enlarging the root to $[-5,30]$), both threads write $R$ concurrently and must serialize on it via CAS/latch — manufacturing $\Omega(1)$ contention at the root even though their points are far apart.
+
+This is the impossibility the file describes: any operation enlarging the shared root bounding box must coordinate on it. With $p$ threads all doing root-enlarging inserts, the target $O(c)$ conflict-proportional synchronization degrades because $c$ collapses to "all of them" at the single root element. Lazy/relaxed MBR maintenance (deferring the root enlargement) is the proposed escape: if the root is kept loose, e.g. pre-set to $[-100,100]^2$, neither insert dirties it and the two truly proceed in parallel.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

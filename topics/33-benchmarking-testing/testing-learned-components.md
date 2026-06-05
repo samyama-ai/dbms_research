@@ -45,12 +45,25 @@ Open. The hard-invariant fragment is solved (wrap + differential test), but ther
 - Standard adversarial-robustness benchmark suites for learned indexes/estimators/optimizers.
 
 ## 9. Key References
-- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018.
-- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis (PQS) / NoREC / TLP.* OSDI & ESEC/FSE 2020.
-- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV 2017.
-- **[SOTA]** Marcus, Negi, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
-- **[Survey]** Wang, Yang, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021.
-- **[Foundational]** Ferragina, Vinciguerra. *The PGM-index: error-bounded learned index.* VLDB 2020.
+- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196909) · [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis (PQS) / NoREC / TLP.* OSDI & ESEC/FSE 2020. — [PQS (USENIX)](https://www.usenix.org/conference/osdi20/presentation/rigger) · [NoREC (DOI)](https://doi.org/10.1145/3368089.3409710) · [TLP (DOI)](https://doi.org/10.1145/3428279)
+- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV 2017. — [DOI](https://doi.org/10.1007/978-3-319-63387-9_5) · [arXiv](https://arxiv.org/abs/1702.01135)
+- **[SOTA]** Marcus, Negi, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838) · [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[Survey]** Wang, Yang, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [DOI](https://doi.org/10.14778/3461535.3461552) · [arXiv](https://arxiv.org/abs/2012.06743)
+- **[Foundational]** Ferragina, Vinciguerra. *The PGM-index: error-bounded learned index.* VLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) · [PDF](http://www.vldb.org/pvldb/vol13/p1162-ferragina.pdf)
+
+## 10. Worked Example
+
+A metamorphic oracle for a learned cardinality estimator — no ground truth required. Let $\hat{f}_\theta$ estimate the row count of a selection.
+
+Base query $q$: `SELECT * FROM orders WHERE amount > 100`, estimate $\hat{f}_\theta(q) = 4200$.
+Mutant $q'$: add a conjunct, `WHERE amount > 100 AND status = 'shipped'`.
+
+**Metamorphic relation (monotonicity under conjunction):** adding a conjunctive predicate can never *increase* the true cardinality, since $\sigma_{p\wedge r}(R)\subseteq\sigma_p(R)$, so a correct estimator must satisfy $\hat{f}_\theta(q')\le\hat{f}_\theta(q)$. This is an oracle $\hat f(T(x))\;R\;\hat f(x)$ with $R=\le$ and needs no reference engine.
+
+Suppose the model returns $\hat{f}_\theta(q') = 5000 > 4200$. The relation is violated → **bug flagged** (the model is non-monotone, a robustness/soundness failure). Note this is a *soft* contract: even if $\hat{f}_\theta(q')=3000\le4200$ the estimate could still be numerically far from truth — the oracle is partial.
+
+Contrast the **hard-invariant** case for a learned index: predicted position $\hat p=120$ for key $k$ with error bound $\epsilon=8$. The wrapper does a guaranteed local search over $[\hat p-\epsilon,\hat p+\epsilon]=[112,128]$, $2\epsilon+1=17$ probes, and returns exactly $\sigma_{\text{key}=k}(R)$ — always correct in $O(\log\epsilon)$ extra work regardless of $\theta$, so this fragment is *decidably* testable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

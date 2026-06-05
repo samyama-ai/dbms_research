@@ -49,12 +49,22 @@ Open and wide. We have effective *local* attacks and hard-workload generators, b
 - Adversarial training pipelines proven to reduce production regression rates.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput., 2013.
-- **[Foundational]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
-- **[SOTA]** Ding, Chaudhuri, et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB 2021.
-- **[SOTA]** Rigger, Su. *Finding Bugs in Database Systems via Query Synthesis (SQLancer / NoREC / TLP).* OSDI & ESEC/FSE 2020.
-- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: Verifying Deep Neural Networks (robustness NP-hardness).* CAV 2017.
-- **[Survey]** Wang, Yang, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput., 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[SOTA]** Ding, Chaudhuri, et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB 2021. — [DOI](https://doi.org/10.14778/3484224.3484234)
+- **[SOTA]** Rigger, Su. *Finding Bugs in Database Systems via Query Synthesis (SQLancer / NoREC / TLP).* OSDI & ESEC/FSE 2020. — [arXiv](https://arxiv.org/abs/2001.04174)
+- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: Verifying Deep Neural Networks (robustness NP-hardness).* CAV 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
+- **[Survey]** Wang, Yang, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+
+## 10. Worked Example
+
+Two tables, $R(A,B)$ and $S(B,C)$, each $|R|=|S|=1000$ rows. Query $Q$: $R \bowtie_B S$ with predicate $A=5 \wedge C=7$.
+
+A product-form estimator assumes independence: $\text{sel}(A=5)=\tfrac{1}{100}$, $\text{sel}(C=7)=\tfrac{1}{100}$, join selectivity $\tfrac{1}{|\text{dom}(B)|}=\tfrac{1}{10}$. It predicts $\hat c = 1000\cdot 1000 \cdot \tfrac{1}{10}\cdot\tfrac{1}{100}\cdot\tfrac{1}{100} = 10$.
+
+Now the data-adversary correlates $B$ with both $A$ and $C$: all rows with $A=5$ share one $B$ value $b^\star$, and so do all rows with $C=7$. Then every $A=5$ tuple (10 of them) joins every $C=7$ tuple (10 of them): true $c=100$.
+
+q-error $=\max(\hat c/c,\,c/\hat c)=\max(0.1,10)=10$. The AGM bound here is $\prod|R_i|^{x_i}=1000^{1}\cdot1000^{0}=10^3$ (cover one edge), so a stronger correlation push could drive $c$ toward $10^3$, widening the gap and flipping the optimizer from a hash join to a far costlier nested-loop plan — exactly the plan-regret the adversary targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

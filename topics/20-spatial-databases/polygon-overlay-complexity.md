@@ -43,11 +43,21 @@ The **complexity** question is essentially **closed**: $\Theta(n\log n + k)$ is 
 Provably robust *parallel* overlay at floating-point speed; a unified degeneracy-and-precision theory tying snap-rounding distortion to EGC guarantees; formally verified production overlay kernels; output-sensitive overlay on compressed/streamed polygon data.
 
 ## 9. Key References
-- **[Foundational]** Bentley, Ottmann. *Algorithms for Reporting and Counting Geometric Intersections.* IEEE Trans. Computers, 1979.
-- **[Foundational]** Chazelle, Edelsbrunner. *An Optimal Algorithm for Intersecting Line Segments in the Plane.* J. ACM, 1992.
-- **[Foundational]** Shewchuk. *Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric Predicates.* Discrete & Computational Geometry, 1997.
-- **[SOTA]** Fogel, Halperin, Wein. *CGAL Arrangements and Their Applications.* Springer, 2012.
-- **[SOTA]** Hobby. *Practical Segment Intersection with Finite Precision Output (Snap Rounding).* Computational Geometry: Theory and Applications, 1999.
+- **[Foundational]** Bentley, Ottmann. *Algorithms for Reporting and Counting Geometric Intersections.* IEEE Trans. Computers, 1979. — [DOI](https://doi.org/10.1109/TC.1979.1675432)
+- **[Foundational]** Chazelle, Edelsbrunner. *An Optimal Algorithm for Intersecting Line Segments in the Plane.* J. ACM, 1992. — [DOI](https://doi.org/10.1145/147508.147511)
+- **[Foundational]** Shewchuk. *Adaptive Precision Floating-Point Arithmetic and Fast Robust Geometric Predicates.* Discrete & Computational Geometry, 1997. — [DOI](https://doi.org/10.1007/PL00009321)
+- **[SOTA]** Fogel, Halperin, Wein. *CGAL Arrangements and Their Applications.* Springer, 2012. — [DOI](https://doi.org/10.1007/978-3-642-17283-0)
+- **[SOTA]** Hobby. *Practical Segment Intersection with Finite Precision Output (Snap Rounding).* Computational Geometry: Theory and Applications, 1999. — [DOI](https://doi.org/10.1016/S0925-7721(99)00021-8)
+
+## 10. Worked Example
+
+**A robustness failure in one orientation test.** Overlay two triangles whose edges nearly graze. Subdivision $A$ has edge $e$ from $a=(0,0)$ to $b=(10,10)$; subdivision $B$ has vertex $c=(5.0,5.0000000001)$. To label the face containing $c$ we evaluate the orientation determinant
+
+$$\mathrm{sign}\begin{vmatrix} b_x-a_x & b_y-a_y\\ c_x-a_x & c_y-a_y\end{vmatrix} = \mathrm{sign}\begin{vmatrix} 10 & 10\\ 5 & 5.0000000001\end{vmatrix} = \mathrm{sign}(10\cdot 5.0000000001 - 10\cdot 5) = \mathrm{sign}(10^{-9}) > 0,$$
+
+so $c$ lies just **left** of $e$. The exact value $+10^{-9}$ is far below IEEE-754 double cancellation error: $10\times 5.0000000001 = 50.000000001$ rounds against $50.0$, and the subtraction can yield $0$ or even a negative result. A neighboring vertex tested on the *other* incident edge might be judged **right**, producing a topologically impossible "edge crossing itself" — a sliver polygon or a thrown `TopologyException`.
+
+**Cost side:** with $n=6$ total edges and $k=2$ true crossings, Bentley–Ottmann runs in $O((n+k)\log n)=O(8\log 6)\approx 21$ steps; Shewchuk's adaptive predicate returns the exact $\mathrm{sign}=+1$ here, restoring correct topology at near-float speed because the filter only escalates to exact arithmetic on this near-degenerate test.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

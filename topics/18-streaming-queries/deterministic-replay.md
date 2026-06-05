@@ -52,12 +52,25 @@ For *internal* nondeterminism (timers, RNG, hashing) the problem is essentially 
 
 ## 9. Key References
 
-- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978.
-- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** E. N. Elnozahy, L. Alvisi, Y.-M. Wang, D. B. Johnson. *A Survey of Rollback-Recovery Protocols in Message-Passing Systems.* ACM Computing Surveys, 2002.
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, S. Richter, K. Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* PVLDB, 2017 (and ABS, 2015).
-- **[SOTA]** A. Thomson, T. Diamond, S.-C. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012.
+- **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
+- **[Foundational]** K. M. Chandy, L. Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** E. N. Elnozahy, L. Alvisi, Y.-M. Wang, D. B. Johnson. *A Survey of Rollback-Recovery Protocols in Message-Passing Systems.* ACM Computing Surveys, 2002. — [DOI](https://doi.org/10.1145/568522.568525)
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** P. Carbone, S. Ewen, G. Fóra, S. Haridi, S. Richter, K. Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* PVLDB, 2017 (and ABS, 2015). — [DOI](https://doi.org/10.14778/3137765.3137777)
+- **[SOTA]** A. Thomson, T. Diamond, S.-C. Weng, K. Ren, P. Shao, D. Abadi. *Calvin: Fast Distributed Transactions for Partitioned Database Systems.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213838)
+
+## 10. Worked Example
+
+A single operator samples each input tuple with probability $0.5$ using a seeded RNG, then emits kept tuples to an external sink. Input log $I = [t_1, t_2, t_3, t_4]$. The nondeterminism oracle is the RNG draw sequence $\omega$.
+
+**Original run.** Checkpoint $s_0$ taken before $t_1$, recording RNG seed $\sigma = 42$. Draws: $0.31, 0.88, 0.10, 0.67$. Keep if draw $< 0.5$, so kept $= \{t_1, t_3\}$ → emitted to sink, which now durably holds $\{t_1, t_3\}$.
+
+**Crash** after $t_3$ committed. Recover from $s_0$.
+
+- *No logging (assume determinism):* replay re-seeds from wall-clock, draws e.g. $0.62, 0.05, \dots$ → keeps $\{t_2\}$. Sink already has $t_1$; now we re-emit $t_2$ — a **divergent, duplicated** output. Exactly-once broken.
+- *PWD logging:* we logged only the seed $\sigma=42$ (one boundary event), not the data. Replaying $\delta$ on $(I, \sigma{=}42)$ from $s_0$ regenerates draws $0.31, 0.88, 0.10$ → keeps exactly $\{t_1, t_3\}$, matching the committed prefix. Extra log volume $= O(1)$ per epoch, independent of the data rate.
+
+**Cost accounting.** Internal RNG nondeterminism: $O(1)$ log (the seed) suffices — matches the information-theoretic optimum. Contrast an *external lookup* `f(t) = RPC(t)`: the responses are not regenerable, so by the §5 lower bound the log must store $\Omega(\#\text{RPCs})$ distinct answers — here, one recorded response per tuple, i.e. log size grows with the data rate. This is exactly the open internal-vs-external gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

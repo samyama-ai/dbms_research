@@ -62,12 +62,22 @@ The **additive**, all-queries problem is essentially closed (VC upper bound matc
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Vapnik, Chervonenkis. *On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities.* 1971.
-- **[SOTA]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001.
-- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2020.
-- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Vapnik, Chervonenkis. *On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities.* 1971. — [DOI](https://doi.org/10.1137/1116025)
+- **[SOTA]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1905.04278)
+- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Take $d=2$ attributes (`age`, `salary`) over $|R|=10{,}000$ employees lying almost exactly on the line `salary = 2000·age` (strong positive correlation). Query the box $Q:\;30\le\text{age}\le40\ \wedge\ 100\text{k}\le\text{salary}\le120\text{k}$.
+
+**Independence factorization.** Suppose `age` $\in[30,40]$ holds for $20\%$ of rows and `salary` $\in[100\text{k},120\text{k}]$ for $20\%$. Then $\hat\sigma_{\text{indep}}=0.2\times0.2=0.04\Rightarrow\hat c=400$.
+
+**Truth.** Because $\text{salary}\approx2000\cdot\text{age}$, the salary band $[100\text{k},120\text{k}]$ corresponds to ages $[50,60]$ — *disjoint* from `age` $\in[30,40]$. So the box is empty: $c=0$. Independence over-estimates an empty region as $400$ rows. Conversely the aligned band $\text{age}\in[30,40]\wedge\text{salary}\in[60\text{k},80\text{k}]$ holds for the full $2{,}000$ rows, where independence would predict only $400$ — a 5× under-estimate.
+
+**VC sample size.** For axis-parallel boxes in $\mathbb R^2$ the VC dimension is $2d=4$. To guarantee additive error $\varepsilon|R|$ on *all* boxes with probability $1-\delta$, a uniform sample of size $O(\varepsilon^{-2}(d\log(1/\varepsilon)+\log(1/\delta)))$ suffices: e.g. $\varepsilon=0.01,\ \delta=0.05$ gives on the order of $10^4$–$10^5$ sampled tuples, independent of the (here perfect) correlation — illustrating that the *additive* problem is dimension-robust while the *multiplicative* error on the empty box remains unbounded.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

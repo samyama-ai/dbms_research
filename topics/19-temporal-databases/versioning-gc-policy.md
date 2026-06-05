@@ -87,15 +87,34 @@ focus, with proposals for **per-tuple visibility deltas** and **decoupled retent
 
 ## 9. Key References
 - **[Foundational]** D. Lomet et al. *Immortal DB / Transaction-Time Support Inside a Database
-  Engine.* ICDE, 2005–2006.
+  Engine.* ICDE, 2005–2006. — [DBLP](https://dblp.org/rec/conf/icde/LometBMS06.html)
 - **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for
-  In-Memory MVCC Systems.* PVLDB, 2019.
+  In-Memory MVCC Systems.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
 - **[Foundational]** P. Bernstein, N. Goodman. *Concurrency Control and Recovery in Database
-  Systems* (MVCC foundations). Addison-Wesley, 1987.
+  Systems* (MVCC foundations). Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
 - **[Foundational]** A. Karlin, M. Manasse, L. Rudolph, D. Sleator. *Competitive Snoopy
-  Caching / Ski-Rental.* Algorithmica, 1988.
+  Caching / Ski-Rental.* Algorithmica, 1988. — [DOI](https://doi.org/10.1007/BF01762111)
 - **[SOTA]** M. Armbrust et al. *Delta Lake: High-Performance ACID Table Storage over Cloud
-  Object Stores.* PVLDB, 2020.
+  Object Stores.* PVLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415560)
+
+## 10. Worked Example
+
+A single key's transaction-time version chain, with retention horizon $H = 30$ and "now" $= 100$, so the horizon cutoff is $\mathrm{now} - H = 70$:
+
+| version | $[\text{born}, \text{dead})$ |
+|--|--|
+| $v_1$ | $[10, 40)$ |
+| $v_2$ | $[40, 65)$ |
+| $v_3$ | $[65, 90)$ |
+| $v_4$ | $[90, \infty)$ (live) |
+
+One long-running snapshot transaction started at $\mathrm{lwm} = 55$. The safety rule: reclaim $v$ only if $\mathrm{dead}(v) < \min(\mathrm{lwm}, \mathrm{now}-H) = \min(55, 70) = 55$.
+
+- $v_1$: $\mathrm{dead}=40 < 55$ → reclaimable.
+- $v_2$: $\mathrm{dead}=65 \not< 55$ → **pinned** (the snapshot at $55$ falls inside $[40,65)$, so it may still read $v_2$).
+- $v_3, v_4$: visible to current/recent readers → keep.
+
+So only $v_1$ is collected. Note the **horizon-pinning** effect: drop the long snapshot and $\mathrm{lwm}$ jumps to $\mathrm{now}-H = 70$, making $v_2$ ($\mathrm{dead}=65<70$) reclaimable too. One long reader thus pins extra storage — the coupled cost that makes online cost-optimality (§6) hard.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

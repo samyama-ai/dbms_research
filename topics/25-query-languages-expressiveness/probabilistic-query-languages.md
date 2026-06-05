@@ -44,12 +44,20 @@ For **UCQs the gap is essentially closed** (full dichotomy), which is why the st
 - Tight knowledge-compilation lower bounds for d-DNNF/SDD over realistic correlation models.
 
 ## 9. Key References
-- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM, 2012.
-- **[Survey]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Synthesis Lectures, Morgan & Claypool, 2011.
-- **[SOTA]** P. Beame, J. Li, S. Roy, D. Suciu. *Lower Bounds for Exact Model Counting and Applications in Probabilistic Databases.* UAI, 2013.
-- **[Foundational]** T. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[SOTA]** G. Van den Broeck, D. Suciu. *Query Processing on Probabilistic Data: A Survey.* Foundations and Trends in Databases, 2017.
-- **[Foundational]** R. Karp, M. Luby, N. Madras. *Monte-Carlo Approximation Algorithms for Enumeration Problems.* J. Algorithms, 1989.
+- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+- **[Survey]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Synthesis Lectures, Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00362ED1V01Y201105DTM016)
+- **[SOTA]** P. Beame, J. Li, S. Roy, D. Suciu. *Lower Bounds for Exact Model Counting and Applications in Probabilistic Databases.* UAI, 2013. — [arXiv](https://arxiv.org/abs/1309.6815)
+- **[Foundational]** T. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[SOTA]** G. Van den Broeck, D. Suciu. *Query Processing on Probabilistic Data: A Survey.* Foundations and Trends in Databases, 2017. — [DOI](https://doi.org/10.1561/1900000052)
+- **[Foundational]** R. Karp, M. Luby, N. Madras. *Monte-Carlo Approximation Algorithms for Enumeration Problems.* J. Algorithms, 1989. — [DOI](https://doi.org/10.1016/0196-6774(89)90038-2)
+
+## 10. Worked Example
+
+Two TID tables. $R(A)$: tuple $r_1=(a)$ with $p=0.5$. $S(A)$: $s_1=(a)$ with $p=0.5$. Boolean query $q = \exists x\, R(x) \land S(x)$.
+
+**Safe (independent-join) case.** Here $q$'s lineage is $\Phi_q = X_{r_1} \land X_{s_1}$, a read-once formula over *independent* variables, so $\Pr[q] = 0.5 \times 0.5 = 0.25$ — computed by a safe plan in PTIME.
+
+**The hard query $H_0 = R(x), S(x,y), T(y)$.** Let $R=\{a_1,a_2\}$, $T=\{b_1,b_2\}$ (each $p=1$), and let $S$ contain $(a_i,b_j)$ with probability $0.5$ each. Lineage is the bipartite PP2DNF $\Phi = \bigvee_{i,j} X_{ij}$ over independent $S$-variables. Inclusion–exclusion does **not** factor (the terms share variables across both sides), and computing $\Pr[\Phi]$ is exactly #PP2DNF counting — the canonical **#P-hard** core. With all four $S$-tuples present-or-absent equiprobably, $\Pr[H_0]=1-\Pr[\text{no }(a_i,b_j)\text{ edge forms a path}]$; the dichotomy says no safe plan exists for $H_0$, so exact evaluation must fall back to grounded WMC or FPRAS.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

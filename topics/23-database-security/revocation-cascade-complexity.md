@@ -51,12 +51,33 @@ Active directions: **graph-based authorization at scale** (Google **Zanzibar**, 
 
 ## 9. Key References
 
-- **[Foundational]** Griffiths, P.P., Wade, B.W. *An Authorization Mechanism for a Relational Database System.* ACM TODS, 1976.
-- **[Foundational]** Fagin, R. *On an Authorization Mechanism.* ACM TODS, 1978.
-- **[Foundational]** Bertino, E., Samarati, P., Jajodia, S. *An Extended Authorization Model for Relational Databases.* IEEE TKDE, 1997.
-- **[SOTA]** Hagström, Å., Jajodia, S., Parisi-Presicce, F., Wijesekera, D. *Revocations — A Classification.* IEEE CSFW/POLICY, 2001.
-- **[SOTA]** Henzinger, M., Krinninger, S., Nanongkai, D., Saranurak, T. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Multiplication Conjecture.* STOC, 2015.
-- **[SOTA]** Pang, R., et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019.
+- **[Foundational]** Griffiths, P.P., Wade, B.W. *An Authorization Mechanism for a Relational Database System.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320473.320482)
+- **[Foundational]** Fagin, R. *On an Authorization Mechanism.* ACM TODS, 1978. — [DOI](https://doi.org/10.1145/320263.320288)
+- **[Foundational]** Bertino, E., Samarati, P., Jajodia, S. *An Extended Authorization Model for Relational Databases.* IEEE TKDE, 1997. — [DOI](https://doi.org/10.1109/69.567051)
+- **[SOTA]** Hagström, Å., Jajodia, S., Parisi-Presicce, F., Wijesekera, D. *Revocations — A Classification.* IEEE CSFW/POLICY, 2001. — [DOI](https://doi.org/10.1109/CSFW.2001.930133)
+- **[SOTA]** Henzinger, M., Krinninger, S., Nanongkai, D., Saranurak, T. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Multiplication Conjecture.* STOC, 2015. — [DOI](https://doi.org/10.1145/2746539.2746609) · [arXiv](https://arxiv.org/abs/1511.06773)
+- **[SOTA]** Pang, R., et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/pang)
+
+## 10. Worked Example
+
+Owner $O$ holds `SELECT` on table `T`. Grants (each WITH GRANT OPTION), with timestamps:
+
+| edge | grant | time |
+|------|-------|------|
+| $O\to A$ | SELECT | $t_1=10$ |
+| $A\to B$ | SELECT | $t_2=20$ |
+| $A\to C$ | SELECT | $t_3=30$ |
+| $B\to C$ | SELECT | $t_4=40$ |
+| $C\to D$ | SELECT | $t_5=50$ |
+
+Now $O$ issues `REVOKE SELECT ON T FROM A CASCADE`, deleting edge $O\to A$. Under Griffiths–Wade timestamp-recursive semantics, an authorization survives iff it still has a supporting chain from the source $O$ in which each grant is *older* than the one it supports.
+
+- $A$: lost its only support ($O\to A$) → **revoked**.
+- $B$: only support was $A\to B$ (granted by $A$, now invalid) → **revoked**.
+- $C$: had two supports — $A\to C$ ($t_3=30$, gone) and $B\to C$ ($t_4=40$, but $B$ is gone) → no valid chain → **revoked**.
+- $D$: supported by $C\to D$ ($t_5$), and $C$ is gone → **revoked**.
+
+The entire chain $\{A,B,C,D\}$ cascades — a single revoke removes $\Theta(|V|)$ nodes, exactly the linear worst case. Had $O$ separately granted $C$ at $t=5$, that older independent edge would have *saved* $C$ and $D$, illustrating why validity is a constrained-reachability (not plain reachability) property.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

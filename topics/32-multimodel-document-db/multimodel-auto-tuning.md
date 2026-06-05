@@ -43,13 +43,29 @@ The *single-model, static* problem is theoretically **near-closed** (greedy matc
 - Safe exploration: changing physical design without violating tail-latency SLAs.
 
 ## 9. Key References
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[Foundational]** A. Gupta, I. S. Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999.
-- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems (Peloton/NoisePage).* CIDR, 2017.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[Foundational]** K. Schnaitter, S. Abiteboul, T. Milo, N. Polyzotis. *On-Line Index Selection for Shifting Workloads (COLT/index interaction line).* ICDE workshops, 2007.
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[Foundational]** A. Gupta, I. S. Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_28)
+- **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems (Peloton/NoisePage).* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLLMMMPQ17.html)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[Foundational]** K. Schnaitter, S. Abiteboul, T. Milo, N. Polyzotis. *On-Line Index Selection for Shifting Workloads (COLT/index interaction line).* ICDE workshops, 2007. — [DBLP](https://dblp.org/rec/conf/icde/SchnaitterAMP07.html)
+
+## 10. Worked Example
+
+Budget $B = 2$ indexes. Candidate set $\{a,b,c\}$ with workload benefits (cost saved) when an index is *added to the current set*:
+
+| add to $\emptyset$ | $a$:10 | $b$:8 | $c$:7 |
+|---|---|---|---|
+| add to $\{a\}$ | — | $b$:3 | $c$:6 |
+
+Note $b$'s marginal benefit drops $8 \to 3$ once $a$ is present (they cover overlapping queries) — diminishing returns, i.e. submodular.
+
+*Greedy.* Pick the best singleton: $a$ (gain 10). Then pick the best marginal addition: $c$ (gain 6) beats $b$ (gain 3). Result $\{a,c\}$, total benefit $10+6 = 16$.
+
+*Optimum.* Enumerate size-2 sets: $\{a,b\}=10+3=13$, $\{a,c\}=16$, $\{b,c\}=8+7=15$. Optimum is $\{a,c\}=16$, so greedy is exact here. The theory guarantees greedy $\ge (1-1/e)\cdot \mathrm{OPT} \approx 0.632\cdot 16 = 10.1$ in the worst case; we comfortably beat the bound.
+
+*Where multi-model bites:* suppose $a$ is a graph adjacency index and $c$ a relational FK index serving the *same* logical join through different models. Then their true joint benefit is **not** additive and can even be *anti*-submodular (one makes the other redundant), violating the greedy guarantee — the open cross-model coupling of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

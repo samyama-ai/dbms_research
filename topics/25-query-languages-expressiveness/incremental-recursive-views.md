@@ -1,6 +1,7 @@
 # Incremental Maintenance of Recursive Views
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/incremental-recursive-views` · **Status:** empirically-open
+> **Verification note:** The CIDR 2013 *Differential Dataflow* paper's authors are McSherry, Murray, Isaacs, and Isard (Abadi co-authored the later *Foundations of Differential Dataflow*, FoSSaCS 2015); the reference has been corrected accordingly.
 
 ## 1. Problem Statement
 Given a recursive view $V$ defined by a Datalog program (or `WITH RECURSIVE` SQL) over base relations, and a stream of updates $\Delta$ (insertions and especially **deletions**) to the base, recompute $V$ **incrementally** — doing work proportional to the change rather than re-evaluating from scratch — while guaranteeing the result equals the from-scratch answer. Insertions to a monotone recursive view are easy (semi-naive continues); **deletions** are the hard case because a deleted base fact may or may not invalidate a derived fact that has *other* supporting derivations.
@@ -35,12 +36,20 @@ Schwentick, Zeume, Vortmeier and collaborators continue mapping the $\mathrm{Dyn
 A decidable characterization (or robust sufficient conditions) for boundedly maintainable recursive views; worst-case-optimal and fine-grained-conditional lower bounds for recursive deletion; unified maintenance of recursion + aggregation + negation with correctness proofs; and provenance-driven engines that maintain *and* explain recursive views with provably sublinear per-update work.
 
 ## 9. Key References
-- **[Foundational]** A. Gupta, I. S. Mumick, V. S. Subrahmanian. *Maintaining Views Incrementally.* SIGMOD 1993 (counting and DRed).
-- **[Foundational]** S. Patnaik, N. Immerman. *Dyn-FO: A Parallel, Dynamic Complexity Class.* JCSS / PODS 1994.
-- **[SOTA]** S. Datta, R. Kulkarni, A. Mukherjee, T. Schwentick, T. Zeume. *Reachability Is in DynFO.* Journal of the ACM 65(5), 2018 (ICALP 2015).
-- **[SOTA]** F. McSherry, D. Murray, R. Isard, M. Abadi. *Differential Dataflow.* CIDR 2013.
-- **[SOTA]** M. Nikolic, M. Dashti, D. Olteanu. *F-IVM: Factorized Incremental View Maintenance.* SIGMOD 2018 / VLDB Journal.
-- **[Survey]** A. Gupta, I. S. Mumick (eds.). *Materialized Views: Techniques, Implementations, and Applications.* MIT Press, 1999.
+- **[Foundational]** A. Gupta, I. S. Mumick, V. S. Subrahmanian. *Maintaining Views Incrementally.* SIGMOD 1993 (counting and DRed). — [DOI](https://doi.org/10.1145/170035.170066)
+- **[Foundational]** S. Patnaik, N. Immerman. *Dyn-FO: A Parallel, Dynamic Complexity Class.* JCSS / PODS 1994. — [DOI](https://doi.org/10.1145/182591.182614) — [PDF](https://people.cs.umass.edu/~immerman/pub/dynfo.pdf)
+- **[SOTA]** S. Datta, R. Kulkarni, A. Mukherjee, T. Schwentick, T. Zeume. *Reachability Is in DynFO.* Journal of the ACM 65(5), 2018 (ICALP 2015). — [arXiv](https://arxiv.org/abs/1502.07467) — [DOI](https://doi.org/10.1145/3212685)
+- **[SOTA]** F. McSherry, D. Murray, R. Isaacs, M. Isard. *Differential Dataflow.* CIDR 2013. — [PDF](https://www.microsoft.com/en-us/research/publication/differential-dataflow/)
+- **[SOTA]** M. Nikolic, M. Dashti, D. Olteanu. *F-IVM: Factorized Incremental View Maintenance.* SIGMOD 2018 / VLDB Journal. — [arXiv](https://arxiv.org/abs/1703.07484) — [DOI](https://doi.org/10.1145/3183713.3183758)
+- **[Survey]** A. Gupta, I. S. Mumick (eds.). *Materialized Views: Techniques, Implementations, and Applications.* MIT Press, 1999. — [MIT Press](https://direct.mit.edu/books/edited-volume/2853/Materialized-ViewsTechniques-Implementations-and)
+
+## 10. Worked Example
+
+Recursive view $\text{TC}(x,y) \leftarrow E(x,y)$ and $\text{TC}(x,y)\leftarrow E(x,z),\text{TC}(z,y)$ over the path graph $E=\{(1,2),(2,3),(3,4)\}$. Semi-naive yields $\text{TC}=\{(1,2),(2,3),(3,4),(1,3),(2,4),(1,4)\}$ — 6 pairs.
+
+Now **delete** base edge $(2,3)$. DRed first *over-deletes* every TC tuple derivable using $(2,3)$: that removes $(2,3),(1,3),(2,4),(1,4)$, leaving only $\{(1,2),(3,4)\}$. The **rederive** phase checks each over-deleted pair against the remaining edges $\{(1,2),(3,4)\}$: none can be rederived (1 no longer reaches 3, 2 no longer reaches 4), so the final view is $\{(1,2),(3,4)\}$ — correct.
+
+The cost lesson: a single base deletion forced re-examination of 4 derived tuples on a 4-node graph, i.e. $\Theta(n)$ rederivation work in the worst case. By contrast $\text{TC}\in\mathrm{DynFO}$ (Datta et al.) maintains the *same* relation with a first-order update formula over polynomial auxiliary relations — constant parallel ($\mathrm{AC}^0$) depth per single-tuple change — which is exactly the gap between practical DRed and the theoretical bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

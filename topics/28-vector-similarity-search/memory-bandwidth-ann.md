@@ -44,11 +44,19 @@ The gap is between achieved single-query latency (latency-bound, low MLP) and th
 
 ## 9. Key References
 
-- **[Foundational]** Malkov, Yu. A., Yashunin, D. A. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020.
-- **[SOTA]** Subramanya, S. J., Devvrit, Kadekodi, R., Krishnaswamy, R., Simhadri, H. V. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Aguerrebere, C., Bhati, I., Hildebrand, M., Tepper, M., Willke, T. *Similarity Search in the Blink of an Eye with Compressed Indices (SVS/LVQ).* VLDB, 2023.
-- **[SOTA]** Manohar, M. D., Shen, Z., Blelloch, G., Dhulipala, L., Gu, Y., Simhadri, H. V., Sun, Y. *ParlayANN: Scalable and Deterministic Parallel Graph-Based ANN.* PPoPP, 2024.
+- **[Foundational]** Malkov, Yu. A., Yashunin, D. A. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320) · [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[SOTA]** Subramanya, S. J., Devvrit, Kadekodi, R., Krishnaswamy, R., Simhadri, H. V. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Aguerrebere, C., Bhati, I., Hildebrand, M., Tepper, M., Willke, T. *Similarity Search in the Blink of an Eye with Compressed Indices (SVS/LVQ).* VLDB, 2023. — [arXiv](https://arxiv.org/abs/2304.04759) · [DOI](https://doi.org/10.14778/3611479.3611537)
+- **[SOTA]** Manohar, M. D., Shen, Z., Blelloch, G., Dhulipala, L., Gu, Y., Simhadri, H. V., Sun, Y. *ParlayANN: Scalable and Deterministic Parallel Graph-Based ANN.* PPoPP, 2024. — [arXiv](https://arxiv.org/abs/2305.04359) · [DOI](https://doi.org/10.1145/3627535.3638475)
+
+## 10. Worked Example
+
+One HNSW query visits $V=200$ vectors, each $d=768$ dims at $b=4$ bytes (fp32), so byte traffic $\approx Vdb = 200\cdot768\cdot4 \approx 0.61$ MB. On a DRAM channel with bandwidth $\beta=20$ GB/s the **roofline latency** is $0.61\text{MB}/20\text{GB/s}\approx 31\ \mu s$.
+
+But the 200 vectors are read along $\approx 50$ *dependent* hops (beam search, $\mathrm{ef}$ small). Each hop stalls on a cache miss of latency $L\approx 100$ ns before the next address is known, so wall-clock $\gtrsim 50\cdot 100\text{ns}=5\ \mu s$ of pure stall — and with MLP $\approx 1$, the effective bandwidth is only $(64\text{ B line})/100\text{ns}=0.64$ GB/s, i.e. **3% of the 20 GB/s roofline**.
+
+**Little's Law check:** to saturate $\beta$ you need $\beta L/\text{(line)} = (20\text{GB/s}\cdot 100\text{ns})/64\text{B}\approx 31$ outstanding misses; pointer-chasing supplies $\approx 1$. **Quantization** (LVQ to $b=1$ byte) cuts traffic $4\times$ to $\approx 0.15$ MB, dropping the roofline to $\approx 8\ \mu s$ and shrinking per-hop reads so more fit in flight — illustrating why shrinking $b$ and raising MLP are the two levers in the open gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

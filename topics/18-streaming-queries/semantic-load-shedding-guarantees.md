@@ -73,5 +73,11 @@ For single-stream aggregates the gap is essentially **closed**: optimal variance
 - **[Foundational]** Atallah, Grama et al. / Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SODA / SIAM J. Comput., 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
 - **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
 
+## 10. Worked Example
+
+**Single-stream aggregate (provable).** A window holds $n_g = 10{,}000$ sensor readings; we must shed $\rho = 90\%$ of load, keeping $\approx 1000$. Random drop with Horvitz–Thompson rescaling ($\hat A_g = \sum X_t v_t / p_t$, $p_t = 0.1$) is unbiased. For a relative-error target $\epsilon = 0.05$ on the sum, the sampling lower bound needs $n_{\text{kept}} \gtrsim 1/\epsilon^2 = 400$ surviving tuples — and $1000 > 400$, so the guarantee holds: $|\hat A_g - A_g|/A_g \le 0.05$ w.h.p. This is the *closed* case, with Babcock–Datar–Motwani's variance-minimizing allocation matching $\Theta(\epsilon^{-2})$.
+
+**Two-stream join (open).** Now query $R \bowtie_{\text{key}} S$ over windows of $N = 10{,}000$ each. Suppose one *heavy* key $k^\star$ appears in $100$ tuples of $R$ and $100$ of $S$, producing $100 \times 100 = 10{,}000$ output tuples — half the join. If shedding randomly drops $90\%$ of $R$, it keeps $\approx 10$ of the $k^\star$ tuples, so $\hat{}$ output for $k^\star$ falls to $\approx 10 \times 100 = 1000$; rescaling by $1/p^2$ (two dropped sides) inflates variance enormously. An oblivious adversary can place all mass on such a skewed key, forcing $\Omega(1)$ relative error at any fixed $\rho > 0$ — illustrating why distribution-free $(\epsilon,\delta)$ guarantees for joins remain open.
+
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -31,11 +31,21 @@ Active threads: CXL-attached memory and disaggregated GPU pools change $M$ from 
 Tight makespan lower bounds under duplex bandwidth and compute–transfer overlap; transfer-optimal multi-way GPU join theory tied to fractional hypertree/submodular width; unified bounds spanning the PCIe → NVLink → C2C → CXL continuum; data-skew-aware lower bounds.
 
 ## 9. Key References
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SICOMP, 2013 (AGM bound).
-- **[SOTA]** C. Lutz, S. Breß, S. Zeuch, T. Rabl, V. Markl. *Pump Up the Volume: Processing Large Data on GPUs with Fast Interconnects.* SIGMOD, 2020.
-- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics (Crystal).* SIGMOD, 2020.
-- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity Joins / Worst-Case Optimal I/O Joins.* PODS, 2017.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins.* SICOMP, 2013 (AGM bound). — [DOI](https://doi.org/10.1137/110859440) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** C. Lutz, S. Breß, S. Zeuch, T. Rabl, V. Markl. *Pump Up the Volume: Processing Large Data on GPUs with Fast Interconnects.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389705)
+- **[SOTA]** A. Shanbhag, S. Madden, X. Yu. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics (Crystal).* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380595)
+- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity Joins / Worst-Case Optimal I/O Joins.* PODS, 2017. — [DBLP](https://dblp.org/rec/conf/pods/HuTY17.html)
+
+## 10. Worked Example
+
+Join $R \bowtie S$ on a GPU with HBM $M = 4$ MB, build side $S$, and transfer block $B$. Let $|R| = 100$ MB, $|S| = 10$ MB, output $\mathrm{OUT} = 20$ MB, all in units where $B$ normalizes counts to bytes/$B$.
+
+**Case 1 — $S$ fits ($|S| = 10$ MB $> M$):** here $S$ does *not* fit, so a single-pass broadcast is impossible. We use **grace-hash**: partition both sides into $\lceil |S|/M \rceil = \lceil 10/4 \rceil = 3$ partitions so each build partition $\le M$. One partitioning pass streams $|R|+|S| = 110$ MB host→device→host, then the probe pass streams 110 MB again plus emits $\mathrm{OUT}=20$ MB. Total link traffic $\approx (110 + 110 + 20)/B = 240/B$ MB.
+
+**Contrast — naive re-probe** (re-stream $R$ once per $S$-chunk that overflowed): $3 \times 100 = 300$ MB of $R$ alone, far worse.
+
+The external-memory optimum is $O\!\big(\frac{N}{B}\log_{M/B}\frac{N}{B} + \frac{\mathrm{OUT}}{B}\big)$ with $N=110$ MB; here $\log_{M/B}(N/B)$ is small (one partitioning round suffices), so the grace-hash schedule is within a constant factor of optimal, illustrating why interconnect bytes — not compute — set the cost.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

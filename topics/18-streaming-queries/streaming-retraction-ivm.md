@@ -48,13 +48,27 @@ For **positive / q-hierarchical** queries the picture is essentially **closed**:
 - Unified theory of aggregation + recursion + retraction with worst-case-optimal guarantees.
 
 ## 9. Key References
-- **[Foundational]** Gupta, A., Mumick, I.S., Subrahmanian, V.S. *Maintaining Views Incrementally (Counting and DRed).* SIGMOD, 1993.
-- **[Foundational]** McSherry, F., Murray, D., Isaacs, R., Isard, M. *Differential Dataflow.* CIDR, 2013.
-- **[SOTA]** Koch, C., Ahmad, Y., Kennedy, O., Nikolic, M., Nötzli, A., Lupei, D., Shaikhha, A. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014.
-- **[SOTA]** Berkholz, C., Keppmann, J., Schweikardt, N. *Answering Conjunctive Queries under Updates.* PODS/ICDT, 2017.
-- **[SOTA]** Nikolic, M., Olteanu, D. *Incremental View Maintenance with Triple Lock Factorization Benefits (F-IVM).* SIGMOD, 2018.
-- **[SOTA]** Gjengset, J., Schwarzkopf, M., Behrens, J., et al. *Noria: Dynamic, Partially-Stateful Data-Flow for High-Performance Web Applications.* OSDI, 2018.
-- **[Survey]** Idris, M., Ugarte, M., Vansummeren, S. *The Dynamic Yannakakis Algorithm: Compact and Efficient Query Processing Under Updates.* SIGMOD, 2017.
+- **[Foundational]** Gupta, A., Mumick, I.S., Subrahmanian, V.S. *Maintaining Views Incrementally (Counting and DRed).* SIGMOD, 1993. — [DOI](https://doi.org/10.1145/170035.170066)
+- **[Foundational]** McSherry, F., Murray, D., Isaacs, R., Isard, M. *Differential Dataflow.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
+- **[SOTA]** Koch, C., Ahmad, Y., Kennedy, O., Nikolic, M., Nötzli, A., Lupei, D., Shaikhha, A. *DBToaster: Higher-Order Delta Processing for Dynamic, Frequently Fresh Views.* VLDB Journal, 2014. — [DOI](https://doi.org/10.1007/s00778-013-0348-4) — [arXiv](https://arxiv.org/abs/1207.0137)
+- **[SOTA]** Berkholz, C., Keppeler, J., Schweikardt, N. *Answering Conjunctive Queries under Updates.* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3034789) — [arXiv](https://arxiv.org/abs/1702.06370)
+- **[SOTA]** Nikolic, M., Olteanu, D. *Incremental View Maintenance with Triple Lock Factorization Benefits (F-IVM).* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3183758) — [arXiv](https://arxiv.org/abs/1703.07484)
+- **[SOTA]** Gjengset, J., Schwarzkopf, M., Behrens, J., et al. *Noria: Dynamic, Partially-Stateful Data-Flow for High-Performance Web Applications.* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/gjengset)
+- **[Survey]** Idris, M., Ugarte, M., Vansummeren, S. *The Dynamic Yannakakis Algorithm: Compact and Efficient Query Processing Under Updates.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064027)
+
+## 10. Worked Example
+
+Maintain $V = R \bowtie S$ over $\mathbb{Z}$-relations on join key $k$. Initial state:
+
+$R = \{(k{=}1)\mapsto +1,\ (k{=}2)\mapsto +1\}$,  $S = \{(k{=}1)\mapsto +1\}$.
+So $V = \{(k{=}1)\mapsto +1\}$ (one matching row).
+
+Apply a delta: insert $(k{=}2)$ into $S$ and **retract** $(k{=}1)$ from $S$, i.e. $\Delta S = \{(k{=}2)\mapsto +1,\ (k{=}1)\mapsto -1\}$. Using the signed delta rule $\Delta V = R \bowtie \Delta S$ (since $\Delta R = \varnothing$):
+
+- $R(k{=}2){\cdot}\Delta S(k{=}2) = (+1)(+1) = +1$ → emit $(k{=}2)$ with $+1$.
+- $R(k{=}1){\cdot}\Delta S(k{=}1) = (+1)(-1) = -1$ → emit $(k{=}1)$ with $-1$ (retraction).
+
+New $V = \{(k{=}2)\mapsto +1\}$, matching a from-scratch re-evaluation. Cost is $O(|\Delta S|)$, proportional to the delta and not to $|V|$ — the hallmark of $\mathbb{Z}$-relation IVM. Note SUM/COUNT retract in $O(1)$ here; had the aggregate been MIN over $k$, the $-1$ on $k{=}1$ could un-mask a previous minimum, forcing the auxiliary order structure noted in section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

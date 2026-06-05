@@ -40,11 +40,21 @@ Asymptotically, balance vs. crossing is **tight ($\Theta(\sqrt p)$)** for point 
 Provable bi-criteria approximation for polygon partitioning; streaming one-pass balanced partitioners with replication guarantees; partitioners co-optimized with multi-way join order; theory linking stabbing number to end-to-end distributed-join cost.
 
 ## 9. Key References
-- **[Foundational]** Matoušek. *Efficient Partition Trees.* Discrete & Computational Geometry, 1992.
-- **[Foundational]** Leutenegger, Lopez, Edgington. *STR: A Simple and Efficient Algorithm for R-Tree Packing.* ICDE, 1997.
-- **[SOTA]** Eldawy, Mokbel. *SpatialHadoop: A MapReduce Framework for Spatial Data.* ICDE, 2015.
-- **[SOTA]** Yu, Zhang, Sarwat. *Spatial Data Management in Apache Spark: The GeoSpark Perspective.* GeoInformatica, 2019.
-- **[Survey]** Pandey, Kipf, Neumann, Kemper. *How Good Are Modern Spatial Analytics Systems?* PVLDB, 2018.
+- **[Foundational]** Matoušek. *Efficient Partition Trees.* Discrete & Computational Geometry, 1992. — [DOI](https://doi.org/10.1007/BF02293051)
+- **[Foundational]** Leutenegger, Lopez, Edgington. *STR: A Simple and Efficient Algorithm for R-Tree Packing.* ICDE, 1997. — [DBLP](https://dblp.org/rec/conf/icde/LeuteneggerEL97.html)
+- **[SOTA]** Eldawy, Mokbel. *SpatialHadoop: A MapReduce Framework for Spatial Data.* ICDE, 2015. — [DOI](https://doi.org/10.1109/ICDE.2015.7113382)
+- **[SOTA]** Yu, Zhang, Sarwat. *Spatial Data Management in Apache Spark: The GeoSpark Perspective.* GeoInformatica, 2019. — [DOI](https://doi.org/10.1007/s10707-018-0330-9)
+- **[Survey]** Pandey, Kipf, Neumann, Kemper. *How Good Are Modern Spatial Analytics Systems?* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236213)
+
+## 10. Worked Example
+
+Take $n=12$ points in the unit square, heavily skewed: $9$ clustered in the lower-left quadrant $[0,0.3]^2$, and $1$ each in the other three quadrants. We want $p=4$ partitions.
+
+**Uniform $2\times2$ grid** (cut at $x=y=0.5$): cell loads are $9,1,1,1$. Imbalance $\max_i|P_i|=9$ vs. ideal $n/p=3$ — a $3\times$ straggler.
+
+**STR / median-split** (count-balanced): first sort by $x$ and cut into $\sqrt p=2$ vertical slabs of $6$ points each; within each slab cut by $y$ into $2$ cells of $3$. Loads become $3,3,3,3$ — perfect balance. The cut lines now fall *inside* the dense cluster.
+
+**Replication cost.** Consider a range query that is a horizontal line straddling the cluster. Under the grid it crosses $\le 2$ cells; under the balanced split its $y$-cut passes through the dense region, so a thin query band there now intersects up to $\sqrt p=2$ cells and boundary-straddling polygons get duplicated. This is the $\Theta(\sqrt p)$ crossing price of balance — exactly the tension in Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

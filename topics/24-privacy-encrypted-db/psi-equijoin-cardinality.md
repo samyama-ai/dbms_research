@@ -45,12 +45,23 @@ Active lines: OKVS constructions with smaller expansion (Bienstock–Patel–Seo
 - Hardware (TEE + PSI hybrid) acceleration with formal leakage accounting.
 
 ## 9. Key References
-- **[Foundational]** Freedman, Nissim, Pinkas. *Efficient Private Matching and Set Intersection.* EUROCRYPT, 2004.
-- **[Foundational]** Kolesnikov, Kumaresan, Rosulek, Trieu. *Efficient Batched Oblivious PRF with Applications to Private Set Intersection.* CCS, 2016.
-- **[SOTA]** Rindal, Schoppmann. *VOLE-PSI: Fast OPRF and Circuit-PSI from Vector-OLE.* EUROCRYPT, 2021.
-- **[SOTA]** Chen, Laine, Rindal. *Fast Private Set Intersection from Homomorphic Encryption.* CCS, 2017.
-- **[SOTA]** Ion, Kreuter, et al. *On Deploying Secure Computing: Private Intersection-Sum-with-Cardinality.* IEEE EuroS&P, 2020 (Google Private Join and Compute).
-- **[Survey]** Pinkas, Schneider, Zohner. *Scalable Private Set Intersection Based on OT Extension.* ACM TOPS, 2018.
+- **[Foundational]** Freedman, Nissim, Pinkas. *Efficient Private Matching and Set Intersection.* EUROCRYPT, 2004. — [DOI](https://doi.org/10.1007/978-3-540-24676-3_1) — [DBLP](https://dblp.org/rec/conf/eurocrypt/FreedmanNP04.html)
+- **[Foundational]** Kolesnikov, Kumaresan, Rosulek, Trieu. *Efficient Batched Oblivious PRF with Applications to Private Set Intersection.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978381) — [ePrint](https://eprint.iacr.org/2016/799)
+- **[SOTA]** Rindal, Schoppmann. *VOLE-PSI: Fast OPRF and Circuit-PSI from Vector-OLE.* EUROCRYPT, 2021. — [DOI](https://doi.org/10.1007/978-3-030-77886-6_31) — [ePrint](https://eprint.iacr.org/2021/266)
+- **[SOTA]** Chen, Laine, Rindal. *Fast Private Set Intersection from Homomorphic Encryption.* CCS, 2017. — [DOI](https://doi.org/10.1145/3133956.3134061) — [ePrint](https://eprint.iacr.org/2017/299)
+- **[SOTA]** Ion, Kreuter, et al. *On Deploying Secure Computing: Private Intersection-Sum-with-Cardinality.* IEEE EuroS&P, 2020 (Google Private Join and Compute). — [DOI](https://doi.org/10.1109/EuroSP48549.2020.00031) — [ePrint](https://eprint.iacr.org/2019/723)
+- **[Survey]** Pinkas, Schneider, Zohner. *Scalable Private Set Intersection Based on OT Extension.* ACM TOPS, 2018. — [DOI](https://doi.org/10.1145/3154794) — [ePrint](https://eprint.iacr.org/2016/930)
+
+## 10. Worked Example
+
+A merchant holds set $A=\{\text{alice},\text{bob},\text{carol}\}$ with purchase amounts; an ad network holds $B=\{\text{bob},\text{dave},\text{carol}\}$ of users shown an ad. They want **PSI-Sum**: total spend of users in $A\cap B$, revealing nothing else.
+
+Trace a Diffie–Hellman PSI-Sum. Both agree on a group with generator and a hash $H$ to the group. Merchant picks secret $k_1$, network picks $k_2$.
+1. Merchant sends $\{H(x)^{k_1}\}_{x\in A}$ (shuffled). Network sees blinded points, not identities.
+2. Network raises each to $k_2$, returning $\{H(x)^{k_1 k_2}\}$, and separately sends its own $\{H(y)^{k_2}\}_{y\in B}$ plus Paillier-encrypted amounts.
+3. Merchant raises $H(y)^{k_2}$ to $k_1$, getting $\{H(y)^{k_1 k_2}\}$. By commutativity, an item is in the intersection iff $H(x)^{k_1 k_2} = H(y)^{k_1 k_2}$.
+
+Here the matches are $\text{bob},\text{carol}$, so $|A\cap B|=2$. Their encrypted amounts (say \$30 and \$50) are summed *under Paillier homomorphism* — $\mathrm{Enc}(30)\cdot\mathrm{Enc}(50)=\mathrm{Enc}(80)$ — and only the decrypted total \$80 (and cardinality $2$) is revealed. Neither party learns that alice/dave were non-matches' identities, nor the per-user \$30/\$50 split. Communication is $O(|A|+|B|)$ group elements — the near-linear cost the "practical" qualifier demands.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

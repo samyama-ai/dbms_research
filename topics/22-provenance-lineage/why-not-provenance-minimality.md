@@ -54,11 +54,23 @@ Active: **explainability for missing answers in data pipelines and ML**, and **p
 
 ## 9. Key References
 
-- **[Foundational]** Chapman, Jagadish. *Why Not?* SIGMOD, 2009.
-- **[Foundational]** Huang, Chen, Doan, Naughton. *On the Provenance of Non-Answers to Queries over Extracted Data (Artemis).* VLDB, 2008.
-- **[SOTA]** Tran, Chan. *How to ConQueR Why-Not Questions.* SIGMOD, 2010.
-- **[SOTA]** ten Cate, Civili, Sherkhonov, Tan. *High-Level Why-Not Explanations using Ontologies.* PODS/ICDT, 2015.
-- **[Survey]** Herschel, Diestelkämper, Ben Lahmar. *A Survey on Provenance: What for? What form? What from?* VLDB Journal, 2017.
+- **[Foundational]** Chapman, Jagadish. *Why Not?* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559901)
+- **[Foundational]** Huang, Chen, Doan, Naughton. *On the Provenance of Non-Answers to Queries over Extracted Data (Artemis).* VLDB, 2008. — [DBLP search](https://dblp.org/search?q=On+the+Provenance+of+Non-Answers+to+Queries+over+Extracted+Data)
+- **[SOTA]** Tran, Chan. *How to ConQueR Why-Not Questions.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807172)
+- **[SOTA]** ten Cate, Civili, Sherkhonov, Tan. *High-Level Why-Not Explanations using Ontologies.* PODS/ICDT, 2015. — [arXiv](https://arxiv.org/abs/1412.2332)
+- **[Survey]** Herschel, Diestelkämper, Ben Lahmar. *A Survey on Provenance: What for? What form? What from?* VLDB Journal, 2017. — [DBLP](https://dblp.org/rec/journals/vldb/HerschelDL17.html)
+
+## 10. Worked Example
+
+Source tables:
+
+$\textsf{Emp}(\text{name},\text{dept})=\{(\text{Ann},D1),(\text{Bob},D2)\}$, $\quad\textsf{Dept}(\text{dept},\text{loc})=\{(D1,\text{NYC})\}$.
+
+Query $Q$: $\;\textsf{Ans}(n) \leftarrow \textsf{Emp}(n,d),\ \textsf{Dept}(d,\text{NYC})$. Result $=\{\text{Ann}\}$.
+
+**Why-not question:** why is *Bob* missing? A homomorphism $h$ from the body to a fixed instance must map $\textsf{Emp}(\text{Bob},d)$ and $\textsf{Dept}(d,\text{NYC})$. We already have $(\text{Bob},D2)\in\textsf{Emp}$, so $h(d)=D2$, but $\textsf{Dept}(D2,\text{NYC})$ is absent.
+
+**Minimal instance fix.** Add exactly $\Delta^+ = \{\textsf{Dept}(D2,\text{NYC})\}$ — cost $1$ — and Bob appears. Any cheaper fix is impossible: the missing witness needs at least one new tuple. Alternatively, if $D2$ is at a different location, a **query-refinement** fix relaxes the predicate $\text{loc}=\text{NYC}$ to $\text{loc}\in\{\text{NYC},\text{Bob's loc}\}$, but that may admit unwanted tuples, turning the choice into a set-cover-style trade-off. This contrasts the instance-based ($\min|\Delta^+|$) and query-based optimality models, and shows why constraints (e.g., if $D2$ is read-only) can leave *no* finite minimal repair.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -34,11 +34,22 @@ Active threads: learned cost/convergence predictors to warm-start $c_i$; reinfor
 - Co-design of synopsis caches and schedulers so dashboard panels share work optimally.
 
 ## 9. Key References
-- **[Foundational]** Hellerstein, J., Haas, P., Wang, H. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** Zeng, K., Agarwal, S., Dave, A., Armbrust, M., Stoica, I. *G-OLA: Generalized Online Aggregation for Interactive Analysis.* SIGMOD, 2015.
-- **[SOTA]** Park, Y., Mozafari, B., Sorenson, J., Wang, J. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018.
-- **[SOTA]** Ding, B., Huang, S., Chaudhuri, S., Chakrabarti, K., Wang, C. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD, 2016.
-- **[Survey]** Chaudhuri, S., Ding, B., Kandula, S. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017.
+- **[Foundational]** Hellerstein, J., Haas, P., Wang, H. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253262.253291)
+- **[SOTA]** Zeng, K., Agarwal, S., Dave, A., Armbrust, M., Stoica, I. *G-OLA: Generalized Online Aggregation for Interactive Analysis.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2735381)
+- **[SOTA]** Park, Y., Mozafari, B., Sorenson, J., Wang, J. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[SOTA]** Ding, B., Huang, S., Chaudhuri, S., Chakrabarti, K., Wang, C. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD, 2016. — [DBLP](https://dblp.org/rec/conf/sigmod/DingHCC016.html)
+- **[Survey]** Chaudhuri, S., Ding, B., Kandula, S. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056097)
+
+## 10. Worked Example
+
+A dashboard renders $k=2$ charts under deadline $T$, total sample budget $B=10{,}000$. Progressive CI half-widths are $\varepsilon_i(b_i)=c_i/\sqrt{b_i}$ with data-dependent constants $c_1=1$ (low-skew chart) and $c_2=2$ (high-skew chart).
+
+**Naive equal split** $b_1=b_2=5000$:
+$\varepsilon_1=1/\sqrt{5000}\approx 0.0141$, $\varepsilon_2=2/\sqrt{5000}\approx 0.0283$. Sum $\approx 0.0424$, max $=0.0283$.
+
+**Min-sum water-filling** allocates $b_i\propto c_i^{2/3}$. With $c_1^{2/3}=1$, $c_2^{2/3}=2^{2/3}\approx 1.587$, the shares are $b_1=10000\cdot\frac{1}{2.587}\approx 3866$, $b_2\approx 6134$. Then $\varepsilon_1\approx 0.0161$, $\varepsilon_2=2/\sqrt{6134}\approx 0.0255$, sum $\approx 0.0416$ — below the equal split, confirming the Lagrangian optimum.
+
+**Min–max** instead equalizes errors: set $c_1/\sqrt{b_1}=c_2/\sqrt{b_2}$, i.e. $b_2/b_1=(c_2/c_1)^2=4$, giving $b_1=2000$, $b_2=8000$ and $\varepsilon_1=\varepsilon_2=2/\sqrt{8000}\approx 0.0224$ — a smaller worst-case error than either above. The online catch: $c_2$ is unknown until chart 2's stream reveals its skew, so a scheduler must *learn* $c_i$ on the fly, paying the $\Omega(\sqrt{kB})$ bandit regret of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

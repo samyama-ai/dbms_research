@@ -58,12 +58,21 @@ Open and largely **uncharted for the DB setting**. The graph-ML community has a 
 
 ## 9. Key References
 
-- **[Foundational]** Xu, Hu, Leskovec, Jegelka. *How Powerful Are Graph Neural Networks? (GIN).* ICLR, 2019.
-- **[Foundational]** Morris, Ritzert, Fey, Hamilton, Lenssen, Rattan, Grohe. *Weisfeiler and Leman Go Neural: Higher-Order Graph Neural Networks.* AAAI, 2019.
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022.
+- **[Foundational]** Xu, Hu, Leskovec, Jegelka. *How Powerful Are Graph Neural Networks? (GIN).* ICLR, 2019. — [arXiv](https://arxiv.org/abs/1810.00826)
+- **[Foundational]** Morris, Ritzert, Fey, Hamilton, Lenssen, Rattan, Grohe. *Weisfeiler and Leman Go Neural: Higher-Order Graph Neural Networks.* AAAI, 2019. — [arXiv](https://arxiv.org/abs/1810.02244)
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.00561)
+
+## 10. Worked Example
+
+A **marginal-only collision**. Two columns $X,Y$, each Boolean, $N=100$ rows. Encoding $\phi$ carries only per-column marginals: $\Pr[X{=}1]=0.5,\ \Pr[Y{=}1]=0.5$ — identical for both datasets below.
+
+- **Dataset A (independent):** the 4 cells $(X,Y)\in\{0,1\}^2$ each have 25 rows. Join $\sigma_{X=1}\bowtie\sigma_{Y=1}$ selectivity $=0.5\cdot0.5=0.25\Rightarrow 25$ output rows.
+- **Dataset B (perfectly correlated, $X{=}Y$):** cells $(0,0)$ and $(1,1)$ have 50 rows each; $(0,1),(1,0)$ empty. Same marginals, but $\Pr[X{=}1\wedge Y{=}1]=0.5\Rightarrow 50$ output rows — **2× the cost**.
+
+Both map to the *same* feature vector $\phi$, so $\phi(p_A)=\phi(p_B)$ while $\text{cost}(p_A)\ne\text{cost}(p_B)$ — a certified collision (section 1's representability variant). The within-fiber cost variance is nonzero, so *no* downstream model on $\phi$ can separate them: the expressiveness ceiling is breached. The fix from section 6: inject a 1-cell correlation sketch (the joint $\Pr[X{=}1,Y{=}1]$), which makes cost a function of the augmented $\phi$ and removes exactly this blind spot — mirroring the AGM-vs-actual gap of Atserias–Grohe–Marx.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

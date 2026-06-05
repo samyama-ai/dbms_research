@@ -71,12 +71,22 @@ For **CQs**, theory is closed (NP-complete, decidable). The genuinely **open** r
 
 ## 9. Key References
 
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[SOTA]** S. Chu, C. Wang, K. Cheung, D. Suciu. *Cosette: An Automated Prover for SQL.* CIDR, 2017.
-- **[SOTA]** S. Chu, B. Murphy, J. Roesch, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018.
-- **[SOTA]** Z. Wang et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (CQ equivalence, decidability boundaries).
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[SOTA]** S. Chu, C. Wang, K. Cheung, D. Suciu. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
+- **[SOTA]** S. Chu, B. Murphy, J. Roesch, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236200)
+- **[SOTA]** Z. Wang et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526125)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (CQ equivalence, decidability boundaries). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+An optimizer rewrites $Q_1 = \pi_A(R \bowtie_B S)$ into $Q_2 = \pi_A(R) \ltimes \dots$ claiming pushdown is safe. Bounded check with $k=2$, domain $\{0,1\}$.
+
+The SMT encoding introduces, for each candidate tuple, a multiplicity variable. Take $R(A,B)=\{(1,0)\}$ and $S(B,C)=\{(0,9),(0,8)\}$. Under **bag** semantics, $R\bowtie_B S$ yields two tuples $\{(1,0,9),(1,0,8)\}$, so $Q_1$ returns $A=1$ with multiplicity $2$. If the buggy $Q_2$ projects $A$ *before* the join, it returns $A=1$ with multiplicity $1$. The solver finds the model
+
+$$D:\ R=\{(1,0)\},\ S=\{(0,9),(0,8)\}\ \Rightarrow\ Q_1(D)=\{1{:}2\}\neq Q_2(D)=\{1{:}1\},$$
+
+a SAT witness — a $1$-row + $2$-row counterexample database, already minimal. Under **set** semantics both collapse to $\{1\}$ and the check returns UNSAT up to $k$, certifying $Q_1\equiv_k Q_2$. The example shows why bag vs. set semantics is the decisive axis: the same rewrite is a bug in SQL's bag world but sound under set semantics.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

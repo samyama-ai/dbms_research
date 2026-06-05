@@ -50,12 +50,27 @@ Active directions: (a) **DP-relaxed obliviousness** — pad output/intermediate 
 
 ## 9. Key References
 
-- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** Arasu, A., Kaushik, R. *Oblivious Query Processing.* ICDT, 2014.
-- **[SOTA]** Zheng, W., Dave, A., Beekman, J., Popa, R.A., Gonzalez, J., Stoica, I. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
-- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2019.
-- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Dauterman, E., Fang, V., Demertzis, I., Crooks, N., Popa, R.A. *Snoopy: Surpassing the Scalability Bottleneck of Oblivious Storage.* SOSP, 2021.
+- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Arasu, A., Kaushik, R. *Oblivious Query Processing.* ICDT, 2014. — [DOI](https://doi.org/10.5441/002/icdt.2014.07)
+- **[SOTA]** Zheng, W., Dave, A., Beekman, J., Popa, R.A., Gonzalez, J., Stoica, I. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [DBLP](https://dblp.org/rec/conf/nsdi/ZhengDBPGS17.html)
+- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364331)
+- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[SOTA]** Dauterman, E., Fang, V., Demertzis, I., Crooks, N., Popa, R.A. *Snoopy: Surpassing the Scalability Bottleneck of Oblivious Storage.* SOSP, 2021. — [DOI](https://doi.org/10.1145/3477132.3483562)
+
+## 10. Worked Example
+
+Run a filter $\sigma_{\text{salary}>100}$ over a 4-row table inside an enclave. A naive implementation branches: `if (row.salary > 100) output(row)`. An observer watching page/cache accesses sees a *write to the output buffer* only on matching rows — so the access trace reveals exactly which rows passed, i.e. the secret predicate result per tuple.
+
+The oblivious version touches memory identically regardless of values, using a constant-time conditional move:
+```
+for each row r:                       // same loop length always
+    pass = (r.salary > 100) ? 1 : 0   // computed, no branch
+    cmov(pass, out[w], r)             // always writes out[w]
+    w = w + pass                      // index advances obliviously
+```
+Every row triggers one read and one `cmov` write to `out[w]`; later the buffer is obliviously compacted/padded to a fixed length (e.g. the table size $n=4$). The trace $(\text{read } r_1, \text{write}, \ldots, \text{read } r_4, \text{write})$ is identical for any data, leaking only $n$.
+
+Cost: the bitonic-sort building block for a join over $n$ tuples needs $\tfrac{1}{4}n\log^2 n$ compare-exchanges. For $n=2^{20}$: $\tfrac{1}{4}\cdot 2^{20}\cdot 400 \approx 10^8$ data-independent comparisons versus $\sim 2^{20}$ for a value-dependent scan — roughly the $\Theta(\log^2 n)$ obliviousness tax, before hardware (EPC paging) constants.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

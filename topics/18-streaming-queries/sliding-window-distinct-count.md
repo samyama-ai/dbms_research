@@ -66,12 +66,24 @@ for $(1\pm\epsilon)$ relative error with constant success probability (boost to 
 
 ## 9. Key References
 
-- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Comput., 2002.
-- **[Foundational]** Gibbons, Tirthapura. *Distributed Streams Algorithms for Sliding Windows.* SPAA, 2002.
-- **[SOTA]** Braverman, Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007.
-- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** Chabchoub, Hébrail. *Sliding HyperLogLog: Estimating Cardinality in a Data Stream over a Sliding Window.* ICDM Workshops, 2010.
+- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Comput., 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Foundational]** Gibbons, Tirthapura. *Distributed Streams Algorithms for Sliding Windows.* SPAA, 2002. — [DOI](https://doi.org/10.1145/564870.564880)
+- **[SOTA]** Braverman, Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DBLP](https://dblp.org/rec/conf/focs/BravermanO07.html)
+- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
+- **[SOTA]** Chabchoub, Hébrail. *Sliding HyperLogLog: Estimating Cardinality in a Data Stream over a Sliding Window.* ICDM Workshops, 2010. — [DOI](https://doi.org/10.1109/ICDMW.2010.18)
+
+## 10. Worked Example
+
+**Why distinct counting needs a window-aware sketch.** Sequence-based window of size $N=4$ over the stream of keys
+$$\underbrace{a,\;b,\;a}_{\text{older}},\;c,\;a,\;b$$
+At "now" the window holds the last 4 arrivals $\{c,a,b\}$ as multiset $[c,a,b]$ from positions 3–6 (recall position 4 is $c$, 5 is $a$, 6 is $b$; position 3 is the evicted $a$). Distinct count $D=|\{a,b,c\}|=3$.
+
+A plain counter is wrong: when the next item $d$ arrives, the oldest ($c$, pos 4) expires, window becomes $[a,b,d]$ — still $D=3$, but a naive "increment on new key" would have over-counted, and we cannot simply decrement, because $a$ also appears later and must survive $c$'s expiry.
+
+**Timestamp-retention fix.** For each key keep the timestamp of its *most recent* occurrence: $a\!:5,\;b\!:6,\;c\!:4$. A key is "live" iff its latest timestamp $> \text{now}-N$. After $d$ (now$=7$, threshold $=3$): $c$'s stamp $4>3$ initially, but once now advances to $8$ the threshold is $4$ and $c$ ($4\not>4$) expires. $D$ = count of keys with a live latest-stamp.
+
+The cost: keeping latest timestamps for all distinct keys is exact but linear; approximate estimators (Gibbons–Tirthapura distinct-sampling, Sliding-HLL) keep only sampled/registered maxima, trading $(1\pm\epsilon)$ error for the $\tilde{O}(\epsilon^{-2}\log N)$-style space in Section 4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

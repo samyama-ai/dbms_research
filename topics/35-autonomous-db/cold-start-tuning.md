@@ -42,12 +42,28 @@ Upper and lower bounds match (up to logs) for a *fixed* task in a known RKHS, bu
 - Reusable pretrained "tuning foundation models" with calibrated uncertainty.
 
 ## 9. Key References
-- **[Foundational]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design.* ICML, 2010.
-- **[Foundational]** J. Scarlett, I. Bogunovic, V. Cevher. *Lower Bounds on Regret for Noisy Gaussian Process Bandit Optimization.* COLT, 2017.
-- **[SOTA]** D. Van Aken et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017.
-- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021.
-- **[SOTA]** K. Kanellis et al. *LlamaTune: Sample-Efficient DBMS Configuration Tuning.* VLDB, 2022.
-- **[Survey]** D. Golovin et al. *Google Vizier: A Service for Black-Box Optimization.* KDD, 2017.
+- **[Foundational]** N. Srinivas, A. Krause, S. Kakade, M. Seeger. *Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design.* ICML, 2010. — [arXiv](https://arxiv.org/abs/0912.3995)
+- **[Foundational]** J. Scarlett, I. Bogunovic, V. Cevher. *Lower Bounds on Regret for Noisy Gaussian Process Bandit Optimization.* COLT, 2017. — [arXiv](https://arxiv.org/abs/1706.00090)
+- **[SOTA]** D. Van Aken et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457291)
+- **[SOTA]** K. Kanellis et al. *LlamaTune: Sample-Efficient DBMS Configuration Tuning.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2203.05128)
+- **[Survey]** D. Golovin et al. *Google Vizier: A Service for Black-Box Optimization.* KDD, 2017. — [DOI](https://doi.org/10.1145/3097983.3098043)
+
+## 10. Worked Example
+
+Tune one knob (`shared_buffers`) on a fresh DB with budget $k=3$ trials; each trial replays a workload (minutes). We have a meta-prior from 4 source workloads suggesting good values cluster near $\theta\approx 6$ GB, modeled as a GP with mean $\mu(\theta)=6$ GB and unit length-scale.
+
+**Zero-shot:** pick the prior mean $\hat\theta_0=6$ GB; observed latency $g=120$ ms.
+
+**Few-shot GP-UCB,** $\beta_t=2$: at each step pick $\arg\max_\theta\;\mu_t(\theta)+\sqrt{\beta_t}\,\sigma_t(\theta)$ (here minimizing latency, so the lower-confidence bound):
+
+| trial | $\theta$ (GB) | latency (ms) |
+|---|---|---|
+| 1 | 6 | 120 |
+| 2 | 9 (high $\sigma$) | 95 |
+| 3 | 8 | 88 |
+
+Simple regret vs. the true optimum ($\theta^\*=8$, 85 ms) drops from $120-85=35$ ms (zero-shot) to $88-85=3$ ms after $k=3$ trials. Without the prior, GP-UCB would waste these 3 trials merely locating the $\approx 6$–$9$ GB region; the prior collapses information gain $\gamma_T$ so the budget is spent refining, not searching — the cold-start payoff.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

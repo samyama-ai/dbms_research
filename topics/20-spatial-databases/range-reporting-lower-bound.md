@@ -41,12 +41,24 @@ Larsen, Afshani, and collaborators continue pushing **static and dynamic cell-pr
 - Bounds that account for the word size $w$ beyond $\Theta(\log N)$.
 
 ## 9. Key References
-- **[Foundational]** B. Chazelle. *Lower Bounds for Orthogonal Range Searching: I & II.* Journal of the ACM, 1990.
-- **[Foundational]** J. L. Bentley. *Multidimensional Binary Search Trees Used for Associative Searching.* CACM, 1975.
-- **[SOTA]** M. Pătraşcu. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007.
-- **[SOTA]** P. Afshani, L. Arge, K. G. Larsen. *Orthogonal Range Reporting in Three and Higher Dimensions.* FOCS, 2009.
-- **[SOTA]** K. G. Larsen. *The Cell Probe Complexity of Dynamic Range Counting.* STOC, 2012.
-- **[Survey]** P. K. Agarwal, J. Erickson. *Geometric Range Searching and Its Relatives.* Advances in Discrete and Computational Geometry, 1999.
+- **[Foundational]** B. Chazelle. *Lower Bounds for Orthogonal Range Searching: I & II.* Journal of the ACM, 1990. — [DOI](https://doi.org/10.1145/77600.77614)
+- **[Foundational]** J. L. Bentley. *Multidimensional Binary Search Trees Used for Associative Searching.* CACM, 1975. — [DOI](https://doi.org/10.1145/361002.361007)
+- **[SOTA]** M. Pătraşcu. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250797)
+- **[SOTA]** P. Afshani, L. Arge, K. G. Larsen. *Orthogonal Range Reporting in Three and Higher Dimensions.* FOCS, 2009. — [DOI](https://doi.org/10.1109/FOCS.2009.58)
+- **[SOTA]** K. G. Larsen. *The Cell Probe Complexity of Dynamic Range Counting.* STOC, 2012. — [arXiv](https://arxiv.org/abs/1105.5933)
+- **[Survey]** P. K. Agarwal, J. Erickson. *Geometric Range Searching and Its Relatives.* Advances in Discrete and Computational Geometry, 1999. — [author copy](https://jeffe.cs.illinois.edu/pubs/survey.html)
+
+## 10. Worked Example
+
+**Range tree space, traced in 2-D.** Take $N=8$ points; a 1-D range tree is a balanced BST of height $\log_2 8 = 3$. For a 2-D range tree, each of the $O(N)$ primary-tree nodes stores a **secondary** structure on the $y$-coordinates of the points in its subtree. A point at depth-$d$ leaf belongs to one node at each of the $\log N$ levels above it, so it is **replicated $\log N = 3$ times** across secondary structures.
+
+Total space: $S(N) = O(N \log N) = 8\cdot 3 = 24$ stored entries. Generalizing to $d$ dimensions, the replication compounds per level: $S = O(N \log^{d-1} N)$.
+
+**Fractional cascading** shaves a $\log$ factor off *query* time by linking the secondary lists, and Chazelle's bound (§5) shows the resulting
+
+$$S = \Omega\!\Big(N\,(\log N/\log\log N)^{d-1}\Big)$$
+
+is **optimal on a pointer machine** for $O(\mathrm{polylog}\,N + K)$ query. For $d=2$, $N=8$: $\log N/\log\log N = 3/\log_2 3 \approx 1.9$, so the tradeoff predicts $\approx 8\cdot 1.9 \approx 15$ cells are *necessary* — the PM side is closed. The open gap (§6) is that a **cell-probe** structure could in principle use only $O(N)$ space with comparably fast queries; no technique yet rules this out.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

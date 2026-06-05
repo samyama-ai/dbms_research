@@ -56,12 +56,20 @@ Largely **unaddressed as a unified problem**; components exist. **Data-exchange 
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT, 2003 / TCS, 2005.
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies and the Inverse.* PODS / ACM TODS, 2004–2009.
-- **[SOTA]** C. Curino, H. J. Moon, C. Zaniolo et al. *Graceful Database Schema Evolution: PRISM / PRISM++.* PVLDB, 2008 / 2013.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[SOTA]** A. Bhardwaj et al. *DataHub / Dataset Versioning (OrpheusDB).* CIDR / PVLDB, 2015–2017.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases* (chase, tgds/egds, undecidability of implication). Addison-Wesley, 1995.
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* ICDT, 2003 / TCS, 2005. — [DOI](https://doi.org/10.1007/3-540-36285-1_14)
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings: Second-Order Dependencies and the Inverse.* PODS / ACM TODS, 2004–2009. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[SOTA]** C. Curino, H. J. Moon, C. Zaniolo et al. *Graceful Database Schema Evolution: PRISM / PRISM++.* PVLDB, 2008 / 2013. — [DBLP](https://dblp.org/rec/journals/pvldb/CurinoMZ08.html)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[SOTA]** A. Bhardwaj et al. *DataHub / Dataset Versioning (OrpheusDB).* CIDR / PVLDB, 2015–2017. — [DOI](https://doi.org/10.14778/3115404.3115417)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases* (chase, tgds/egds, undecidability of implication). Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+
+Old schema has `Emp(name, dept)` with one tuple $e_1 = (\text{Ann}, \text{Sales})$, annotated $x_1 \in \mathbb{N}[X]$. A view $V = \pi_{\text{dept}}(\text{Emp})$ produced output tuple $(\text{Sales})$ with provenance polynomial $p = x_1$.
+
+**Lossless evolution (rename):** the SMO `RENAME dept TO division` is a bijective mapping $m$. It induces a semiring *isomorphism* on annotations, so $\mathsf{migrate}(p,m) = x_1$ unchanged — the why/where answer ("Sales came from $e_1$") survives exactly. Invertible $\Rightarrow$ no loss.
+
+**Lossy evolution (merge):** now `MERGE COLUMNS (dept, location) INTO site` collapses two source columns into one. Suppose $e_1=(\text{Ann},\text{Sales},\text{NYC})$ and $e_2=(\text{Bob},\text{Sales},\text{LA})$, with $V$'s tuple $(\text{Sales})$ carrying $p = x_1 + x_2$. After the merge, the target has distinct sites $\text{Sales@NYC}$, $\text{Sales@LA}$; the predicate "dept = Sales" is no longer recoverable from `site` alone. Exact migration is *impossible*. The **certain provenance** — what holds under every valid target instance — degrades to the safe under-approximation $p' = \mathbf{0}$ for the now-unanswerable query, illustrating the information-theoretic lower bound of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -44,12 +44,30 @@ There is **no agreed canonical expressiveness hierarchy** placing sliding/sessio
 - Compositional semantics unifying batch and stream (Beam/Flink) with provable expressiveness, and a separation theory for triggers and lateness.
 
 ## 9. Key References
-- **[Foundational]** A. Arasu, S. Babu, J. Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006.
-- **[Foundational]** R. Alur, P. Černý. *Streaming Transducers for Algorithmic Verification of Single-Pass List-Processing Programs.* POPL, 2011.
-- **[SOTA]** T. Akidau et al. *The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing.* VLDB, 2015.
-- **[SOTA]** I. Botan et al. *SECRET: A Model for Analysis of the Execution Semantics of Stream Processing Systems.* VLDB, 2010.
-- **[SOTA]** A. Grez, C. Riveros, M. Ugarte. *A Formal Framework for Complex Event Processing.* ICDT, 2019.
-- **[SOTA]** M. Budiu, F. McSherry, L. Ryzhyk, V. Tannen. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023.
+- **[Foundational]** A. Arasu, S. Babu, J. Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+- **[Foundational]** R. Alur, P. Černý. *Streaming Transducers for Algorithmic Verification of Single-Pass List-Processing Programs.* POPL, 2011. — [DOI](https://doi.org/10.1145/1926385.1926454)
+- **[SOTA]** T. Akidau et al. *The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[SOTA]** I. Botan et al. *SECRET: A Model for Analysis of the Execution Semantics of Stream Processing Systems.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920874)
+- **[SOTA]** A. Grez, C. Riveros, M. Ugarte. *A Formal Framework for Complex Event Processing.* ICDT, 2019. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2019.5)
+- **[SOTA]** M. Budiu, F. McSherry, L. Ryzhyk, V. Tannen. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [arXiv](https://arxiv.org/abs/2203.16684) · [DOI](https://doi.org/10.14778/3587136.3587137)
+
+## 10. Worked Example
+
+Consider a stream of (timestamp, value) tuples arriving in-order:
+
+$$ (1,5),\;(2,3),\;(3,8),\;(4,1),\;(5,6) $$
+
+Run a **count-based sliding window** of size $w=3$ computing `SUM` (a CQL stream-to-relation window, then relation-to-relation aggregation, then Rstream output):
+
+| at $t$ | window contents | SUM |
+|--------|-----------------|-----|
+| 3 | $5,3,8$ | 16 |
+| 4 | $3,8,1$ | 12 |
+| 5 | $8,1,6$ | 15 |
+
+**Bounded memory?** `SUM` is an *invertible* associative aggregate ($g^{-1}$ exists: subtract the expiring element). So each step costs $O(1)$ amortized: on advancing from $t{=}3$ to $t{=}4$, $16 - 5 + 1 = 12$ — subtract the departed $5$, add the new $1$. State is just the window buffer of size $w{=}3$ plus a running sum: $O(w)$, **constant in stream length** $n$. This is the bounded-memory fragment the topic's upper bound names.
+
+Contrast `COUNT(DISTINCT value)` over an *unbounded* (landmark) window: distinctness needs the full set seen so far, $\Omega(n)$ space, and even approximate distinct-count needs $\Omega(\log n)$ (a streaming/communication lower bound). The expressiveness question this illustrates: **which window+aggregate combinations stay in constant state** — the boundary between $O(1)$ register-automaton-realizable queries and those provably requiring unbounded synopsis.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

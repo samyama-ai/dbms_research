@@ -49,13 +49,24 @@ For the *core* binary exact windowed equi-join the gap is essentially **closed**
 - Bridging communication lower bounds to real system state via realistic skew models.
 
 ## 9. Key References
-- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[Foundational]** Alon, N., Gibbons, P., Matias, Y., Szegedy, M. *Tracking Join and Self-Join Sizes in Limited Storage.* PODS, 1999.
-- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002.
-- **[SOTA]** Braverman, V., Ostrovsky, R. *Smooth Histograms for Sliding Windows.* FOCS, 2007.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013.
-- **[SOTA]** Dobra, A., Garofalakis, M., Gehrke, J., Rastogi, R. *Processing Complex Aggregate Queries over Data Streams (Sketch Sharing).* SIGMOD, 2002.
-- **[Survey]** Woodruff, D. *Sketching as a Tool for Numerical Linear Algebra.* Foundations and Trends in TCS, 2014.
+- **[Foundational]** Alon, N., Matias, Y., Szegedy, M. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[Foundational]** Alon, N., Gibbons, P., Matias, Y., Szegedy, M. *Tracking Join and Self-Join Sizes in Limited Storage.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.303978)
+- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[SOTA]** Braverman, V., Ostrovsky, R. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DOI](https://doi.org/10.1109/FOCS.2007.55)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Dobra, A., Garofalakis, M., Gehrke, J., Rastogi, R. *Processing Complex Aggregate Queries over Data Streams (Sketch Sharing).* SIGMOD, 2002. — [DOI](https://doi.org/10.1145/564691.564699)
+- **[Survey]** Woodruff, D. *Sketching as a Tool for Numerical Linear Algebra.* Foundations and Trends in TCS, 2014. — [arXiv](https://arxiv.org/abs/1411.4357)
+
+## 10. Worked Example
+
+Take a count-based window of $W=4$ tuples per stream, joining on key $a$. Streams arrive interleaved (timestamp in parentheses):
+
+$R$: $r_1{=}(a{:}5,\,t{:}1)$, $r_2{=}(a{:}7,\,t{:}3)$, $r_3{=}(a{:}5,\,t{:}5)$
+$S$: $s_1{=}(a{:}5,\,t{:}2)$, $s_2{=}(a{:}9,\,t{:}4)$, $s_3{=}(a{:}5,\,t{:}6)$
+
+A **symmetric hash join** keeps two hash tables keyed on $a$, each holding $\le W$ live tuples. When $s_3$ arrives, the in-window $R$ side is $\{r_1,r_2,r_3\}$; probing key $5$ returns $\{r_1,r_3\}$, emitting $(r_1,s_3)$ and $(r_3,s_3)$. State is $|R_{\text{live}}|+|S_{\text{live}}| \le 2W = 8$ tuples, i.e. $\Theta(W)$.
+
+**Why the lower bound bites:** to decide merely whether key $5$ has a match, an adversary can flip any one of the $W$ live $R$-keys. By an INDEX reduction on domain $[U]$, recovering the answer for an arbitrary probed position forces storing $\Omega(\min(W,U))$ bits — here $\min(4, U)$. So no algorithm beats $\Theta(W)$ exact state, matching the symmetric-hash upper bound. For *approximate* join size instead, an AMS sketch of size $O(\varepsilon^{-2})$ would estimate the count $2$ within $(1\pm\varepsilon)$ without storing the tuples themselves.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

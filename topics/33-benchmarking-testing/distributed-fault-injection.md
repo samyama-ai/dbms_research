@@ -45,12 +45,25 @@ The gap is between **bug-finding power** (excellent — Jepsen/Elle/LDFI find se
 - Auto-minimization of counterexamples into developer-readable root causes.
 
 ## 9. Key References
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
-- **[SOTA]** Alvaro, Kingsbury. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB 2020.
-- **[SOTA]** Alvaro, Rosen, Hellerstein. *Lineage-Driven Fault Injection.* SIGMOD 2015.
-- **[SOTA]** Lukman, Gunawi, et al. *SAMC: Semantic-Aware Model Checking for Fast Discovery of Deep Bugs in Cloud Systems.* OSDI 2014.
-- **[Foundational]** Gibbons, Korach. *Testing Shared Memories (linearizability NP-completeness).* SIAM J. Comput., 1997.
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121) — [DBLP](https://dblp.org/rec/journals/jacm/FischerLP85)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** Alvaro, Kingsbury. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB 2020. — [arXiv](https://arxiv.org/abs/2003.10554) — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** Alvaro, Rosen, Hellerstein. *Lineage-Driven Fault Injection.* SIGMOD 2015. — [DOI](https://doi.org/10.1145/2723372.2723711)
+- **[SOTA]** Lukman, Gunawi, et al. *SAMC: Semantic-Aware Model Checking for Fast Discovery of Deep Bugs in Cloud Systems.* OSDI 2014. — [USENIX](https://www.usenix.org/conference/osdi14/technical-sessions/presentation/leesatapornwongsa) — [DBLP](https://dblp.org/rec/conf/osdi/LeesatapornwongsaHJLG14)
+- **[Foundational]** Gibbons, Korach. *Testing Shared Memories (linearizability NP-completeness).* SIAM J. Comput., 1997. — [DOI](https://doi.org/10.1137/S0097539794279614)
+
+## 10. Worked Example
+
+Consider a 3-node replicated register $\{A,B,C\}$ using majority quorums (write needs 2 acks, read needs 2 reads). Client writes $x{=}1$; node $A$ is leader. A nemesis injects a partition isolating $A$ from $\{B,C\}$ *after* $A$ locally applies $x{=}1$ but *before* replication.
+
+Trace:
+1. $A$ applies $x{=}1$ locally, acks the client commit (buggy: acked on 1 vote).
+2. Partition $\{A\} \mid \{B,C\}$ injected.
+3. $\{B,C\}$ elect a new leader, still hold $x{=}0$; a read quorum $\{B,C\}$ returns $0$.
+
+Oracle (Elle-style): observed history has $\text{commit}(x{=}1) \to \text{read}(x{=}0)$ violating linearizability — a **lost commit**. 
+
+Cost intuition: with $k$ message events the raw interleaving space is $O(k!)$. DPOR collapses to Mazurkiewicz classes; bounding to "$\le 1$ partition" makes the search complete and small. LDFI reasons backward from the *successful* (non-buggy) outcome and reports the single fault — partition before replication — needed to break it, instead of exhaustively trying all $2^k$ message-drop combinations.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

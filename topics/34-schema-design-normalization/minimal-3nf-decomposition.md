@@ -54,11 +54,23 @@ Feasibility is fully solved (PTIME). The open gap is between the **NP-hardness o
 
 ## 9. Key References
 
-- **[Foundational]** P. A. Bernstein. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976.
-- **[Foundational]** J. Biskup, U. Dayal, P. A. Bernstein. *Synthesizing Independent Database Schemas.* ACM SIGMOD, 1979.
-- **[Foundational]** C. L. Lucchesi, S. L. Osborn. *Candidate Keys for Relations.* JCSS, 1978.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** D. Maier. *The Theory of Relational Databases.* Computer Science Press, 1983.
+- **[Foundational]** P. A. Bernstein. *Synthesizing Third Normal Form Relations from Functional Dependencies.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320493.320489)
+- **[Foundational]** J. Biskup, U. Dayal, P. A. Bernstein. *Synthesizing Independent Database Schemas.* ACM SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582118)
+- **[Foundational]** C. L. Lucchesi, S. L. Osborn. *Candidate Keys for Relations.* JCSS, 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [full text](http://webdam.inria.fr/Alice/)
+- **[Foundational]** D. Maier. *The Theory of Relational Databases.* Computer Science Press, 1983. — [full text](https://web.cecs.pdx.edu/~maier/TheoryBook/TRD.html)
+
+## 10. Worked Example
+
+Let $R(A,B,C,D)$ with $\Sigma=\{A\to B,\; B\to C,\; AB\to D\}$. Compute a minimal cover $\Sigma_c$:
+
+1. Single-attribute RHS: already singletons.
+2. Remove extraneous LHS attributes: in $AB\to D$, since $A\to B$, $A$ alone determines $B$, so $\{A\}^+\supseteq\{A,B,...\}$ and $B$ is extraneous on the LHS — reduce to $A\to D$.
+3. Remove redundant FDs: check $A\to D$, $A\to B$, $B\to C$ — none redundant.
+
+So $\Sigma_c=\{A\to B,\; B\to C,\; A\to D\}$. Bernstein synthesis groups by determinant: group $A$ gives $\{A\to B, A\to D\}\Rightarrow R_1(A,B,D)$; group $B$ gives $\{B\to C\}\Rightarrow R_2(B,C)$. A key of $R$ is $\{A\}$ (since $A^+=ABCD$), and $R_1$ already contains $A$, so no extra key schema is needed.
+
+Result: $\{R_1(A,B,D),\,R_2(B,C)\}$ — 2 tables, lossless and dependency-preserving, in 3NF. Note a *different* extraneous-removal order (e.g., keeping $B\to D$ instead) could yield a 3-table decomposition — illustrating why min-table 3NF is an optimization over the non-unique space of minimal covers, the NP-hard core of the problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

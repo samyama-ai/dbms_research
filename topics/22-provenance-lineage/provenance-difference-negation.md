@@ -1,6 +1,7 @@
 # Provenance for Full Relational Algebra
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-difference-negation` · **Status:** partially-solved
+> **Verification note:** Glavic–Miller *Reexamining Some Holy Grails of Data Provenance* appeared at TaPP **2011** (not 2013); the reference year has been corrected.
 
 ## 1. Problem Statement
 The semiring framework (Green–Karvounarakis–Tannen 2007) elegantly handles **positive** relational algebra, but $\mathrm{RA}^+$ excludes set **difference** ($R - S$), and by extension relational **negation** and the universal/division operators. The obstacle is structural: a commutative semiring has no inverse for $+$, so "tuple $t$ is in $R$ but *not* in $S$" has no canonical algebraic counterpart. Naively adding subtraction breaks the homomorphism property — different but semantically-equivalent query plans yield different annotations, and instantiation to particular semirings (probabilities, bag counts) becomes ill-defined.
@@ -31,11 +32,23 @@ Grädel's Aachen group and Tannen (Penn) are extending dual-indeterminate proven
 Open directions: a universal sound structure or its impossibility; reconciling monus with aggregation; provenance for SQL NULLs; scalable negative/why-not provenance with ranked minimal explanations; and integrating negation-provenance into incremental view maintenance and data repair.
 
 ## 9. Key References
-- **[Foundational]** F. Geerts, A. Poggi. *On Database Query Languages for K-Relations.* J. Applied Logic, 2010.
-- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** K. Dannert, E. Grädel, M. Naaf, V. Tannen. *Semiring Provenance for Fixed-Point Logic.* CSL, 2021.
-- **[SOTA]** B. Glavic, R. J. Miller, et al. *Reexamining Some Holy Grails of Data Provenance.* TaPP, 2013.
-- **[Survey]** A. Chapman, H. V. Jagadish. *Why Not? (Explaining Missing Answers).* SIGMOD, 2009.
+- **[Foundational]** F. Geerts, A. Poggi. *On Database Query Languages for K-Relations.* J. Applied Logic, 2010. — [DOI](https://doi.org/10.1016/j.jal.2009.09.001)
+- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011. — [DOI](https://doi.org/10.1145/1989284.1989302), [arXiv](https://arxiv.org/abs/1101.1110)
+- **[SOTA]** K. Dannert, E. Grädel, M. Naaf, V. Tannen. *Semiring Provenance for Fixed-Point Logic.* CSL, 2021. — [DOI](https://doi.org/10.4230/LIPIcs.CSL.2021.17)
+- **[SOTA]** B. Glavic, R. J. Miller, et al. *Reexamining Some Holy Grails of Data Provenance.* TaPP, 2011. — [USENIX](https://www.usenix.org/conference/tapp11/reexamining-some-holy-grails-data-provenance)
+- **[Survey]** A. Chapman, H. V. Jagadish. *Why Not? (Explaining Missing Answers).* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559901)
+
+## 10. Worked Example
+
+Let $R=\{a,b\}$ and $S=\{b,c\}$ be sets over a domain, annotated in $\mathbb{N}$ (bag counts): $R(a)=2,\,R(b)=1$ and $S(b)=1,\,S(c)=4$. Consider $Q = R - S$.
+
+Under the **$m$-semiring monus** on $\mathbb{N}$, $a \ominus b = \max(a-b,0)$, so we annotate each tuple of $R$ by $R(t)\ominus S(t)$:
+
+- $a$: $R(a)\ominus S(a) = 2 \ominus 0 = 2$ (present, multiplicity 2).
+- $b$: $R(b)\ominus S(b) = 1 \ominus 1 = 0$ (absent).
+- $c$: $0 \ominus 4 = 0$ (never in $R$).
+
+So $Q = \{a\mapsto 2\}$, matching bag difference. Now see why monus breaks an RA equivalence. Set semantics demands $R - S = R - (R \cap S)$. Here $R\cap S$ on $b$ gives $\min(1,1)=1$, so $R(b)\ominus(R\cap S)(b)=1\ominus 1=0$ — consistent. But take $S'(b)=3$: then $R-S'$ gives $1\ominus 3=0$, while $R-(R\cap S')$ gives $1\ominus\min(1,3)=1\ominus 1=0$ — still equal here, yet for annotations carrying *polynomials* the two plans yield syntactically different monus-expressions ($x_b\ominus 3$ vs. $x_b\ominus x_b$) that no semiring homomorphism reconciles. That non-invariance under equivalent rewrites is exactly the "partially solved" obstruction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

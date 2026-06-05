@@ -47,12 +47,22 @@ Active threads: provenance for *property-graph* algebras and GQL/SQL-PGQ (Senell
 - Standardizing provenance into GQL/SQL-PGQ semantics.
 
 ## 9. Key References
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Mendelzon, Wood. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Comput., 1995.
-- **[SOTA]** Ramusat, Maniu, Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases* (and earlier *Semiring Provenance over Graph Databases*). EDBT / ICDE, 2018–2021.
-- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018.
-- **[SOTA]** Deutch, Milo, Roy, Tannen. *Circuits for Datalog Provenance.* ICDT, 2014.
-- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Mendelzon, Wood. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Comput., 1995. — [DOI](https://doi.org/10.1137/S009753979122370X)
+- **[SOTA]** Ramusat, Maniu, Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases* (and earlier *Semiring Provenance over Graph Databases*). EDBT / ICDE, 2018–2021. — [DOI](https://doi.org/10.5441/002/edbt.2021.08)
+- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[SOTA]** Deutch, Milo, Roy, Tannen. *Circuits for Datalog Provenance.* ICDT, 2014. — [DOI](https://doi.org/10.5441/002/icdt.2014.22)
+- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+
+## 10. Worked Example
+
+**How-provenance of an RPQ answer.** Take a tiny graph with edges annotated by semiring variables:
+$$a \xrightarrow{\;x_1\;} b,\quad b \xrightarrow{\;x_2\;} d,\quad a \xrightarrow{\;x_3\;} c,\quad c \xrightarrow{\;x_4\;} d.$$
+Query $Q$: is there a path from $a$ to $d$ of length 2? In the provenance semiring $\mathbb{N}[X]$, join (sequential edges) uses $\cdot$ and alternative derivations use $+$. Two distinct 2-hop witnesses exist — $a\!\to\!b\!\to\!d$ and $a\!\to\!c\!\to\!d$ — so the how-provenance polynomial of the answer is
+$$x_1 x_2 \;+\; x_3 x_4.$$
+Each monomial is a **why-witness** (a minimal edge set sufficing to derive the answer): $\{x_1,x_2\}$ and $\{x_3,x_4\}$.
+
+**Tropical specialization for shortest witness.** Interpret the same expression over the tropical semiring $(\min,+)$ with edge costs $x_1{=}5,x_2{=}1,x_3{=}2,x_4{=}2$. Then $\cdot\mapsto+$ and $+\mapsto\min$, giving $\min(5{+}1,\;2{+}2)=\min(6,4)=4$ — the cheapest explanation is $\{x_3,x_4\}$. Counting witnesses (here 2) becomes $\#P$-complete once paths must be *simple* and the graph is large.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

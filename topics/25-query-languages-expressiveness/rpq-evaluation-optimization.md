@@ -40,12 +40,25 @@ Hot directions: **WCOJ + automaton** integration for UCRPQ; **GraphBLAS / linear
 - Constant-delay enumeration and **factorized** outputs for UCRPQ; incremental/streaming RPQ maintenance.
 
 ## 9. Key References
-- **[Foundational]** A. Mendelzon, P. Wood. *Finding regular simple paths in graph databases.* SIAM J. Computing, 1995.
-- **[Foundational]** H. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case optimal join algorithms.* JACM, 2018.
-- **[SOTA]** A. Bonifati, G. Fletcher, H. Voigt, N. Yakovets. *Querying Graphs.* Morgan & Claypool (Synthesis Lectures), 2018.
-- **[SOTA]** D. Vrgoč et al. *MillenniumDB: An open-source graph database system.* Data Intelligence / SIGMOD demos, 2023.
-- **[Survey]** R. Angles, M. Arenas, P. Barceló, A. Hogan, J. Reutter, D. Vrgoč. *Foundations of modern query languages for graph databases.* ACM Computing Surveys, 2017.
-- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023.
+- **[Foundational]** A. Mendelzon, P. Wood. *Finding regular simple paths in graph databases.* SIAM J. Computing, 1995. — [DOI](https://doi.org/10.1137/S009753979122370X)
+- **[Foundational]** H. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case optimal join algorithms.* JACM, 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** A. Bonifati, G. Fletcher, H. Voigt, N. Yakovets. *Querying Graphs.* Morgan & Claypool (Synthesis Lectures), 2018. — [DOI](https://doi.org/10.2200/S00873ED1V01Y201808DTM051)
+- **[SOTA]** D. Vrgoč et al. *MillenniumDB: An open-source graph database system.* Data Intelligence / SIGMOD demos, 2023. — [DBLP](https://dblp.org/rec/journals/dint/VrgocRAAABHNRR23.html) — [arXiv](https://arxiv.org/abs/2111.01540)
+- **[Survey]** R. Angles, M. Arenas, P. Barceló, A. Hogan, J. Reutter, D. Vrgoč. *Foundations of modern query languages for graph databases.* ACM Computing Surveys, 2017. — [DOI](https://doi.org/10.1145/3104031) — [arXiv](https://arxiv.org/abs/1610.06264)
+- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023. — [DBLP search](https://dblp.org/search?q=GQL%20and%20SQL%2FPGQ%20The%20ISO%20standards%20for%20property%20graph%20querying)
+
+## 10. Worked Example
+
+Product-graph BFS for an RPQ. Graph $G$ with edges (label in parentheses):
+$$1 \xrightarrow{a} 2,\quad 2 \xrightarrow{b} 3,\quad 3 \xrightarrow{b} 4,\quad 1 \xrightarrow{a} 5.$$
+Query $L = a\,b^{*}$ (an $a$ then zero-or-more $b$). NFA $A$: start $q_0 \xrightarrow{a} q_1$, $q_1 \xrightarrow{b} q_1$ (accepting state $q_1$).
+
+Evaluate $\mathsf{RPQ}_L$ from source $s=1$ by BFS in the product $G \times A$ starting at $(1,q_0)$:
+- $(1,q_0) \xrightarrow{a} (2,q_1)$ and $(1,q_0)\xrightarrow{a}(5,q_1)$.
+- From $(2,q_1) \xrightarrow{b} (3,q_1) \xrightarrow{b} (4,q_1)$.
+- $(5,q_1)$ has no outgoing $b$, stays.
+
+Accepting product-states (those with NFA component $q_1$) reachable: $(2,q_1),(5,q_1),(3,q_1),(4,q_1)$. So $\mathsf{RPQ}_L(G)$ from node $1$ yields targets $\{2,5,3,4\}$ (words $a$, $a$, $ab$, $abb$). The product has $|V|\cdot|Q_A| = 5\cdot 2 = 10$ states; the BFS visits each product edge once, matching the $O(|E|\cdot|A|)$ bound of Section 4. Note arbitrary-path semantics counts $4$ via $1\to2\to3\to4$; under **simple-path** semantics the same answer holds here since no node repeats, but in general that restriction is NP-complete.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

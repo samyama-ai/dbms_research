@@ -46,12 +46,29 @@ This is genuinely **open and largely pre-formal**: the gap is the absence of (a)
 - Linking MDL-optimal schemas to data-quality outcomes (defect probability as a function of enforcement).
 
 ## 9. Key References
-- **[Foundational]** J. Rissanen. *Modeling by Shortest Data Description (MDL).* Automatica, 1978.
-- **[Foundational]** E. F. Codd. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970.
-- **[SOTA]** M. A. Baazizi, D. Colazzo, G. Ghelli, C. Sartiani. *Parametric Schema Inference for Massive JSON Datasets.* VLDB Journal, 2019.
-- **[SOTA]** C. Zhang, J. Lu, et al. *UniBench: A Benchmark for Multi-Model Database Management Systems.* TPCTC, 2018.
-- **[Survey]** M. Klettke, U. Störl, S. Scherzinger, et al. *Schema Evolution and Schema Extraction in NoSQL Databases.* (schema-management survey line), 2015–2021.
-- **[SOTA]** B. F. Cooper, A. Silberstein, E. Tam, R. Ramakrishnan, R. Sears. *Benchmarking Cloud Serving Systems with YCSB.* SoCC, 2010.
+- **[Foundational]** J. Rissanen. *Modeling by Shortest Data Description (MDL).* Automatica, 1978. — [DOI](https://doi.org/10.1016/0005-1098(78)90005-5)
+- **[Foundational]** E. F. Codd. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
+- **[SOTA]** M. A. Baazizi, D. Colazzo, G. Ghelli, C. Sartiani. *Parametric Schema Inference for Massive JSON Datasets.* VLDB Journal, 2019. — [DOI](https://doi.org/10.1007/s00778-018-0532-7)
+- **[SOTA]** C. Zhang, J. Lu, et al. *UniBench: A Benchmark for Multi-Model Database Management Systems.* TPCTC, 2018. — [DOI](https://doi.org/10.1007/978-3-030-11404-6_2)
+- **[Survey]** M. Klettke, U. Störl, S. Scherzinger, et al. *Schema Evolution and Schema Extraction in NoSQL Databases.* (schema-management survey line), 2015–2021. — [DBLP search](https://dblp.org/search?q=Klettke+St%C3%B6rl+Scherzinger+schema+evolution+NoSQL)
+- **[SOTA]** B. F. Cooper, A. Silberstein, E. Tam, R. Ramakrishnan, R. Sears. *Benchmarking Cloud Serving Systems with YCSB.* SoCC, 2010. — [DOI](https://doi.org/10.1145/1807128.1807152)
+
+## 10. Worked Example
+
+A tiny collection $D$ of 4 user documents with two "shapes":
+
+- 3 docs: `{id, name, email}` (shape $A$)
+- 1 doc: `{id, name, phone}` (shape $B$)
+
+**Shape entropy.** With $p_A = 3/4, p_B = 1/4$:
+$$H(\text{shape}) = -\tfrac34\log_2\tfrac34 - \tfrac14\log_2\tfrac14 \approx 0.81 \text{ bits/doc}.$$
+Low entropy ⇒ data is *nearly* homogeneous, so a rigid schema wastes little.
+
+**Schema-on-write cost (MDL view).** Force one relational schema `{id, name, email, phone}`. Each doc now stores one NULL for its missing column: 4 NULLs total. The rigid encoding pays $L(\text{schema}) + L(\text{data}\mid\text{schema})$ where the $4 \times$ NULL overhead is the redundancy $R$.
+
+**Schema-on-read cost.** Store each doc as-is (no NULLs), but every query filtering on `email` must handle docs lacking the field, raising $C_{\text{query}} + C_{\text{defect}}$.
+
+The flexibility metric $\mathrm{Flex}(D,W)$ should reward schema-on-read here (small $H$, few NULLs) only if the *workload* $W$ rarely queries the variant fields. If $H(\text{shape})$ rose toward $\log_2(\#\text{shapes})$, the rigid schema's NULL waste would dominate — exactly the tradeoff a principled benchmark must score.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

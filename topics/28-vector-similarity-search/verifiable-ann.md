@@ -44,11 +44,19 @@ The completeness requirement inherits ANN's **curse of dimensionality**: any *ce
 
 ## 9. Key References
 
-- **[Foundational]** Tamassia, R. *Authenticated Data Structures.* ESA, 2003.
-- **[Foundational]** Yang, Y., Papadias, D., Papadopoulos, S., Kalnis, P. *Authenticated Join Processing / Spatial Queries in Outsourced Databases.* SIGMOD, 2009.
-- **[SOTA]** Liu, T., Xie, X., Zhang, Y. *zkCNN: Zero Knowledge Proofs for Convolutional Neural Network Predictions.* CCS, 2021.
-- **[Lower bound]** Rubinstein, A. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
-- **[Survey]** Setty, S., et al. *Survey/Foundations of Succinct Arguments (SNARKs/STARKs).* (e.g. Spartan, CCS 2020; and STARK transparency work).
+- **[Foundational]** Tamassia, R. *Authenticated Data Structures.* ESA, 2003. — [DOI](https://doi.org/10.1007/978-3-540-39658-1_2)
+- **[Foundational]** Yang, Y., Papadias, D., Papadopoulos, S., Kalnis, P. *Authenticated Join Processing / Spatial Queries in Outsourced Databases.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559848)
+- **[SOTA]** Liu, T., Xie, X., Zhang, Y. *zkCNN: Zero Knowledge Proofs for Convolutional Neural Network Predictions.* CCS, 2021. — [DOI](https://doi.org/10.1145/3460120.3485379)
+- **[Lower bound]** Rubinstein, A. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
+- **[Survey]** Setty, S., et al. *Survey/Foundations of Succinct Arguments (SNARKs/STARKs).* (e.g. Spartan, CCS 2020; and STARK transparency work). — [Spartan eprint](https://eprint.iacr.org/2019/550)
+
+## 10. Worked Example
+
+A client commits a dataset $P = \{p_1,\dots,p_4\}\subset\mathbb{R}^1$ at positions $\{2,\,5,\,9,\,14\}$ via a Merkle tree, keeping only the root digest $\mathrm{com}(P)$. It outsources $P$ and queries for the top-1 nearest to $q = 6$. The server returns $S = \{p_2 = 5\}$ with distance $1$.
+
+**Soundness** is cheap: the server provides the Merkle path authenticating $p_2 = 5$, and the client recomputes $|6-5| = 1$. This proves the returned point is genuine — $O(\log n)$ proof, no scan.
+
+**Completeness** is the hard part: the client must be convinced no $p_i$ is closer than $1$, i.e. none lies in the open ball $(5,7)$. A geometric witness presents the two flanking points $p_2 = 5$ and $p_3 = 9$ (both Merkle-authenticated) plus a proof that *consecutive* committed points bracket $q$ — certifying the gap $(5,9)$ contains no other point. In $1$-D this is an $O(\log n)$ ordered-structure certificate. In high dimension $d$, no such succinct "empty ball" certificate is known: the witness can require enumerating $\Omega(n)$ points or a $2^{\Omega(d)}$ Voronoi partition — exactly the curse-of-dimensionality barrier that keeps verifiable completeness open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

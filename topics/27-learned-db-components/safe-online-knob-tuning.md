@@ -41,11 +41,19 @@ Directions: (a) misspecification-robust safe BO using confidence sequences / e-v
 - Composition of safety guarantees when multiple components tune online simultaneously (links to co-learning).
 
 ## 9. Key References
-- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015.
-- **[SOTA]** X. Zhang et al. *Towards Dynamic and Safe Configuration Tuning for Cloud Databases (OnlineTune).* SIGMOD, 2022.
-- **[Foundational]** F. Berkenkamp, A. Krause, A. P. Schoellig. *Bayesian Optimization with Safety Constraints: Safe and Automatic Parameter Tuning in Robotics.* Machine Learning, 2021.
-- **[Foundational]** S. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021.
-- **[Foundational]** Y. Wu, R. Shariff, T. Lattimore, C. Szepesvári. *Conservative Bandits.* ICML, 2016.
+- **[Foundational]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/sui15.html)
+- **[SOTA]** X. Zhang et al. *Towards Dynamic and Safe Configuration Tuning for Cloud Databases (OnlineTune).* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2203.14473) — [DOI](https://doi.org/10.1145/3514221.3526176)
+- **[Foundational]** F. Berkenkamp, A. Krause, A. P. Schoellig. *Bayesian Optimization with Safety Constraints: Safe and Automatic Parameter Tuning in Robotics.* Machine Learning, 2021. — [arXiv](https://arxiv.org/abs/1602.04450) — [DOI](https://doi.org/10.1007/s10994-021-06019-1)
+- **[Foundational]** S. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021. — [arXiv](https://arxiv.org/abs/1810.08240) — [DOI](https://doi.org/10.1214/20-AOS1991)
+- **[Foundational]** Y. Wu, R. Shariff, T. Lattimore, C. Szepesvári. *Conservative Bandits.* ICML, 2016. — [arXiv](https://arxiv.org/abs/1602.04282) — [PMLR](http://proceedings.mlr.press/v48/wu16.html)
+
+## 10. Worked Example
+
+Tune one knob $\theta=$ `shared_buffers` (GB), metric $g=$ throughput (txn/s). Baseline $\theta_{\text{base}}=4$ gives $g_{\text{base}}=1000$; safety factor $\alpha=0.1$, so the threshold is $(1-\alpha)g_{\text{base}}=900$.
+
+Fit a GP from 3 probes: $g(4)=1000,\ g(6)=1080,\ g(8)=1050$. At candidate $\theta=10$ the GP posterior gives mean $1020$ with std $80$; the high-probability **lower** confidence bound (using $\beta^{1/2}=2$) is $l(10)=1020-2\cdot80=860$. Since $860<900$, $\theta=10$ is **outside** the safe set $S_t=\{\theta: l_t(\theta)\ge900\}$ — SafeOpt will not evaluate it, even though its mean looks promising. At $\theta=7$ the GP gives mean $1075$, std $30$, so $l(7)=1075-60=1015\ge900$: safe, and it lies in the *expander* set, so it gets probed next.
+
+Now suppose a workload shift silently drops true throughput at $\theta=7$ to $840$. A CUSUM monitor on the residual $r_t=\hat g-g_{\text{obs}}$ accumulates $S_t=\max(0,S_{t-1}+r_t-k)$; with drift $\approx160$/step and slack $k=40$, it crosses threshold $h=200$ after $\lceil200/(160-40)\rceil=2$ steps, triggering rollback to $\theta_{\text{base}}$. The integral of the regression is bounded by roughly $2\times(900-840)=120$ txn$\cdot$s lost — the bounded-damage guarantee in action.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

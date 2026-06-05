@@ -62,13 +62,34 @@ For **positive relational algebra (+ projection, join, union)**, how-provenance 
 
 ## 9. Key References
 
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001.
-- **[Foundational]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* FnT Databases, 2009.
-- **[SOTA]** Amsterdamer, Deutch, Tannen. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018.
-- **[SOTA]** Arab, Feng, Glavic, et al. *GProM — A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018.
-- **[Foundational]** Dalvi, Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM, 2012.
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001. — [DOI](https://doi.org/10.1007/3-540-44503-X_20)
+- **[Foundational]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* FnT Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+- **[SOTA]** Amsterdamer, Deutch, Tannen. *Provenance for Aggregate Queries.* PODS, 2011. — [DOI](https://doi.org/10.1145/1989284.1989302)
+- **[SOTA]** Senellart, Jachiet, Maniu, Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[SOTA]** Arab, Feng, Glavic, et al. *GProM — A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018. — [DBLP](https://dblp.org/rec/journals/debu/ArabFGLNZ18.html)
+- **[Foundational]** Dalvi, Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* JACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+
+## 10. Worked Example
+
+Relation $R$ with provenance-annotated tuples (free semiring $\mathbb{N}[X]$):
+
+| tuple | annotation |
+|---|---|
+| (Ann, HR) | $x_1$ |
+| (Bob, HR) | $x_2$ |
+| (Carol, IT)| $x_3$ |
+
+**Query** $Q$: $\pi_{dept}(R)$ — list departments.
+
+Projection *adds* annotations of tuples that collapse to the same output. Output:
+
+- (HR): $x_1 + x_2$
+- (IT): $x_3$
+
+The **how-provenance** of (HR) is the polynomial $x_1 + x_2$: it says HR is witnessed by *either* the Ann tuple *or* the Bob tuple (the $+$ encodes alternative use). Its **why-provenance** is $\{x_1, x_2\}$ (the variables appearing).
+
+Now self-join $Q' = \pi_{\emptyset}(R \bowtie_{dept} R)$ to ask "does some department have $\ge 1$ pair?" The HR group contributes $(x_1+x_2)\cdot(x_1+x_2) = x_1^2 + 2x_1x_2 + x_2^2$. The exponent on $x_1^2$ and coefficient $2$ record *multiplicity* — Ann paired with herself, and Ann–Bob counted twice. A plain set-lineage $\{x_1,x_2\}$ loses this; the **semiring polynomial** keeps it, which is precisely why $\mathbb{N}[X]$ is the most informative annotation (Section 2). Crossing into a graph `nest` step is where, per Section 6, no single semiring yet composes cleanly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

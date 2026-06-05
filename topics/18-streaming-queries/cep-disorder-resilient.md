@@ -50,12 +50,29 @@ For **bounded** disorder the problem is largely solved (watermarks + allowed lat
 - Unifying watermark semantics, punctuations, and provenance for explainable late-event handling.
 
 ## 9. Key References
-- **[Foundational]** Wu, E., Diao, Y., Rizvi, S. *High-Performance Complex Event Processing over Streams (SASE).* SIGMOD, 2006.
-- **[Foundational]** Demers, A., Gehrke, J., Panda, B., Riedewald, M., Sharma, V., White, W. *Cayuga: A General Purpose Event Monitoring System.* CIDR, 2007.
-- **[Foundational]** Li, J., Tucker, K., Tufte, P., Papadimos, V., Maier, D. *Out-of-Order Processing: A New Architecture for High-Performance Stream Systems.* PVLDB, 2008.
-- **[SOTA]** Grez, A., Riveros, C., Ugarte, M., Vansummeren, S. *A Formal Framework for Complex Event Recognition (CEL/CET).* ACM TODS, 2021.
-- **[SOTA]** Mutschler, C., Philippsen, M. *Distributed Low-Latency Out-of-Order Event Processing (K-slack).* IPDPS, 2013.
-- **[Survey]** Giatrakos, N., Alevizos, E., Artikis, A., Deligiannakis, A., Garofalakis, M. *Complex Event Recognition in the Big Data Era: A Survey.* VLDB Journal, 2020.
+- **[Foundational]** Wu, E., Diao, Y., Rizvi, S. *High-Performance Complex Event Processing over Streams (SASE).* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142520)
+- **[Foundational]** Demers, A., Gehrke, J., Panda, B., Riedewald, M., Sharma, V., White, W. *Cayuga: A General Purpose Event Monitoring System.* CIDR, 2007. — [PDF](https://www.cidrdb.org/cidr2007/papers/cidr07p47.pdf) · [DBLP](https://dblp.org/rec/conf/cidr/DemersGPRSW07.html)
+- **[Foundational]** Li, J., Tucker, K., Tufte, P., Papadimos, V., Maier, D. *Out-of-Order Processing: A New Architecture for High-Performance Stream Systems.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
+- **[SOTA]** Grez, A., Riveros, C., Ugarte, M., Vansummeren, S. *A Formal Framework for Complex Event Recognition (CEL/CET).* ACM TODS, 2021. — [DOI](https://doi.org/10.1145/3485463)
+- **[SOTA]** Mutschler, C., Philippsen, M. *Distributed Low-Latency Out-of-Order Event Processing (K-slack).* IPDPS, 2013. — [DOI](https://doi.org/10.1109/IPDPS.2013.29)
+- **[Survey]** Giatrakos, N., Alevizos, E., Artikis, A., Deligiannakis, A., Garofalakis, M. *Complex Event Recognition in the Big Data Era: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00557-w)
+
+## 10. Worked Example
+
+Pattern: `SEQ(A, B)` within a 5-second window — an $A$ event followed by a later $B$ from the same sensor. The NFA has states $q_0 \xrightarrow{A} q_1 \xrightarrow{B} q_{\text{accept}}$; a live run records the timestamp of the matched $A$.
+
+Stream arrives (event, event-time):
+
+| arrival order | event | event-time $t$ |
+|---|---|---|
+| 1 | $A_1$ | 10 |
+| 2 | $B_1$ | 12 |
+| 3 | $B_2$ | 9  |
+| 4 | $A_2$ | 8  |
+
+An order-perfect engine sorts by event-time: $A_2(8), B_2(9), A_1(10), B_1(12)$, yielding matches $(A_2,B_2)$ and $(A_1,B_1)$.
+
+Now process in arrival order. After $A_1, B_1$ we emit $(A_1, B_1)$. Then $B_2(9)$ and $A_2(8)$ arrive *late*. The crucial match $(A_2, B_2)$ requires both — but $A_2$ arrives last, after $B_2$. With disorder bound $K=4$ (max out-of-orderness $= 12-8$), a reorder buffer of size $O(K)$ holding events until the watermark $w(t)$ passes $t + K$ lets us reconstruct the sorted order and emit $(A_2,B_2)$ correctly, at extra latency $\le K = 4$ s. Without buffering, a speculative engine would emit $(A_1,B_1)$ early, then on seeing $A_2$ issue an *insertion* revision adding $(A_2,B_2)$ — one retraction-class event per late arrival, trading the $O(K)$ latency for $O(\#\text{late})$ revisions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

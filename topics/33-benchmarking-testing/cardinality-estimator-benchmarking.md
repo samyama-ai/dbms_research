@@ -50,12 +50,28 @@ Exact counting of conjunctive-query answers is **#P-hard** in general (Provan–
 - Hardware- and parallelism-aware ground truth so the "cost" the metric tracks matches modern engines.
 
 ## 9. Key References
-- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB 2015.
-- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB 2009.
-- **[SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB 2021.
-- **[SOTA]** Ding, Chaudhuri, et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB 2021.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput., 2013.
-- **[Survey]** Yang, Kandula, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021.
+- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB 2015. — [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB 2009. — [DOI](https://doi.org/10.14778/1687627.1687738)
+- **[SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB 2021. — [DOI](https://doi.org/10.14778/3503585.3503586)
+- **[SOTA]** Ding, Chaudhuri, et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB 2021. — [DOI](https://doi.org/10.14778/3484224.3484234)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Comput., 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Survey]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+
+## 10. Worked Example
+
+A query has true cardinality $c=10{,}000$. Two estimators compete on three competing sub-plans whose costs scale with their cardinality estimates.
+
+| Sub-plan | true $c$ | Est. $X$ ($\hat c$) | Est. $Y$ ($\hat c$) |
+|---|---|---|---|
+| $P_1$ | 10,000 | 1,000 | 100,000 |
+| $P_2$ | 50,000 | 5,000 | 5,000 |
+| $P_3$ | 8,000 (optimal) | 800 | 80,000 |
+
+Both estimators have identical **q-error** on every plan: $X$ underestimates by exactly $10\times$, $Y$ overestimates by exactly $10\times$, so $\text{q-error}=10$ for all six cells. By q-error alone the estimators are indistinguishable.
+
+But plan choice depends on the *argmin* of $\hat c$. Estimator $X$ picks $\arg\min\{1000,5000,800\}=P_3$ — the truly optimal plan, **P-error $=0$**. Estimator $Y$ picks $\arg\min\{100000,5000,80000\}=P_2$, whose true cost $50{,}000$ vs optimal $8{,}000$ gives **P-error $=50000/8000=6.25$**.
+
+Same q-error distribution, wildly different P-error — exactly the impossibility-flavored separation of Section 5: no scalar marginal-error metric is faithful, because plan quality hinges on *relative* errors across competing sub-plans.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

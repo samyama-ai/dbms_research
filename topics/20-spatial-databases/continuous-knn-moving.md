@@ -41,12 +41,24 @@ Active directions: learned / index-assisted continuous monitors that predict inv
 - Learned invalidation-time predictors with certified correctness fallbacks.
 
 ## 9. Key References
-- **[Foundational]** Basch, Guibas, Hershberger. *Data Structures for Mobile Data.* Journal of Algorithms / SODA, 1997/1999.
-- **[Foundational]** Tao, Papadias, Shen. *Continuous Nearest Neighbor Search.* VLDB, 2002.
-- **[SOTA]** Mouratidis, Papadias, Hadjieleftheriou. *Conceptual Partitioning: An Efficient Method for Continuous Nearest Neighbor Monitoring (CPM).* SIGMOD, 2005.
-- **[SOTA]** Xiong, Mokbel, Aref. *SEA-CNN: Scalable Processing of Continuous K-Nearest Neighbor Queries in Spatio-Temporal Databases.* ICDE, 2005.
-- **[Foundational]** Aurenhammer. *Voronoi Diagrams — A Survey of a Fundamental Geometric Data Structure.* ACM Computing Surveys, 1991.
-- **[Survey]** Guibas. *Kinetic Data Structures.* In *Handbook of Data Structures and Applications*, 2004.
+- **[Foundational]** Basch, Guibas, Hershberger. *Data Structures for Mobile Data.* Journal of Algorithms / SODA, 1997/1999. — [DOI](https://doi.org/10.1006/jagm.1998.0988)
+- **[Foundational]** Tao, Papadias, Shen. *Continuous Nearest Neighbor Search.* VLDB, 2002. — [DBLP](https://dblp.org/rec/conf/vldb/TaoPS02.html)
+- **[SOTA]** Mouratidis, Papadias, Hadjieleftheriou. *Conceptual Partitioning: An Efficient Method for Continuous Nearest Neighbor Monitoring (CPM).* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066230)
+- **[SOTA]** Xiong, Mokbel, Aref. *SEA-CNN: Scalable Processing of Continuous K-Nearest Neighbor Queries in Spatio-Temporal Databases.* ICDE, 2005. — [DOI](https://doi.org/10.1109/ICDE.2005.128)
+- **[Foundational]** Aurenhammer. *Voronoi Diagrams — A Survey of a Fundamental Geometric Data Structure.* ACM Computing Surveys, 1991. — [DOI](https://doi.org/10.1145/116873.116880)
+- **[Survey]** Guibas. *Kinetic Data Structures.* In *Handbook of Data Structures and Applications*, 2004. — [DBLP](https://dblp.org/db/reference/crc/dsa2004.html)
+
+## 10. Worked Example
+
+Take $k=1$ (nearest neighbor) with two static objects and a query moving along the $x$-axis: $q(t)=(t,0)$ for $t\in[0,4]$. Objects: $A=(1,0)$, $B=(3,1)$.
+
+Squared distances:
+$$d_A^2(t)=(t-1)^2,\qquad d_B^2(t)=(t-3)^2+1.$$
+The NN swaps when $d_A^2=d_B^2$:
+$$(t-1)^2=(t-3)^2+1 \;\Rightarrow\; -2t+1=-6t+10 \;\Rightarrow\; 4t=9 \;\Rightarrow\; t=2.25.$$
+So the answer is $A$ for $t<2.25$ and $B$ for $t>2.25$ — a single **kinetic event** at $t=2.25$, which is the root of the pairwise distance-difference polynomial (Section 2). A KDS keeps just one **certificate** ("$A$ closer than $B$") and only re-evaluates when it fails at $t=2.25$; between events the answer is maintained at $O(1)$ cost.
+
+The crossing point $q(2.25)=(2.25,0)$ lies on the perpendicular bisector of $A$ and $B$ — the boundary of the order-1 Voronoi cell of $A$. With $n$ objects each pair contributes up to a Davenport–Schinzel-bounded number of such roots, giving the near-linear total event budget that bounds recomputation under linear motion.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -35,12 +35,26 @@ Directions: **learned and workload-adaptive spatial indexes** with emerging atte
 - Instance-optimality in the I/O model with output-sensitive (boundary-complexity) OPT.
 
 ## 9. Key References
-- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* PODS / JCSS, 2001/2003.
-- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006.
-- **[SOTA]** P. Afshani, J. Barbay, T. M. Chan. *Instance-Optimal Geometric Algorithms.* FOCS, 2009 / Journal of the ACM, 2017.
-- **[SOTA]** N. Ailon, B. Chazelle, K. L. Clarkson, D. Liu, W. Mulzer, C. Seshadhri. *Self-Improving Algorithms.* SICOMP, 2011.
-- **[SOTA]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[Foundational]** A. Borodin, R. Ostrovsky, Y. Rabani. *Lower Bounds for High Dimensional Nearest Neighbor Search and Related Problems.* STOC, 1999.
+- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* PODS / JCSS, 2001/2003. — [arXiv](https://arxiv.org/abs/cs/0204046), [DOI](https://doi.org/10.1145/375551.375567)
+- **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857), [DBLP](https://dblp.org/rec/conf/icml/BeygelzimerKL06.html)
+- **[SOTA]** P. Afshani, J. Barbay, T. M. Chan. *Instance-Optimal Geometric Algorithms.* FOCS, 2009 / Journal of the ACM, 2017. — [arXiv](https://arxiv.org/abs/1505.00184), [DOI](https://doi.org/10.1145/3046673)
+- **[SOTA]** N. Ailon, B. Chazelle, K. L. Clarkson, D. Liu, W. Mulzer, C. Seshadhri. *Self-Improving Algorithms.* SICOMP, 2011. — [arXiv](https://arxiv.org/abs/0907.0884), [DOI](https://doi.org/10.1137/090766437)
+- **[SOTA]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208), [DOI](https://doi.org/10.1145/3183713.3196909)
+- **[Foundational]** A. Borodin, R. Ostrovsky, Y. Rabani. *Lower Bounds for High Dimensional Nearest Neighbor Search and Related Problems.* STOC, 1999. — [DOI](https://doi.org/10.1145/301250.301330)
+
+## 10. Worked Example
+
+Take exact 1-NN as a top-$k$ problem with $k=1$ over $m=2$ sorted lists, the FLN setting. Score an object by squared distance to query $q=(0,0)$: list $L_x$ sorts by $x^2$, list $L_y$ sorts by $y^2$; the aggregate is $x^2+y^2$. Points:
+
+| pt | $(x,y)$ | $x^2$ | $y^2$ | total |
+|----|---------|-------|-------|-------|
+| P | $(1,0)$ | 1 | 0 | 1 |
+| Q | $(0,2)$ | 0 | 4 | 4 |
+| R | $(2,2)$ | 4 | 4 | 8 |
+
+The **Threshold Algorithm** reads both lists in sorted order. Round 1: $L_x$ yields $Q(x^2{=}0)$, $L_y$ yields $P(y^2{=}0)$; random-access fills in their totals $Q{=}4$, $P{=}1$. The threshold $\tau$ = aggregate of the last-seen scores $= 0+0 = 0$. Best-so-far is $P{=}1 > \tau{=}0$, so we continue. Round 2: next sorted values are $x^2{=}1$ (P) and $y^2{=}4$ (Q), giving $\tau = 1+4 = 5$. Now best-so-far $P{=}1 \le \tau{=}5$: **stop and return $P$** — without ever touching $R$.
+
+TA never reads more than a factor $m=2$ of the depth any correct sorted-access algorithm must reach (here both stop at depth 2), matching the **tight optimality ratio of $m$** from Section 5. The open question of Section 1 is whether this clean instance-optimality survives in general metrics where no such sorted-list decomposition exists.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

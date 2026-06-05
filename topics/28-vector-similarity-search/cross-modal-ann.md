@@ -43,12 +43,18 @@ Active directions: anisotropic / score-aware quantization beyond ScaNN; learning
 - Robust handling of norm/temperature drift in cross-modal scores over time.
 
 ## 9. Key References
-- **[Foundational]** A. Shrivastava, P. Li. *Asymmetric LSH (ALSH) for Sublinear Time Maximum Inner Product Search.* NeurIPS, 2014.
-- **[Foundational]** B. Neyshabur, N. Srebro. *On Symmetric and Asymmetric LSHs for Inner Product Search.* ICML, 2015.
-- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020.
-- **[Foundational]** L. Cayton. *Fast Nearest Neighbor Retrieval for Bregman Divergences.* ICML, 2008.
-- **[SOTA]** O. Khattab, M. Zaharia. *ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT.* SIGIR, 2020.
-- **[Foundational]** A. Andoni, P. Indyk, M. Pătrașcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006.
+- **[Foundational]** A. Shrivastava, P. Li. *Asymmetric LSH (ALSH) for Sublinear Time Maximum Inner Product Search.* NeurIPS, 2014. — [arXiv](https://arxiv.org/abs/1405.5869)
+- **[Foundational]** B. Neyshabur, N. Srebro. *On Symmetric and Asymmetric LSHs for Inner Product Search.* ICML, 2015. — [arXiv](https://arxiv.org/abs/1410.5518)
+- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396)
+- **[Foundational]** L. Cayton. *Fast Nearest Neighbor Retrieval for Bregman Divergences.* ICML, 2008. — [DOI](https://doi.org/10.1145/1390156.1390171)
+- **[SOTA]** O. Khattab, M. Zaharia. *ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT.* SIGIR, 2020. — [arXiv](https://arxiv.org/abs/2004.12832) · [DBLP](https://dblp.org/rec/conf/sigir/KhattabZ20.html)
+- **[Foundational]** A. Andoni, P. Indyk, M. Pătrașcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006. — [PDF](https://www.mit.edu/~andoni/papers/eps2n.pdf) · [DBLP search](https://dblp.org/search?q=On+the+Optimality+of+the+Dimensionality+Reduction+Method)
+
+## 10. Worked Example
+
+Why MIPS breaks graph monotonicity. Take three items $x_1=(1,0),\ x_2=(2,0),\ x_3=(0,3)$ and query $q=(1,0)$, with score $s(q,x)=\langle q,x\rangle$. Scores: $s(q,x_1)=1,\ s(q,x_2)=2,\ s(q,x_3)=0$. The MIPS answer is $x_2$, even though in Euclidean distance $x_1$ ($\|q-x_1\|=0$) is the true NN. Inner product rewards *large norm*, not proximity — the "best" point is not the closest one, so an $\ell_2$ proximity graph navigates to the wrong answer.
+
+Now apply the Neyshabur–Srebro symmetric transform: append a coordinate so $\tilde x = (x; \sqrt{U^2-\|x\|^2})$ with $U=\max\|x\|=3$, and $\tilde q=(q;0)$. Then $\langle \tilde q,\tilde x\rangle=\langle q,x\rangle$ while $\|\tilde x\|^2=U^2$ is constant, so $\|\tilde q-\tilde x\|^2 = \|\tilde q\|^2+U^2-2\langle q,x\rangle$ is now *monotone decreasing* in the score. Minimizing $\ell_2$ on the lifted points $\tilde x$ recovers $\arg\max s$, restoring a metric an LSH/graph index can use — at the cost of one extra dimension and a norm-dependent distortion factor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

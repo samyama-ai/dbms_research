@@ -59,11 +59,31 @@ MLS/polyinstantiation is a comparatively dormant classical area, revived in nich
 
 ## 9. Key References
 
-- **[Foundational]** Jajodia, S., Sandhu, R. *Toward a Multilevel Secure Relational Data Model.* SIGMOD, 1991.
-- **[Foundational]** Denning, D., Lunt, T., et al. *The SeaView Security Model.* IEEE S&P, 1987.
-- **[Foundational]** Smith, K., Winslett, M. *Entity Modeling in the MLS Relational Model* (belief-based semantics). VLDB, 1992.
-- **[Foundational]** Bell, D., LaPadula, L. *Secure Computer System: Unified Exposition and Multics Interpretation.* MITRE, 1976.
-- **[Survey]** Atluri, V., Jajodia, S., Bertino, E. *Transaction Processing in Multilevel Secure Databases.* (multilevel concurrency control), 1990s.
+- **[Foundational]** Jajodia, S., Sandhu, R. *Toward a Multilevel Secure Relational Data Model.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115796)
+- **[Foundational]** Denning, D., Lunt, T., et al. *The SeaView Security Model.* IEEE S&P, 1987. — [DOI](https://doi.org/10.1109/32.55088)
+- **[Foundational]** Smith, K., Winslett, M. *Entity Modeling in the MLS Relational Model* (belief-based semantics). VLDB, 1992. — [DBLP](https://dblp.org/rec/conf/vldb/SmithW92.html)
+- **[Foundational]** Bell, D., LaPadula, L. *Secure Computer System: Unified Exposition and Multics Interpretation.* MITRE, 1976. — [DBLP search](https://dblp.org/search?q=Secure+Computer+System+Unified+Exposition+Multics)
+- **[Survey]** Atluri, V., Jajodia, S., Bertino, E. *Transaction Processing in Multilevel Secure Databases.* (multilevel concurrency control), 1990s. — [DBLP search](https://dblp.org/search?q=Transaction+Processing+Multilevel+Secure+Databases+Atluri+Jajodia)
+
+## 10. Worked Example
+
+Relation **Mission**$(Name, Objective, TC)$ with apparent key $Name$. Initially a *Secret* user inserts:
+
+| Name | Objective | TC |
+|------|-----------|----|
+| Bravo | Sabotage bridge | S |
+
+A *Unclassified* (U) user — who, by **no-read-up**, cannot see the S tuple — inserts `('Bravo', 'Deliver mail', U)`.
+
+- **Reject** the insert → the U user infers a hidden 'Bravo' exists: a covert channel of $1$ bit.
+- **Polyinstantiate** → store both, with the real key extended by classification $(Name, C_{TC})$:
+
+| Name | Objective | TC |
+|------|-----------|----|
+| Bravo | Deliver mail | U |
+| Bravo | Sabotage bridge | S |
+
+Now the level-filtered views are consistent: $R_U = \pi_{\le U}$ shows only the U row (the cover story), while $R_S$ shows both. **Polyinstantiation integrity** holds because $(Name, C_{TC}) \to Objective$: the pair $(Bravo, U)$ determines "Deliver mail," $(Bravo, S)$ determines "Sabotage bridge." Entity integrity on $Name$ alone is sacrificed — exactly the relational guarantee §1 says polyinstantiation breaks.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

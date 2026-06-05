@@ -42,11 +42,21 @@ Active directions: determinacy and rewriting for **graph/path queries** (UCRPQ v
 - Quantitative "almost-determinacy" and its use in approximate query answering and privacy (view-based information leakage).
 
 ## 9. Key References
-- **[Foundational]** A. Nash, L. Segoufin, V. Vianu. *Views and queries: Determinacy and rewriting.* ACM TODS, 2010.
-- **[SOTA]** T. Gogacz, J. Marcinkowski. *The hunt for a red spider: Conjunctive query determinacy is undecidable.* LICS, 2015.
-- **[Foundational]** A. Halevy. *Answering queries using views: A survey.* VLDB Journal, 2001.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** D. Calvanese, G. De Giacomo, M. Lenzerini, M. Vardi. *View-based query processing: On the relationship between rewriting, answering and losslessness.* ICDT, 2005.
+- **[Foundational]** A. Nash, L. Segoufin, V. Vianu. *Views and queries: Determinacy and rewriting.* ACM TODS, 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[SOTA]** T. Gogacz, J. Marcinkowski. *The hunt for a red spider: Conjunctive query determinacy is undecidable.* LICS, 2015. — [arXiv](https://arxiv.org/abs/1501.01817)
+- **[Foundational]** A. Halevy. *Answering queries using views: A survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** D. Calvanese, G. De Giacomo, M. Lenzerini, M. Vardi. *View-based query processing: On the relationship between rewriting, answering and losslessness.* ICDT, 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_22)
+
+## 10. Worked Example
+
+**A determinacy that *does* yield a rewriting, and the gap it hints at.** Schema: one binary relation $E(x,y)$. Define two CQ views
+$$V_1(x,y) = E(x,y),\qquad V_2(x,z) = \exists y\,\big(E(x,y)\wedge E(y,z)\big),$$
+and ask whether $\{V_1,V_2\}$ determines the query $Q(x,z)=\exists y\,(E(x,y)\wedge E(y,z))$ (paths of length 2).
+
+Here determinacy holds **trivially and constructively**: $Q\equiv V_2$, so the rewriting is just $Q(x,z):\!-\,V_2(x,z)$. For any two databases with $\mathcal V(D_1)=\mathcal V(D_2)$ we get $V_2(D_1)=V_2(D_2)$, hence $Q(D_1)=Q(D_2)$ — determinacy as required by the fiber definition of §2.
+
+Now perturb: keep only $V_1(x,y)=E(x,y)$ and ask whether $V_1$ determines **even-length reachability** $Q'(x,z)$ = "there is a path of *even* length from $x$ to $z$." Information-theoretically $V_1$ exposes all of $E$, so it *does* determine $Q'$ — yet $Q'$ is **not first-order definable** (parity/transitive-closure is beyond FO, by an Ehrenfeucht–Fraïssé / locality argument). So determinacy holds while no FO rewriting exists; one must climb to Datalog. This is exactly the Nash–Segoufin–Vianu phenomenon — *losslessness without a query plan in the target language* — and it is why determinacy ($V_1\twoheadrightarrow Q'$) and FO-rewritability come apart, the crux of §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

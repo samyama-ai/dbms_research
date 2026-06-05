@@ -1,6 +1,7 @@
 # Aggregation Control Lower Bounds
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/aggregation-control-bounds` · **Status:** open
+> **Verification note:** The STOC 2014 fingerprinting-codes paper is by Bun, Ullman, and Vadhan (not Steinke); author corrected in §9.
 
 ## 1. Problem Statement
 
@@ -64,12 +65,24 @@ The **noisy random-workload frontier is essentially closed** (Dinur–Nissim low
 
 ## 9. Key References
 
-- **[Foundational]** Irit Dinur, Kobbi Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003.
-- **[Foundational]** Cynthia Dwork, Frank McSherry, Kobbi Nissim, Adam Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[SOTA]** Mark Bun, Jonathan Ullman, Thomas Steinke. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014.
-- **[SOTA]** Chao Li, Gerome Miklau, Michael Hay, Andrew McGregor, Vibhor Rastogi. *The Matrix Mechanism: Optimizing Linear Counting Queries Under Differential Privacy.* VLDB Journal, 2015.
-- **[Foundational]** Dorothy E. Denning, Peter J. Denning. *The Tracker: A Threat to Statistical Database Security.* ACM TODS, 1979.
-- **[Survey]** Cynthia Dwork, Aaron Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in Theoretical Computer Science, 2014.
+- **[Foundational]** Irit Dinur, Kobbi Nissim. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
+- **[Foundational]** Cynthia Dwork, Frank McSherry, Kobbi Nissim, Adam Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[SOTA]** Mark Bun, Jonathan Ullman, Salil Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* STOC, 2014. — [DOI](https://doi.org/10.1145/2591796.2591877)
+- **[SOTA]** Chao Li, Gerome Miklau, Michael Hay, Andrew McGregor, Vibhor Rastogi. *The Matrix Mechanism: Optimizing Linear Counting Queries Under Differential Privacy.* VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0398-x)
+- **[Foundational]** Dorothy E. Denning, Peter J. Denning, Mayer D. Schwartz. *The Tracker: A Threat to Statistical Database Security.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320069)
+- **[Survey]** Cynthia Dwork, Aaron Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in Theoretical Computer Science, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+
+## 10. Worked Example
+
+**A tracker in action.** Secret bits $x=(x_1,\dots,x_5)\in\{0,1\}^5$ (say a "has-condition" flag). The policy forbids any COUNT over a set of fewer than 2 records, to hide individuals. The adversary wants $x_3$.
+
+Pick two *allowed* (size $\ge 2$) queries that differ by exactly record 3:
+$$q_1=\{2,3,4\},\quad q_2=\{2,4\}.$$
+Both have size $\ge 2$, so both are answered. The system returns $a_{q_1}=x_2+x_3+x_4$ and $a_{q_2}=x_2+x_4$. The adversary computes
+$$a_{q_1}-a_{q_2}=x_3,$$
+isolating the forbidden individual bit despite the size-threshold guard. The pair $(q_1,q_2)$ is a **tracker**: query-set-size control alone fails.
+
+**Why noise is forced (Dinur–Nissim).** If instead each answer carries noise $|e_q|\le E$, then $a_{q_1}-a_{q_2}=x_3+e_{q_1}-e_{q_2}$, an error up to $2E$. Over $m=O(n)$ random queries an LP attack still reconstructs $x$ up to $o(n)$ errors whenever $E=o(\sqrt n)$ — so safety requires noise $\Omega(\sqrt n)$, here $\Omega(\sqrt 5)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

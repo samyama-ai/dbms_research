@@ -38,12 +38,25 @@ Active: declarative schema-evolution DSLs with provenance (PRISM lineage); event
 A sound lazy-evolution system with proven amortized read/write/storage bounds; static detection of non-invertible (lossy) SMOs with user warnings; cost-based scheduling of background rewrite under latency budgets; integration with schema-on-read typing so coexisting versions are statically checkable; certain-answer semantics for reads after lossy evolution.
 
 ## 9. Key References
-- **[Foundational]** Curino, Moon, Deutsch, Zaniolo. *Automating the Database Schema Evolution Process (PRISM++).* VLDB Journal, 2013.
-- **[Foundational]** Fagin, Kolaitis, Popa, Tan. *Quasi-Inverses of Schema Mappings.* ACM TODS, 2008.
-- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2005 (the chase, certain answers).
-- **[Foundational]** Foster, Greenwald, Moore, Pierce, Schmitt. *Combinators for Bidirectional Tree Transformations (Lenses).* ACM TOPLAS, 2007.
-- **[SOTA]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[Survey]** Roddick. *Schema Evolution in Database Systems — A Survey.* (and successors in NoSQL schema management), 1995 / updated.
+- **[Foundational]** Curino, Moon, Deutsch, Zaniolo. *Automating the Database Schema Evolution Process (PRISM++).* VLDB Journal, 2013. — [DOI](https://doi.org/10.1007/s00778-012-0302-x)
+- **[Foundational]** Fagin, Kolaitis, Popa, Tan. *Quasi-Inverses of Schema Mappings.* ACM TODS, 2008. — [DOI](https://doi.org/10.1145/1366102.1366108)
+- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* ICDT/TCS, 2005 (the chase, certain answers). — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** Foster, Greenwald, Moore, Pierce, Schmitt. *Combinators for Bidirectional Tree Transformations (Lenses).* ACM TOPLAS, 2007. — [DOI](https://doi.org/10.1145/1232420.1232424)
+- **[SOTA]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42), [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Survey]** Roddick. *Schema Evolution in Database Systems — A Survey.* (and successors in NoSQL schema management), 1995 / updated. — [DOI](https://doi.org/10.1016/0950-5849(95)91494-K)
+
+## 10. Worked Example
+
+A `User` collection has 1 billion documents. Two evolutions are applied without rewriting:
+
+- $v_1 \to v_2$ (rename): `name` → `full_name`. *Invertible.*
+- $v_2 \to v_3$ (split): `full_name` → `{first, last}` by splitting on the first space. *Lossy* if a name has no space or multiple spaces — not cleanly invertible.
+
+Stored documents now coexist at three versions. A read of a $v_1$ document `{"_id":7,"name":"Ada Lovelace"}` under the current schema $v_3$ applies the delta chain at read time: rename → `{"full_name":"Ada Lovelace"}`, then split → `{"first":"Ada","last":"Lovelace"}`. Chain length $d = 2$, so $O(d)$ transformation steps per read.
+
+Cost trace: lazy migration pays $O(1)$ write-time per evolution (only metadata stored), versus eager rewrite touching $10^9$ documents per evolution. Read overhead grows with $d$; a background trickle re-shaping $10^6$ docs/hour bounds the live chain length over time.
+
+Lossiness shows: document `{"name":"Cher"}` (no space) maps to `{"first":"Cher","last":null}`. The inverse cannot recover whether `null` was intended — only the *certain answer* (`first="Cher"`) is reconstructable, illustrating the non-invertible-SMO lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -49,12 +49,22 @@ Practice has working one-sided lock-free hash indexes and write-optimized B-tree
 
 ## 9. Key References
 
-- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990.
-- **[Foundational]** Dragojević, Narayanan, Castro, Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014.
-- **[SOTA]** Mitchell, Geng, Li. *Using One-Sided RDMA Reads to Build a Fast, CPU-Efficient Key-Value Store (Pilaf).* USENIX ATC, 2013.
-- **[SOTA]** Zuo, Wang, et al. *One-sided RDMA-Conscious Extendible Hashing for Disaggregated Memory (RACE).* USENIX ATC, 2021.
-- **[SOTA]** Wang, Qian, et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022.
-- **[SOTA]** Kalia, Kaminsky, Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016.
+- **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Dragojević, Narayanan, Castro, Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87)
+- **[SOTA]** Mitchell, Geng, Li. *Using One-Sided RDMA Reads to Build a Fast, CPU-Efficient Key-Value Store (Pilaf).* USENIX ATC, 2013. — [USENIX](https://www.usenix.org/conference/atc13/technical-sessions/presentation/mitchell)
+- **[SOTA]** Zuo, Wang, et al. *One-sided RDMA-Conscious Extendible Hashing for Disaggregated Memory (RACE).* USENIX ATC, 2021. — [USENIX](https://www.usenix.org/conference/atc21/presentation/zuo)
+- **[SOTA]** Wang, Qian, et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
+- **[SOTA]** Kalia, Kaminsky, Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/kalia)
+
+## 10. Worked Example
+
+A client reads a 24-byte hash-table slot — `{key: 8B, value: 8B, version: 8B}` — laid out across two cache lines via one one-sided RDMA READ. Because the READ is **non-atomic across cache lines**, it can observe a torn state while a writer is mid-update.
+
+*Self-verifying read (Pilaf/RACE style).* The writer updates with a version-and-checksum protocol. Client reads slot, sees `version=7` in the trailer but a checksum over `{key,value}` that does not match `version 7`'s stored CRC → torn read **detected** → retry. After the writer's WRITE completes, a re-READ yields a consistent `version=8` with matching CRC → accepted in **1 extra round trip**.
+
+*Insert via 8-byte CAS.* To claim an empty slot, the client issues `CMP_AND_SWAP(slot.header, EMPTY, my_token)` — exactly 8 bytes, the only remote atomic available. If two clients race, one CAS succeeds, the loser retries elsewhere; this is lock-free (system-wide progress), not wait-free (a single client may retry unboundedly under contention).
+
+*Round-trip lower bound.* Probing a bucket whose overflow chain has dereference depth $d=3$ costs $\ge 3$ round trips (pointer-chasing argument, Section 5): each remote pointer needs its own READ. With latency $\sim 2\,\mu s$, that is $\ge 6\,\mu s$ per lookup before any retries — illustrating why minimizing $d$ dominates one-sided index design.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

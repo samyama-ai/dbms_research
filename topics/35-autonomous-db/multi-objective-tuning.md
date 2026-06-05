@@ -39,11 +39,27 @@ Threads: (a) **many-objective** MOBO with cheap-to-evaluate surrogates and prefe
 - Energy and carbon as first-class, well-calibrated objectives.
 
 ## 9. Key References
-- **[Foundational]** C. H. Papadimitriou, M. Yannakakis. *On the Approximability of Trade-offs and Optimal Access of Web Sources.* FOCS, 2000.
-- **[Foundational]** M. Zuluaga, A. Krause, G. Sergent, M. Püschel. *Active Learning for Multi-Objective Optimization (PAL).* ICML, 2013.
-- **[SOTA]** S. Daulton, M. Balandat, E. Bakshy. *Differentiable Expected Hypervolume Improvement for Parallel Multi-Objective Bayesian Optimization (qNEHVI).* NeurIPS, 2021.
-- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021.
-- **[Foundational]** J. Knowles. *ParEGO: A Hybrid Algorithm with On-line Landscape Approximation for Expensive Multiobjective Optimization Problems.* IEEE Trans. Evolutionary Computation, 2006.
+- **[Foundational]** C. H. Papadimitriou, M. Yannakakis. *On the Approximability of Trade-offs and Optimal Access of Web Sources.* FOCS, 2000. — [DOI](https://doi.org/10.1109/SFCS.2000.892068)
+- **[Foundational]** M. Zuluaga, A. Krause, G. Sergent, M. Püschel. *Active Learning for Multi-Objective Optimization (PAL).* ICML, 2013. — [PMLR](https://proceedings.mlr.press/v28/zuluaga13.html)
+- **[SOTA]** S. Daulton, M. Balandat, E. Bakshy. *Differentiable Expected Hypervolume Improvement for Parallel Multi-Objective Bayesian Optimization (qNEHVI).* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2105.08195)
+- **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457291)
+- **[Foundational]** J. Knowles. *ParEGO: A Hybrid Algorithm with On-line Landscape Approximation for Expensive Multiobjective Optimization Problems.* IEEE Trans. Evolutionary Computation, 2006. — [DOI](https://doi.org/10.1109/TEVC.2005.851274)
+
+## 10. Worked Example
+
+**Why linear scalarization misses the frontier.** Two configs to compare on $(\text{latency},\text{cost})$, both minimized. Candidate configurations give these objective vectors:
+
+| Config | latency | cost |
+|--------|---------|------|
+| A | 1 | 9 |
+| B | 9 | 1 |
+| C | 4 | 4 |
+
+All three are Pareto-optimal: none dominates another. C sits in a **concave (non-convex) dent** of the frontier.
+
+Linear scalarization minimizes $w\cdot\text{lat} + (1-w)\cdot\text{cost}$. For $w=0.5$: A scores $5$, B scores $5$, **C scores $4$** — here C wins. But sweep $w$: at $w=0.5$ the tie A=B=5 already beats nothing, and for *any* $w$, $\min$ over A,B is $\le 9w+(1-w)\cdot 1$... checking $w=0.5$ C does win. Replace C with $C'=(4.5,4.5)$: then A,B score $5$ at $w{=}0.5$ but $C'$ scores $4.5$ — still found. Now $C''=(5,5)$: at every $w$, $\min(\text{A},\text{B}) \le 5w+5(1-w)=5=$ score of $C''$, so linear weighting **never strictly prefers** the concave point $C''$, even though it is non-dominated.
+
+**Chebyshev** scalarization $\max_k w_k|f_k - z_k^*|$ with ideal $z^*=(1,1)$ recovers $C''$ for $w=(0.5,0.5)$ (score $2$ vs A,B's $4$), illustrating §2's completeness claim.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

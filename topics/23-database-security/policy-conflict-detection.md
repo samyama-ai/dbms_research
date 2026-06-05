@@ -57,11 +57,25 @@ Active: **incremental / change-impact analysis** (re-verify only the affected di
 
 ## 9. Key References
 
-- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996.
-- **[Foundational]** Fisler, K., Krishnamurthi, S., Meyerovich, L.A., Tschantz, M.C. *Verification and Change-Impact Analysis of Access-Control Policies.* ICSE, 2005.
-- **[SOTA]** Backes, J., Bolignano, P., Cook, B., et al. *Semantic-Based Automated Reasoning for AWS Access Policies Using SMT (Zelkova).* FMCAD/CAV, 2018–2019.
-- **[SOTA]** Yuan, L., Mai, J., Su, Z., Chen, H., Chuah, C.-N., Mohapatra, P. *FIREMAN: A Toolkit for FIREwall Modeling and ANalysis.* IEEE S&P, 2006.
-- **[Survey]** Hu, V.C., et al. *Guide to Attribute Based Access Control (ABAC) Definition and Considerations.* NIST SP 800-162, 2014.
+- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996. — [DOI](https://doi.org/10.1109/2.485845)
+- **[Foundational]** Fisler, K., Krishnamurthi, S., Meyerovich, L.A., Tschantz, M.C. *Verification and Change-Impact Analysis of Access-Control Policies.* ICSE, 2005. — [DOI](https://doi.org/10.1145/1062455.1062502)
+- **[SOTA]** Backes, J., Bolignano, P., Cook, B., et al. *Semantic-Based Automated Reasoning for AWS Access Policies Using SMT (Zelkova).* FMCAD/CAV, 2018–2019. — [DOI](https://doi.org/10.23919/FMCAD.2018.8602994)
+- **[SOTA]** Yuan, L., Mai, J., Su, Z., Chen, H., Chuah, C.-N., Mohapatra, P. *FIREMAN: A Toolkit for FIREwall Modeling and ANalysis.* IEEE S&P, 2006. — [DOI](https://doi.org/10.1109/SP.2006.16)
+- **[Survey]** Hu, V.C., et al. *Guide to Attribute Based Access Control (ABAC) Definition and Considerations.* NIST SP 800-162, 2014. — [DOI](https://doi.org/10.6028/NIST.SP.800-162)
+
+## 10. Worked Example
+
+Take an ABAC policy over attributes $age\in[0,100]$ and $dept\in\{HR, ENG\}$, evaluated **first-applicable** (top rule wins):
+
+- $r_1$: **permit** if $age \ge 18 \wedge dept = HR$
+- $r_2$: **deny**  if $age \ge 21$
+- $r_3$: **permit** if $age \ge 18$
+
+**Conflict ($r_1$ vs $r_2$).** Are the footprints' overlap nonempty with opposite effects? Solve $age\ge 18 \wedge dept=HR \wedge age\ge 21$. The SMT solver returns $age=21, dept=HR$ — a witness, so $r_1$ and $r_2$ **conflict**; first-applicable resolves it to *permit*, but the author may not have intended that.
+
+**Shadowing ($r_3$).** Is $\llbracket r_3\rrbracket \subseteq \llbracket r_1\rrbracket \cup \llbracket r_2\rrbracket$? Check UNSAT of $age\ge18 \wedge \neg(age\ge18\wedge dept{=}HR) \wedge \neg(age\ge21)$. Witness $age=19, dept=ENG$ exists, so $r_3$ is **reachable** (not shadowed): a 19-year-old ENG user is decided by $r_3$.
+
+With $n=3$ rules this took $\binom{3}{2}=3$ pairwise overlap queries plus one coverage query — illustrating the $O(n^2)$ SMT-query upper bound of §4.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

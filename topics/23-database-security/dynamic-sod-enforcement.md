@@ -48,12 +48,20 @@ Active threads: (1) **resiliency-aware WSP** — enforcing DSoD when users may b
 
 ## 9. Key References
 
-- **[Foundational]** Sandhu, R. *Transaction Control Expressions for Separation of Duties.* ACSAC, 1988.
-- **[Foundational]** Wang, Q., Li, N. *Satisfiability and Resiliency in Workflow Authorization Systems.* ACM TISSEC, 2010.
-- **[SOTA]** Crampton, J., Gutin, G., Yeo, A. *On the Parameterized Complexity and Kernelization of the Workflow Satisfiability Problem.* ACM TISSEC, 2013.
-- **[SOTA]** Karapetyan, D., Gagarin, A., Gutin, G. *Pattern Backtracking Algorithm for the Workflow Satisfiability Problem with User-Independent Constraints.* J. Heuristics / FAW, 2015.
-- **[SOTA]** Basin, D., Burri, S.J., Karjoth, G. *Obstruction-Free Authorization Enforcement: Aligning Security and Business Objectives.* Journal of Computer Security, 2014.
-- **[Survey]** Crampton, J., Gutin, G., Watrigant, R. *Resiliency and the Workflow Satisfiability Problem.* (surveying FPT results), 2010s.
+- **[Foundational]** Sandhu, R. *Transaction Control Expressions for Separation of Duties.* ACSAC, 1988. — [IEEE](https://ieeexplore.ieee.org/document/113349)
+- **[Foundational]** Wang, Q., Li, N. *Satisfiability and Resiliency in Workflow Authorization Systems.* ACM TISSEC, 2010. — [DOI](https://doi.org/10.1145/1880022.1880034)
+- **[SOTA]** Crampton, J., Gutin, G., Yeo, A. *On the Parameterized Complexity and Kernelization of the Workflow Satisfiability Problem.* ACM TISSEC, 2013. — [DOI](https://doi.org/10.1145/2487222.2487226)
+- **[SOTA]** Karapetyan, D., Gagarin, A., Gutin, G. *Pattern Backtracking Algorithm for the Workflow Satisfiability Problem with User-Independent Constraints.* J. Heuristics / FAW, 2015. — [arXiv](https://arxiv.org/abs/1412.7834)
+- **[SOTA]** Basin, D., Burri, S.J., Karjoth, G. *Obstruction-Free Authorization Enforcement: Aligning Security and Business Objectives.* Journal of Computer Security, 2014. — [DOI](https://doi.org/10.3233/JCS-140500)
+- **[Survey]** Crampton, J., Gutin, G., Watrigant, R. *Resiliency and the Workflow Satisfiability Problem.* (surveying FPT results), 2010s. — [arXiv](https://arxiv.org/abs/1706.07205)
+
+## 10. Worked Example
+
+A payment workflow has $k=3$ steps: $s_1$ *create*, $s_2$ *approve*, $s_3$ *pay*. Users $U=\{a,b,c\}$, authorization $A$: $a$ may do $s_1,s_2$; $b$ may do $s_2,s_3$; $c$ may do $s_3$. Two DSoD constraints: $(s_1,s_2)$ different users, and $(s_2,s_3)$ different users.
+
+Enumerate satisfiable plans $\pi:S\to U$. $\pi(s_1)=a$ (only option). For $s_2$: must differ from $a$, and be authorized for $s_2$, so $\pi(s_2)=b$. For $s_3$: must differ from $b$, authorized for $s_3$, so $\pi(s_3)=c$. Exactly **one** valid plan: $(a,b,c)$. The instance is satisfiable but tightly so.
+
+Now a *dynamic* admission trace. Step $s_1$ arrives from $a$ — grant (history $h=\{(s_1,a)\}$). Step $s_3$ arrives from $b$ — granting yields residual where $s_2$ must avoid both its $(s_1,s_2)$ partner $a$ and its $(s_2,s_3)$ partner $b$; but the only $s_2$-authorized users are $a,b$ — residual WSP **unsatisfiable**, so the monitor must **deny** $s_3$-by-$b$ to stay safe, even though no constraint is yet literally violated. This is the lookahead the FPT residual-satisfiability check performs at each step, $O^*(2^{k\log k})$ with $k=3$ trivial here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -58,11 +58,21 @@ The gap is genuinely open. We have (a) a trivial worst-case bound (incompressibl
 
 ## 9. Key References
 
-- **[Foundational]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015.
-- **[SOTA]** P. Liakos, K. Papakonstantinou, Y. Kotidis. *Chimp: Efficient Lossless Floating Point Compression for Time Series Databases.* VLDB, 2022.
-- **[SOTA]** R. Li, Z. Li, et al. *Elf: Erasing-Based Lossless Floating-Point Compression.* SIGMOD/VLDB, 2023.
-- **[SOTA]** A. Afroozeh, L. Kuffo, P. Boncz. *ALP: Adaptive Lossless Floating-Point Compression.* SIGMOD, 2024.
-- **[Foundational]** T. Cover, J. Thomas. *Elements of Information Theory.* Wiley, 2006.
+- **[Foundational]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015. — [DBLP](https://dblp.org/rec/journals/pvldb/PelkonenFCHMTV15.html)
+- **[SOTA]** P. Liakos, K. Papakonstantinou, Y. Kotidis. *Chimp: Efficient Lossless Floating Point Compression for Time Series Databases.* VLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551852)
+- **[SOTA]** R. Li, Z. Li, et al. *Elf: Erasing-Based Lossless Floating-Point Compression.* SIGMOD/VLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587149)
+- **[SOTA]** A. Afroozeh, L. Kuffo, P. Boncz. *ALP: Adaptive Lossless Floating-Point Compression.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3626717)
+- **[Foundational]** T. Cover, J. Thomas. *Elements of Information Theory.* Wiley, 2006. — [DBLP search](https://dblp.org/search?q=Cover%20Thomas%20Elements%20of%20Information%20Theory)
+
+## 10. Worked Example
+
+Take two consecutive doubles that differ slightly. Suppose (schematically, in 16 hex nibbles = 64 bits):
+
+$v_{i-1} = \texttt{0x4045000000000000}$, $v_i = \texttt{0x4045400000000000}$.
+
+XOR: $x_i = v_{i-1}\oplus v_i = \texttt{0x0000400000000000}$. In binary this is a single 1-bit: it has $\ell_i = 17$ leading zeros and the meaningful window is $w_i = 1$ bit wide (the rest trailing zeros).
+
+Gorilla then spends: 1 bit "value changed" flag + (new block) $5$ bits for $\ell_i$ + $6$ bits for $w_i$ + $w_i=1$ payload bit $= 13$ bits, versus $64$ raw — a $\sim 4.9\times$ saving on this point. The "empirically-open" gap shows up here: Gorilla pays $5+6=11$ bits of *bookkeeping* to describe a single meaningful bit. Elf-style erasure or a lag-matched predictor could shave that overhead when many residuals share the same $(\ell,w)$ pattern, and no theorem yet says how close $13$ bits is to the source entropy $H$ of this residual stream — only that for an incompressible mantissa, $x_i$ would fill all 64 bits and no XOR scheme beats $\sim 64$ bits/value.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

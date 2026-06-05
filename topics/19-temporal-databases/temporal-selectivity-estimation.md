@@ -60,12 +60,22 @@ Active: correlation-aware 2-D synopses over the endpoint cloud; **learned + sket
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, P.G. et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001.
-- **[Foundational]** Haussler, D., Welzl, E. *Epsilon-Nets and Simplex Range Queries.* Discrete & Computational Geometry, 1987.
-- **[SOTA]** Kipf, A., Kipf, T., Radke, B., Leis, V., Boncz, P., Kemper, A. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019.
-- **[Foundational]** Pătraşcu, M. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007.
+- **[Foundational]** Selinger, P.G. et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** Bruno, N., Chaudhuri, S., Gravano, L. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[Foundational]** Haussler, D., Welzl, E. *Epsilon-Nets and Simplex Range Queries.* Discrete & Computational Geometry, 1987. — [DOI](https://doi.org/10.1007/BF02187876)
+- **[SOTA]** Kipf, A., Kipf, T., Radke, B., Leis, V., Boncz, P., Kemper, A. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Foundational]** Pătraşcu, M. *Lower Bounds for 2-Dimensional Range Counting.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250797)
+
+## 10. Worked Example
+
+Take 5 interval-valued facts, each mapped to its endpoint point $(s,e)$:
+$$\{(0,9),\ (0,8),\ (1,7),\ (5,6),\ (7,9)\}.$$
+Note the **start/length correlation**: the two long-lived facts both start early ($s=0$), exactly the skew §1 warns about.
+
+**As-of($a=3$)** = stabbing count = points with $s\le 3\le e$. Checking each: $(0,9)$✓, $(0,8)$✓, $(1,7)$✓, $(5,6)$✗ ($s=5>3$), $(7,9)$✗. So true selectivity $=3/5$.
+
+**Naive independence estimate.** A 1-D histogram on $s$ alone sees $P(s\le 3)=3/5$ and on $e$ alone sees $P(e\ge 3)=5/5$, and assuming independence predicts $\tfrac35\cdot\tfrac55 \cdot 5 = 3$. Here it happens to match — but try **As-of($a=8$)**: true count is $\{(0,9),(0,8),(7,9)\}=3$. Independence gives $P(s\le8)\cdot P(e\ge8)\cdot5 = \tfrac55\cdot\tfrac35\cdot5 = 3$ again, coincidentally — whereas a deep-history instant like $a=0$ has true count $2$ but independence predicts $P(s\le0)P(e\ge0)\cdot5=\tfrac25\cdot1\cdot5=2$. The blow-up appears once mass concentrates near the diagonal: a VC $\varepsilon$-sample of size $O(\varepsilon^{-2}\log\delta^{-1})$ bounds the *additive* error $\varepsilon n$ regardless of this correlation (§4), but gives no useful *multiplicative* guarantee for the rare-instant tail (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

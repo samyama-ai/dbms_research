@@ -54,12 +54,31 @@ The gap is between **practical near-linear row scaling** (HyFD/Pyro) and the **a
 
 ## 9. Key References
 
-- **[Foundational]** Y. Huhtala, J. Kärkkäinen, P. Porkka, H. Toivonen. *TANE: An Efficient Algorithm for Discovering Functional and Approximate Dependencies.* The Computer Journal, 1999.
-- **[Survey]** T. Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015.
-- **[SOTA]** T. Papenbrock, F. Naumann. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* ACM SIGMOD, 2016.
-- **[SOTA]** S. Kruse, F. Naumann. *Efficient Discovery of Approximate Dependencies (Pyro).* PVLDB, 2018.
-- **[Foundational]** H. Mannila, K.-J. Räihä. *Algorithms for Inferring Functional Dependencies from Relations.* Data & Knowledge Engineering, 1994.
-- **[Foundational]** M. Fredman, L. Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* Journal of Algorithms, 1996.
+- **[Foundational]** Y. Huhtala, J. Kärkkäinen, P. Porkka, H. Toivonen. *TANE: An Efficient Algorithm for Discovering Functional and Approximate Dependencies.* The Computer Journal, 1999. — [DOI](https://doi.org/10.1093/comjnl/42.2.100)
+- **[Survey]** T. Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+- **[SOTA]** T. Papenbrock, F. Naumann. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* ACM SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[SOTA]** S. Kruse, F. Naumann. *Efficient Discovery of Approximate Dependencies (Pyro).* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3192965.3192968)
+- **[Foundational]** H. Mannila, K.-J. Räihä. *Algorithms for Inferring Functional Dependencies from Relations.* Data & Knowledge Engineering, 1994. — [DOI](https://doi.org/10.1016/0169-023X(94)90023-X)
+- **[Foundational]** M. Fredman, L. Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* Journal of Algorithms, 1996. — [DOI](https://doi.org/10.1006/jagm.1996.0062)
+
+## 10. Worked Example
+
+Take a 4-row relation over $R=\{A,B,C\}$:
+
+| tid | A | B | C |
+|-----|---|---|---|
+| 1 | a1 | b1 | c1 |
+| 2 | a1 | b1 | c2 |
+| 3 | a2 | b2 | c1 |
+| 4 | a2 | b2 | c2 |
+
+**Validate $A \to B$ via stripped partitions (PLIs).** Group tuple ids by value:
+$$\pi_A = \{\{1,2\},\{3,4\}\}, \qquad \pi_{AB} = \{\{1,2\},\{3,4\}\}.$$
+Since $\pi_A = \pi_{AB}$ (refinement with no extra splits), the FD $A \to B$ **holds** — every group agreeing on $A$ also agrees on $B$.
+
+**Refute $A \to C$:** $\pi_{AC} = \{\{1\},\{2\},\{3\},\{4\}\}$, which strictly refines $\pi_A$, so $A\to C$ **fails** (tuples 1,2 share $A{=}a_1$ but differ on $C$).
+
+**Minimality / lattice traversal:** $A\to B$ and (by symmetry) $B\to A$ both hold and are minimal. The lattice over $2^R$ here has $2^3=8$ nodes; level-wise traversal prunes supersets of confirmed determinants. Worst-case the minimal-FD set can reach $\binom{n}{n/2}$ — for $n=3$ that is $\binom{3}{1}=3$ candidate single-attribute LHSs per RHS, illustrating why complete discovery is exponential in $n$ even though each PLI check is linear in $m$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,29 @@ Active: (i) **DataSketches** ecosystem growth and standardization of mergeable s
 - Private, out-of-order-robust temporal sketches with continual-observation guarantees.
 
 ## 9. Key References
-- **[Foundational]** Agarwal, P., Cormode, G., Huang, Z., Phillips, J., Wei, Z., Yi, K. *Mergeable Summaries.* ACM TODS, 2013.
-- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog.* AofA, 2007.
-- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing / SODA, 2002.
-- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: the Count-Min Sketch.* J. Algorithms, 2005.
-- **[SOTA]** Chan, T.-H. H., Shi, E., Song, D. *Private and Continual Release of Statistics.* ACM TISSEC, 2011. (dyadic binary mechanism)
+- **[Foundational]** Agarwal, P., Cormode, G., Huang, Z., Phillips, J., Wei, Z., Yi, K. *Mergeable Summaries.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128)
+- **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[Foundational]** Flajolet, P., Fusy, É., Gandouet, O., Meunier, F. *HyperLogLog.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
+- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing / SODA, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Foundational]** Cormode, G., Muthukrishnan, S. *An Improved Data Stream Summary: the Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[SOTA]** Chan, T.-H. H., Shi, E., Song, D. *Private and Continual Release of Statistics.* ACM TISSEC, 2011. (dyadic binary mechanism) — [DOI](https://doi.org/10.1145/2043621.2043626)
+
+## 10. Worked Example
+
+**Dyadic decomposition for a range-`SUM`.** Suppose $T=8$ time buckets $[0,8)$, each holding a precomputed (mergeable) summary of that bucket's events. Build the dyadic / segment-tree layout:
+
+```
+level 0:  [0,8)
+level 1:  [0,4)        [4,8)
+level 2:  [0,2) [2,4)  [4,6) [6,8)
+level 3:  0 1 2 3 4 5 6 7   (singletons)
+```
+
+Query range $[1,7)$. Greedy maximal-dyadic cover decomposes it into the *fewest* aligned nodes:
+
+$$[1,7) = \underbrace{[1,2)}_{\text{leaf}} \;\cup\; \underbrace{[2,4)}_{\text{lvl 2}} \;\cup\; \underbrace{[4,6)}_{\text{lvl 2}} \;\cup\; \underbrace{[6,7)}_{\text{leaf}}.$$
+
+The answer merges $4$ precomputed sketches. In general any range needs $\le 2\log_2 T = 6$ nodes here, so the per-query cost is $O(\log T)$ merges. With additive `COUNT/SUM` the merges are exact; with a distinct-count sketch (HyperLogLog) each merge is a register-wise max and the union error stays $\approx 1.04/\sqrt{m}$, paying the multiplicative $O(\log T)$ dyadic factor over a single sketch. An interval tuple spanning, say, $[2,6)$ is a *range update* covered exactly by nodes $[2,4)$ and $[4,6)$ — two lazy node updates instead of touching every leaf.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

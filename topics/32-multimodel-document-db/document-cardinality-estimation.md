@@ -64,13 +64,28 @@ For single-path scalar predicates the gap is essentially **closed** (histograms 
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS, 2000.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007.
-- **[SOTA]** Polyzotis, Garofalakis. *XSKETCH Synopses for XML Data Graphs.* ACM TODS, 2006.
-- **[SOTA]** Kipf, Kemper, et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019.
-- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* FnT Databases, 2011.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS, 2000. — [DOI](https://doi.org/10.1145/335168.335230)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007. — [DBLP](https://dblp.org/rec/journals/dmtcs/FlajoletFGM07.html)
+- **[SOTA]** Polyzotis, Garofalakis. *XSKETCH Synopses for XML Data Graphs.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1166074.1166082)
+- **[SOTA]** Kipf, Kemper, et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* FnT Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Collection of $N=1000$ JSON documents. Predicate $\varphi$: `country = "FR" AND ANY t IN tags : t = "vip"`. Suppose the true per-predicate selectivities are
+$$s_1 = \Pr[country = \text{FR}] = 0.10, \qquad s_2 = \Pr[\text{vip} \in tags] = 0.05,$$
+but in this data VIP customers are *concentrated* in France: the true conjunction selectivity is $s_{12} = 0.04$ (40 documents), not the independent product.
+
+**Independence assumption** (what a naive optimizer multiplies):
+$$\hat{c}_{\text{indep}} = N\,s_1 s_2 = 1000 \times 0.10 \times 0.05 = 5 \text{ documents}.$$
+
+True $c = 40$. The q-error is
+$$\text{q-error} = \max\!\Big(\tfrac{\hat c}{c}, \tfrac{c}{\hat c}\Big) = \max\!\Big(\tfrac{5}{40}, \tfrac{40}{5}\Big) = 8,$$
+an 8x underestimate, which can flip a join order. This is the independence-failure blow-up of section 5: with correlated paths the error grows with predicate length.
+
+**Sampling cost.** To estimate $s_{12}=0.04$ to standard error $0.01$ needs $m \approx s(1-s)/\sigma^2 = 0.04\cdot0.96/0.0001 \approx 384$ sampled documents, fine for dense predicates but hopeless for a path present in only $5/1000$ documents, where $s\to 0$ forces huge $m$ (the Charikar et al. distinct-sparse lower bound).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

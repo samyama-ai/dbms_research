@@ -96,11 +96,21 @@ runtime regret, and cheap unlabeled drift proxies with provable correlation to q
 
 ## 9. Key References
 
-- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Ann. Math. Statist., 1971.
-- **[Foundational]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM 2007.
-- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020.
-- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
-- **[Survey]** J. Gama et al. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014.
+- **[Foundational]** G. Lorden. *Procedures for Reacting to a Change in Distribution.* Ann. Math. Statist., 1971. — [DOI](https://doi.org/10.1214/aoms/1177693055)
+- **[Foundational]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM 2007. — [DOI](https://doi.org/10.1137/1.9781611972771.42)
+- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3389711) · [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** J. Gama et al. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2523813)
+
+## 10. Worked Example
+
+A learned cardinality estimator is monitored by its per-query log-q-error $X_t$. Pre-drift $X_t\sim\mathcal N(0.2,\,0.1^2)$; after a silent data shift at $t=500$ it jumps to $\mathcal N(0.5,\,0.1^2)$.
+
+**CUSUM trace.** With reference $\mu_0=0.2$ and slack $k=0.15$ (half the shift), the one-sided statistic is $S_t=\max(0,\,S_{t-1}+X_t-\mu_0-k)$, alarm when $S_t>h$ (threshold $h=2$ tuned for false-alarm period $T\approx 10^4$).
+
+Before drift $X_t-0.35\approx -0.15$ on average, so $S_t$ stays pinned at $0$. After $t=500$ the increment is $0.5-0.35=+0.15$ per query, so $S_t$ climbs roughly linearly; it crosses $h=2$ after about $2/0.15\approx 14$ queries.
+
+**Delay vs. Lorden bound.** Post/pre KL for unit-variance-scaled Gaussians with mean gap $0.3/0.1=3\sigma$ is $\mathrm{KL}=\tfrac12(3)^2=4.5$. Lorden's bound gives expected delay $\gtrsim \log T/\mathrm{KL}=\log(10^4)/4.5\approx 9.2/4.5\approx 2$ queries — so the observed $\sim14$-query delay is within an order of magnitude of the information-theoretic floor, and shrinking the slack $k$ would trade faster detection for more false alarms.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

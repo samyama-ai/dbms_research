@@ -66,12 +66,25 @@ The **asymptotic online gap is closed**: OptORAMa's $O(\log n)$ meets Larsen–N
 
 ## 9. Key References
 
-- **[Foundational]** Oded Goldreich, Rafail Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* Journal of the ACM, 1996.
-- **[Foundational]** Emil Stefanov, Marten van Dijk, Elaine Shi, Christopher Fletcher, Ling Ren, Xiangyao Yu, Srinivas Devadas. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* ACM CCS, 2013.
-- **[SOTA]** Kasper Green Larsen, Jesper Buus Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Gilad Asharov, Ilan Komargodski, Wei-Kai Lin, Kartik Nayak, Enoch Peserico, Elaine Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020.
-- **[SOTA]** Natacha Crooks, Matthew Burke, Ethan Cecchetti, Sitar Harel, Rachit Agarwal, Lorenzo Alvisi. *Obladi: Oblivious Serializable Transactions in the Cloud.* OSDI, 2018.
-- **[Survey]** Elaine Shi. *Path Oblivious Heap and Oblivious Data Structures* / tutorials on ORAM. (Survey material, 2020.)
+- **[Foundational]** Oded Goldreich, Rafail Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* Journal of the ACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Emil Stefanov, Marten van Dijk, Elaine Shi, Christopher Fletcher, Ling Ren, Xiangyao Yu, Srinivas Devadas. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* ACM CCS, 2013. — [DOI](https://doi.org/10.1145/2508859.2516660)
+- **[SOTA]** Kasper Green Larsen, Jesper Buus Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[SOTA]** Gilad Asharov, Ilan Komargodski, Wei-Kai Lin, Kartik Nayak, Enoch Peserico, Elaine Shi. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020. — [DOI](https://doi.org/10.1007/978-3-030-45724-2_14)
+- **[SOTA]** Natacha Crooks, Matthew Burke, Ethan Cecchetti, Sitar Harel, Rachit Agarwal, Lorenzo Alvisi. *Obladi: Oblivious Serializable Transactions in the Cloud.* OSDI, 2018. — [arXiv](https://arxiv.org/abs/1809.10559)
+- **[Survey]** Elaine Shi. *Path Oblivious Heap and Oblivious Data Structures* / tutorials on ORAM. (Survey material, 2020.) — [DBLP search](https://dblp.org/search?q=Path+Oblivious+Heap+Elaine+Shi)
+
+## 10. Worked Example
+
+Consider a tiny Path ORAM storing $n=4$ blocks in a binary tree of height $L=\log_2 n = 2$ (so $4$ leaves $\{00,01,10,11\}$, $7$ nodes), each node a *bucket* of $Z=2$ blocks. The client keeps a **position map** assigning each block a random leaf.
+
+Say block $b_3$ currently maps to leaf $10$. To read $b_3$:
+
+1. **Read the path** root→leaf $10$: nodes at depths $0,1,2$, i.e. $3$ buckets $\times\,Z=2 = 6$ block-slots fetched.
+2. Find $b_3$, return it to the app.
+3. **Remap** $b_3$ to a fresh random leaf, say $01$ (this is what hides the pattern — the next access to $b_3$ touches an unrelated path).
+4. **Write back** the same path, pushing each held block as deep as its leaf allows; overflow goes to the client *stash*.
+
+Cost: $6$ physical block transfers for $1$ logical access, so overhead $\approx Z\,(L+1)=2\cdot 3=6 = \Theta(\log n)$. For $n=2^{20}$ this is $\approx 2\cdot 21=42\times$ — matching the Larsen–Nielsen $\Omega(\log n)$ bound and illustrating why real overheads are "tens of $\times$."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

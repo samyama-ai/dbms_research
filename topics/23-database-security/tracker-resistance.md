@@ -50,13 +50,25 @@ Active directions: **workload-aware / instance-optimal** DP mechanisms (extendin
 
 ## 9. Key References
 
-- **[Foundational]** Denning, D.E., Denning, P.J., Schwartz, M.D. *The Tracker: A Threat to Statistical Database Security.* ACM TODS, 1979.
-- **[Foundational]** Dinur, I., Nissim, K. *Revealing Information While Preserving Privacy.* PODS, 2003.
-- **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006.
-- **[SOTA]** Li, C., Hay, M., Rastogi, V., Miklau, G., McGregor, A. *Optimizing Linear Counting Queries under Differential Privacy.* PODS, 2010.
-- **[SOTA]** Hardt, M., Rothblum, G.N. *A Multiplicative Weights Mechanism for Privacy-Preserving Data Analysis.* FOCS, 2010.
-- **[Survey]** Adam, N.R., Worthmann, J.C. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989.
-- **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
+- **[Foundational]** Denning, D.E., Denning, P.J., Schwartz, M.D. *The Tracker: A Threat to Statistical Database Security.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320069)
+- **[Foundational]** Dinur, I., Nissim, K. *Revealing Information While Preserving Privacy.* PODS, 2003. — [DOI](https://doi.org/10.1145/773153.773173)
+- **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[SOTA]** Li, C., Hay, M., Rastogi, V., Miklau, G., McGregor, A. *Optimizing Linear Counting Queries under Differential Privacy.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104)
+- **[SOTA]** Hardt, M., Rothblum, G.N. *A Multiplicative Weights Mechanism for Privacy-Preserving Data Analysis.* FOCS, 2010. — [DOI](https://doi.org/10.1109/FOCS.2010.85)
+- **[Survey]** Adam, N.R., Wortmann, J.C. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989. — [DOI](https://doi.org/10.1145/76894.76895)
+- **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+
+## 10. Worked Example
+
+**A tracker attack.** A medical DB blocks any `COUNT` query whose answer set has size $<2$ or $>n-2$. The attacker wants to learn whether Alice has diabetes — a query set of size $1$, which is forbidden. Let $A=$ "diabetic", and pick a characteristic predicate $C$ that uniquely identifies Alice, e.g. $C=$ (ZIP $=94016$ AND age $=37$ AND female). The tracker $T = C$, and its complement $\lnot C$, are both large allowed sets.
+
+The attacker issues three *permitted* queries:
+$$q_1 = \text{COUNT}(A),\quad q_2 = \text{COUNT}(A \wedge \lnot C),\quad q_3 = \text{COUNT}(A \wedge \text{TRUE})\ \text{computed as}\ q_1.$$
+Then
+$$\text{COUNT}(A \wedge C) = q_1 - q_2.$$
+If $q_1=128$ and $q_2=127$, the difference is $1$: Alice is diabetic — extracted entirely from large-answer-set queries.
+
+**The DP fix.** Adding $\mathrm{Lap}(1/\varepsilon)$ noise to each count (sensitivity $=1$) makes $q_1-q_2$ a noisy value with std $\approx \sqrt{2}/\varepsilon$, so a difference of $1$ is statistically indistinguishable from $0$. Composition charges $3\varepsilon$ total, *accounting* for the attacker's query-combining strategy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

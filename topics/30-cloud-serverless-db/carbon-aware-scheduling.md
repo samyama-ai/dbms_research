@@ -52,12 +52,24 @@ Theory cleanly bounds the *stylized* pieces (energy speed-scaling, one-way tradi
 - Carbon-aware *transaction* (not just batch) scheduling without violating latency.
 
 ## 9. Key References
-- **[Foundational]** Frances Yao, Alan Demers, Scott Shenker. *A Scheduling Model for Reduced CPU Energy.* FOCS, 1995.
-- **[Foundational]** Nikhil Bansal, Tracy Kimbrel, Kirk Pruhs. *Speed Scaling to Manage Energy and Temperature.* JACM, 2007.
-- **[SOTA]** Ana Radovanović, et al. *Carbon-Aware Computing for Datacenters.* IEEE Transactions on Power Systems, 2023 (Google carbon-intelligent computing).
-- **[SOTA]** Philipp Wiesner, et al. *Let's Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud.* Middleware, 2021.
-- **[SOTA]** Walid Hanafy, et al. *CarbonScaler: Leveraging Cloud Workload Elasticity for Optimizing Carbon-Efficiency.* SIGMETRICS, 2024.
-- **[Survey]** Susanne Albers. *Energy-Efficient Algorithms.* Communications of the ACM, 2010.
+- **[Foundational]** Frances Yao, Alan Demers, Scott Shenker. *A Scheduling Model for Reduced CPU Energy.* FOCS, 1995. — [ACM](https://dl.acm.org/doi/10.5555/795662.796264)
+- **[Foundational]** Nikhil Bansal, Tracy Kimbrel, Kirk Pruhs. *Speed Scaling to Manage Energy and Temperature.* JACM, 2007. — [DOI](https://doi.org/10.1145/1206035.1206038)
+- **[SOTA]** Ana Radovanović, et al. *Carbon-Aware Computing for Datacenters.* IEEE Transactions on Power Systems, 2023 (Google carbon-intelligent computing). — [arXiv](https://arxiv.org/abs/2106.11750)
+- **[SOTA]** Philipp Wiesner, et al. *Let's Wait Awhile: How Temporal Workload Shifting Can Reduce Carbon Emissions in the Cloud.* Middleware, 2021. — [arXiv](https://arxiv.org/abs/2110.13234)
+- **[SOTA]** Walid Hanafy, et al. *CarbonScaler: Leveraging Cloud Workload Elasticity for Optimizing Carbon-Efficiency.* SIGMETRICS, 2024. — [arXiv](https://arxiv.org/abs/2302.08681)
+- **[Survey]** Susanne Albers. *Energy-Efficient Algorithms.* Communications of the ACM, 2010. — [DOI](https://doi.org/10.1145/1735223.1735245)
+
+## 10. Worked Example
+
+Consider one deferrable nightly compaction job needing $4$ hours of work, released at hour $0$ with deadline at hour $6$. Carbon intensity (gCO₂/kWh) over the 6 hourly slots in one region is:
+
+$$\text{CI} = [\,500,\ 480,\ 300,\ 120,\ 150,\ 460\,].$$
+
+Power is fixed at $1$ kW while running. We must pick $4$ of the $6$ slots. Carbon-optimal greedy selects the four lowest-CI slots: hours $3,4,2,5$ → values $120,150,300,460$, total $= 1030$ gCO₂.
+
+Compare to a carbon-blind scheduler that runs immediately in slots $0$–$3$: $500+480+300+120 = 1400$ gCO₂. Savings $= 1 - 1030/1400 \approx 26\%$ — consistent with the reported 10–40% range.
+
+Now make it **online**: at hour $0$ we see only $\text{CI}_0=500$ and the range bound $\Phi = \tfrac{\max}{\min}=\tfrac{500}{120}\approx 4.2$. A one-way-trading threshold policy runs only when CI drops below $\sqrt{500\cdot 120}\approx 245$, deferring through hours $0,1$ and capturing hours $2,3,4$ — but must run an extra slot before the deadline, illustrating why no online policy beats the $\Omega(\log\Phi)$ deferral lower bound without a forecast.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

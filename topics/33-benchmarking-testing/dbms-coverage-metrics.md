@@ -72,12 +72,25 @@ The gap is **definitional and empirical, not closed**. We can compute code cover
 
 ## 9. Key References
 
-- **[Foundational]** R. A. DeMillo, R. J. Lipton, F. G. Sayward. *Hints on Test Data Selection: Help for the Practicing Programmer (Mutation Testing).* IEEE Computer, 1978.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI, 2020.
-- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020.
-- **[SOTA]** R. Zhong et al. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* CCS, 2020.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (query-language expressiveness/behavior space).
+- **[Foundational]** R. A. DeMillo, R. J. Lipton, F. G. Sayward. *Hints on Test Data Selection: Help for the Practicing Programmer (Mutation Testing).* IEEE Computer, 1978. — [DOI](https://doi.org/10.1109/C-M.1978.218136)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger) · [arXiv](https://arxiv.org/abs/2001.04174)
+- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
+- **[SOTA]** R. Zhong et al. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* CCS, 2020. — [DOI](https://doi.org/10.1145/3372297.3417260) · [arXiv](https://arxiv.org/abs/2006.02398)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (query-language expressiveness/behavior space). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Take **3-valued predicate coverage** as the obligation set. For a single `WHERE` predicate $p$ over a nullable column, the obligations are $\{p=\text{TRUE},\ p=\text{FALSE},\ p=\text{UNKNOWN(NULL)}\}$, so $m=3$.
+
+Two candidate queries against table `t(x INT)` with rows $\{1, 5, \texttt{NULL}\}$:
+
+- $q_1$: `SELECT * FROM t WHERE x > 3` — on the three rows, $p$ evaluates to FALSE (1), TRUE (5), UNKNOWN (NULL). Covers all 3 obligations: $C(\{q_1\})=3/3=1$.
+- $q_2$: `SELECT * FROM t WHERE x > 0` — evaluates TRUE, TRUE, UNKNOWN. Covers $\{$TRUE, UNKNOWN$\}$ only: $C(\{q_2\})=2/3$.
+
+Why this matters: a classic logic bug is treating `x > 3` on a NULL row as FALSE (filtering it correctly) but `NOT (x > 3)` as TRUE (wrongly *including* the NULL) — violating SQL's three-valued logic where `NOT UNKNOWN = UNKNOWN`. Code-line coverage hits 100% of the comparison operator's source on $q_2$ alone, yet never exercises the UNKNOWN path, so the bug survives. The semantic metric exposes the gap that edge coverage saturates over.
+
+Greedy suite selection: starting empty, pick $q_1$ (gain 3), done — matching the $(1-1/e)$ submodular guarantee, here achieving the exact optimum.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

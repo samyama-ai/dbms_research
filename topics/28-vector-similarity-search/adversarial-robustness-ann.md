@@ -44,12 +44,20 @@ Active threads: corpus-poisoning and retrieval-attack research on RAG pipelines 
 - Cheap poisoning detection on insert streams (degree/clustering anomalies).
 
 ## 9. Key References
-- **[Foundational]** O. Ben-Eliezer, R. Jayaram, D. P. Woodruff, E. Yogev. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020.
-- **[Foundational]** M. Hardt, D. P. Woodruff. *How Robust are Linear Sketches to Adaptive Inputs?* STOC, 2013.
-- **[Foundational]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
-- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320).
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Survey]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
+- **[Foundational]** O. Ben-Eliezer, R. Jayaram, D. P. Woodruff, E. Yogev. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020. — [arXiv](https://arxiv.org/abs/2003.14265) — [DOI](https://doi.org/10.1145/3375395.3387658)
+- **[Foundational]** M. Hardt, D. P. Woodruff. *How Robust are Linear Sketches to Adaptive Inputs?* STOC, 2013. — [arXiv](https://arxiv.org/abs/1211.1056) — [DOI](https://doi.org/10.1145/2488608.2488624)
+- **[Foundational]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904) — [DOI](https://doi.org/10.1145/3188745.3188916)
+- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320). — [arXiv](https://arxiv.org/abs/1603.09320) — [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html) — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
+- **[Survey]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+
+## 10. Worked Example
+
+**A query-time adversary forcing a greedy-search local minimum.** Take 6 points on a line, $a{=}0, b{=}1, c{=}2, d{=}10, e{=}11, f{=}12$, and build a proximity graph where each node links only to its two nearest neighbors: $a\!-\!b\!-\!c$ and $d\!-\!e\!-\!f$, with one bridge $c\!-\!d$. Greedy 1-NN search starts at a fixed entry, say $a$.
+
+Honest query $q{=}1.4$: true NN is $c$ (dist $0.6$). Greedy from $a$: $a(1.4)\to b(0.4)\to c(0.6)$ — neighbor $d$ is farther, stop at $c$. Correct, 3 distance evals.
+
+Adversarial query $q{=}9.6$: true NN is $d$ (dist $0.4$). Greedy from $a$: $a(9.6)\to b(8.6)\to c(7.6)\to d(0.4)\to e$? $e$ is dist $1.4 > 0.4$, stop at $d$. Here it still succeeds but costs $4$ evals. Now delete the single bridge $c\!-\!d$ (a poisoning insert that crowds it out): greedy halts at $c$ (dist $7.6$) — recall drops to $0$. One adversarial edge removal flips recall from $1$ to $0$, illustrating why fixed-randomness graphs have no worst-case recall floor.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -43,12 +43,23 @@ Directions: (1) unified checkers spanning the whole isolation lattice with count
 - Inference of the *exact* strongest guarantee a system provides, with statistical confidence bounds.
 
 ## 9. Key References
-- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[SOTA]** Alvaro, Kingsbury. *Elle: Inferring Isolation Anomalies from Experimental Observations.* PVLDB, 2020.
-- **[SOTA]** Tan, Jung, Lustig, Lloyd, et al. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
-- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
-- **[SOTA]** Huang, Liu, et al. *PolySI: Checking Snapshot Isolation Efficiently.* PVLDB, 2023.
+- **[Foundational]** Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** Adya, Liskov, O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DOI](https://doi.org/10.1109/ICDE.2000.839388) — [DBLP](https://dblp.org/rec/conf/icde/AdyaLO00)
+- **[SOTA]** Alvaro, Kingsbury. *Elle: Inferring Isolation Anomalies from Experimental Observations.* PVLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554) — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** Tan, Zhao, Mu, Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan) — [DBLP](https://dblp.org/rec/conf/osdi/TanZMW20)
+- **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [arXiv](https://arxiv.org/abs/1908.04509) — [DOI](https://doi.org/10.1145/3360591)
+- **[SOTA]** Huang, Liu, et al. *PolySI: Checking Snapshot Isolation Efficiently.* PVLDB, 2023. — [arXiv](https://arxiv.org/abs/2301.07313) — [DOI](https://doi.org/10.14778/3583140.3583145)
+
+## 10. Worked Example
+
+Two transactions over keys $x,y$ (both initially 0), each write installs a *unique* value (Elle's trick):
+
+- $T_1$: $w(x{=}1)$, then $r(y) \to 0$.
+- $T_2$: $w(y{=}1)$, then $r(x) \to 0$.
+
+Recover dependency edges. $T_1$ read $y{=}0$, but $T_2$ wrote $y{=}1$, so $T_1$ did *not* read $T_2$'s write — $T_1$ must be ordered before $T_2$ on $y$: edge $T_1 \xrightarrow{\text{rw}} T_2$ (anti-dependency). Symmetrically $T_2$ read $x{=}0$ while $T_1$ wrote $x{=}1$: edge $T_2 \xrightarrow{\text{rw}} T_1$.
+
+The DSG has a **cycle** $T_1 \to T_2 \to T_1$ formed by two rw anti-dependency edges. Serializability forbids *all* cycles, so this history is **not serializable** — it is the classic **write-skew** anomaly. But snapshot isolation only forbids cycles with $<2$ consecutive rw edges; this cycle has exactly two, so SI *permits* it. Thus the history is a witness that the system is at most SI, not serializable. Because each value is unique, version order needs no search — cycle detection is near-linear, sidestepping the worst-case NP-completeness of recovering hidden ww order.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

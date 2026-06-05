@@ -53,12 +53,22 @@ Best provable: a $(1 - 1/e)$-competitive guarantee against the best *fixed* feas
 - Joint online selection of indexes *and* views (couples with *joint-physical-design*).
 
 ## 9. Key References
-- **[Foundational]** N. Bruno, S. Chaudhuri. *An Online Approach to Physical Design Tuning.* ICDE, 2007.
-- **[Foundational]** M. Streeter, D. Golovin. *An Online Algorithm for Maximizing Submodular Functions.* NeurIPS, 2008.
-- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998.
-- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[SOTA]** A. Sharma, et al. *Reinforcement Learning for Index Tuning (NoDBA / DRLinda lineage).* ~2018–2021.
-- **[Survey]** E. Hazan. *Introduction to Online Convex Optimization.* now Publishers / MIT Press, 2nd ed., 2022.
+- **[Foundational]** N. Bruno, S. Chaudhuri. *An Online Approach to Physical Design Tuning.* ICDE, 2007. — [DBLP](https://dblp.org/rec/conf/icde/BrunoC07.html)
+- **[Foundational]** M. Streeter, D. Golovin. *An Online Algorithm for Maximizing Submodular Functions.* NeurIPS, 2008. — [NeurIPS](https://proceedings.neurips.cc/paper/2008/hash/5751ec3e9a4feab575962e78e006250d-Abstract.html)
+- **[Foundational]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998. — [DBLP](https://dblp.org/rec/books/daglib/0097598.html)
+- **[SOTA]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[SOTA]** A. Sharma, et al. *Reinforcement Learning for Index Tuning (NoDBA / DRLinda lineage).* ~2018–2021. — [DBLP search](https://dblp.org/search?q=NoDBA%20reinforcement%20learning%20index)
+- **[Survey]** E. Hazan. *Introduction to Online Convex Optimization.* now Publishers / MIT Press, 2nd ed., 2022. — [MIT Press](https://mitpress.mit.edu/9780262046985/introduction-to-online-convex-optimization/)
+
+## 10. Worked Example
+
+Consider one candidate index $I$, build cost $\delta = 100$ (paid once when we go from $\emptyset$ to $\{I\}$), and a stream of $T=10$ queries. Each query costs $10$ without the index and $2$ with it (benefit $8$/query). Storage budget admits $I$.
+
+The best *fixed* configuration in hindsight: building $I$ at $t=1$ costs $100 + 10\cdot 2 = 120$; never building costs $10\cdot 10 = 100$. So the offline optimum is **never build** at cost $100$ — because $\delta=100$ is not amortized over only $10$ queries ($8\cdot 10 = 80 < 100$).
+
+Now suppose the stream is non-stationary: $I$ helps only the first $5$ queries, then the workload shifts and $I$ becomes useless (cost $10$ with or without it). A naive "build once benefit looks positive" tuner that builds at $t=1$ pays $100 + (2\!\cdot\!5) + (10\!\cdot\!5) = 160$, versus optimum $100$ — incurring **regret $60$**, almost all of it the unamortized build cost.
+
+The lesson the algorithm must encode: defer building until the *expected future benefit* $\sum 8 > \delta = 100$, i.e. at least $13$ remaining helped queries. This break-even threshold is exactly the asymmetric, amortizable build-cost term that standard symmetric-MTS switching bounds fail to capture.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -37,12 +37,22 @@ Active threads: **algorithmic meta-theorems** beyond nowhere-dense — monadic s
 Unify locality with the twin-width / monadic-NIP program to get a single tractability boundary for FO; develop a robust locality theory for FO+aggregation and for FO over data values (infinite alphabets); obtain matching upper/lower bounds on enumeration delay as a function of structural sparsity; mechanize EF/locality arguments for automated inexpressibility proofs.
 
 ## 9. Key References
-- **[Foundational]** H. Gaifman. *On Local and Non-Local Properties.* In Logic Colloquium '81, North-Holland, 1982.
-- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004.
-- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999.
-- **[SOTA]** M. Grohe, S. Kreutzer, S. Siebertz. *Deciding First-Order Properties of Nowhere Dense Graphs.* J. ACM 64(3), 2017 (FOCS 2014).
-- **[SOTA]** W. Kazana, L. Segoufin. *Enumeration of First-Order Queries on Classes of Structures with Bounded Expansion.* PODS 2013.
-- **[SOTA]** É. Bonnet, E. Kim, S. Thomassé, R. Watrigant. *Twin-width I: Tractable FO Model Checking.* J. ACM 69(1), 2022.
+- **[Foundational]** H. Gaifman. *On Local and Non-Local Properties.* In Logic Colloquium '81, North-Holland, 1982. — [DOI](https://doi.org/10.1016/S0049-237X(08)71879-2)
+- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004. — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999. — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+- **[SOTA]** M. Grohe, S. Kreutzer, S. Siebertz. *Deciding First-Order Properties of Nowhere Dense Graphs.* J. ACM 64(3), 2017 (FOCS 2014). — [DOI](https://doi.org/10.1145/3051095)
+- **[SOTA]** W. Kazana, L. Segoufin. *Enumeration of First-Order Queries on Classes of Structures with Bounded Expansion.* PODS 2013. — [ACM](https://doi.org/10.1145/2463664.2463667)
+- **[SOTA]** É. Bonnet, E. Kim, S. Thomassé, R. Watrigant. *Twin-width I: Tractable FO Model Checking.* J. ACM 69(1), 2022. — [DOI](https://doi.org/10.1145/3486655)
+
+## 10. Worked Example
+
+**"There is a path" is not FO, via an EF game.** Let the signature have one binary edge relation $E$. Take two directed structures:
+- $\mathfrak{A}_k$: a single directed cycle of length $2^{k+1}$;
+- $\mathfrak{B}_k$: two disjoint directed cycles, each of length $2^k$.
+
+Both are unions of cycles with in/out-degree 1, so every vertex's $r$-neighborhood (for $r<2^{k-1}$) is just a directed path segment of length $2r{+}1$ — *isomorphic across both structures*. Duplicator wins the $k$-round Ehrenfeucht–Fraïssé game by always answering so that, whenever Spoiler picks a vertex within distance $2^{k-i}$ of an already-pebbled one after round $i$, the local gap is matched; distant picks are matched freely since neighborhoods agree. Hence $\mathfrak{A}_k\equiv_k\mathfrak{B}_k$.
+
+Now the property "$E$-graph is connected" (equivalently, all vertices mutually reachable) holds for $\mathfrak{A}_k$ but fails for $\mathfrak{B}_k$. If a sentence $\varphi$ of quantifier rank $k$ defined connectivity, it would distinguish them — contradicting $\equiv_k$. Since $k$ is arbitrary, **connectivity/reachability is not FO-definable**. This is exactly why graph query languages add a primitive transitive-closure (path) operator.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -63,12 +63,28 @@ Estimating set difference / disjointness is communication-complexity hard: **set
 
 ## 9. Key References
 
-- **[Foundational]** Beyer, Haas, Reinwald, Sismanis, Gemulla. *On Synopses for Distinct-Value Estimation Under Multiset Operations (KMV).* SIGMOD, 2007.
-- **[Foundational]** Eppstein, Goodrich, Uyeda, Varghese. *What's the Difference? Efficient Set Reconciliation Without Prior Context (IBLT).* SIGCOMM, 2011.
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog.* AofA, 2007.
-- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[Foundational]** Kalyanasundaram, Schnitger. *The Probabilistic Communication Complexity of Set Intersection.* SIAM J. Discrete Math, 1992.
-- **[SOTA]** Wu, Cong, et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD, 2023.
+- **[Foundational]** Beyer, Haas, Reinwald, Sismanis, Gemulla. *On Synopses for Distinct-Value Estimation Under Multiset Operations (KMV).* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247504)
+- **[Foundational]** Eppstein, Goodrich, Uyeda, Varghese. *What's the Difference? Efficient Set Reconciliation Without Prior Context (IBLT).* SIGCOMM, 2011. — [DOI](https://doi.org/10.1145/2018436.2018462)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog.* AofA, 2007. — [DOI](https://doi.org/10.46298/dmtcs.3545)
+- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594), [DBLP](https://dblp.org/rec/journals/pvldb/LeisGMBK015.html)
+- **[Foundational]** Kalyanasundaram, Schnitger. *The Probabilistic Communication Complexity of Set Intersection.* SIAM J. Discrete Math, 1992. — [DOI](https://doi.org/10.1137/0405044)
+- **[SOTA]** Wu, Negi, Alizadeh, Kraska, Madden. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3588721), [arXiv](https://arxiv.org/abs/2212.05526)
+
+## 10. Worked Example
+
+Let $R(\text{cust})$ list orders and $S(\text{cust})$ list customers with a complaint. We want `customers in R with NO complaint`: $R \triangleright S$.
+
+| key $v$ | $\mathrm{freq}_R(v)$ | in $S$? |
+|---|---|---|
+| 1 | 40 | yes |
+| 2 | 35 | yes |
+| 3 | 3  | no  |
+| 4 | 2  | no  |
+
+So $|R| = 80$, $D_R=\{1,2,3,4\}$, $D_S=\{1,2,5,6\}$, and the answer is the mass on $D_R\setminus D_S=\{3,4\}$:
+$$|R \triangleright S| = \mathrm{freq}_R(3)+\mathrm{freq}_R(4) = 3+2 = 5.$$
+
+Now watch the **inclusion–exclusion amplification**. The semi-join $|R \ltimes S| = 40+35 = 75$, and $|R\triangleright S| = |R| - |R\ltimes S| = 80-75 = 5$. Suppose a sample-based semi-join estimate errs by just $\pm 6$ (an $8\%$ relative error on $75$): $\widehat{|R\ltimes S|}=69$. Then $\widehat{|R\triangleright S|} = 80-69 = 11$, a $120\%$ error on the true value $5$. The small result is the difference of two large, correlated quantities, so absolute error in the operand becomes relative catastrophe in the result — exactly the §5 needle-in-haystack regime.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

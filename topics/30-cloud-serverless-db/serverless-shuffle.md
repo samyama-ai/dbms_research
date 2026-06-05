@@ -48,12 +48,22 @@ Directions: **storage-side aggregation / pushdown** (combiners executed inside t
 
 ## 9. Key References
 
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM / PODS, 2017 (PODS 2013).
-- **[SOTA]** E. Jonas et al. *Occupy the Cloud: Distributed Computing for the 99% (PyWren).* SoCC, 2017.
-- **[SOTA]** Q. Pu, S. Venkataraman, I. Stoica. *Shuffling, Fast and Slow: Scalable Analytics on Serverless Infrastructure (Locus).* NSDI, 2019.
-- **[SOTA]** M. Perron, R. Castro Fernandez, D. DeWitt, S. Madden. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020.
-- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM / PODS, 2017 (PODS 2013). — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** E. Jonas et al. *Occupy the Cloud: Distributed Computing for the 99% (PyWren).* SoCC, 2017. — [DOI](https://doi.org/10.1145/3127479.3128601), [arXiv](https://arxiv.org/abs/1702.04024)
+- **[SOTA]** Q. Pu, S. Venkataraman, I. Stoica. *Shuffling, Fast and Slow: Scalable Analytics on Serverless Infrastructure (Locus).* NSDI, 2019. — [DBLP](https://dblp.org/rec/conf/nsdi/PuVS19.html)
+- **[SOTA]** M. Perron, R. Castro Fernandez, D. DeWitt, S. Madden. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380609)
+- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389758), [arXiv](https://arxiv.org/abs/1912.00937)
+
+## 10. Worked Example
+
+Shuffle $D = 10$ GB among $m = 1000$ producer and $r = 1000$ consumer Lambdas via S3, repartitioned by a hash on the shuffle key. **Naive one-level shuffle:** each producer writes one object per consumer, so the object count is $m\times r = 10^6$ PUTs, then $r$ consumers issue up to $m\times r = 10^6$ GETs. At S3 pricing $\$5\times10^{-6}$ per PUT and $\$4\times10^{-7}$ per GET:
+
+$$\$_{\text{req}} \approx 10^6(5\!\times\!10^{-6}) + 10^6(4\!\times\!10^{-7}) \approx \$5.0 + \$0.4 = \$5.4,$$
+
+while byte cost is only $2D = 20$ GB of traffic (write + read). The request term dominates and grows as $\Theta(mr)$.
+
+**Two-level shuffle** (Lambada/Starling) inserts an intermediate aggregation tier of $g = \sqrt{mr} = 1000$ groups: producers write $m\cdot\sqrt{r}$ objects to the tier, which coalesces to $\sqrt{m}\cdot r$ — total $\Theta((m+r)\sqrt{mr}) \approx 2000\times1000 = 2\times10^6$? No: the fan-in tree cuts distinct objects to $\Theta(p\log p)$ with $p=1000$: $\approx 1000\times10 = 10^4$ objects, a $100\times$ reduction, bringing request cost to $\approx \$0.05$ at the price of one extra round (latency). This is the rounds-vs-request-cost trade §4 describes; the $\geq 2D$ byte floor and $\Omega(p)$ object floor remain.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

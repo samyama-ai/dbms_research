@@ -1,6 +1,7 @@
 # Access-Pattern Leakage Quantification
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/access-pattern-leakage` · **Status:** partially-solved
+> **Verification note:** The "LEAKER" reference appeared at EuroS&P 2022 (not CCS) under the title "SoK: Cryptanalysis of Encrypted Search with LEAKER"; venue corrected in §9.
 
 ## 1. Problem Statement
 
@@ -54,12 +55,20 @@ Active: **distribution-aware leakage measures** unifying $g$-leakage with recons
 
 ## 9. Key References
 
-- **[Foundational]** Curtmola, R., Garay, J., Kamara, S., Ostrovsky, R. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[Foundational]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009.
-- **[SOTA]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** Lacharité, M.-S., Minaud, B., Paterson, K.G. *Improved Reconstruction Attacks on Encrypted Data Using Range Query Leakage.* IEEE S&P, 2018.
-- **[SOTA]** Kornaropoulos, E.M., Papamanthou, C., Tamassia, R. *Data Recovery on Encrypted Databases with k-Nearest Neighbor Query Leakage.* IEEE S&P, 2019.
-- **[Survey]** Kamara, S., Moataz, T., et al. *LEAKER: Evaluating Leakage-Abuse Attacks Against Searchable Encryption.* CCS, 2022.
+- **[Foundational]** Curtmola, R., Garay, J., Kamara, S., Ostrovsky, R. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417)
+- **[Foundational]** Smith, G. *On the Foundations of Quantitative Information Flow.* FoSSaCS, 2009. — [DOI](https://doi.org/10.1007/978-3-642-00596-1_21)
+- **[SOTA]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+- **[SOTA]** Lacharité, M.-S., Minaud, B., Paterson, K.G. *Improved Reconstruction Attacks on Encrypted Data Using Range Query Leakage.* IEEE S&P, 2018. — [DOI](https://doi.org/10.1109/SP.2018.00002)
+- **[SOTA]** Kornaropoulos, E.M., Papamanthou, C., Tamassia, R. *Data Recovery on Encrypted Databases with k-Nearest Neighbor Query Leakage.* IEEE S&P, 2019. — [DOI](https://doi.org/10.1109/SP.2019.00015)
+- **[Survey]** Kamara, S., Moataz, T., et al. *LEAKER: Evaluating Leakage-Abuse Attacks Against Searchable Encryption.* EuroS&P, 2022. — [DBLP](https://dblp.org/rec/conf/eurosp/KamaraKMSTY22) (published as "SoK: Cryptanalysis of Encrypted Search with LEAKER")
+
+## 10. Worked Example
+
+Take a dense range column with domain $\{1,2,3,4\}$ ($N=4$), so every value $1..N$ is present. An encrypted range scheme leaks the **access pattern**: for each range query it returns the set of matching record IDs (IDs but not values). The adversary sees, over many queries, which IDs co-occur.
+
+A query for $[a,b]$ returns a *contiguous* block of the sorted order. So observing all query result-sets lets the adversary recover the total order of records — IDs $\{r_1,\dots\}$ that always appear together as the smallest matched block correspond to value $1$, etc. The only residual ambiguity is **reflection**: the labelings $1,2,3,4$ and $4,3,2,1$ produce identical co-occurrence sets, since $[a,b]$ and its mirror image have the same shape.
+
+KKNO16 shows that for dense data, $O(N^2\log N)$ uniformly random range queries suffice to observe enough distinct intervals to pin down every value (up to reflection). With $N=4$ that is a small constant number of distinct intervals — there are only $\binom{4+1}{2}=10$ possible ranges — illustrating why small dense domains fall quickly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

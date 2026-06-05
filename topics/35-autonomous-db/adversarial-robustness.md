@@ -47,12 +47,23 @@ Variants:
 - Multi-tenant attack analysis: bounding the blast radius one tenant can inflict (ties to multi-tenant-tuning).
 
 ## 9. Key References
-- **[Foundational]** C. Szegedy et al. *Intriguing Properties of Neural Networks.* ICLR, 2014.
-- **[Foundational]** I. Goodfellow, J. Shlens, C. Szegedy. *Explaining and Harnessing Adversarial Examples.* ICLR, 2015.
-- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (ICML, 2018).
-- **[SOTA]** J. Cohen, E. Rosenfeld, J. Z. Kolter. *Certified Adversarial Robustness via Randomized Smoothing.* ICML, 2019.
-- **[Foundational]** S. A. Crosby, D. S. Wallach. *Denial of Service via Algorithmic Complexity Attacks.* USENIX Security, 2003.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** C. Szegedy et al. *Intriguing Properties of Neural Networks.* ICLR, 2014. — [arXiv](https://arxiv.org/abs/1312.6199)
+- **[Foundational]** I. Goodfellow, J. Shlens, C. Szegedy. *Explaining and Harnessing Adversarial Examples.* ICLR, 2015. — [arXiv](https://arxiv.org/abs/1412.6572)
+- **[SOTA]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021 (ICML, 2018). — [DOI](https://doi.org/10.1145/3447579)
+- **[SOTA]** J. Cohen, E. Rosenfeld, J. Z. Kolter. *Certified Adversarial Robustness via Randomized Smoothing.* ICML, 2019. — [arXiv](https://arxiv.org/abs/1902.02918)
+- **[Foundational]** S. A. Crosby, D. S. Wallach. *Denial of Service via Algorithmic Complexity Attacks.* USENIX Security, 2003. — [DBLP](https://dblp.org/rec/conf/uss/CrosbyW03.html)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+**A thrashing / switching-cost attack.** A reactive tuner builds index $I$ whenever the recent query mix favors it and drops $I$ otherwise. Building costs $c_{\text{build}}=50$, dropping costs $c_{\text{drop}}=10$; one full oscillation cycle costs $c_{\text{build}}+c_{\text{drop}}=60$.
+
+A malicious tenant issues queries in an alternating pattern: a burst that makes $I$ look profitable, then a burst that makes it look useless, repeating. With budget $B$ queries and $q$ queries needed to flip the tuner's decision, the adversary forces
+$$\#\text{cycles} = \left\lfloor \frac{B}{2q} \right\rfloor, \qquad \text{victim cost} = 60 \cdot \left\lfloor \frac{B}{2q}\right\rfloor.$$
+
+For $B=2000$, $q=50$: $\lfloor 2000/100\rfloor = 20$ cycles $\Rightarrow$ **1200 units** of pure reconfiguration cost, while the workload never actually benefits from $I$ — an $\Omega(B)$ algorithmic-complexity DoS (§5).
+
+**Defense (hysteresis).** Require an estimated net gain of at least $\theta = 2\,c_{\text{build}} = 100$ sustained over a dwell window before building, and symmetric reluctance to drop. Each induced cycle now demands $\approx \theta/(\text{per-query signal})$ more queries; if that quadruples $q$ to $200$, cycles fall to $\lfloor 2000/400\rfloor = 5$ and cost drops to $300$ — a $4\times$ reduction. This is the anti-oscillation, build/drop-cost-parameterized tuner of §8 in miniature.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

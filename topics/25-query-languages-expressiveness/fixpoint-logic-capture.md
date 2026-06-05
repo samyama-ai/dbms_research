@@ -61,13 +61,27 @@ On **ordered** structures, the gap is **closed**: every listed capture is a theo
 
 ## 9. Key References
 
-- **[Foundational]** N. Immerman. *Languages that capture complexity classes.* SIAM J. Computing, 1987 (DTC↔L, TC↔NL).
-- **[Foundational]** N. Immerman. *Relational queries computable in polynomial time.* Inf. & Control, 1986 / M. Vardi, STOC 1982 (LFP/IFP↔P).
-- **[Foundational]** S. Abiteboul, V. Vianu. *Generic computation and its complexity.* STOC 1991 (IFP=PFP ⇔ P=PSPACE; PFP↔PSPACE).
-- **[Foundational]** Y. Gurevich, S. Shelah. *Fixed-point extensions of first-order logic.* Annals of Pure and Applied Logic, 1986 (LFP = IFP).
-- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992.
-- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999.
-- **[SOTA]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017.
+- **[Foundational]** N. Immerman. *Languages that capture complexity classes.* SIAM J. Computing, 1987 (DTC↔L, TC↔NL). — [DOI](https://doi.org/10.1137/0216051)
+- **[Foundational]** N. Immerman. *Relational queries computable in polynomial time.* Inf. & Control, 1986 / M. Vardi, STOC 1982 (LFP/IFP↔P). — [DOI](https://doi.org/10.1016/S0019-9958(86)80029-8)
+- **[Foundational]** S. Abiteboul, V. Vianu. *Generic computation and its complexity.* STOC 1991 (IFP=PFP ⇔ P=PSPACE; PFP↔PSPACE). — [ACM](https://doi.org/10.1145/103418.103444)
+- **[Foundational]** Y. Gurevich, S. Shelah. *Fixed-point extensions of first-order logic.* Annals of Pure and Applied Logic, 1986 (LFP = IFP). — [DOI](https://doi.org/10.1016/0168-0072(86)90055-2)
+- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992. — [DOI](https://doi.org/10.1007/BF01305232)
+- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999. — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+- **[SOTA]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017. — [DOI](https://doi.org/10.1017/9781139028868)
+
+## 10. Worked Example
+
+**Transitive closure via LFP.** Let $E$ be a binary edge relation. Define reachability by the LFP formula
+$$T(x,y) \equiv [\mathrm{lfp}_{R,(x,y)}\;\; E(x,y)\;\vee\;\exists z\,(E(x,z)\wedge R(z,y))](x,y).$$
+The body is positive in $R$, so iteration is monotone. On the path graph $1\to 2\to 3$:
+- $R^0=\varnothing$;
+- $R^1=\{(1,2),(2,3)\}$ (the $E$ disjunct);
+- $R^2=R^1\cup\{(1,3)\}$ (now $E(1,2)\wedge R^1(2,3)$ fires);
+- $R^3=R^2$ — fixpoint reached.
+
+So $T=\{(1,2),(2,3),(1,3)\}$, computed in $\le n$ stages, each FO-evaluable in PTIME — witnessing $\mathrm{FO}{+}\mathrm{LFP}\subseteq\mathrm{P}$.
+
+**Why order matters.** Consider the two unordered structures $A=$ a single 4-cycle and $B=$ two disjoint 2-cycles (8 vertices each split appropriately). With enough vertices these are $\equiv_k$-indistinguishable in $\mathrm{FO}{+}\mathrm{IFP}$ for any fixed iteration that cannot count, so **parity** ("is $|V|$ even?") escapes $\mathrm{FO}{+}\mathrm{IFP}$ — concretely placing it strictly below P on unordered structures, exactly the gap that a built-in linear order $\le$ would erase.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

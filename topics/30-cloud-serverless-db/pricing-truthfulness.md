@@ -48,12 +48,20 @@ Directions: **learned cost models** (and learned cardinality estimators) with ca
 
 ## 9. Key References
 
-- **[Foundational]** N. Nisan, A. Ronen. *Algorithmic Mechanism Design.* Games and Economic Behavior / STOC, 1999.
-- **[Foundational]** H. Moulin, S. Shenker. *Strategyproof Sharing of Submodular Costs.* Economic Theory, 2001.
-- **[SOTA]** P. Koutris, P. Upadhyaya, M. Balazinska, B. Howe, D. Suciu. *Query-Based Data Pricing.* PODS 2012 / JACM, 2015.
-- **[Foundational]** Y. Ioannidis, S. Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008.
-- **[SOTA]** A. Agarwal, M. Dahleh, T. Sarkar. *A Marketplace for Data: An Algorithmic Solution.* EC, 2019.
+- **[Foundational]** N. Nisan, A. Ronen. *Algorithmic Mechanism Design.* Games and Economic Behavior / STOC, 1999. — [DOI](https://doi.org/10.1006/game.1999.0790) · [STOC DOI](https://doi.org/10.1145/301250.301287)
+- **[Foundational]** H. Moulin, S. Shenker. *Strategyproof Sharing of Submodular Costs.* Economic Theory, 2001. — [DOI](https://doi.org/10.1007/PL00004200)
+- **[SOTA]** P. Koutris, P. Upadhyaya, M. Balazinska, B. Howe, D. Suciu. *Query-Based Data Pricing.* PODS 2012 / JACM, 2015. — [JACM DOI](https://doi.org/10.1145/2770870) · [PODS DOI](https://doi.org/10.1145/2213556.2213582)
+- **[Foundational]** Y. Ioannidis, S. Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835) · [DBLP](https://dblp.org/rec/conf/sigmod/IoannidisC91.html)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008. — [SIAM DOI](https://doi.org/10.1137/110859440) · [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
+- **[SOTA]** A. Agarwal, M. Dahleh, T. Sarkar. *A Marketplace for Data: An Algorithmic Solution.* EC, 2019. — [arXiv](https://arxiv.org/abs/1805.08125) · [DOI](https://doi.org/10.1145/3328526.3329589)
+
+## 10. Worked Example
+
+Bytes-scanned pricing is truthful-by-measurability. A table $T$ has columns (id, region, amount); a tenant runs `SELECT amount FROM T WHERE region='EU'`. With columnar storage the engine reads only the `region` and `amount` columns — say $2$ GB of the $6$ GB table — and charges on $2$ GB *actually scanned*, at \$5/TB $= \$0.01$. No rewrite lowers the bill without doing less real work, so the charge–cost gap is $0$.
+
+Contrast estimate-based pricing. Suppose the optimizer estimates an intermediate join result at $10^4$ rows but the AGM bound only guarantees $|Q| \le \prod_e |R_e|^{x_e}$; for a 3-way cycle join on relations of size $N$ the bound is $N^{3/2}$. With $N=10^3$ the worst-case true size is $\approx 31{,}600$, more than $3\times$ the estimate. A tenant crafting data to hit this worst case is charged on $10^4$ but consumes $31{,}600$ — the charged–actual gap is unbounded multiplicatively as $N$ grows (section 5(b)).
+
+Mechanism tension: by Myerson–Satterthwaite no pricing is simultaneously truthful, budget-balanced, efficient, and individually-rational — industry sacrifices predictability to keep the first three.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

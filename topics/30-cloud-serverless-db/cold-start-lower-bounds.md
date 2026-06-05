@@ -46,11 +46,21 @@ Active work on snapshot/restore (Firecracker, gVisor checkpoint), "keep-warm" pr
 
 ## 9. Key References
 
-- **[Foundational]** Karlin, Manasse, Rudolph, Sleator. *Competitive Snoopy Caching* / ski-rental analysis. Algorithmica, 1988.
-- **[SOTA]** Agache, Brooker, et al. *Firecracker: Lightweight Virtualization for Serverless Applications.* NSDI, 2020.
-- **[SOTA]** Brooker, et al. *Aurora Serverless* / *On-demand Container Loading in AWS Lambda.* USENIX ATC, 2023.
-- **[Survey]** Jonas, Schleier-Smith, et al. *Cloud Programming Simplified: A Berkeley View on Serverless Computing.* Tech report, 2019.
-- **[SOTA]** Neon. *Neon: Serverless Postgres — Separation of Storage and Compute.* (project documentation), 2022–2024.
+- **[Foundational]** Karlin, Manasse, Rudolph, Sleator. *Competitive Snoopy Caching* / ski-rental analysis. Algorithmica, 1988. — [DOI](https://doi.org/10.1007/BF01762111)
+- **[SOTA]** Agache, Brooker, et al. *Firecracker: Lightweight Virtualization for Serverless Applications.* NSDI, 2020. — [USENIX](https://www.usenix.org/conference/nsdi20/presentation/agache)
+- **[SOTA]** Brooker, et al. *Aurora Serverless* / *On-demand Container Loading in AWS Lambda.* USENIX ATC, 2023. — [arXiv](https://arxiv.org/abs/2305.13162)
+- **[Survey]** Jonas, Schleier-Smith, et al. *Cloud Programming Simplified: A Berkeley View on Serverless Computing.* Tech report, 2019. — [arXiv](https://arxiv.org/abs/1902.03383)
+- **[SOTA]** Neon. *Neon: Serverless Postgres — Separation of Storage and Compute.* (project documentation), 2022–2024. — [docs](https://neon.tech/docs/introduction)
+
+## 10. Worked Example
+
+**Latency floor.** Suppose the essential warm state on the critical path is $W_{\text{critical}} = 256$ MB (catalog + root index pages + plan cache), fetched from object storage with first-byte latency $\delta = 30$ ms over a link of bandwidth $B = 1$ GB/s. The information-theoretic floor is
+
+$$L \ge \delta + \frac{W_{\text{critical}}}{B} = 30\ \text{ms} + \frac{256\ \text{MB}}{1024\ \text{MB/s}} = 30 + 250 = 280\ \text{ms}.$$
+
+No prefetch beats the $30$ ms first-byte $\delta$; no compression beats the entropy of the $256$ MB. A warm pool that keeps state resident pays idle cost $C>0$ but hides the $280$ ms.
+
+**Keep-warm cost (ski-rental).** Idle compute costs $c = \$0.0001$/s to keep warm; a cold start costs a monetized penalty $P = \$0.05$ (SLO breach + reload). Break-even idle gap is $P/c = 500$ s. The deterministic $2$-competitive rule keeps the node warm for $500$ s after the last request, then scales to zero. If the true inter-arrival gap is $200$ s we stay warm and avoid the penalty; if gaps are always $10{,}000$ s we waste $\$0.05$ of warm time per idle period before scaling down — at most $2\times$ the offline optimum. Randomized ski-rental tightens this to $\tfrac{e}{e-1}\approx 1.58$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

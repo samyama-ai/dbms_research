@@ -39,12 +39,34 @@ Verified query compilers and equivalence checkers (e.g., **Cosette**-style SMT/r
 - Practical bidirectional lenses for document updates with conflict semantics.
 
 ## 9. Key References
-- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** A. Chandra, P. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[SOTA]** K. Ong, Y. Papakonstantinou, R. Vernoux. *The SQL++ Query Language: Configurable, Unifying and Semi-structured.* arXiv:1405.3631, 2014.
-- **[SOTA]** A. Deutsch, L. Popa, V. Tannen. *Query Reformulation with Constraints.* SIGMOD Record, 2006.
-- **[Foundational]** J. N. Foster et al. *Combinators for Bidirectional Tree Transformations (Lenses).* ACM TOPLAS, 2007.
+- **[Foundational]** R. Fagin, P. Kolaitis, R. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [full text](http://webdam.inria.fr/Alice/)
+- **[Foundational]** A. Chandra, P. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[SOTA]** K. Ong, Y. Papakonstantinou, R. Vernoux. *The SQL++ Query Language: Configurable, Unifying and Semi-structured.* arXiv:1405.3631, 2014. — [arXiv](https://arxiv.org/abs/1405.3631)
+- **[SOTA]** A. Deutsch, L. Popa, V. Tannen. *Query Reformulation with Constraints.* SIGMOD Record, 2006. — [DOI](https://doi.org/10.1145/1147376.1147377)
+- **[Foundational]** J. N. Foster et al. *Combinators for Bidirectional Tree Transformations (Lenses).* ACM TOPLAS, 2007. — [DOI](https://doi.org/10.1145/1232420.1232424)
+
+## 10. Worked Example
+
+Two physical designs of the same data. **Relational (normalized):**
+
+`Users(uid, name)` = $\{(1,\text{Ann}), (2,\text{Bob})\}$
+`Orders(oid, uid, item)` = $\{(10,1,\text{pen}), (11,1,\text{ink}), (12,2,\text{mug})\}$
+
+**Document (embedded):**
+```json
+{ "uid":1, "name":"Ann", "orders":[{"item":"pen"},{"item":"ink"}] }
+{ "uid":2, "name":"Bob", "orders":[{"item":"mug"}] }
+```
+
+The schema mapping $\mathcal{M}$ is the s-t tgd
+$$\textsf{Users}(u,n) \wedge \textsf{Orders}(o,u,i) \;\to\; \exists\,\textsf{doc}:\ \textsf{doc}.uid{=}u \wedge \textsf{doc}.name{=}n \wedge i \in \textsf{doc}.orders.item.$$
+
+**Rewriting a query.** Document query $q_D$: "items of user 1" = `$.orders[*].item where uid=1`, returning $\{\text{pen},\text{ink}\}$. Its certified relational rewrite is the CQ
+$$q_R(i) \,{:}{-}\, \textsf{Users}(1,n),\ \textsf{Orders}(o,1,i),$$
+which also yields $\{\text{pen},\text{ink}\}$ — the *unnest* in $q_D$ becomes a *join* in $q_R$. The chase of the relational instance through $\mathcal{M}$ produces exactly the two documents above, and certain-answer correctness means both queries agree on every model of $\mathcal{M}$.
+
+**Where it breaks (the gap).** If a third user has *no* orders, the embedded `orders:[]` vs. a missing relational row forces three-valued reasoning, and array *order* (pen before ink) is not preserved by the unordered tgd — exactly the order/missing-field cases section 6 flags as open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,20 @@ For the **submodular** regime the gap is essentially **closed**: $1-1/e$ achieva
 - Co-design extended to compression, sort orders, and storage tiers.
 
 ## 9. Key References
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997.
-- **[SOTA]** D. Zilio et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004.
-- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions—I.* Mathematical Programming, 1978.
-- **[Foundational]** M. Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
-- **[SOTA]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000.
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *An Efficient Cost-Driven Index Selection Tool for Microsoft SQL Server (AutoAdmin).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN97.html)
+- **[SOTA]** D. Zilio et al. *DB2 Design Advisor: Integrated Automatic Physical Database Design.* VLDB, 2004. — [ACM](https://dl.acm.org/doi/10.5555/1316689.1316783)
+- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** M. Sviridenko. *A Note on Maximizing a Submodular Set Function Subject to a Knapsack Constraint.* Operations Research Letters, 2004. — [DOI](https://doi.org/10.1016/S0167-6377(03)00062-2)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** S. Agrawal, S. Chaudhuri, V. Narasayya. *Automated Selection of Materialized Views and Indexes for SQL Databases.* VLDB, 2000. — [DBLP](https://dblp.org/rec/conf/vldb/AgrawalCN00.html)
+
+## 10. Worked Example
+
+Budget $B=10$. Candidates with (size, standalone benefit): index $a=(4,40)$, index $b=(5,50)$, view $c=(6,72)$. Greedy under the knapsack uses benefit/cost density: $a:10$, $b:10$, $c:12$. Pick $c$ first (density 12, uses 6, leaves 4). Next, among $\{a,b\}$ only $a$ fits the remaining 4. Final greedy set $\{c,a\}$: size $10$, benefit $72+40=112$.
+
+Compare the optimum: $\{b,a\}$ has size $9\le10$ and benefit $90$; $\{c,a\}=112$; $\{c\}$ alone $=72$. So OPT $=112=$ greedy here. The Sviridenko guarantee says greedy-with-enumeration is $\ge(1-1/e)\cdot\text{OPT}\approx0.632\cdot112\approx71$, comfortably met.
+
+Now add a *complementarity*: an index $d=(2,5)$ that, built *on view* $c$, raises $c$'s benefit by $30$ (worthless without $c$). The benefit function is no longer submodular — the marginal gain of $d$ rises after $c$ is chosen, violating diminishing returns. Greedy, evaluating $d$ early when $c$ is absent, sees marginal $5$ at density $2.5$ and skips it, missing the $+30$ synergy. This is exactly the interaction-aware regime where the $(1-1/e)$ bound no longer applies.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

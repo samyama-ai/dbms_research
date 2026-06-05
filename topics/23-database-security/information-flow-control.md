@@ -48,13 +48,25 @@ Active directions: **provenance-driven IFC** that unifies why/how-provenance wit
 
 ## 9. Key References
 
-- **[Foundational]** Denning, D.E. *A Lattice Model of Secure Information Flow.* Communications of the ACM, 1976.
-- **[Foundational]** Myers, A.C., Liskov, B. *A Decentralized Model for Information Flow Control.* SOSP, 1997.
-- **[Foundational]** Goguen, J.A., Meseguer, J. *Security Policies and Security Models.* IEEE S&P, 1982.
-- **[SOTA]** Schultz, D., Liskov, B. *IFDB: Decentralized Information Flow Control for Databases.* EuroSys, 2013.
-- **[SOTA]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007.
-- **[Survey]** Sabelfeld, A., Myers, A.C. *Language-Based Information-Flow Security.* IEEE JSAC, 2003.
-- **[Survey]** Sabelfeld, A., Sands, D. *Declassification: Dimensions and Principles.* Journal of Computer Security, 2009.
+- **[Foundational]** Denning, D.E. *A Lattice Model of Secure Information Flow.* Communications of the ACM, 1976. — [DOI](https://doi.org/10.1145/360051.360056)
+- **[Foundational]** Myers, A.C., Liskov, B. *A Decentralized Model for Information Flow Control.* SOSP, 1997. — [DOI](https://doi.org/10.1145/268998.266669)
+- **[Foundational]** Goguen, J.A., Meseguer, J. *Security Policies and Security Models.* IEEE S&P, 1982. — [DOI](https://doi.org/10.1109/SP.1982.10014)
+- **[SOTA]** Schultz, D., Liskov, B. *IFDB: Decentralized Information Flow Control for Databases.* EuroSys, 2013. — [DBLP](https://dblp.org/rec/conf/eurosys/SchultzL13.html)
+- **[SOTA]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Survey]** Sabelfeld, A., Myers, A.C. *Language-Based Information-Flow Security.* IEEE JSAC, 2003. — [DOI](https://doi.org/10.1109/JSAC.2002.806121)
+- **[Survey]** Sabelfeld, A., Sands, D. *Declassification: Dimensions and Principles.* Journal of Computer Security, 2009. — [DOI](https://doi.org/10.3233/JCS-2009-0352)
+
+## 10. Worked Example
+
+Lattice $\{L \sqsubseteq H\}$. Relation $\mathsf{Acct}(\text{id}, \text{balance}^{H})$ — `balance` is High, `id` is Low. A user cleared only to $L$ runs:
+
+```sql
+SELECT id FROM Acct WHERE balance > 1000000;
+```
+
+No High *value* appears in the output (we project only `id`), so an explicit-flow checker that tracks projected columns sees nothing leak. Yet this is a textbook **implicit flow**: *which* ids appear depends entirely on the High `balance` predicate. Provenance makes it precise — each output tuple's why-provenance includes its `balance` cell, so the result's very *membership* carries a High dependency. Concretely, over two databases $D_1, D_2$ that are low-equivalent (same `id`s) but differ in one balance crossing the \$1M threshold, the query returns different row sets — violating non-interference $\llbracket P\rrbracket(D_1)\approx_L\llbracket P\rrbracket(D_2)$.
+
+Quantitatively, if an attacker uses such a predicate as a binary probe, each query reveals $\le 1$ bit; $k$ adaptive threshold queries binary-search a balance to $\le k$ bits of min-entropy leakage — exactly the budget a declassifier (or DP noise on the count) must bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -1,6 +1,7 @@
 # Persistent-memory write-amplification bounds
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/pmem-write-amplification-bounds` · **Status:** open
+> **Verification note:** Two reference author tokens were corrected — the RUM Conjecture's last author is Callaghan (not Dittrich), and Level Hashing's third author is Wu (not Sun); the cited "Aurora, Crotty" PMEM survey could not be matched to a real publication and is flagged unverified.
 
 ## 1. Problem Statement
 
@@ -56,12 +57,25 @@ The gap is wide and **genuinely open**: upper bounds come from clever representa
 
 ## 9. Key References
 
-- **[Foundational]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, Dittrich. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014.
-- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018.
-- **[SOTA]** Zuo, Hua, Sun. *Write-Optimized and High-Performance Hashing Index Scheme for Persistent Memory (Level Hashing).* OSDI, 2018.
-- **[Foundational]** Brodal, Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003.
-- **[Survey]** Aurora, Crotty, et al. (and predecessors). *Persistent Memory: a survey of programming and indexing techniques.* (PMEM index/WA surveys), 2020-2021.
+- **[Foundational]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42) — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712) — [DBLP](https://dblp.org/rec/conf/isca/PelleyCW14.html)
+- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
+- **[SOTA]** Zuo, Hua, Wu. *Write-Optimized and High-Performance Hashing Index Scheme for Persistent Memory (Level Hashing).* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/zuo) — [DBLP](https://dblp.org/rec/conf/osdi/ZuoHW18.html)
+- **[Foundational]** Brodal, Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
+- **[Survey]** Aurora, Crotty, et al. (and predecessors). *Persistent Memory: a survey of programming and indexing techniques.* (PMEM index/WA surveys), 2020-2021. *(unverified)*
+
+## 10. Worked Example
+
+Take a packed sorted leaf of $B = 16$ slots, 8-byte keys ($w=8$), on 64-byte cache lines ($L=64 \Rightarrow L/w = 8$ slots per line, so the node spans 2 lines: slots 0–7 on line A, 8–15 on line B). The node currently holds keys in slots 0–14; we insert a key landing at position $p$.
+
+**Shift-based cost.** Inserting at $p$ shifts slots $p..14$ right by one. The number of *distinct cache lines* touched determines flushes:
+- Insert at $p = 12$ (within line B): shifts slots 12,13,14 — all on line B. WA $= 1$ flush.
+- Insert at $p = 5$ (line A): shifts slots 5..14, spanning **both** lines A and B. WA $= 2$ flushes.
+- Insert at $p = 0$: shifts all 15 slots across both lines. WA $= 2$ flushes.
+
+So $\text{WA}_{\text{flush}}(p,B) \ge \lceil (\,\text{lines spanned by } [p,14]\,) \rceil$, matching the §5 bound $\Omega((B-p)/(L/w))$: here $(B-p)/8$ rounds to $1$ or $2$.
+
+**The open gap made concrete.** An *unsorted* node with a validity bitmap inserts the key in any free slot and flips one 8-byte bitmap word: WA $= 1$ flush regardless of $p$ — but now lookups cost $O(B)$ scan instead of $O(\log B)$. The unproven question (§6): is there a representation giving *both* $o(B/L)$ persists per ordered insert *and* $O(\log B)$ search? No cell-probe-style lower bound yet forbids it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

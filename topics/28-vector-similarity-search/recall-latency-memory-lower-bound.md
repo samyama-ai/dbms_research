@@ -48,12 +48,20 @@ Directions: extending ALRW-style optimality from the sphere to general/data-depe
 - Average-case bounds matching observed benchmark curves.
 
 ## 9. Key References
-- **[Foundational]** R. Panigrahy, K. Talwar, U. Wieder. *Lower Bounds on Near Neighbor Search via Metric Expansion.* FOCS, 2010.
-- **[SOTA]** A. Andoni, T. Laarhoven, I. Razenshteyn, E. Waingarten. *Optimal Hashing-based Time–Space Trade-offs for Approximate Near Neighbors.* SODA, 2017.
-- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020.
-- **[Foundational]** A. Andoni, P. Indyk, M. Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006.
-- **[Survey]** H. Simhadri et al. *Results of the Big ANN: NeurIPS 2021 Competition.* PMLR / NeurIPS Competition Track, 2022.
-- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory* (rate–distortion). Wiley, 2006.
+- **[Foundational]** R. Panigrahy, K. Talwar, U. Wieder. *Lower Bounds on Near Neighbor Search via Metric Expansion.* FOCS, 2010. — [arXiv](https://arxiv.org/abs/1005.0418)
+- **[SOTA]** A. Andoni, T. Laarhoven, I. Razenshteyn, E. Waingarten. *Optimal Hashing-based Time–Space Trade-offs for Approximate Near Neighbors.* SODA, 2017. — [arXiv](https://arxiv.org/abs/1608.03580)
+- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396)
+- **[Foundational]** A. Andoni, P. Indyk, M. Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006. — [DBLP](https://dblp.org/rec/conf/focs/AndoniIP06.html)
+- **[Survey]** H. Simhadri et al. *Results of the Big ANN: NeurIPS 2021 Competition.* PMLR / NeurIPS Competition Track, 2022. — [arXiv](https://arxiv.org/abs/2205.03763)
+- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory* (rate–distortion). Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+
+## 10. Worked Example
+
+Take the **cell-probe space–time** tradeoff of PTW concretely. Suppose $n = 10^6$ points, approximation factor $c = 2$, and we allow exactly $T = 5$ probes per query. The bound $S \ge n^{1+\Omega(1/(cT))}$ has the exponent $1/(cT) = 1/(2\cdot 5) = 1/10$. With the hidden constant set to $1$ for illustration, this forces
+
+$$ S \ge n^{1 + 1/10} = (10^6)^{1.1} = 10^{6.6} \approx 4.0 \times 10^6 \text{ cells.} $$
+
+So insisting on only $5$ probes costs at least a $\sim 4\times$ blow-up over the $n = 10^6$ "one cell per point" baseline. Halving the probe budget to $T = 2.5$ raises the exponent to $1/5$, demanding $S \ge 10^{7.2} \approx 1.6\times10^7$ cells — a $16\times$ blow-up. This illustrates the **time–space** axis. The open challenge is folding in a **memory/quantization** axis: e.g. if each vector is stored in $b = 64$ bits rather than full precision, recall $\rho$ drops by a rate–distortion amount $R(\varepsilon)$, and no single inequality today couples that $b$ to the $(S,T)$ pair above.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

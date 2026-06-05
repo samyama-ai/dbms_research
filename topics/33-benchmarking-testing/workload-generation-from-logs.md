@@ -58,12 +58,20 @@ The gap is between (a) systems that reproduce *marginal* skew or single-column c
 
 ## 9. Key References
 
-- **[Foundational]** C. Binnig, D. Kossmann, E. Lo, M. T. Özsu. *QAGen: Generating Query-Aware Test Databases.* SIGMOD, 2007.
-- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2013.
-- **[SOTA]** Y. Li, R. Zhang, X. Yang, Z. Zhang, A. Zhou. *Touchstone: Generating Enormous Query-Aware Test Databases.* USENIX ATC, 2018.
-- **[Foundational]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014.
-- **[Foundational]** J. Zhang, G. Cormode, C. M. Procopiuc, D. Srivastava, X. Xiao. *PrivBayes: Private Data Release via Bayesian Networks.* SIGMOD, 2014.
-- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019.
+- **[Foundational]** C. Binnig, D. Kossmann, E. Lo, M. T. Özsu. *QAGen: Generating Query-Aware Test Databases.* SIGMOD, 2007. — [DOI](https://doi.org/10.1145/1247480.1247520)
+- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2732240.2732246)
+- **[SOTA]** Y. Li, R. Zhang, X. Yang, Z. Zhang, A. Zhou. *Touchstone: Generating Enormous Query-Aware Test Databases.* USENIX ATC, 2018. — [DBLP](https://dblp.org/rec/conf/usenix/LiZYZZ18.html)
+- **[Foundational]** C. Dwork, A. Roth. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
+- **[Foundational]** J. Zhang, G. Cormode, C. M. Procopiuc, D. Srivastava, X. Xiao. *PrivBayes: Private Data Release via Bayesian Networks.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588573)
+- **[SOTA]** Z. Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019. — [DOI](https://doi.org/10.14778/3368289.3368294)
+
+## 10. Worked Example
+
+**Why marginals are not enough — and the DP cost.** A log has two parameter columns, `country` and `currency`, with the joint over 4 entries: $(\text{US},\text{USD})\times 40$, $(\text{EU},\text{EUR})\times 40$, $(\text{US},\text{EUR})\times 1$, $(\text{EU},\text{USD})\times 1$, total $n=82$.
+
+The **marginals** are nearly uniform: $P(\text{US})\approx P(\text{EU})\approx 0.5$, $P(\text{USD})\approx P(\text{EUR})\approx 0.5$. A per-column generator samples them independently, producing $\approx 25\%$ mass on each cell — so it emits the rare $(\text{US},\text{EUR})$ pair $\sim20$ instead of $\sim1$ times, badly mismatching selectivities (a query `WHERE country='US' AND currency='EUR'` hits $\sim20\times$ too many rows). Capturing the true $\rho\approx 0.95$ correlation requires modeling the **joint** (e.g. a 2-way marginal / copula).
+
+Now add **$(\varepsilon,\delta)$-DP** at $\varepsilon=1$: releasing the $2\times2$ contingency table adds Laplace noise of scale $1/\varepsilon = 1$ per cell. The two rare cells (true count $1$) are swamped — noise std $\approx\sqrt{2}\approx1.4 > 1$ — so the sign of the correlation is no longer recoverable. This is the fingerprinting lower bound in miniature: additive error $\Omega(\sqrt{d}/\varepsilon)$ over $d$ correlated statistics fundamentally limits joint-fidelity under privacy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

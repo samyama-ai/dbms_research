@@ -44,11 +44,27 @@ Active: maturing Prometheus/Mimir OOO support toward larger/elastic windows and 
 - SLO-driven automatic drop/buffer/retract decisions.
 
 ## 9. Key References
-- **[Foundational]** Akidau, Bradshaw, Chambers, Chernyak, Fernández-Moctezuma, Lax, McVeety, Mills, Perry, Schmidt, Whittle. *The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing.* VLDB, 2015.
-- **[Foundational]** Pelkonen, Franklin, Teller, Cavallaro, Huang, Meza, Veeraraghavan. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015 (XOR compression assuming order).
-- **[SOTA]** Prometheus Team. *Out-of-Order Sample Ingestion (TSDB OOO Head).* Prometheus 2.39 release / design docs, 2022.
-- **[SOTA]** Carbone, Katsifodimos, Ewen, Markl, Haridi, Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Engineering Bulletin, 2015 (watermarks, event-time).
-- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017.
+- **[Foundational]** Akidau, Bradshaw, Chambers, Chernyak, Fernández-Moctezuma, Lax, McVeety, Mills, Perry, Schmidt, Whittle. *The Dataflow Model: A Practical Approach to Balancing Correctness, Latency, and Cost in Massive-Scale, Unbounded, Out-of-Order Data Processing.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[Foundational]** Pelkonen, Franklin, Teller, Cavallaro, Huang, Meza, Veeraraghavan. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015 (XOR compression assuming order). — [DOI](https://doi.org/10.14778/2824032.2824078), [DBLP](https://dblp.org/rec/journals/pvldb/PelkonenFCHMTV15.html)
+- **[SOTA]** Prometheus Team. *Out-of-Order Sample Ingestion (TSDB OOO Head).* Prometheus 2.39 release / design docs, 2022. — [GitHub PR #11075](https://github.com/prometheus/prometheus/pull/11075)
+- **[SOTA]** Carbone, Katsifodimos, Ewen, Markl, Haridi, Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Engineering Bulletin, 2015 (watermarks, event-time). — [PDF](https://asterios.katsifodimos.com/assets/publications/flink-deb.pdf), [DBLP](https://dblp.org/rec/journals/debu/CarboneKEMHT15.html)
+- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017. — [DOI](https://doi.org/10.1109/TKDE.2017.2740932), [arXiv](https://arxiv.org/abs/1710.01077)
+
+## 10. Worked Example
+
+A series ingests samples in arrival order with event-times:
+
+$$t = 100,\ 110,\ 120,\ \mathbf{105},\ 130.$$
+
+The 4th arrival ($t=105$) is **out-of-order**: it precedes the latest stored timestamp $120$. Quantify disorder by the displacement $K = \max_i(\text{arrival rank} - \text{time rank})$. Here $105$ arrives 4th but belongs 2nd in time order, so $K = 4-2 = 2$.
+
+**Without OOO support:** the active chunk $[100,110,120]$ was Gorilla-XOR encoded assuming monotone time. Inserting $105$ forces decode-merge-recode of the sealed chunk — write amplification $\Omega(\text{block size})$.
+
+**With a tolerance window $\tau$:** set $\tau = 30$. Since lateness $= 120-105 = 15 \le \tau$, the point is accepted into a small in-memory OOO head rather than rejected, and merged with the overlapping block only at the next compaction — amortized $O(1)$ per late point.
+
+**Rollup repair:** suppose a 1-minute `avg` rollup already emitted the bucket $[100,120)$ as $(100+110)/2 = 105$ over 2 points. The late $105$ lands in that same bucket, so the invalidation log marks exactly **one** dirty bucket; recomputing it gives $(100+110+105)/3 = 105$ over 3 points. Repair cost is $O(\#\text{dirty buckets}) = O(1)$, not a full re-aggregation.
+
+If instead $t=105$ arrived after the window had advanced past $\tau$, completeness is undecidable without unbounded retraction state — the watermark/FLP-style barrier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

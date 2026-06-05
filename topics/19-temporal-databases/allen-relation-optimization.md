@@ -52,12 +52,22 @@ Active: GPU/SIMD-vectorized interval joins; integrating WCOJ into temporal engin
 
 ## 9. Key References
 
-- **[Foundational]** Allen, J.F. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983.
-- **[Foundational]** Vilain, M., Kautz, H. *Constraint Propagation Algorithms for Temporal Reasoning.* AAAI, 1986.
-- **[Foundational]** Nebel, B., Bürckert, H.-J. *Reasoning about Temporal Relations: A Maximal Tractable Subclass of Allen's Interval Algebra.* JACM, 1995.
-- **[SOTA]** Dignös, A., Böhlen, M.H., Gamper, J. *Overlap Interval Partition Join.* SIGMOD, 2014.
-- **[SOTA]** Piatov, D., Helmer, S., Dignös, A. *An Interval Join Optimized for Modern Hardware.* VLDB / ICDE, 2016.
-- **[Foundational]** Ngo, H.Q., Ré, C., Rudra, A. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Allen, J.F. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983. — [DOI](https://doi.org/10.1145/182.358434)
+- **[Foundational]** Vilain, M., Kautz, H. *Constraint Propagation Algorithms for Temporal Reasoning.* AAAI, 1986. — [DBLP](https://dblp.org/rec/conf/aaai/VilainK86.html)
+- **[Foundational]** Nebel, B., Bürckert, H.-J. *Reasoning about Temporal Relations: A Maximal Tractable Subclass of Allen's Interval Algebra.* JACM, 1995. — [DOI](https://doi.org/10.1145/200836.200848)
+- **[SOTA]** Dignös, A., Böhlen, M.H., Gamper, J. *Overlap Interval Partition Join.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612175)
+- **[SOTA]** Piatov, D., Helmer, S., Dignös, A. *An Interval Join Optimized for Modern Hardware.* VLDB / ICDE, 2016. — [DOI](https://doi.org/10.1109/ICDE.2016.7498316)
+- **[Foundational]** Ngo, H.Q., Ré, C., Rudra, A. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+**An `overlaps` join via plane sweep, plus a transitivity rewrite.** Two interval relations on a shared timeline:
+
+$R = \{r_1{=}[1,4],\ r_2{=}[6,9]\}$, $S = \{s_1{=}[3,7],\ s_2{=}[8,10]\}$. We want pairs with $r\;\mathsf{overlaps}\;s$, i.e. $r^- < s^- < r^+ < s^+$.
+
+Sort all $4+4=8$ endpoints and sweep left to right, keeping an *active set* of open intervals. When $s_1$ opens at $3$, $r_1=[1,4]$ is active and $r_1^- {=}1 < s_1^- {=}3 < r_1^+{=}4 < s_1^+{=}7$ holds — emit $(r_1,s_1)$. When $s_2$ opens at $8$, $r_2=[6,9]$ is active and $6<8<9<10$ — emit $(r_2,s_2)$. Total cost $O((n{+}m)\log(n{+}m)+k)$ with $n{+}m{=}4$ intervals and $k{=}2$ outputs: the $\log$ term is the endpoint sort, $k$ the result writes — matching the output-optimal bound of §4.
+
+**Composition-table rewrite:** if a query asks `A meets B` and `B meets C`, Allen's table gives $\mathsf{meets}\circ\mathsf{meets}=\{\mathsf{before}\}$, so the optimizer infers $A\;\mathsf{before}\;C$ as a derived (cheaper, indexable) range predicate instead of recomputing it — a sound conjunctive simplification done in PTIME, unlike the NP-complete disjunctive case of §5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

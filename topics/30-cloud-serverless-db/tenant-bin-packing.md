@@ -55,12 +55,28 @@ For the **realistic** tenant problem — multidimensional + correlated-stochasti
 - Truthful packing when tenants misreport footprints (mechanism design).
 
 ## 9. Key References
-- **[Foundational]** Narendra Karmarkar, Richard M. Karp. *An Efficient Approximation Scheme for the One-Dimensional Bin-Packing Problem.* FOCS, 1982.
-- **[Foundational]** Chandra Chekuri, Sanjeev Khanna. *On Multidimensional Packing Problems.* SIAM J. Computing, 2004.
-- **[Foundational]** Jon Kleinberg, Yuval Rabani, Éva Tardos. *Allocating Bandwidth for Bursty Connections.* SIAM J. Computing, 2000 (stochastic/bursty packing).
-- **[SOTA]** Sudipto Das, Vivek Narasayya, Feng Li, Manoj Syamala. *CPU Sharing Techniques for Performance Isolation in Multi-tenant Relational Database-as-a-Service.* VLDB, 2013 (and the MSR multi-tenant placement line).
-- **[SOTA]** Ori Hadary, et al. *Protean: VM Allocation Service at Scale.* OSDI, 2020.
-- **[Survey]** Henrik I. Christensen, Arindam Khan, Sebastian Pokutta, Prasad Tetali. *Approximation and Online Algorithms for Multidimensional Bin Packing: A Survey.* Computer Science Review, 2017.
+- **[Foundational]** Narendra Karmarkar, Richard M. Karp. *An Efficient Approximation Scheme for the One-Dimensional Bin-Packing Problem.* FOCS, 1982. — [DOI](https://doi.org/10.1109/SFCS.1982.61)
+- **[Foundational]** Chandra Chekuri, Sanjeev Khanna. *On Multidimensional Packing Problems.* SIAM J. Computing, 2004. — [DOI](https://doi.org/10.1137/S0097539799356265)
+- **[Foundational]** Jon Kleinberg, Yuval Rabani, Éva Tardos. *Allocating Bandwidth for Bursty Connections.* SIAM J. Computing, 2000 (stochastic/bursty packing). — [DOI](https://doi.org/10.1137/S0097539797329142)
+- **[SOTA]** Sudipto Das, Vivek Narasayya, Feng Li, Manoj Syamala. *CPU Sharing Techniques for Performance Isolation in Multi-tenant Relational Database-as-a-Service.* VLDB, 2013 (and the MSR multi-tenant placement line). — [DOI](https://doi.org/10.14778/2732219.2732223)
+- **[SOTA]** Ori Hadary, et al. *Protean: VM Allocation Service at Scale.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/hadary)
+- **[Survey]** Henrik I. Christensen, Arindam Khan, Sebastian Pokutta, Prasad Tetali. *Approximation and Online Algorithms for Multidimensional Bin Packing: A Survey.* Computer Science Review, 2017. — [DOI](https://doi.org/10.1016/j.cosrev.2016.12.001)
+
+## 10. Worked Example
+
+Three tenants with stochastic CPU demand (capacity per node $C=1.0$), means and standard deviations:
+
+| Tenant | $\mu_i$ | $\sigma_i$ |
+|---|---|---|
+| A | 0.40 | 0.10 |
+| B | 0.35 | 0.10 |
+| C | 0.30 | 0.15 |
+
+**Mean-only packing** sums to $0.40+0.35+0.30 = 1.05 > 1.0$, so all three never fit on one node by means alone.
+
+**Chance constraint** ($\epsilon = 2.3\%$, so $z_\epsilon = 2$). Try co-locating A+B, assuming independence ($\Sigma$ diagonal): effective load
+$$ \mu_A+\mu_B + z_\epsilon\sqrt{\sigma_A^2+\sigma_B^2} = 0.75 + 2\sqrt{0.01+0.01} = 0.75 + 0.283 = 1.033 > 1.0. $$
+Infeasible — A+B overflow with probability $>2.3\%$. But if A and B are **negatively correlated** ($\rho=-0.6$), the variance term becomes $x^\top\Sigma x = 0.01+0.01+2(-0.6)(0.1)(0.1)=0.008$, giving $0.75+2\sqrt{0.008}=0.929 \le 1.0$ — now feasible on one node. This shows why correlation, not just mean size, drives the packing: identical means but $\rho=-0.6$ vs $\rho=0$ flips A+B from 3 nodes to 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

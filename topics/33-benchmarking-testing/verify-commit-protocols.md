@@ -48,12 +48,20 @@ For the **decidable** fragment (EPR / quantifier-restricted, Ivy), checking a *c
 - Bridging verified protocol cores with verified concurrency/recovery in the surrounding engine.
 
 ## 9. Key References
-- **[Foundational]** Skeen, Stonebraker. *A Formal Model of Crash Recovery in a Distributed System.* IEEE TSE, 1983.
-- **[Foundational]** Lamport. *The Part-Time Parliament (Paxos).* ACM TOCS, 1998.
-- **[SOTA]** Hawblitzel, Howell, Kapritsos, Lorch, Parno, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP 2015.
-- **[SOTA]** Wilcox, Woos, Panchekha, Tatlock, Ernst, et al. *Verdi: A Framework for Implementing and Formally Verifying Distributed Systems.* PLDI 2015.
-- **[SOTA]** Padon, McMillan, Panda, Sagiv, Shoham. *Ivy: Safety Verification by Interactive Generalization.* PLDI 2016.
-- **[Foundational]** Dwork, Lynch, Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988.
+- **[Foundational]** Skeen, Stonebraker. *A Formal Model of Crash Recovery in a Distributed System.* IEEE TSE, 1983. — [DOI](https://doi.org/10.1109/TSE.1983.236608)
+- **[Foundational]** Lamport. *The Part-Time Parliament (Paxos).* ACM TOCS, 1998. — [DOI](https://doi.org/10.1145/279227.279229)
+- **[SOTA]** Hawblitzel, Howell, Kapritsos, Lorch, Parno, et al. *IronFleet: Proving Practical Distributed Systems Correct.* SOSP 2015. — [DOI](https://doi.org/10.1145/2815400.2815428)
+- **[SOTA]** Wilcox, Woos, Panchekha, Tatlock, Ernst, et al. *Verdi: A Framework for Implementing and Formally Verifying Distributed Systems.* PLDI 2015. — [DOI](https://doi.org/10.1145/2737924.2737958)
+- **[SOTA]** Padon, McMillan, Panda, Sagiv, Shoham. *Ivy: Safety Verification by Interactive Generalization.* PLDI 2016. — [DOI](https://doi.org/10.1145/2908080.2908118)
+- **[Foundational]** Dwork, Lynch, Stockmeyer. *Consensus in the Presence of Partial Synchrony.* JACM, 1988. — [DOI](https://doi.org/10.1145/42282.42283)
+
+## 10. Worked Example
+
+Trace 2PC blocking — the safety/liveness tension a verifier must capture. Coordinator $C$, participants $P_1,P_2$. Phase 1: $C$ sends `PREPARE`; both reply `YES` and durably log a *prepared* (in-doubt) state. Phase 2: $C$ logs `COMMIT` and sends it to $P_1$, which commits — then **$C$ crashes before messaging $P_2$**.
+
+Now $P_2$ is stuck in *prepared*: it may not unilaterally abort (a TLA+ safety invariant $\square\neg(\text{decided}_1=\text{commit}\wedge\text{decided}_2=\text{abort})$ forbids disagreeing with $P_1$'s commit), and it cannot commit without the decision. It **blocks** until $C$ recovers and replays its log.
+
+A model checker over the state space $\{\text{working},\text{prepared},\text{committed},\text{aborted}\}^{3}$ confirms the safety invariant holds on *all* $4^3=64$ reachable configurations, but the liveness property $\Diamond(\text{decided}_2)$ **fails** under the fair-but-crash-prone schedule above — exactly Skeen's impossibility ($n=2$): no asynchronous commit protocol is non-blocking. This is why verifiers prove liveness only under partial synchrony (eventual coordinator recovery), not unconditionally.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

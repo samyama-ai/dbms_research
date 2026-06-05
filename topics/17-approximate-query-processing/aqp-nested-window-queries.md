@@ -54,13 +54,23 @@ Active directions: (1) **compositional error bounds** — a calculus that propag
 - Benchmarks and ground-truth error metrics for nested/analytic AQP.
 
 ## 9. Key References
-- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query (subquery decorrelation).* ACM TODS, 1982.
-- **[Foundational]** U. Dayal. *Of Nests and Trees: A Unified Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers.* VLDB, 1987.
-- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018.
-- **[SOTA]** K. Zeng, S. Gao, B. Mozafari, C. Zaniolo. *The Analytical Bootstrap: A New Method for Fast Error Estimation in Approximate Query Processing.* SIGMOD, 2014.
-- **[SOTA]** S. Kandula et al. *Quickr: Lazily Approximating Complex Ad-Hoc Queries in Big Data Clusters.* SIGMOD, 2016.
-- **[Foundational]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[Survey]** S. Chaudhuri, B. Ding, S. Kandula. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017.
+- **[Foundational]** W. Kim. *On Optimizing an SQL-like Nested Query (subquery decorrelation).* ACM TODS, 1982. — [DOI](https://doi.org/10.1145/319732.319745)
+- **[Foundational]** U. Dayal. *Of Nests and Trees: A Unified Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers.* VLDB, 1987. — [DBLP](https://dblp.org/rec/conf/vldb/Dayal87)
+- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[SOTA]** K. Zeng, S. Gao, B. Mozafari, C. Zaniolo. *The Analytical Bootstrap: A New Method for Fast Error Estimation in Approximate Query Processing.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588579)
+- **[SOTA]** S. Kandula et al. *Quickr: Lazily Approximating Complex Ad-Hoc Queries in Big Data Clusters.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882940)
+- **[Foundational]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Survey]** S. Chaudhuri, B. Ding, S. Kandula. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056097)
+
+## 10. Worked Example
+
+**Per-group sample starvation.** A `Sales(region, amount)` table has $N=1{,}000{,}000$ rows split over $g=10{,}000$ regions (100 rows each). The query is a correlated subquery: for each region, flag it if its average sale exceeds the global average.
+
+AQP draws a uniform $1\%$ sample, $n=10{,}000$ rows. Spread over 10,000 regions, the *expected* sample per region is $n/g = 1$ row — many regions get 0 or 1 sampled tuple.
+
+For a region with $n_k=1$ sampled row, the estimate $\hat\theta_k$ of its mean is a single observation: standard error $\sigma_k/\sqrt{n_k}=\sigma_k$. With per-region $\sigma_k=200$, the half-width of a 95% CI is about $1.96\times 200 \approx \pm392$ — useless for deciding whether the region's true mean (say 510) beats the global average (500).
+
+The lower bound from section 5 says error in the starved group is $\Omega(\sigma\sqrt{g/n}) = 200\sqrt{10000/10000}=200$ — no uniform-sampling estimator does better. Only **stratified sampling** (guaranteeing, e.g., $n_k\ge 30$ per region) shrinks this; that requires $g\times 30 = 300{,}000$ rows, $30\times$ the uniform budget. This is exactly why correlated subqueries break flat AQP.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

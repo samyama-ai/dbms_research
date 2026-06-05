@@ -61,11 +61,24 @@ For **conjunctive queries the problem is essentially solved**: there is a clean 
 
 ## 9. Key References
 
-- **[Foundational]** Gerome Miklau, Dan Suciu. *A Formal Analysis of Information Disclosure in Data Exchange.* Journal of Computer and System Sciences, 2007 (and SIGMOD 2004).
-- **[Foundational]** Shariq Rizvi, Alberto Mendelzon, S. Sudarshan, Prasan Roy. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004.
-- **[SOTA]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM Transactions on Database Systems, 2010.
-- **[Foundational]** Wenfei Fan, Chee-Yong Chan, Minos Garofalakis. *Secure XML Querying with Security Views.* SIGMOD, 2004.
-- **[Survey]** Surajit Chaudhuri, Tanmoy Dutta, S. Sudarshan. *Fine Grained Authorization Through Predicated Grants.* ICDE, 2007.
+- **[Foundational]** Gerome Miklau, Dan Suciu. *A Formal Analysis of Information Disclosure in Data Exchange.* Journal of Computer and System Sciences, 2007 (and SIGMOD 2004). — [DOI](https://doi.org/10.1016/j.jcss.2006.10.004)
+- **[Foundational]** Shariq Rizvi, Alberto Mendelzon, S. Sudarshan, Prasan Roy. *Extending Query Rewriting Techniques for Fine-Grained Access Control.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007631)
+- **[SOTA]** Alan Nash, Luc Segoufin, Victor Vianu. *Views and Queries: Determinacy and Rewriting.* ACM Transactions on Database Systems, 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[Foundational]** Wenfei Fan, Chee-Yong Chan, Minos Garofalakis. *Secure XML Querying with Security Views.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007634)
+- **[Survey]** Surajit Chaudhuri, Tanmoy Dutta, S. Sudarshan. *Fine Grained Authorization Through Predicated Grants.* ICDE, 2007. — [DOI](https://doi.org/10.1109/ICDE.2007.368976)
+
+## 10. Worked Example
+
+**Leakage through a join key.** Base table $\texttt{Emp}(\underline{\text{eid}}, \text{name}, \text{dept}, \text{salary})$. The secret is each employee's salary. We grant two "harmless-looking" views that each drop salary:
+
+- $\mathcal{V}_1 = \pi_{\text{eid},\text{salary}}\,\texttt{Emp}$ but with names *removed* — i.e. $(\text{eid},\text{salary})$ pairs.
+- $\mathcal{V}_2 = \pi_{\text{eid},\text{name}}\,\texttt{Emp}$ — the directory $(\text{eid},\text{name})$.
+
+Individually neither view links a *name* to a *salary*. But $\text{eid}$ is a key shared by both, so the user computes
+$$\mathcal{V}_1 \bowtie_{\text{eid}} \mathcal{V}_2 = \pi_{\text{name},\text{salary}}\,\texttt{Emp},$$
+fully reconstructing the secret $Q_s = \pi_{\text{name},\text{salary}}\texttt{Emp}$. Formally $\{\mathcal{V}_1,\mathcal{V}_2\} \twoheadrightarrow Q_s$ (determinacy), so perfect secrecy *fails*: the posterior $\Pr[S\mid \mathcal{V}_1,\mathcal{V}_2]$ collapses to a point.
+
+The Miklau–Suciu critical-tuple test catches this: the two views' critical tuples overlap on the $\text{eid}$-join, so they are *not* disjoint — exactly the condition under which a CQ view leaks a CQ secret. A purely syntactic "salary column is hidden in every view" check would miss the leak.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

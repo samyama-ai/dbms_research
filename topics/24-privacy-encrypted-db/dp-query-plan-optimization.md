@@ -49,12 +49,22 @@ There is **no unified DP cost model** that is both (a) predictive of true output
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries Under Differential Privacy (Matrix Mechanism).* PODS, 2010.
-- **[Foundational]** Hardt, Talwar. *On the Geometry of Differential Privacy.* STOC, 2010.
-- **[SOTA]** McKenna, Miklau, Hay, Machanavajjhala. *Optimizing Error of High-Dimensional Statistical Queries Under Differential Privacy (HDMM).* VLDB, 2018.
-- **[SOTA]** Ge, Mohan, He, Machanavajjhala, et al. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019.
-- **[SOTA]** Johnson, Near, et al. *CHORUS: A Programming Framework for Building Scalable Differential Privacy Mechanisms.* IEEE EuroS&P, 2020.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099) · [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[Foundational]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries Under Differential Privacy (Matrix Mechanism).* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104) · [DBLP](https://dblp.org/rec/conf/pods/LiHRMM10.html)
+- **[Foundational]** Hardt, Talwar. *On the Geometry of Differential Privacy.* STOC, 2010. — [DOI](https://doi.org/10.1145/1806689.1806786) · [DBLP](https://dblp.org/rec/conf/stoc/HardtT10.html) · [arXiv](https://arxiv.org/abs/0907.3754)
+- **[SOTA]** McKenna, Miklau, Hay, Machanavajjhala. *Optimizing Error of High-Dimensional Statistical Queries Under Differential Privacy (HDMM).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3231751.3231769) · [DBLP](https://dblp.org/rec/journals/pvldb/McKennaMHM18.html) · [arXiv](https://arxiv.org/abs/1808.03537)
+- **[SOTA]** Ge, Mohan, He, Machanavajjhala, et al. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300092) · [arXiv](https://arxiv.org/abs/1712.10266)
+- **[SOTA]** Johnson, Near, et al. *CHORUS: A Programming Framework for Building Scalable Differential Privacy Mechanisms.* IEEE EuroS&P, 2020. — [DOI](https://doi.org/10.1109/EuroSP48549.2020.00041) · [arXiv](https://arxiv.org/abs/1809.07750)
+
+## 10. Worked Example
+
+**Budget split across two operators changes total error.** A plan emits two independent Gaussian-mechanism measurements with sensitivities $\Delta_1=1$ and $\Delta_2=2$ under a zCDP budget $\rho=1$ ($\rho=\rho_1+\rho_2$). Gaussian variance on operator $i$ is $\Delta_i^2/(2\rho_i)$; minimize total variance $V=\frac{\Delta_1^2}{2\rho_1}+\frac{\Delta_2^2}{2\rho_2}$.
+
+*Naive equal split* $\rho_1=\rho_2=0.5$: $V=\frac{1}{1}+\frac{4}{1}=5$.
+
+*Optimal split* (Lagrangian / water-filling): $\rho_i\propto\Delta_i$, so $\rho_1=\frac{1}{1+2}=\tfrac13$, $\rho_2=\tfrac23$. Then $V=\frac{1}{2/3}+\frac{4}{4/3}=1.5+3=4.5$ — a 10% reduction *for the same plan*, just by reallocating budget toward the higher-sensitivity operator.
+
+Now suppose a plan *rewrite* (e.g. truncating a join degree to $\tau$) lowers $\Delta_2$ from $2$ to $1$ at the cost of small bias. Equal split then gives $V=1+1=2$. The optimizer must jointly choose the rewrite (which sets the $\Delta_i$) and the split (convex given $\Delta_i$) — the inner problem is convex, the outer plan choice combinatorial, which is exactly what makes joint DP plan optimization hard.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

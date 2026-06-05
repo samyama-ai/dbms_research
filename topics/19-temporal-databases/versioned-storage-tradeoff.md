@@ -52,12 +52,26 @@ Active: time-travel storage in lakehouse formats (Iceberg/Delta/Hudi) — automa
 
 ## 9. Key References
 
-- **[SOTA]** Bhattacherjee, S., Chavan, A., Huang, S., Deshpande, A., Parameswaran, A. *Principles of Dataset Versioning: Exploring the Recreation/Storage Tradeoff.* VLDB, 2015.
-- **[Foundational]** Driscoll, J.R., Sarnak, N., Sleator, D.D., Tarjan, R.E. *Making Data Structures Persistent.* JCSS, 1989.
-- **[SOTA]** Huang, S., Xu, L., Liu, J., Elmore, A., Parameswaran, A. *OrpheusDB: Bolt-on Versioning for Relational Databases.* VLDB, 2017.
-- **[Foundational]** Bernstein, P.A., Goodman, N. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983.
-- **[SOTA]** Armbrust, M. et al. *Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores.* VLDB, 2020.
-- **[Survey]** Salzberg, B., Tsotras, V.J. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999.
+- **[SOTA]** Bhattacherjee, S., Chavan, A., Huang, S., Deshpande, A., Parameswaran, A. *Principles of Dataset Versioning: Exploring the Recreation/Storage Tradeoff.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1505.05211) · [DOI](https://doi.org/10.14778/2824032.2824035)
+- **[Foundational]** Driscoll, J.R., Sarnak, N., Sleator, D.D., Tarjan, R.E. *Making Data Structures Persistent.* JCSS, 1989. — [DOI](https://doi.org/10.1016/0022-0000(89)90034-2)
+- **[SOTA]** Huang, S., Xu, L., Liu, J., Elmore, A., Parameswaran, A. *OrpheusDB: Bolt-on Versioning for Relational Databases.* VLDB, 2017. — [arXiv](https://arxiv.org/abs/1703.02475) · [DOI](https://doi.org/10.14778/3115404.3115417)
+- **[Foundational]** Bernstein, P.A., Goodman, N. *Multiversion Concurrency Control — Theory and Algorithms.* ACM TODS, 1983. — [DOI](https://doi.org/10.1145/319996.319998)
+- **[SOTA]** Armbrust, M. et al. *Delta Lake: High-Performance ACID Table Storage over Cloud Object Stores.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415560)
+- **[Survey]** Salzberg, B., Tsotras, V.J. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999. — [DOI](https://doi.org/10.1145/319806.319816)
+
+## 10. Worked Example
+
+A linear history of 5 versions, each $|v|=100$ units to store as a full snapshot; each consecutive delta costs $d=10$ to store and $10$ to apply.
+
+$$v_0 \to v_1 \to v_2 \to v_3 \to v_4$$
+
+**All-snapshots:** storage $= 5 \times 100 = 500$; any reconstruction $= O(100)$, $0$ deltas.
+
+**One base + deltas:** materialize only $v_0$ (cost $100$), store $4$ deltas ($4 \times 10 = 40$); storage $= 140$. But reconstructing $v_4$ applies $4$ deltas: retrieval cost $= 100 + 4\times10 = 140$.
+
+**Mixed (budget-driven):** also materialize $v_2$. Storage $= 100 + 100 + 4\times10 = 240$. Now worst-case reconstruction is $\le 2$ delta-applies (any $v_i$ reaches $v_0$ or $v_2$ within $2$ hops): max retrieval $= 100 + 2\times10 = 120$.
+
+This is the storage-vs-retrieval frontier of §2: as snapshots are added, storage rises ($140 \to 240 \to 500$) while worst-case retrieval falls ($140 \to 120 \to 100$). On a line, the optimal placement under a retrieval bound is found exactly by interval DP; the same objective over a branching DAG is NP-hard (§5).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

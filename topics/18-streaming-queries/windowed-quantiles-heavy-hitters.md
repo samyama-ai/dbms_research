@@ -1,6 +1,7 @@
 # Quantile and heavy-hitter tracking over windows
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/windowed-quantiles-heavy-hitters` · **Status:** partially-solved
+> **Verification note:** The KLL sketch is Karnin–Lang–**Liberty** (Edo Liberty); occurrences of "Liviu" are a name typo for "Liberty."
 
 ## 1. Problem Statement
 
@@ -60,12 +61,28 @@ For *infinite streams* the problem is essentially **closed** (KLL, SpaceSaving m
 
 ## 9. Key References
 
-- **[Foundational]** M. Datar, A. Gionis, P. Indyk, R. Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002.
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005.
-- **[Foundational]** A. Metwally, D. Agrawal, A. El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT, 2005.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liviu. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** P. K. Agarwal, G. Cormode, Z. Huang, J. Phillips, Z. Wei, K. Yi. *Mergeable Summaries.* ACM TODS, 2013.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** M. Datar, A. Gionis, P. Indyk, R. Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** A. Metwally, D. Agrawal, A. El Abbadi. *Efficient Computation of Frequent and Top-k Elements in Data Streams (Space-Saving).* ICDT, 2005. — [DOI](https://doi.org/10.1007/978-3-540-30570-5_27)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** P. K. Agarwal, G. Cormode, Z. Huang, J. Phillips, Z. Wei, K. Yi. *Mergeable Summaries.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+**Misra–Gries heavy hitters** with $\epsilon = 1/3$, so $k = \lceil 1/\epsilon\rceil - 1 = 2$ counters, on the stream $a,b,a,c,a,b,d$ ($N=7$).
+
+| arrive | counters after step |
+|--------|---------------------|
+| $a$ | $\{a{:}1\}$ |
+| $b$ | $\{a{:}1, b{:}1\}$ |
+| $a$ | $\{a{:}2, b{:}1\}$ |
+| $c$ | full + new key $\Rightarrow$ decrement all: $\{a{:}1\}$ |
+| $a$ | $\{a{:}2\}$ |
+| $b$ | $\{a{:}2, b{:}1\}$ |
+| $d$ | decrement all: $\{a{:}1\}$ |
+
+Final estimate $\hat f(a)=1$; true counts are $f(a)=3,\,f(b)=2,\,f(c)=f(d)=1$. Misra–Gries guarantees $f(x)-\epsilon N \le \hat f(x) \le f(x)$, i.e. each estimate undercounts by at most $\epsilon N = 7/3 \approx 2.33$. Check: $\hat f(a)=1 \in [3-2.33,\,3]$. Any true $\phi$-heavy hitter with $\phi > \epsilon$ survives with a positive counter, so querying $\phi = 1/2$ ($\ge \lceil 3.5\rceil$ occurrences) correctly returns no false negatives. The structure uses only $O(1/\epsilon)=2$ counters regardless of $N$, and two such tables **merge** by summing then keeping the top $k$ — the property that makes it usable per-window and across partitions.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

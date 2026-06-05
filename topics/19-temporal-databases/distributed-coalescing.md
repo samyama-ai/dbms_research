@@ -45,12 +45,35 @@ This is **empirically open**: we have a clean single-node optimum, MPC bounds fo
 
 ## 9. Key References
 
-- **[Foundational]** M. Böhlen, R. T. Snodgrass, M. D. Soo. *Coalescing in Temporal Databases.* VLDB, 1996.
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* ACM PODS, 2013 (MPC model, skew).
-- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Overlap Interval Partition Join.* ACM SIGMOD, 2014.
-- **[SOTA]** P. Bouros, N. Mamoulis. *A Forward Scan based Plane Sweep Algorithm for Parallel Interval Joins.* VLDB, 2017.
-- **[SOTA]** T. Roughgarden, S. Vassilvitskii, J. R. Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* Journal of the ACM, 2018 (MPC round lower bounds).
-- **[Survey]** M. H. Böhlen, A. Dignös, J. Gamper, C. S. Jensen. *Temporal Data Management — An Overview.* eBISS, Springer, 2018.
+- **[Foundational]** M. Böhlen, R. T. Snodgrass, M. D. Soo. *Coalescing in Temporal Databases.* VLDB, 1996. — [PDF](https://www.vldb.org/conf/1996/P180.PDF)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* ACM PODS, 2013 (MPC model, skew). — [DBLP](https://dblp.org/rec/conf/pods/BeameKS13.html) · [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Overlap Interval Partition Join.* ACM SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612175)
+- **[SOTA]** P. Bouros, N. Mamoulis. *A Forward Scan based Plane Sweep Algorithm for Parallel Interval Joins.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137644)
+- **[SOTA]** T. Roughgarden, S. Vassilvitskii, J. R. Wang. *Shuffles and Circuits: On Lower Bounds for Modern Parallel Computation.* Journal of the ACM, 2018 (MPC round lower bounds). — [DOI](https://doi.org/10.1145/3232536)
+- **[Survey]** M. H. Böhlen, A. Dignös, J. Gamper, C. S. Jensen. *Temporal Data Management — An Overview.* eBISS, Springer, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96655-7_3)
+
+## 10. Worked Example
+
+Coalesce these (key, $[ts,te)$) intervals, all key $A$, across $p=2$ workers by **time-range**
+partition at boundary $b=20$ (worker 0 owns $[0,20)$, worker 1 owns $[20,40)$):
+
+$$A:[2,8),\ [6,14),\ [18,24),\ [30,36)$$
+
+**P1 (local coalesce).** Endpoint sweep per worker. Worker 0 sees $[2,8),[6,14)$ and the left part
+of the straddler $[18,24)$ (replicated to both sides): merging the overlapping run gives
+$[2,14)$ and $[18,20)$. Worker 1 sees the right part $[20,24)$ and $[30,36)$: gives $[20,24)$ and
+$[30,36)$.
+
+**P2 (boundary stitch).** Only intervals touching $b=20$ can still merge. Worker 0's $[18,20)$ and
+worker 1's $[20,24)$ meet at 20, so one stitch round merges them into $[18,24)$. Final output:
+
+$$A:[2,14),\ [18,24),\ [30,36)$$
+
+Cost: local work $O((m/p)\log(m/p))$; the shuffle in P2 is just the **boundary cut**
+$c$ = number of boundary-crossing intervals = $1$ here, not all $m=4$ — illustrating the
+$O(m/p + c)$ load bound. Had every interval been one long-lived $A:[0,40)$ spanning both ranges
+(the adversarial case of §5), replication would blow up and the cut $c$ would dominate, forcing the
+skew-vs-shuffle trade-off the problem leaves open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,20 @@ Each axis is individually well understood — PR-trees nail worst-case window I/
 - Privacy-preserving archive indexing (queries over anonymized/aggregated trajectory history).
 
 ## 9. Key References
-- **[Foundational]** Pfoser, Jensen, Theodoridis. *Novel Approaches to the Indexing of Moving Object Trajectories (TB-tree / STR-tree).* VLDB, 2000.
-- **[Foundational]** Arge, de Berg, Haverkort, Yi. *The Priority R-tree: A Practically Efficient and Worst-Case Optimal R-tree.* SIGMOD, 2004.
-- **[SOTA]** Zimányi, Sakr, Lesuisse. *MobilityDB: A Mobility Database Based on PostgreSQL and PostGIS.* ACM TODS, 2020.
-- **[SOTA]** Hughes et al. *GeoMesa: A Distributed Architecture for Spatio-Temporal Fusion.* SPIE / GeoMesa, 2015.
-- **[SOTA]** Cudre-Mauroux, Wu, Madden. *TrajStore: An Adaptive Storage System for Very Large Trajectory Data Sets.* ICDE, 2010.
-- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016.
+- **[Foundational]** Pfoser, Jensen, Theodoridis. *Novel Approaches to the Indexing of Moving Object Trajectories (TB-tree / STR-tree).* VLDB, 2000. — [DBLP](https://dblp.org/rec/conf/vldb/PfoserJT00.html)
+- **[Foundational]** Arge, de Berg, Haverkort, Yi. *The Priority R-tree: A Practically Efficient and Worst-Case Optimal R-tree.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007608)
+- **[SOTA]** Zimányi, Sakr, Lesuisse. *MobilityDB: A Mobility Database Based on PostgreSQL and PostGIS.* ACM TODS, 2020. — [DOI](https://doi.org/10.1145/3406534)
+- **[SOTA]** Hughes et al. *GeoMesa: A Distributed Architecture for Spatio-Temporal Fusion.* SPIE / GeoMesa, 2015. — [DOI](https://doi.org/10.1117/12.2177233)
+- **[SOTA]** Cudre-Mauroux, Wu, Madden. *TrajStore: An Adaptive Storage System for Very Large Trajectory Data Sets.* ICDE, 2010. — [DOI](https://doi.org/10.1109/ICDE.2010.5447829)
+- **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
+
+## 10. Worked Example
+
+Encode a trajectory point $(x,y,t)$ with a Z-order (Morton) space-filling-curve key, the layout used by GeoMesa. Quantize each coordinate to 2 bits: a point in cell $(x{=}2, y{=}1, t{=}3)$ has binary $(10, 01, 11)$. Interleaving bits as $z = x_1 t_1 y_1 \dots$ — using order $(t,x,y)$ per level — gives the 1-D key; adjacent points in space-time land in nearby keys, so a window query becomes a few contiguous key ranges.
+
+**Why ranges, not a point.** A window $[t_2,t_3]\times[x_1,x_2]\times[y_1,y_2]$ does *not* map to one contiguous Z-interval — the curve re-enters and leaves the box, producing several disjoint ranges (the "Z-order jump"). For a $2\times2\times2$ window the decomposition typically yields $2$–$4$ ranges.
+
+**The three-way tension (Section 1).** With block size $B$, the PR-tree answers this $d{=}3$ window in $O((n/B)^{2/3}+K/B)$ I/Os worst-case. The SFC+LSM layout instead ingests at $O((1/B)\log_{M/B}(n/B))$ amortized but pays boundary replication for sub-trajectories straddling a range edge — trading read optimality for cheap appends.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

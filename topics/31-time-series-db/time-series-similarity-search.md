@@ -58,12 +58,28 @@ For **Euclidean** the gap is essentially closed (near-optimal ANN; $O(n\log n)$ 
 
 ## 9. Key References
 
-- **[Foundational]** E. Keogh, C. Ratanamahatana. *Exact indexing of dynamic time warping.* KAIS, 2005.
-- **[SOTA]** T. Rakthanmanon et al. *Searching and Mining Trillions of Time Series Subsequences under DTW.* KDD, 2012.
-- **[SOTA]** C.-C. M. Yeh et al. *Matrix Profile I.* ICDM, 2016.
-- **[Foundational]** K. Bringmann, M. Künnemann. *Quadratic Conditional Lower Bounds for String Problems and DTW.* FOCS, 2015.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[Survey]** T. Palpanas et al. *Data Series Management and Analytics.* (data-series indexing line / surveys), 2019–2023.
+- **[Foundational]** E. Keogh, C. Ratanamahatana. *Exact indexing of dynamic time warping.* KAIS, 2005. — [DOI](https://doi.org/10.1007/s10115-004-0154-9)
+- **[SOTA]** T. Rakthanmanon et al. *Searching and Mining Trillions of Time Series Subsequences under DTW.* KDD, 2012. — [DOI](https://doi.org/10.1145/2339530.2339576)
+- **[SOTA]** C.-C. M. Yeh et al. *Matrix Profile I.* ICDM, 2016. — [DOI](https://doi.org/10.1109/ICDM.2016.0179)
+- **[Foundational]** K. Bringmann, M. Künnemann. *Quadratic Conditional Lower Bounds for String Problems and DTW.* FOCS, 2015. — [arXiv](https://arxiv.org/abs/1502.01063)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[Survey]** T. Palpanas et al. *Data Series Management and Analytics.* (data-series indexing line / surveys), 2019–2023. — [DBLP search](https://dblp.org/search?q=Palpanas+Data+Series+Management+and+Analytics)
+
+## 10. Worked Example
+
+Take query $Q=(0,1,2)$ and candidate $S=(0,0,1,2,2)$ — same shape, stretched in time. Plain Euclidean on the aligned prefix $(0,1,2)$ vs $(0,0,1)$ gives $\sqrt{0^2+1^2+1^2}=\sqrt 2\approx1.41$, falsely large. DTW does better.
+
+Fill the DP grid $D[i,j]=(q_i-s_j)^2+\min(D[i{-}1,j],D[i,j{-}1],D[i{-}1,j{-}1])$ with cost $(q_i-s_j)^2$:
+
+| | s=0 | 0 | 1 | 2 | 2 |
+|---|---|---|---|---|---|
+| **q=0** | 0 | 0 | 1 | 4 | 4 |
+| **q=1** | 1 | 1 | 0 | 1 | 2 |
+| **q=2** | 5 | 5 | 1 | 0 | 0 |
+
+The bottom-right cell is $\mathrm{DTW}(Q,S)=0$: the warping path $0{\to}0,0; 1{\to}1; 2{\to}2,2$ aligns perfectly, recovering the true match Euclidean missed.
+
+**Lower-bound pruning:** $LB\_Keogh$ builds an envelope $(U,L)$ around $Q$ with band $w=1$: $U=(1,2,2),L=(0,0,1)$. For a far candidate, $LB\_Keogh=\sum\max(0,(s_i-U_i)^2,(L_i-s_i)^2)$ is computed in $O(m)$ and, if it already exceeds the best-so-far DTW, the $O(m^2)$ DP is skipped — the cascade behind UCR Suite's trillion-point scan.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

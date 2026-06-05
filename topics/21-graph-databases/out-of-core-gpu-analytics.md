@@ -45,12 +45,22 @@ Active groups: Hwu/cuGraph and NVIDIA (UVM/GPUDirect Storage zero-copy); Kim/Eom
 - Unified topology + feature streaming for GNN training at trillion-edge scale.
 
 ## 9. Key References
-- **[Foundational]** Aggarwal, Vitter. *The input/output complexity of sorting and related problems.* CACM, 1988.
-- **[Foundational]** Kyrola, Blelloch, Guestrin. *GraphChi: Large-scale graph computation on just a PC.* OSDI, 2012.
-- **[SOTA]** Wang, Davidson et al. *Gunrock: A high-performance graph processing library on the GPU.* PPoPP, 2016.
-- **[SOTA]** Sabet, Zhao, Gupta. *Subway: Minimizing data transfer during out-of-GPU-memory graph processing.* EuroSys, 2020.
-- **[SOTA]** Min et al. *EMOGI: Efficient memory-access for out-of-memory graph-traversal in GPUs.* PVLDB, 2021.
-- **[Survey]** Roy, Mihailovic, Zwaenepoel. *X-Stream: Edge-centric graph processing using streaming partitions.* SOSP, 2013.
+- **[Foundational]** Aggarwal, Vitter. *The input/output complexity of sorting and related problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Kyrola, Blelloch, Guestrin. *GraphChi: Large-scale graph computation on just a PC.* OSDI, 2012. — [PDF](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/kyrola)
+- **[SOTA]** Wang, Davidson et al. *Gunrock: A high-performance graph processing library on the GPU.* PPoPP, 2016. — [arXiv](https://arxiv.org/abs/1501.05387) · [DOI](https://doi.org/10.1145/2851141.2851145)
+- **[SOTA]** Sabet, Zhao, Gupta. *Subway: Minimizing data transfer during out-of-GPU-memory graph processing.* EuroSys, 2020. — [DOI](https://doi.org/10.1145/3342195.3387537)
+- **[SOTA]** Min et al. *EMOGI: Efficient memory-access for out-of-memory graph-traversal in GPUs.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2006.06890) · [DOI](https://doi.org/10.14778/3425879.3425883)
+- **[Survey]** Roy, Mihailovic, Zwaenepoel. *X-Stream: Edge-centric graph processing using streaming partitions.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522740)
+
+## 10. Worked Example
+
+Run BFS on a graph with $|E| = 8 \times 10^9$ edges (each $8$ bytes $\Rightarrow 64$ GB edge data) on a GPU with $16$ GB HBM, streaming edges from host over PCIe at $12$ GB/s. Block size $B = 1$ MB.
+
+**Whole-graph-per-iteration (EMOGI-style streaming):** each BFS level streams all $64$ GB once. I/O per level $= |E|/B = 8\times10^9 \cdot 8 / 10^6 = 6.4\times10^4$ block transfers; time $\approx 64\text{ GB} / 12\text{ GB/s} \approx 5.3$ s per level. A graph of diameter $20$ takes $\approx 106$ s — most levels move cold edges whose endpoints aren't in the frontier.
+
+**Active-subgraph loading (Subway-style):** BFS frontiers are tiny at the start and end. Suppose frontier edge counts across $20$ levels sum to only $0.15\,|E|$ (the bulk concentrated in $\sim 3$ middle levels). Then total transfer $\approx 0.15 \times 64 = 9.6$ GB, time $\approx 0.8$ s for transfer plus per-level subgraph-extraction overhead.
+
+The asymptotic worst case is unchanged: a dense middle frontier still forces $\Omega(I \cdot |E|/B)$ when reuse is absent. But on this instance the active-set scheduler cuts transferred bytes $\sim 6.7\times$, illustrating why the open problem is *instance-adaptive* scheduling rather than improving the worst-case I/O bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -49,11 +49,19 @@ Directions: (i) **learned/predictive watermarks** with conformal-prediction-styl
 
 ## 9. Key References
 
-- **[Foundational]** Tyler Akidau et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* PVLDB, 2013.
-- **[Foundational]** Peter A. Tucker, David Maier, Tim Sheard, Leonidas Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003.
-- **[SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015.
-- **[Foundational]** A. Dvoretzky, J. Kiefer, J. Wolfowitz. *Asymptotic Minimax Character of the Sample Distribution Function (DKW inequality).* Annals of Math. Statistics, 1956.
-- **[Survey]** Martin Hirzel, Robert Soulé, Scott Schneider, Buğra Gedik, Robert Grimm. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014.
+- **[Foundational]** Tyler Akidau et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536229)
+- **[Foundational]** Peter A. Tucker, David Maier, Tim Sheard, Leonidas Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003. — [DOI](https://doi.org/10.1109/TKDE.2003.1198390)
+- **[SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[Foundational]** A. Dvoretzky, J. Kiefer, J. Wolfowitz. *Asymptotic Minimax Character of the Sample Distribution Function (DKW inequality).* Annals of Math. Statistics, 1956. — [DOI](https://doi.org/10.1214/aoms/1177728174)
+- **[Survey]** Martin Hirzel, Robert Soulé, Scott Schneider, Buğra Gedik, Robert Grimm. *A Catalog of Stream Processing Optimizations.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2528412)
+
+## 10. Worked Example
+
+A single source has i.i.d. processing delays (in seconds) sampled as $D = \{1, 2, 2, 3, 8\}$ — four "normal" events and one straggler. We use the fixed-lag watermark $W(p) = p - \delta$, so **lateness** $= \delta$ and **incompleteness** $= \Pr[D > \delta]$, estimated by the empirical tail $\hat{\bar F}(\delta)$.
+
+Pick $\delta = 3$: events with delay $>3$ (just the $D{=}8$ event) miss their window. Empirical incompleteness $= 1/5 = 0.20$ at lateness $3$s. Pick $\delta = 8$: incompleteness $= 0/5 = 0$, but lateness jumps to $8$s — the straggler dominates the cost. This is the $(L,\epsilon)$ trade-off traced by the quantile of $D$.
+
+How many samples justify a target? DKW says $\Pr[\sup_x|\hat F_n(x)-F(x)|>\eta]\le 2e^{-2n\eta^2}$. To pin the empirical CDF within $\eta=0.05$ at confidence $1-\beta=0.95$, solve $2e^{-2n(0.05)^2}=0.05 \Rightarrow n = \ln(40)/(2\cdot 0.0025) \approx 738$ samples. With unbounded adversarial delay, no finite $\delta$ guarantees $\epsilon=0$ (the straggler can be arbitrarily late) — the FLP-flavored impossibility of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

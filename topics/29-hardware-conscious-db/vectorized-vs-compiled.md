@@ -46,12 +46,23 @@ Both paradigms are bounded below by the **roofline / memory-bandwidth limit** fo
 - Compilation-cost models accurate enough to make the compile-vs-interpret decision optimal for short and ad-hoc queries.
 
 ## 9. Key References
-- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[Foundational]** T. Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB, 2011.
-- **[SOTA]** T. Kersten, V. Leis, A. Kemper, T. Neumann, A. Pavlo, P. Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB, 2018.
-- **[SOTA]** T. Gubner, P. Boncz. *Charting the Design Space of Query Execution Using VOILA.* VLDB, 2021.
-- **[SOTA]** A. Kohn, V. Leis, T. Neumann. *Adaptive Execution of Compiled Queries.* ICDE, 2018.
-- **[Foundational]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014.
+- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[Foundational]** T. Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB, 2011. — [DOI](https://doi.org/10.14778/2002938.2002940)
+- **[SOTA]** T. Kersten, V. Leis, A. Kemper, T. Neumann, A. Pavlo, P. Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3275366.3284966)
+- **[SOTA]** T. Gubner, P. Boncz. *Charting the Design Space of Query Execution Using VOILA.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3447689.3447709)
+- **[SOTA]** A. Kohn, V. Leis, T. Neumann. *Adaptive Execution of Compiled Queries.* ICDE, 2018. — [DOI](https://doi.org/10.1109/ICDE.2018.00027)
+- **[Foundational]** V. Leis, P. Boncz, A. Kemper, T. Neumann. *Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610507)
+
+## 10. Worked Example
+
+A 3-operator pipeline (scan → filter → aggregate) over $n = 10^6$ tuples. Per-tuple compute is $c = 2$ ns; vector width $w = 8$; per-operator materialization to L2 costs $m = 0.5$ ns/tuple/boundary (2 inter-operator boundaries); JIT compile latency $T_{\text{compile}} = 30$ ms.
+
+Using the §2 cost forms:
+
+- **Vectorized:** $T_{\text{vec}} = \sum_{op}\frac{n}{w}c + n\cdot 2m = 3\cdot\frac{10^6}{8}\cdot2\text{ ns} + 10^6\cdot1\text{ ns} = 0.75 + 1.0 = 1.75$ ms.
+- **Compiled:** fuses operators (no materialization), $T_{\text{comp}} = \sum_{op} n\,c' + T_{\text{compile}}$. Take $c' = 2$ ns with full fusion: $3\cdot10^6\cdot2\text{ ns} + 30\text{ ms} = 6.0 + 30 = 36$ ms.
+
+For this short query, **vectorized wins** ($1.75$ vs $36$ ms) — the compile latency dominates. Now scale to $n = 10^9$: $T_{\text{vec}} = 1{,}750$ ms vs $T_{\text{comp}} = 6{,}000 + 30 = 6{,}030$ ms; vectorized still wins on this memory-bound pipeline, but the $30$ ms compile is now negligible, so a compute-heavy pipeline (large $c'$ savings from register fusion) would flip the crossover. **Adaptive execution** (§4) sidesteps the choice: interpret immediately, compile in the background, switch only if the query runs long enough to amortize $T_{\text{compile}}$ — guaranteeing $\approx\min(T_{\text{vec}}, T_{\text{comp}})$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

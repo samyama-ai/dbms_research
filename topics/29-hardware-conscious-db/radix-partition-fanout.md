@@ -29,11 +29,24 @@ Directions: **adaptive / learned fan-out** that detects skew at runtime and vari
 A unified skew-and-hardware-parametric model for optimal adaptive fan-out with guarantees; automatic fan-out tuning portable across CPU TLB regimes and GPU shared-memory; integration with worst-case-optimal multi-way join partitioning; co-tuning fan-out with vectorized/streaming-store kernels.
 
 ## 9. Key References
-- **[Foundational]** S. Manegold, P. Boncz, M. Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE, 2002.
-- **[SOTA]** C. Kim, T. Kaldewey, V. W. Lee, E. Sedlar, A. D. Nguyen et al. *Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs.* VLDB, 2009.
-- **[SOTA]** O. Polychroniou, K. A. Ross. *A Comprehensive Study of Main-Memory Partitioning and Its Application to Large-Scale Comparison- and Radix-Sort.* SIGMOD, 2014.
-- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013.
-- **[Survey]** S. Schuh, X. Chen, J. Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD, 2016.
+- **[Foundational]** S. Manegold, P. Boncz, M. Kersten. *Optimizing Main-Memory Join on Modern Hardware.* IEEE TKDE, 2002. — [DOI](https://doi.org/10.1109/TKDE.2002.1019210)
+- **[SOTA]** C. Kim, T. Kaldewey, V. W. Lee, E. Sedlar, A. D. Nguyen et al. *Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687553.1687564)
+- **[SOTA]** O. Polychroniou, K. A. Ross. *A Comprehensive Study of Main-Memory Partitioning and Its Application to Large-Scale Comparison- and Radix-Sort.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2610522)
+- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013. — [DBLP](https://dblp.uni-trier.de/rec/conf/icde/BalkesenTAO13.html)
+- **[Survey]** S. Schuh, X. Chen, J. Dittrich. *An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882917)
+
+## 10. Worked Example
+
+Partition $N = 2^{30}$ tuples (~1 B rows) down to cache-resident buckets of size $\le C = 2^{18}$ tuples (so each fits an L2-sized slice). Total fan-out needed: $N/C = 2^{30}/2^{18} = 2^{12} = 4096$ buckets.
+
+Suppose the TLB holds $T = 64$ entries (typical reach for 4 KB pages), so the cache/TLB-conscious ceiling is $F \le 2^{6}=64$ per pass. Optimal passes:
+$$k^\* = \lceil \log_{T}(N/C)\rceil = \lceil \log_{64} 4096 \rceil = \lceil 12/6 \rceil = 2.$$
+
+So a **2-pass** schedule with $F_1 = F_2 = 2^{6}$ (since $2^6 \cdot 2^6 = 2^{12}$) is optimal. Compare alternatives:
+- **1 pass, $F=4096=2^{12}$:** $F \gg T$, so writing 4096 live partitions thrashes the TLB → $\Omega(N)$ TLB misses.
+- **3 passes, $F=2^{4}=16$:** TLB-safe but scans $N$ three times: cost $\approx 3\cdot N/B$ vs. the optimal $2\cdot N/B$ — 50% more data movement.
+
+With software write-combine buffers (one cache line per partition), the 2-pass plan attains $O(2\cdot N/B)$ cache misses and $O(N/B)$ TLB misses — matching the analytic optimum and the empirical 1–2 pass sweet spot (Section 3). With huge pages ($T$ reach grows), $F$ can rise to $2^{11}$, dropping $k^\*$ to 1.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

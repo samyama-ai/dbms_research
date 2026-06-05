@@ -34,12 +34,22 @@ Active: conformal foundation-model forecasting (wrapping TimesFM/Chronos with ad
 - Coupling with drift maintenance (`online-model-drift.md`) and alerting FDR control (`anomaly-detection-fdr-control.md`).
 
 ## 9. Key References
-- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World.* Springer, 2005.
-- **[Foundational]** R. F. Barber, E. J. Candès, A. Ramdas, R. J. Tibshirani. *The limits of distribution-free conditional predictive inference.* Information and Inference, 2021.
-- **[SOTA]** I. Gibbs, E. Candès. *Adaptive Conformal Inference Under Distribution Shift.* NeurIPS, 2021.
-- **[SOTA]** A. Angelopoulos, E. Candès, R. Tibshirani. *Conformal PID Control for Time Series Prediction.* NeurIPS, 2023.
-- **[SOTA]** C. Xu, Y. Xie. *Conformal Prediction Interval for Dynamic Time-Series (EnbPI).* ICML, 2021.
-- **[Survey]** A. Angelopoulos, S. Bates. *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification.* Foundations and Trends in ML, 2023.
+- **[Foundational]** V. Vovk, A. Gammerman, G. Shafer. *Algorithmic Learning in a Random World.* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+- **[Foundational]** R. F. Barber, E. J. Candès, A. Ramdas, R. J. Tibshirani. *The limits of distribution-free conditional predictive inference.* Information and Inference, 2021. — [DOI](https://doi.org/10.1093/imaiai/iaaa017)
+- **[SOTA]** I. Gibbs, E. Candès. *Adaptive Conformal Inference Under Distribution Shift.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2106.00170)
+- **[SOTA]** A. Angelopoulos, E. Candès, R. Tibshirani. *Conformal PID Control for Time Series Prediction.* NeurIPS, 2023. — [arXiv](https://arxiv.org/abs/2307.16895)
+- **[SOTA]** C. Xu, Y. Xie. *Conformal Prediction Interval for Dynamic Time-Series (EnbPI).* ICML, 2021. — [PMLR](https://proceedings.mlr.press/v139/xu21h.html)
+- **[Survey]** A. Angelopoulos, S. Bates. *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification.* Foundations and Trends in ML, 2023. — [arXiv](https://arxiv.org/abs/2107.07511)
+
+## 10. Worked Example
+
+**Split conformal interval for a 1-step forecast.** A model $\hat f$ forecasts a metric; on a calibration window of $n=9$ recent points we record absolute residuals (nonconformity scores) $S_i = |y_i - \hat f(x_i)|$:
+
+$$\{0.2,\;0.5,\;0.9,\;1.1,\;1.3,\;1.6,\;2.0,\;2.4,\;3.0\}.$$
+
+For miscoverage $\alpha = 0.1$, take the $\lceil (1-\alpha)(n+1)\rceil = \lceil 0.9\times 10\rceil = 9$-th smallest score $= 3.0 = q$. If the next point's forecast is $\hat f = 50$, the interval is $[\,50-3.0,\;50+3.0\,] = [47,53]$, with finite-sample marginal coverage $\ge 1-\alpha = 0.9$ **under exchangeability**.
+
+But telemetry is not exchangeable: suppose drift makes the true error jump and the point lands at $54$ — a miss. **ACI** reacts: it updates the effective level $\alpha_t \leftarrow \alpha_t + \gamma(\alpha - \mathbf{1}[\text{miss}])$ with step $\gamma=0.05$, so after the miss $\alpha_t \to 0.1 + 0.05(0.1-1) = 0.055$, *lowering* the target miscoverage and thus *widening* the next quantile/interval. Over $T$ steps this drives $\tfrac1T\sum_t \mathbf{1}[\text{miss}_t]\to 0.1$ — the achievable *long-run* guarantee. The catch (§5): no finite-width rule gives *conditional* coverage at this specific instant.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

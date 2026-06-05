@@ -36,12 +36,28 @@ Closed for restricted classes (lenses, single-monomial SPJ): tight PTIME up/down
 Characterize updatability via a provenance-width parameter; FPT/W[1] dichotomy. Trust- and cost-weighted minimal translations (which base source to edit when several witness a tuple). Update translation under integrity constraints via the chase. Interactive translation that surfaces the ambiguity to a human when no unique side-effect-free choice exists.
 
 ## 9. Key References
-- **[Foundational]** François Bancilhon, Nicolas Spyratos. *Update Semantics of Relational Views.* ACM TODS, 1981.
-- **[Foundational]** Stavros Cosmadakis, Christos Papadimitriou. *Updates of Relational Views.* JACM, 1984.
-- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007.
-- **[SOTA]** Aaron Bohannon, Benjamin Pierce, Jeffrey Vaughan (Schmitt). *Relational Lenses: A Language for Updatable Views.* PODS, 2006.
-- **[SOTA]** Pierre Senellart, et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018.
-- **[Survey]** James Cheney, Laura Chiticariu, Wang-Chiew Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
+- **[Foundational]** François Bancilhon, Nicolas Spyratos. *Update Semantics of Relational Views.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319634)
+- **[Foundational]** Stavros Cosmadakis, Christos Papadimitriou. *Updates of Relational Views.* JACM, 1984. — [DOI](https://doi.org/10.1145/1634.1887)
+- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[SOTA]** Aaron Bohannon, Benjamin Pierce, Jeffrey Vaughan (Schmitt). *Relational Lenses: A Language for Updatable Views.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142399)
+- **[SOTA]** Pierre Senellart, et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253) · [DBLP](https://dblp.org/rec/journals/pvldb/SenellartJMR18.html)
+- **[Survey]** James Cheney, Laura Chiticariu, Wang-Chiew Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+
+## 10. Worked Example
+
+Let $R(A,B)$ have base tuples $r_1=(1,x),\,r_2=(1,y),\,r_3=(2,x)$ and $S(B,C)$ have $s_1=(x,9),\,s_2=(y,8)$. The view $V = \pi_{A,C}(R \bowtie S)$ produces:
+
+| A | C | provenance $p_t$ |
+|---|---|------------------|
+| 1 | 9 | $r_1 s_1$ |
+| 1 | 8 | $r_2 s_2$ |
+| 2 | 9 | $r_3 s_1$ |
+
+Request: **delete** view tuple $t=(1,9)$. Its provenance is the single monomial $r_1 s_1$, so any side-effect-free deletion must falsify it: a minimal hitting set picks one of $\{r_1, s_1\}$.
+
+Deleting $r_1$ touches no other monomial — safe. But deleting $s_1$ also kills $r_3 s_1$, so tuple $(2,9)$ vanishes — a **side effect**. The side-effect condition $\forall t'\neq t:\ S\cap\text{supp}(p_{t'})=\varnothing$ rules $s_1$ out (it appears in $(2,9)$'s provenance) and selects $S=\{r_1\}$ as the unique side-effect-free translation.
+
+Because every view tuple here has a single monomial, the hitting set is trivial and translation is PTIME. Introduce a union or self-join so some $p_t$ has several monomials, and the choice becomes a genuine minimum-hitting-set / vertex-cover instance — the NP-hard regime.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

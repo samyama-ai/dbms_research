@@ -29,12 +29,23 @@ Active: (i) **practical PANDA-style optimization** and its integration into real
 Efficient approximation of the entropic bound; tight algorithms under general FDs and conditional independencies; reducing the query-size constants of PANDA to make it default-on in optimizers; data-adaptive degree statistics that shrink worst-case bounds toward observed sizes; and unifying degree-constrained bounds with learned point estimates.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *Computing Join Queries with Functional Dependencies (PANDA).* PODS, 2016/2017.
-- **[SOTA]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012.
-- **[SOTA]** Joglekar, Ré. *It's All a Matter of Degree: Using Degree Information to Optimize Multiway Joins.* ICDT, 2016.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *Computing Join Queries with Functional Dependencies (PANDA).* PODS, 2016/2017. — [arXiv](https://arxiv.org/abs/1604.00111)
+- **[SOTA]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012. — [DOI](https://doi.org/10.1145/2220357.2220363)
+- **[SOTA]** Joglekar, Ré. *It's All a Matter of Degree: Using Degree Information to Optimize Multiway Joins.* ICDT, 2016. — [arXiv](https://arxiv.org/abs/1508.01239)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Take the triangle $Q = R(A,B) \bowtie S(B,C) \bowtie T(A,C)$ with $|R|=|S|=|T|=N$. Plain AGM gives $|Q| \le N^{3/2}$.
+
+Now add one **degree constraint**: in $R$, each $A$-value has at most one $B$-value — i.e. $A \to B$ (an FD, $N_{B|A}=1$). Intuitively $R$ is now a *function* from $A$ to $B$, so $|R| \le |\pi_A R| \le N$ but each $a$ pins down $b$.
+
+The polymatroid LP solves $\max h(ABC)$ subject to $h(AB) \le \log N$, $h(BC) \le \log N$, $h(AC) \le \log N$, and the FD $h(AB) = h(A)$ (knowing $A$ determines $B$, so no extra entropy). With the FD, $h(ABC) = h(AC)$ because $B$ is a function of $A$. Hence
+$$\log|Q| \le h(AC) \le \log N \;\Rightarrow\; |Q| \le N.$$
+
+So the FD collapses the bound from $N^{3/2}$ to $N$ — for $N = 10^6$ that is $10^9 \to 10^6$, a $1000\times$ reduction in the certified intermediate-size guarantee. PANDA turns the LP's dual (the Shannon-inequality proof sequence) into a plan that computes $Q$ in $\tilde O(N)$ time, matching the bound. This is precisely how degree/FD information beats vanilla AGM.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

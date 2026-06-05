@@ -60,12 +60,27 @@ For the *decidable* conjunctive/positive fragment, sound MR discovery is "solved
 
 ## 9. Key References
 
-- **[Foundational]** T. Y. Chen, S. C. Cheung, S. M. Yiu. *Metamorphic Testing: A New Approach for Generating Next Test Cases.* Tech. Report HKUST, 1998.
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977.
-- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020.
-- **[SOTA]** X. Jiang et al. *Detecting Logic Bugs in Database Engines via Equivalent Expression Transformation (EET).* OSDI, 2024.
-- **[Survey]** S. Segura, G. Fraser, A. B. Sánchez, A. Ruiz-Cortés. *A Survey on Metamorphic Testing.* IEEE TSE, 2016.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
+- **[Foundational]** T. Y. Chen, S. C. Cheung, S. M. Yiu. *Metamorphic Testing: A New Approach for Generating Next Test Cases.* Tech. Report HKUST, 1998. — [arXiv](https://arxiv.org/abs/2002.12543)
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning (TLP).* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
+- **[SOTA]** X. Jiang et al. *Detecting Logic Bugs in Database Engines via Equivalent Expression Transformation (EET).* OSDI, 2024. — [USENIX](https://www.usenix.org/conference/osdi24/presentation/jiang)
+- **[Survey]** S. Segura, G. Fraser, A. B. Sánchez, A. Ruiz-Cortés. *A Survey on Metamorphic Testing.* IEEE TSE, 2016. — [DOI](https://doi.org/10.1109/TSE.2016.2532875)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+
+## 10. Worked Example
+
+Apply the **TLP** metamorphic relation to one table $R(a)$ with rows $\{1, 2, \texttt{NULL}\}$ and predicate $p \equiv (a > 1)$.
+
+Source query: $q = \texttt{SELECT a FROM R}$, returning the full bag $\{1,2,\texttt{NULL}\}$.
+
+Follow-up partition (3-valued logic splits every row into exactly one of TRUE / FALSE / UNKNOWN):
+- $q_p = \texttt{SELECT a FROM R WHERE a > 1}$ $\to \{2\}$
+- $q_{\neg p} = \texttt{SELECT a FROM R WHERE NOT (a > 1)}$ $\to \{1\}$
+- $q_{p\,\text{IS NULL}} = \texttt{SELECT a FROM R WHERE (a > 1) IS NULL}$ $\to \{\texttt{NULL}\}$
+
+The MR asserts $\llbracket q\rrbracket = \llbracket q_p\rrbracket \uplus \llbracket q_{\neg p}\rrbracket \uplus \llbracket q_{p\,\text{IS NULL}}\rrbracket$. Here $\{1,2,\texttt{NULL}\} = \{2\}\uplus\{1\}\uplus\{\texttt{NULL}\}$ — holds.
+
+Bug witness: an engine that mistakenly treats `NOT (NULL > 1)` as TRUE would put `NULL` into $q_{\neg p}$, yielding $\{1,\texttt{NULL}\}\uplus\{2\}\uplus\{\} = \{1,2,\texttt{NULL}\}$ — still correct *here*, but on a query where the partitions overlap the bag union breaks, and TLP flags the mismatch with **no trusted reference oracle** needed.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

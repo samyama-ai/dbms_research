@@ -45,13 +45,25 @@ Kùzu and MillenniumDB are actively integrating WCOJ with path/recursive queries
 - Extending WCO + provenance/semiring evaluation to OPTIONAL, aggregation, and property-path counting.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008 / SIAM J. Comput., 2013.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (J. ACM, 2018).
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD / ACM TODS, 2017.
-- **[SOTA]** Feng, Ko, Mhedhbi, Salihoglu et al. *Kùzu / Graphflow: Worst-Case-Optimal Joins for Property Graphs.* CIDR / SIGMOD, 2019–2023.
-- **[Foundational]** Mendelzon, Wood. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Comput., 1995.
-- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS 2008 / SIAM J. Comput., 2013. — [arXiv](https://arxiv.org/abs/1711.03860) — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (J. ACM, 2018). — [arXiv](https://arxiv.org/abs/1203.1952) — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-Type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [arXiv](https://arxiv.org/abs/1612.02503) — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A Relational Engine for Graph Processing.* SIGMOD / ACM TODS, 2017. — [arXiv](https://arxiv.org/abs/1503.02368) — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Feng, Ko, Mhedhbi, Salihoglu et al. *Kùzu / Graphflow: Worst-Case-Optimal Joins for Property Graphs.* CIDR / SIGMOD, 2019–2023. — [CIDR 2023](https://www.cidrdb.org/cidr2023/papers/p48-jin.pdf)
+- **[Foundational]** Mendelzon, Wood. *Finding Regular Simple Paths in Graph Databases.* SIAM J. Comput., 1995. — [DOI](https://doi.org/10.1137/S009753979122370X)
+- **[Survey]** Ngo, Ré, Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314) — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+**The triangle BGP.** Over `triple(s,p,o)`, the query
+`{ ?x :e ?y . ?y :e ?z . ?z :e ?x }`
+is the triangle join $R(x,y)\bowtie S(y,z)\bowtie T(z,x)$ with $|R|=|S|=|T|=m$.
+
+**AGM bound.** The query hypergraph is a 3-cycle; a fractional edge cover must put weight $\ge 1$ on the two edges touching each variable, and the optimum is $x_R=x_S=x_T=\tfrac12$. So
+$$\mathrm{AGM}(Q)=m^{1/2}\cdot m^{1/2}\cdot m^{1/2}=m^{3/2},$$
+the true worst-case output size (e.g. a complete bipartite-ish gadget realizes $\Theta(m^{3/2})$ triangles).
+
+**Binary plan vs. WCOJ.** Any pairwise plan first materializes a two-relation join, e.g. $R\bowtie S$, whose intermediate result can be $\Theta(m^2)$ — quadratically larger than the final answer. **Generic Join / Leapfrog Triejoin** instead intersects per variable: fix $x$, intersect $R$'s and $T$'s neighbor lists to get candidate $y,z$, then probe $S$. This runs in $\tilde O(m^{3/2})$, matching $\mathrm{AGM}(Q)$ and never building the $\Theta(m^2)$ blow-up. For $m=10^6$: $m^{3/2}=10^9$ versus $m^2=10^{12}$ — a thousand-fold gap, the canonical motivation for WCOJ in SPARQL engines.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

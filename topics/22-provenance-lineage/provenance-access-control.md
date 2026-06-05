@@ -60,12 +60,27 @@ Propagation over *positive* queries is essentially solved (tight PTIME, sound). 
 
 ## 9. Key References
 
-- **[Foundational]** Denning. *A Lattice Model of Secure Information Flow.* CACM, 1976.
-- **[Foundational]** Foster, Green, Tannen. *Annotated XML: Queries and Provenance.* PODS 2008 (security semirings).
-- **[Foundational]** Sabelfeld, Sands. *Declassification: Dimensions and Principles.* J. Computer Security, 2009.
-- **[SOTA]** Miklau, Suciu. *A Formal Analysis of Information Disclosure in Data Exchange.* SIGMOD 2004 / J. Comput. Syst. Sci., 2007.
-- **[SOTA]** Moreau et al. *The PROV Data Model (PROV-DM).* W3C Recommendation, 2013.
-- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
+- **[Foundational]** Denning. *A Lattice Model of Secure Information Flow.* CACM, 1976. — [DOI](https://doi.org/10.1145/360051.360056)
+- **[Foundational]** Foster, Green, Tannen. *Annotated XML: Queries and Provenance.* PODS 2008 (security semirings). — [DOI](https://doi.org/10.1145/1376916.1376954) · [DBLP](https://dblp.org/rec/conf/pods/FosterGT08.html)
+- **[Foundational]** Sabelfeld, Sands. *Declassification: Dimensions and Principles.* J. Computer Security, 2009. — [DOI](https://doi.org/10.3233/JCS-2009-0352)
+- **[SOTA]** Miklau, Suciu. *A Formal Analysis of Information Disclosure in Data Exchange.* SIGMOD 2004 / J. Comput. Syst. Sci., 2007. — [DOI](https://doi.org/10.1145/1007568.1007633)
+- **[SOTA]** Moreau et al. *The PROV Data Model (PROV-DM).* W3C Recommendation, 2013. — [W3C](https://www.w3.org/TR/prov-dm/)
+- **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+
+## 10. Worked Example
+
+Take a two-level lattice $L = \{\mathsf{public} \sqsubset \mathsf{secret}\}$ and a base relation $\textsf{Sales}(region, amount, \ell)$:
+
+| region | amount | $\ell$ |
+|--------|--------|--------|
+| North  | 100    | public |
+| South  | 200    | secret |
+
+A clearance-public analyst runs $Q = \texttt{SUM(amount)}$. The aggregate's lineage is $\{r_1, r_2\}$, so the high-water-mark label is
+$$\ell(\text{SUM}) = \ell(r_1)\sqcup\ell(r_2) = \mathsf{public}\sqcup\mathsf{secret} = \mathsf{secret}.$$
+PBAC therefore **denies** the analyst the total $300$ — correctly, because the value depends on a secret tuple.
+
+Contrast with row-level security that only checks the *output* label: it would let the analyst read $300$, never noticing the secret input — a laundering channel. The non-interference test makes this precise: change $r_2$'s amount $200\to 500$ (a secret-only edit). The public projection $\text{view}_{\mathsf{public}}$ must be unchanged. But $\text{SUM}$ jumps $300\to600$, so the unguarded view violates non-interference, while the high-water-mark label that hides SUM from public restores it.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

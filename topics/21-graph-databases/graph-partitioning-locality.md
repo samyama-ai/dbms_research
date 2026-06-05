@@ -32,11 +32,21 @@ This is **empirically-open**: systems ship effective partitioners (METIS, Fennel
 - Benchmarks isolating traversal locality (beyond edge-cut) for property graphs.
 
 ## 9. Key References
-- **[Foundational]** Karypis, Kumar. *A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs (METIS).* SIAM J. Sci. Comput., 1998.
-- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* STOC 2004 / J. ACM 2009.
-- **[SOTA]** Tsourakakis, Gkantsidis, Radunovic, Vojnovic. *FENNEL: Streaming Graph Partitioning for Massive Scale Graphs.* WSDM 2014.
-- **[SOTA]** Gonzalez, Low, Gu, Bickson, Guestrin. *PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs.* OSDI 2012.
-- **[Survey]** Buluç, Meyerhenke, Safro, Sanders, Schulz. *Recent Advances in Graph Partitioning.* Algorithm Engineering, 2016.
+- **[Foundational]** Karypis, Kumar. *A Fast and High Quality Multilevel Scheme for Partitioning Irregular Graphs (METIS).* SIAM J. Sci. Comput., 1998. — [DOI](https://doi.org/10.1137/S1064827595287997)
+- **[Foundational]** Arora, Rao, Vazirani. *Expander Flows, Geometric Embeddings and Graph Partitioning.* STOC 2004 / J. ACM 2009. — [DOI](https://doi.org/10.1145/1502793.1502794)
+- **[SOTA]** Tsourakakis, Gkantsidis, Radunovic, Vojnovic. *FENNEL: Streaming Graph Partitioning for Massive Scale Graphs.* WSDM 2014. — [DOI](https://doi.org/10.1145/2556195.2556213)
+- **[SOTA]** Gonzalez, Low, Gu, Bickson, Guestrin. *PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs.* OSDI 2012. — [DBLP](https://dblp.org/rec/conf/osdi/GonzalezLGBG12.html)
+- **[Survey]** Buluç, Meyerhenke, Safro, Sanders, Schulz. *Recent Advances in Graph Partitioning.* Algorithm Engineering, 2016. — [arXiv](https://arxiv.org/abs/1311.3144)
+
+## 10. Worked Example
+
+**Edge-cut vs. navigational-query cut.** Take a 6-vertex graph: a path $1\!-\!2\!-\!3\!-\!4\!-\!5\!-\!6$ plus one extra edge $1\!-\!6$. Partition into $p=2$ balanced parts of 3 vertices each.
+
+A min-edge-cut partition $\{1,2,3\}\mid\{4,5,6\}$ cuts the edges $3\!-\!4$ and $6\!-\!1$, so **edge cut $=2$** (optimal). Now suppose the *workload* is the single 2-hop traversal "start at 2, walk to 4" with frequency $f=1000$. Every such walk crosses the $3\!-\!4$ boundary once, so **navigational cut $=1000$ remote hops**.
+
+Alternative partition $\{2,3,4\}\mid\{1,5,6\}$ has edge cut $=3$ (cuts $1\!-\!2$, $4\!-\!5$, $1\!-\!6$) — *worse* by the classical objective — yet the hot walk $2\to3\to4$ stays entirely inside one part, giving **navigational cut $=0$**.
+
+This shows the two objectives diverge: minimizing $\sum_q f_q\cdot\mathrm{cut}_q(\Pi)$ is not the same as minimizing edge cut. Since balanced min-cut is already NP-hard (best approximation $O(\sqrt{\log n})$, ARV), and the navigational variant lacks any proven approximation guarantee, the problem stays empirically-open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

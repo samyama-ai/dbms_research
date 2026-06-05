@@ -56,11 +56,20 @@ The gap is between (a) heuristic, coverage-guided generators that empirically re
 
 ## 9. Key References
 
-- **[Foundational]** A. Seltenreich. *SQLsmith: A Random SQL Query Generator.* Open-source project, 2016.
-- **[SOTA]** R. Zhong, Y. Chen, H. Hu, H. Zhang, W. Lee, T. Kim. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* ACM CCS, 2020.
-- **[SOTA]** Y. Liang, S. Liu, H. Hu. *Detecting Logical Bugs of DBMS with Coverage-based Guidance (SQLRight).* USENIX Security, 2022.
-- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning.* OOPSLA, 2020.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998.
+- **[Foundational]** A. Seltenreich. *SQLsmith: A Random SQL Query Generator.* Open-source project, 2016. — [GitHub](https://github.com/anse1/sqlsmith)
+- **[SOTA]** R. Zhong, Y. Chen, H. Hu, H. Zhang, W. Lee, T. Kim. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* ACM CCS, 2020. — [arXiv](https://arxiv.org/abs/2006.02398) — [DOI](https://doi.org/10.1145/3372297.3417260)
+- **[SOTA]** Y. Liang, S. Liu, H. Hu. *Detecting Logical Bugs of DBMS with Coverage-based Guidance (SQLRight).* USENIX Security, 2022. — [USENIX](https://www.usenix.org/conference/usenixsecurity22/presentation/liang)
+- **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning.* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+
+## 10. Worked Example
+
+A purely context-free SQL grammar can emit `SELECT a FROM t WHERE b > 'x'`, but if column `b` is `INTEGER`, the binder rejects it — *syntactically* valid, *semantically* invalid, so it never reaches the optimizer. A schema-aware (attribute-grammar) generator instead consults $\Gamma$: `t(a INT, b INT)` and emits `SELECT a FROM t WHERE b > 5`, which binds and exercises predicate pushdown.
+
+Submodular coverage in action. Suppose three candidate queries cover optimizer rules:
+$\text{cov}(q_1)=\{r_1,r_2\}$, $\text{cov}(q_2)=\{r_2,r_3\}$, $\text{cov}(q_3)=\{r_3,r_4,r_5\}$, budget $B=2$.
+
+Greedy: pick $q_3$ (gain 3) $\Rightarrow \{r_3,r_4,r_5\}$; then $q_1$ (marginal gain 2, since $r_2$ new but $r_3$ already covered) $\Rightarrow$ 5 rules. The offline optimum here is also $\{q_3,q_1\}=5$. The $(1-1/e)\approx 0.63$ guarantee bounds greedy's worst case; note coverage of $q_2$ dropped to marginal gain 1 once $q_3$ was chosen — the diminishing-returns (submodular) effect that justifies the greedy bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

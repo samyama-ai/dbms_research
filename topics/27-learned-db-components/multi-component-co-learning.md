@@ -37,12 +37,21 @@ Directions: (a) performative-prediction-based analyses of the CE↔optimizer loo
 - Composed safety/fallback so a single component's drift cannot destabilize the whole stack.
 
 ## 9. Key References
-- **[Foundational]** J. Perdomo, T. Zrnic, C. Mendler-Dünner, M. Hardt. *Performative Prediction.* ICML, 2020.
-- **[SOTA]** R. Marcus, P. Negi, H. Mao, N. Tatbul, M. Alizadeh, T. Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Z. Yang, W.-L. Chiang, S. Luan, G. Mittal, M. Luo, I. Stoica. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022.
-- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021.
-- **[Foundational]** T. Kraska et al. *SageDB: A Learned Database System.* CIDR, 2019.
-- **[Survey]** R. Marcus et al. *Neo: A Learned Query Optimizer.* PVLDB, 2019.
+- **[Foundational]** J. Perdomo, T. Zrnic, C. Mendler-Dünner, M. Hardt. *Performative Prediction.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2002.06673)
+- **[SOTA]** R. Marcus, P. Negi, H. Mao, N. Tatbul, M. Alizadeh, T. Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** Z. Yang, W.-L. Chiang, S. Luan, G. Mittal, M. Luo, I. Stoica. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
+- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2104.01744)
+- **[Foundational]** T. Kraska et al. *SageDB: A Learned Database System.* CIDR, 2019. — [DBLP](https://dblp.org/rec/conf/cidr/KraskaABCKLMMN19.html)
+- **[Survey]** R. Marcus et al. *Neo: A Learned Query Optimizer.* PVLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+
+## 10. Worked Example
+
+Two coupled components: a cardinality estimator (CE) and an optimizer, sharing one scalar state $x$ = estimated selectivity of a hot predicate. The optimizer routes queries by $x$; routing shifts which rows the CE next trains on, updating $x$. Model the retraining map as $x_{t+1}=T(x_t)=a\,x_t + b$, where $a$ is the coupling strength (how strongly the optimizer's routing perturbs the next CE estimate).
+
+- **Stable case** $a=0.5,\,b=0.1$: fixed point $x^\*=b/(1-a)=0.2$. Iterating from $x_0=0$: $0,\,0.1,\,0.15,\,0.175,\,0.1875,\dots\to0.2$, error halving each step (linear rate $a^t$). This is the contraction regime $L=a<1$ of section 4 — repeated retraining converges to the performatively-stable point.
+- **Divergent case** $a=1.4,\,b=0.1$: $\rho(\nabla T)=1.4>1$. From $x_0=0$: $0,\,0.1,\,0.24,\,0.436,\,0.71,\dots$ growing without bound — the feedback loop diverges, illustrating the $\rho(\nabla T)\ge1$ no-convergence barrier of section 5.
+
+The knife-edge at $a=1$ shows why measuring real CE$\leftrightarrow$optimizer coupling strength is the crux: below it, stable; above it, oscillation or blow-up.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

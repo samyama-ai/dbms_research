@@ -42,11 +42,26 @@ Active directions: causal-impact / Bayesian structural time-series adapted to DB
 - Integrating credit assignment with control-loop stability so reversals are evidence-gated.
 
 ## 9. Key References
-- **[Foundational]** Pearl, J. *Causality: Models, Reasoning, and Inference.* Cambridge University Press, 2nd ed., 2009.
-- **[Foundational]** Dudík, M., Langford, J., Li, L. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011.
-- **[SOTA]** Brodersen, K., Gallusser, F., Koehler, J., Remy, N., Scott, S. *Inferring Causal Impact Using Bayesian Structural Time-Series Models.* Annals of Applied Statistics, 2015.
-- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Survey]** Imbens, G., Rubin, D. *Causal Inference for Statistics, Social, and Biomedical Sciences.* Cambridge University Press, 2015.
+- **[Foundational]** Pearl, J. *Causality: Models, Reasoning, and Inference.* Cambridge University Press, 2nd ed., 2009. — [DBLP search](https://dblp.org/search?q=Pearl+Causality+Models+Reasoning+and+Inference)
+- **[Foundational]** Dudík, M., Langford, J., Li, L. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011. — [arXiv](https://arxiv.org/abs/1103.4601)
+- **[SOTA]** Brodersen, K., Gallusser, F., Koehler, J., Remy, N., Scott, S. *Inferring Causal Impact Using Bayesian Structural Time-Series Models.* Annals of Applied Statistics, 2015. — [DOI](https://doi.org/10.1214/14-AOAS788)
+- **[Foundational]** Pavlo, A., et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Survey]** Imbens, G., Rubin, D. *Causal Inference for Statistics, Social, and Biomedical Sciences.* Cambridge University Press, 2015. — [DBLP search](https://dblp.org/search?q=Imbens+Rubin+Causal+Inference+for+Statistics+Social+and+Biomedical+Sciences)
+
+## 10. Worked Example
+
+The controller takes two actions in a 4-tick window and observes latency drop $\Delta Y$ (ms saved vs. baseline). The design matrix has rows $(a_1,a_2)$ and the model is $\Delta Y_t = \tau_1 a_{1,t} + \tau_2 a_{2,t} + \epsilon_t$.
+
+| tick | $a_1$ (index) | $a_2$ (knob) | $\Delta Y$ |
+|------|------|------|------|
+| 1 | 1 | 1 | 30 |
+| 2 | 1 | 1 | 26 |
+| 3 | 1 | 1 | 31 |
+| 4 | 1 | 1 | 29 |
+
+Both actions are **always active together** — the design matrix columns are identical, so $X^\top X$ is rank-1 (rank-deficient). OLS can only recover $\tau_1+\tau_2 \approx 29$; the split between them is **not identified**, exactly the collinearity impossibility of §5.
+
+Now suppose tick 3 had been $a_2=0$ with $\Delta Y=18$. Then the column for $a_2$ differs, $X$ has full rank, and we solve: ticks with the knob give $\approx 29$, the knob-off tick gives $18$, so $\hat\tau_1\approx 18$, $\hat\tau_2\approx 11$. A single de-correlated observation flips the problem from unidentifiable to solvable — illustrating why action-scheduling as experimental design (§8) is the lever: separating $a_1,a_2$ even once buys identifiability.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -53,11 +53,43 @@ Active: **provenance-carrying data** (taint labels stored as first-class column 
 
 ## 9. Key References
 
-- **[Foundational]** Su, Z., Wassermann, G. *The Essence of Command Injection Attacks in Web Applications.* POPL, 2006.
-- **[Foundational]** OWASP. *Testing for SQL Injection — Second-Order / Stored Injection.* OWASP Web Security Testing Guide.
-- **[SOTA]** Halfond, W.G.J., Orso, A. *AMNESIA: Analysis and Monitoring for NEutralizing SQL-Injection Attacks.* ASE, 2005.
-- **[SOTA]** Davis, B., Chen, H. *DBTaint: Cross-Application Information Flow Tracking via Databases.* USENIX WebApps, 2010.
-- **[Survey]** Halfond, W.G.J., Viegas, J., Orso, A. *A Classification of SQL Injection Attacks and Countermeasures.* ISSSE, 2006.
+- **[Foundational]** Su, Z., Wassermann, G. *The Essence of Command Injection Attacks in Web Applications.* POPL, 2006. — [DOI](https://doi.org/10.1145/1111037.1111070)
+- **[Foundational]** OWASP. *Testing for SQL Injection — Second-Order / Stored Injection.* OWASP Web Security Testing Guide. — [OWASP WSTG](https://github.com/OWASP/www-project-web-security-testing-guide/blob/master/v41/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection.md)
+- **[SOTA]** Halfond, W.G.J., Orso, A. *AMNESIA: Analysis and Monitoring for NEutralizing SQL-Injection Attacks.* ASE, 2005. — [DOI](https://doi.org/10.1145/1101908.1101935)
+- **[SOTA]** Davis, B., Chen, H. *DBTaint: Cross-Application Information Flow Tracking via Databases.* USENIX WebApps, 2010. — [USENIX](https://www.usenix.org/conference/webapps-10/dbtaint-cross-application-information-flow-tracking-databases)
+- **[Survey]** Halfond, W.G.J., Viegas, J., Orso, A. *A Classification of SQL Injection Attacks and Countermeasures.* ISSSE, 2006. — [DBLP](https://dblp.org/rec/conf/issse3/HalfondVO06.html)
+
+## 10. Worked Example
+
+**Write path $W$ (registration)** — fully parameterized, looks secure in isolation:
+
+```sql
+-- bound parameter :u, no concatenation
+INSERT INTO users(username) VALUES (:u);
+```
+
+An attacker registers the username:
+
+```
+admin'--
+```
+
+Because `:u` is bound, the string is stored *verbatim and harmlessly*: row `users.username = admin'--`. A SAST scan of $W$ alone reports **clean** — no injection here.
+
+**Read path $R$ (password-change audit)** — written by a different team that trusts DB data:
+
+```sql
+query = "UPDATE creds SET pwd='" + newpwd +
+        "' WHERE username='" + row.username + "'"
+```
+
+When the attacker later triggers this path, `row.username` is read back as `admin'--`, yielding:
+
+```sql
+UPDATE creds SET pwd='x' WHERE username='admin'--'
+```
+
+The `'` closes the string and `--` comments out the rest, so the `WHERE` collapses and **every** row's password is set — or, rewritten, the attacker rewrites `admin`'s credentials. Neither $W$ (parameterized) nor $R$ (trusting stored data) is vulnerable *examined alone*; the injection lives only in the $(W,R)$ pair coupled through the `users.username` column. Detecting it requires taint to *persist through storage*: the cell must carry an "untrusted" label from the `INSERT` so the `SELECT` re-introduces it at the SQL sink — exactly the cross-execution reachability this problem formalizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

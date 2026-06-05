@@ -46,12 +46,22 @@ Groups: Aarhus (Arge/optimal external structures), UC Irvine (AsterixDB), Harvar
 - Coupling with concurrency and with moving-object (continuous-update) workloads.
 
 ## 9. Key References
-- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R\*-tree: an efficient and robust access method for points and rectangles.* SIGMOD, 1990.
-- **[Foundational]** L. Arge, M. de Berg, H. Haverkort, K. Yi. *The priority R-tree: a practically efficient and worst-case optimal R-tree.* SIGMOD, 2004.
-- **[SOTA]** O. Procopiuc, P. K. Agarwal, L. Arge, J. S. Vitter. *Bkd-tree: a dynamic scalable kd-tree.* SSTD, 2003.
-- **[SOTA]** S. Alsubaiee et al. *Storage management in AsterixDB (LSM-based indexing).* PVLDB, 2014.
-- **[SOTA]** M. Athanassoulis, M. S. Kester, L. M. Maas, R. Stoica, S. Idreos, A. Ailamaki, M. Callaghan. *Designing access methods: the RUM conjecture.* EDBT, 2016.
-- **[Survey]** V. Gaede, O. Günther. *Multidimensional access methods.* ACM Computing Surveys, 1998.
+- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R\*-tree: an efficient and robust access method for points and rectangles.* SIGMOD, 1990. — [ACM](https://dl.acm.org/doi/10.1145/93597.98741)
+- **[Foundational]** L. Arge, M. de Berg, H. Haverkort, K. Yi. *The priority R-tree: a practically efficient and worst-case optimal R-tree.* SIGMOD, 2004. — [ACM](https://dl.acm.org/doi/10.1145/1007568.1007608)
+- **[SOTA]** O. Procopiuc, P. K. Agarwal, L. Arge, J. S. Vitter. *Bkd-tree: a dynamic scalable kd-tree.* SSTD, 2003. — [DOI](https://doi.org/10.1007/978-3-540-45072-6_4) · [DBLP](https://dblp.org/rec/conf/ssd/ProcopiucAAV03.html)
+- **[SOTA]** S. Alsubaiee et al. *Storage management in AsterixDB (LSM-based indexing).* PVLDB, 2014. — [PDF](https://www.vldb.org/pvldb/vol7/p841-alsubaiee.pdf) · [DBLP search](https://dblp.org/search?q=Storage+Management+in+AsterixDB)
+- **[SOTA]** M. Athanassoulis, M. S. Kester, L. M. Maas, R. Stoica, S. Idreos, A. Ailamaki, M. Callaghan. *Designing access methods: the RUM conjecture.* EDBT, 2016. — [PDF](https://openproceedings.org/2016/conf/edbt/paper-12.pdf) · [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[Survey]** V. Gaede, O. Günther. *Multidimensional access methods.* ACM Computing Surveys, 1998. — [ACM](https://dl.acm.org/doi/10.1145/280277.280279)
+
+## 10. Worked Example
+
+Take an LSM-spatial index (logarithmic / Bentley–Saxe method) with size ratio $T = 4$ holding $N = 10^6$ points, block size $B = 256$. It maintains $\log_T N = \log_4 10^6 \approx 10$ levels of static packed R-trees of geometrically growing size.
+
+**Insert cost.** A point is merged downward once per level boundary it crosses; total merge work over its lifetime touches $O(\log_T N) \approx 10$ levels, so amortized I/O per insert $= O\!\big(\tfrac{\log_T N}{B}\big) = O\!\big(\tfrac{10}{256}\big) \approx 0.04$ I/Os — sub-1, the hallmark of write batching.
+
+**Read cost.** A range query must probe all $\approx 10$ levels (no single MBR hierarchy), giving read amplification $O(\#\text{levels}) = 10\times$ versus a single R\*-tree.
+
+**The RUM trade-off in numbers.** Lowering $T$ to $2$ doubles levels to $\log_2 10^6 = 20$ (worse reads, $2\times$) but halves merge frequency per level; raising $T$ to $10$ cuts levels to $6$ (better reads) but each merge rewrites more data (worse update/write-amplification). No setting wins on read, update, and memory simultaneously — the high-churn workload lives on this frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

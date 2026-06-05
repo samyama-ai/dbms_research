@@ -50,11 +50,17 @@ Directions: serverless index/compaction offload (RocksDB-Cloud, Iceberg auto-com
 
 ## 9. Key References
 
-- **[Foundational]** R. P. Brent. *The Parallel Evaluation of General Arithmetic Expressions.* JACM, 1974.
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** M. Athanassoulis et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016.
-- **[SOTA]** S. J. Subramanya, R. Krishnaswamy, et al. *DiskANN: Fast Accurate Billion-point ANN Search on a Single Node.* NeurIPS, 2019.
-- **[Survey]** C. Luo, M. J. Carey. *LSM-based storage techniques: a survey.* The VLDB Journal, 2020.
+- **[Foundational]** R. P. Brent. *The Parallel Evaluation of General Arithmetic Expressions.* JACM, 1974. — [DOI](https://doi.org/10.1145/321812.321815)
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** M. Athanassoulis et al. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
+- **[SOTA]** S. J. Subramanya, R. Krishnaswamy, et al. *DiskANN: Fast Accurate Billion-point ANN Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)
+- **[Survey]** C. Luo, M. J. Carey. *LSM-based storage techniques: a survey.* The VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
+
+## 10. Worked Example
+
+**Build phase (Brent's bound).** We bulk-build a B-tree over $N = 10^9$ rows in remote storage. Sorting work is $W = c\,N\log_2 N \approx c \cdot 10^9 \cdot 30 = 3\times10^{10}c$ key-comparisons; the final merge/commit span (serial fraction) is $S = 2\times10^9 c$. With $K$ elastic workers, $T_K \le W/K + S$. At $K=10$: $T_{10} \approx 3\times10^9 c + 2\times10^9 c = 5\times10^9 c$. At $K=100$: $T_{100} \approx 3\times10^8 c + 2\times10^9 c = 2.3\times10^9 c$. Going from $10\to100$ workers ($10\times$) gives only $\approx 2.2\times$ speedup — the span $S$ dominates, so paying for more workers past the crossover $K^\* \approx W/S = 15$ buys little. This is the Amdahl ceiling: speedup $\le W/S + 1 \approx 16$.
+
+**Maintenance phase (queueing).** Writes arrive at $\lambda = 8{,}000$/s; one worker absorbs $\mu = 5{,}000$ updates/s into the index. To keep staleness bounded we need $K\mu \ge \lambda$, so $K \ge \lceil 8000/5000\rceil = 2$, plus a $O(\sqrt{\cdot})$ tail margin $\Rightarrow K = 3$ workers to hold staleness $\le \Delta$ under bursts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

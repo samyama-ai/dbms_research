@@ -63,13 +63,28 @@ The plan search space itself is the System R / dynamic-programming lattice (Seli
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Babcock, Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005.
-- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005; Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007.
-- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998.
-- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Kouvelis, Yu. *Robust Discrete Optimization and Its Applications.* Springer, 1997.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099) — [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
+- **[SOTA]** Babcock, Chaudhuri. *Towards a Robust Query Optimizer: A Principled and Practical Approach.* SIGMOD, 2005. — [DOI](https://doi.org/10.1145/1066157.1066172) — [DBLP](https://dblp.org/rec/conf/sigmod/BabcockC05.html)
+- **[SOTA]** Reddy, Haritsa. *Analyzing Plan Diagrams of Database Query Optimizers.* VLDB, 2005; Harish, Darera, Haritsa. *On the Production of Anorexic Plan Diagrams.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ReddyH05.html)
+- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420) — [PDF](https://dsf.berkeley.edu/cs286/papers/eddies-sigmod2000.pdf)
+- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276315)
+- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838) — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[Survey]** Kouvelis, Yu. *Robust Discrete Optimization and Its Applications.* Springer, 1997. — [DOI](https://doi.org/10.1007/978-1-4757-2620-6)
+
+## 10. Worked Example
+
+One uncertain cardinality $c$ (true value unknown, uncertainty set $U=[100, 10{,}000]$) and two candidate plans:
+
+- $p_1$ (hash join): $\mathrm{cost}(p_1,c)=5000$, flat in $c$ (build side fixed).
+- $p_2$ (index nested-loop): $\mathrm{cost}(p_2,c)=2c$, linear in $c$.
+
+The point estimate is $\hat c=500$, giving $\mathrm{cost}(p_2)=1000<5000$, so the nominal optimizer picks $p_2$.
+
+**Min-max (worst-case)** over $U$: $\max_{c\in U}\mathrm{cost}(p_1)=5000$; $\max_{c\in U}\mathrm{cost}(p_2)=2\cdot10{,}000=20{,}000$. So $p_\text{rob}=p_1$ — the robust choice abandons the nominally cheaper $p_2$ because it is catastrophic if $c$ is large.
+
+**Min-max regret:** the plans tie at $2c=5000\Rightarrow c=2500$ (the decision boundary). For $c<2500$, $p_2$ is optimal; for $c>2500$, $p_1$ is. Regret of $p_1$: worst at $c=100$, $5000-200=4800$. Regret of $p_2$: worst at $c=10{,}000$, $20{,}000-5000=15{,}000$. So $p_\text{regret}=p_1$ (regret $4800$).
+
+This single boundary at $c=2500$ is exactly a plan-diagram cell wall; anorexic reduction would keep just one of these plans if the other's region inflates cost by $\le\lambda\approx1.2$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

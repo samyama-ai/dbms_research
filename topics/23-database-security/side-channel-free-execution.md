@@ -48,13 +48,36 @@ Active directions: **data-oblivious ISAs and hardware** (OISA-style, cache parti
 
 ## 9. Key References
 
-- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** Batcher, K.E. *Sorting Networks and Their Applications.* AFIPS Spring Joint Computer Conference, 1968.
-- **[Foundational]** Xu, Y., Cui, W., Peinado, M. *Controlled-Channel Attacks: Deterministic Side Channels for Untrusted Operating Systems.* IEEE S&P, 2015.
-- **[SOTA]** Zheng, W., Dave, A., Beekman, J., Popa, R.A., Gonzalez, J., Stoica, I. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
-- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2020.
-- **[SOTA]** Almeida, J.B., Barbosa, M., Barthe, G., Dupressoir, F., Emmi, M. *Verifying Constant-Time Implementations.* USENIX Security, 2016.
-- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
+- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Batcher, K.E. *Sorting Networks and Their Applications.* AFIPS Spring Joint Computer Conference, 1968. — [DOI](https://doi.org/10.1145/1468075.1468121)
+- **[Foundational]** Xu, Y., Cui, W., Peinado, M. *Controlled-Channel Attacks: Deterministic Side Channels for Untrusted Operating Systems.* IEEE S&P, 2015. — [DOI](https://doi.org/10.1109/SP.2015.45)
+- **[SOTA]** Zheng, W., Dave, A., Beekman, J., Popa, R.A., Gonzalez, J., Stoica, I. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/zheng)
+- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3364324.3364331) · [arXiv](https://arxiv.org/abs/1710.00458)
+- **[SOTA]** Almeida, J.B., Barbosa, M., Barthe, G., Dupressoir, F., Emmi, M. *Verifying Constant-Time Implementations.* USENIX Security, 2016. — [USENIX](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/almeida)
+- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) · [ePrint](https://eprint.iacr.org/2018/423)
+
+## 10. Worked Example
+
+**A leaky filter vs. an oblivious one.** Run `SELECT * FROM T WHERE salary > 100` over an in-enclave array of $n=4$ rows with secret salaries $[120, 80, 200, 90]$.
+
+A *natural* implementation appends a row to the output only when the predicate holds:
+
+```
+for r in T:
+    if r.salary > 100:        # secret-dependent BRANCH
+        out.append(r)         # secret-dependent WRITE
+```
+
+The observable address trace differs by data: here `out` is written at iterations 1 and 3 (rows 120, 200). An adversary watching cache lines / page faults learns *which* rows matched — recovering a 2-row subset of the secret, even though values stay encrypted. This violates the obliviousness condition: $\mathsf{Trace}(P, x_{\text{sec}})$ depends on $x_{\text{sec}}$.
+
+**Oblivious filter** instead touches *every* output slot every iteration with an oblivious (constant-time) conditional move, then obliviously compacts:
+
+```
+for i in 0..n:                 # fixed n iterations
+    keep[i] = cmov(T[i].salary > 100, 1, 0)   # branchless
+```
+
+Cost: $n$ comparisons + an $O(n\log n)$ oblivious compaction (Goodrich), versus $O(n)$ for the leaky version. The trace is now a fixed function of $n$ alone — for *any* salary vector the address sequence is identical. The price is the $O(\log n)$ compaction factor and padding the result to a public bound, exactly the ORAM-style $\Omega(\log n)$ overhead the lower bound predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

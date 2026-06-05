@@ -47,12 +47,22 @@ GQL/SQL:2023 PGQ standardization is driving convergence onto relational engines 
 - Standard mixed benchmark combining LDBC SNB pattern queries with Graphalytics fixpoints.
 
 ## 9. Key References
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases* (Datalog, fixpoint semantics). Addison-Wesley, 1995.
-- **[Foundational]** Kepner et al. *Mathematical foundations of the GraphBLAS.* IEEE HPEC, 2016.
-- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions asked frequently.* PODS, 2016.
-- **[SOTA]** Mhedhbi, Salihoğlu et al. *GraphflowDB / Optimizing subgraph queries by combining binary and worst-case optimal joins.* PVLDB, 2019.
-- **[SOTA]** McSherry, Murray, Isaacs, Isard. *Differential dataflow.* CIDR, 2013.
-- **[Survey]** Sahu, Mhedhbi, Salihoğlu, Lin, Özsu. *The ubiquity of large graphs and surprising challenges of graph processing.* PVLDB, 2017.
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases* (Datalog, fixpoint semantics). Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** Kepner et al. *Mathematical foundations of the GraphBLAS.* IEEE HPEC, 2016. — [arXiv](https://arxiv.org/abs/1606.05790)
+- **[SOTA]** Abo Khamis, Ngo, Rudra. *FAQ: Questions asked frequently.* PODS, 2016. — [arXiv](https://arxiv.org/abs/1504.04044)
+- **[SOTA]** Mhedhbi, Salihoğlu et al. *GraphflowDB / Optimizing subgraph queries by combining binary and worst-case optimal joins.* PVLDB, 2019. — [arXiv](https://arxiv.org/abs/1903.02076)
+- **[SOTA]** McSherry, Murray, Isaacs, Isard. *Differential dataflow.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
+- **[Survey]** Sahu, Mhedhbi, Salihoğlu, Lin, Özsu. *The ubiquity of large graphs and surprising challenges of graph processing.* PVLDB, 2017. — [arXiv](https://arxiv.org/abs/1709.03188)
+
+## 10. Worked Example
+
+Take a 4-vertex graph with directed edges $A=\{1\!\to\!2, 2\!\to\!3, 3\!\to\!1, 3\!\to\!4\}$ and a mixed query: *"find all directed triangles, then run one PageRank step seeded on their vertices."*
+
+**Pattern side (WCOJ/relational):** the triangle $T(a,b,c)\leftarrow E(a,b),E(b,c),E(c,a)$ has one match $\{1,2,3\}$. A binary-join plan first computes $E\bowtie E$ ($4$ two-hop paths) then filters; a worst-case-optimal plan intersects adjacency lists vertex-by-vertex, touching $O(\mathrm{AGM})=O(|E|^{3/2})=O(4^{1.5})=8$ work units — no wasted two-hop materialization.
+
+**Analytics side (semiring/GAS):** seed $x_0=(\tfrac13,\tfrac13,\tfrac13,0)^\top$ on the triangle vertices and apply one matmul $y=A^\top \otimes x_0$ over the $(\,+,\times)$ semiring with damping $d=0.85$. Vertex $4$ receives mass $0.85\cdot\tfrac13\cdot\tfrac12 \approx 0.14$ from vertex $3$ (out-degree $2$).
+
+The unification pain point: the WCOJ intersection wants sorted adjacency lists (random-access, set-oriented), while the PageRank step wants a contiguous CSR sweep (sequential bandwidth). A single engine must serve both layouts without a $2\times$ penalty on either — the empirically open question this problem captures.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

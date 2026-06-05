@@ -52,11 +52,21 @@ The field has **working systems** (PrivateSQL, R2T, Tumult) for *single-primary-
 
 ## 9. Key References
 
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, inclusion dependencies).
-- **[Foundational]** Kifer, Machanavajjhala. *No Free Lunch in Data Privacy.* SIGMOD, 2011 (why the neighbor/granularity definition matters).
-- **[SOTA]** Kotsogiannis, Tao, He, Hay, Machanavajjhala, Miklau. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB, 2019.
-- **[SOTA]** Dong, Yi, et al. *R2T: Instance-optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022.
-- **[SOTA]** Tao, McKenna, Hay, Machanavajjhala, Miklau. *Benchmarking Differentially Private Synthetic Data Generation Algorithms.* (multi-relation context), 2021.
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, inclusion dependencies). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** Kifer, Machanavajjhala. *No Free Lunch in Data Privacy.* SIGMOD, 2011 (why the neighbor/granularity definition matters). — [DOI](https://doi.org/10.1145/1989323.1989345)
+- **[SOTA]** Kotsogiannis, Tao, He, Hay, Machanavajjhala, Miklau. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342274)
+- **[SOTA]** Dong, Yi, et al. *R2T: Instance-optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517844)
+- **[SOTA]** Tao, McKenna, Hay, Machanavajjhala, Miklau. *Benchmarking Differentially Private Synthetic Data Generation Algorithms.* (multi-relation context), 2021. — [arXiv](https://arxiv.org/abs/2112.09238)
+
+## 10. Worked Example
+
+Schema: `Patients(pid)` ← `Visits(pid)` with an entity = one patient. Query $Q$ = `SELECT COUNT(*) FROM Visits`.
+
+Take patient $p_1$ with 3 visits, $p_2$ with 1 visit, $p_3$ with 2 visits, so $Q(D)=6$. Under **entity-level** neighbors, removing one patient cascade-deletes all of their visits. The worst case is $p_1$: deleting it drops the count by 3, so the realized global sensitivity is the **max per-patient fan-out**, $\Delta_Q = \max_i \deg(p_i) = 3$.
+
+Row-level DP would have used $\Delta=1$ (one visit), badly under-protecting a patient. Entity-level Laplace noise is $\mathrm{Lap}(\Delta_Q/\varepsilon)=\mathrm{Lap}(3/\varepsilon)$; at $\varepsilon=1$ the noisy answer is $6 + \mathrm{Lap}(3)$ (std $\approx 4.24$).
+
+If one patient had 10000 visits, $\Delta_Q=10000$ would be ruinous. **Truncation** caps each patient at $\tau=4$ visits: now $\Delta_Q=\tau=4$, bias $\le$ dropped tuples. R2T chooses $\tau$ to (near-)optimally trade truncation bias against noise $\mathrm{Lap}(\tau/\varepsilon)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

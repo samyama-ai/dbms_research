@@ -62,12 +62,36 @@ The gap is between **clean theory** and **real SQL**. The linear-Datalog corresp
 
 ## 9. Key References
 
-- **[Foundational]** E. F. Codd. *A relational model of data for large shared data banks.* CACM, 1970.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog, fixpoint logics, linear recursion).
-- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, TC, fixpoint capture).
-- **[Foundational]** F. Afrati, S. Cosmadakis. *Expressiveness of restricted recursive queries.* STOC 1989 (linear vs. non-linear Datalog).
-- **[SOTA]** M. A. Khamis, H. Ngo, R. Pichler, D. Suciu, et al. *Convergence of Datalog over (pre-)semirings / Datalog°.* PODS 2022 (monotone aggregation in recursion).
-- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999 (TC, DTC, IFP capture results).
+- **[Foundational]** E. F. Codd. *A relational model of data for large shared data banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog, fixpoint logics, linear recursion). — [book](http://webdam.inria.fr/Alice/)
+- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, TC, fixpoint capture). — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[Foundational]** F. Afrati, S. Cosmadakis. *Expressiveness of restricted recursive queries.* STOC 1989 (linear vs. non-linear Datalog). — [DOI](https://doi.org/10.1145/73007.73018)
+- **[SOTA]** M. A. Khamis, H. Ngo, R. Pichler, D. Suciu, et al. *Convergence of Datalog over (pre-)semirings / Datalog°.* PODS 2022 (monotone aggregation in recursion). — [arXiv](https://arxiv.org/abs/2105.14435) · [DOI](https://doi.org/10.1145/3517804.3524140)
+- **[Survey]** N. Immerman. *Descriptive Complexity.* Springer, 1999 (TC, DTC, IFP capture results). — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+
+## 10. Worked Example
+
+Let $\mathsf{Edge}(src,dst)$ hold a chain $1\!\to\!2,\;2\!\to\!3,\;3\!\to\!4$. The standard linear recursive CTE for reachability:
+
+```sql
+WITH RECURSIVE reach(s, d) AS (
+  SELECT src, dst FROM Edge                         -- seed (non-recursive)
+  UNION                                             -- set semantics: dedup, terminates
+  SELECT r.s, e.dst FROM reach r JOIN Edge e ON r.d = e.src
+)
+SELECT * FROM reach;
+```
+
+**Semi-naïve trace** (working set $\Delta$ of *new* tuples each round):
+
+- Round 0 (seed): $\{(1,2),(2,3),(3,4)\}$.
+- Round 1 (join $\Delta$ with Edge): $(1,2){\bowtie}(2,3)\to(1,3)$, $(2,3){\bowtie}(3,4)\to(2,4)$. New: $\{(1,3),(2,4)\}$.
+- Round 2: $(1,3){\bowtie}(3,4)\to(1,4)$. New: $\{(1,4)\}$.
+- Round 3: no new tuples — fixpoint reached.
+
+Result $= \{(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)\}$, exactly the transitive closure.
+
+This is **linear Datalog**: the recursive rule references $\mathsf{reach}$ once. The iteration count $3$ equals the longest path length, bounded by $|V|-1$, giving **PTIME** data complexity. The key expressiveness point: this query is provably **not** expressible in FO (no recursion) — `reach` separates recursive from non-recursive SQL. Switching `UNION` to `UNION ALL` on a cyclic graph would lose the dedup and **not terminate**.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

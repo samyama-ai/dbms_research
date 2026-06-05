@@ -46,11 +46,21 @@ For a *single* operator with known timeout, Young–Daly essentially closes the 
 - Hardware-assisted fast snapshots (CXL/persistent memory) to drive checkpoint cost $C\to 0$.
 
 ## 9. Key References
-- **[Foundational]** Daly, J. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. (Young–Daly formula.)
-- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** Zaharia, M. et al. *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing.* NSDI, 2012.
-- **[SOTA]** Perron, M., Fernandez, R.C., DeWitt, D., Madden, S. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020.
-- **[SOTA]** Müller, I., Marroquín, R., Alonso, G. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020.
+- **[Foundational]** Daly, J. *A Higher Order Estimate of the Optimum Checkpoint Interval for Restart Dumps.* Future Generation Computer Systems, 2006. (Young–Daly formula.) — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
+- **[Foundational]** Chandy, K.M., Lamport, L. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** Zaharia, M. et al. *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing.* NSDI, 2012. — [DBLP](https://dblp.org/rec/conf/nsdi/ZahariaCDDMMFSS12.html)
+- **[SOTA]** Perron, M., Fernandez, R.C., DeWitt, D., Madden, S. *Starling: A Scalable Query Engine on Cloud Functions.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380609)
+- **[SOTA]** Müller, I., Marroquín, R., Alonso, G. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389758)
+
+## 10. Worked Example
+
+A hash-aggregation query runs on AWS Lambda with a hard timeout $T = 900$ s (so expected time-to-vanish $M \approx 900$ s if a worker is reclaimed only at timeout). Checkpointing the aggregation accumulators costs $C = 2$ s (serialize + PUT to S3). Apply Young–Daly:
+
+$$\tau^\* \approx \sqrt{2CM} = \sqrt{2\times 2\times 900} = \sqrt{3600} = 60\ \text{s}.$$
+
+So checkpoint every $\approx 60$ s — about $900/60 = 15$ checkpoints per function lifetime. The overhead fraction is $C/\tau^\* = 2/60 \approx 3.3\%$ of runtime, plus expected lost work on failure $\approx \tau^\*/2 = 30$ s.
+
+Now contrast the **recompute-vs-store cut**. Suppose the build side of a join is $8$ GB; persisting it costs $C_{\text{store}}\approx 8\text{ GB}/(0.1\text{ GB/s}) = 80$ s, but re-scanning its narrow-dependency input costs only $20$ s. Then $\tau^\*=\sqrt{2\cdot80\cdot900}\approx 379$ s makes storing rarely worthwhile — the optimal policy *recomputes* this operator on restart (lineage recovery) and reserves checkpoints for the cheap-to-persist, expensive-to-recompute accumulator. This per-operator split is exactly the open cut §5 describes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

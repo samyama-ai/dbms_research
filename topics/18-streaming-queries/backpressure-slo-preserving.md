@@ -35,11 +35,21 @@ Active: coupling backpressure with auto-scaling so sustained pressure elasticall
 - Models robust to bursty, correlated, out-of-order arrivals (beyond Poisson).
 
 ## 9. Key References
-- **[Foundational]** L. Tassiulas, A. Ephremides. *Stability Properties of Constrained Queueing Systems and Scheduling Policies for Maximum Throughput (Backpressure).* IEEE TAC, 1992.
-- **[Foundational]** M. J. Neely. *Stochastic Network Optimization with Application to Communication and Queueing Systems (Drift-plus-Penalty).* Morgan & Claypool, 2010.
-- **[SOTA]** P. Carbone, A. Katsifodimos, S. Ewen, V. Markl, S. Haridi, K. Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bulletin, 2015.
-- **[SOTA]** S. Kulkarni, N. Bhagat, M. Fu, et al. *Twitter Heron: Stream Processing at Scale.* SIGMOD, 2015.
-- **[SOTA]** A. Floratou, A. Agrawal, B. Graham, S. Rao, K. Ramasamy. *Dhalion: Self-Regulating Stream Processing in Heron.* VLDB, 2017.
+- **[Foundational]** L. Tassiulas, A. Ephremides. *Stability Properties of Constrained Queueing Systems and Scheduling Policies for Maximum Throughput (Backpressure).* IEEE TAC, 1992. — [DOI](https://doi.org/10.1109/9.182479)
+- **[Foundational]** M. J. Neely. *Stochastic Network Optimization with Application to Communication and Queueing Systems (Drift-plus-Penalty).* Morgan & Claypool, 2010. — [DOI](https://doi.org/10.2200/S00271ED1V01Y201006CNT007)
+- **[SOTA]** P. Carbone, A. Katsifodimos, S. Ewen, V. Markl, S. Haridi, K. Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bulletin, 2015. — [PDF](https://asterios.katsifodimos.com/assets/publications/flink-deb.pdf) · [DBLP](https://dblp.org/rec/journals/debu/CarboneKEMHT15.html)
+- **[SOTA]** S. Kulkarni, N. Bhagat, M. Fu, et al. *Twitter Heron: Stream Processing at Scale.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2742788)
+- **[SOTA]** A. Floratou, A. Agrawal, B. Graham, S. Rao, K. Ramasamy. *Dhalion: Self-Regulating Stream Processing in Heron.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137786)
+
+## 10. Worked Example
+
+Consider a 2-stage tandem $S \to A \to B$, each an $M/M/1$ station. Source rate $\lambda = 90$ tuples/s. Operator $A$ serves at $\mu_A = 100$/s, operator $B$ at $\mu_B = 95$/s. Utilizations: $\rho_A = 0.90$, $\rho_B = 0.947$. Mean sojourn time per station is $W_i = \frac{1}{\mu_i - \lambda}$, so
+
+$$W_A = \frac{1}{100-90} = 0.100\text{ s}, \qquad W_B = \frac{1}{95-90} = 0.200\text{ s}.$$
+
+End-to-end mean latency $= W_A + W_B = 0.300$ s. The tail is dominated by the near-saturated stage $B$ (the bottleneck). Suppose the SLO is $L_{p99} = 0.5$ s. For an $M/M/1$ queue the response time is exponential, so $L_{p99} = W \cdot \ln(100) \approx 4.6\,W$; stage $B$ alone gives $0.2 \times 4.6 = 0.92$ s — already violating the SLO.
+
+Now apply naive backpressure: when $B$'s buffer fills, it blocks $A$, which blocks the source. This caps queues (no overflow) but does nothing for latency. The fix is admission/rate control: throttle $\lambda$ to $80$/s. Then $W_B = \frac{1}{95-80} = 0.067$ s and $L_{p99,B} \approx 0.31$ s — SLO met, at the cost of shedding $\approx 11\%$ of load. This illustrates the throughput–delay tension: stability is free, but the $p99$ target forces a $\rho_B$ below capacity, the knob that drift-plus-penalty parameterizes as $O(1/V)$ utility loss vs. $O(V)$ queue/delay.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

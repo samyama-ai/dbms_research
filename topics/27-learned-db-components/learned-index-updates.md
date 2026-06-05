@@ -42,12 +42,18 @@ Open. Theory gives worst-case-optimal-within-model-class (PGM) and a generic dyn
 - Multidimensional and string-key dynamic learned indexes.
 
 ## 9. Key References
-- **[Foundational]** J. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** J. Wu, et al. *Updatable Learned Index with Precise Positions (LIPP).* VLDB, 2021.
-- **[Foundational]** M. Pătrașcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006.
-- **[Foundational]** J. L. Bentley, J. B. Saxe. *Decomposable Searching Problems I: Static-to-Dynamic Transformation.* J. Algorithms, 1980.
+- **[Foundational]** J. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** J. Wu, et al. *Updatable Learned Index with Precise Positions (LIPP).* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2104.05520)
+- **[Foundational]** M. Pătrașcu, E. Demaine. *Logarithmic Lower Bounds in the Cell-Probe Model.* SIAM J. Computing, 2006. — [arXiv](https://arxiv.org/abs/cs/0502041)
+- **[Foundational]** J. L. Bentley, J. B. Saxe. *Decomposable Searching Problems I: Static-to-Dynamic Transformation.* J. Algorithms, 1980. — [DOI](https://doi.org/10.1016/0196-6774(80)90015-2)
+
+## 10. Worked Example
+
+**Gapped-array insert (ALEX-style), then a Bentley–Saxe merge.** A leaf node fits a linear model $F(x)=\lfloor (x-100)/10\rfloor$ to keys $\{100,110,120,130\}$, laid out in a gapped array of capacity 8 with slots: `[100, _, 110, _, 120, _, 130, _]`. Insert key $115$: $F(115)=1$ scaled to slot $\approx 3$; the slot is empty, so we place it locally — **no rank shift, no retrain**, lookup error stays $\varepsilon\le 1$. Now insert $112,114,116$ into the same gap region: the node overflows (density $> $ threshold), triggering a *split + refit* — the amortized cost charged here is the $O(\log^2 n)$ packed-memory-array bound.
+
+**Why worst-case can't beat the floor.** An adversary inserts $1, \tfrac12, \tfrac14, \dots$ all into one tiny key range, forcing repeated splits. Dynamic PGM instead keeps $O(\log n)$ static layers of sizes $1,2,4,\dots$; inserting one key rebuilds layers up to the first empty one, geometric-series amortized to $O(\log n)$, and a query probes all $\log n$ layers: $O(\log^2 n)$. The Pătrașcu–Demaine floor $\Omega(\log n/\log\log n)$ per op means *no* learned structure escapes logarithmic cost on adversarial updates — gains are purely distributional.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

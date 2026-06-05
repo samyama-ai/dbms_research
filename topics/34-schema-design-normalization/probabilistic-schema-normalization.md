@@ -40,12 +40,27 @@ Active directions: bridging **factorized databases / FDB** (Olteanu, Schleich) w
 - Unifying pFD-thresholded design with graphical-model factorization and with denial-constraint repair.
 
 ## 9. Key References
-- **[Foundational]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Morgan & Claypool, 2011.
-- **[Foundational]** N. Dalvi, D. Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007.
-- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005.
-- **[SOTA]** D. Olteanu, M. Schleich. *Factorized Databases.* ACM SIGMOD Record, 2016.
-- **[Foundational]** I. F. Ilyas, V. Markl, P. Haas, P. Brown, A. Aboulnaga. *CORDS: Automatic Discovery of Correlations and Soft Functional Dependencies.* SIGMOD, 2004.
-- **[Survey]** T. Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015.
+- **[Foundational]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.1007/978-3-031-01879-4)
+- **[Foundational]** N. Dalvi, D. Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007. — [DOI](https://doi.org/10.1007/s00778-006-0004-3)
+- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1067298.1067302)
+- **[SOTA]** D. Olteanu, M. Schleich. *Factorized Databases.* ACM SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
+- **[Foundational]** I. F. Ilyas, V. Markl, P. Haas, P. Brown, A. Aboulnaga. *CORDS: Automatic Discovery of Correlations and Soft Functional Dependencies.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007641)
+- **[Survey]** T. Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+
+## 10. Worked Example
+
+Consider a tuple-independent relation $R(\text{Zip}, \text{City})$ with three uncertain tuples:
+
+| tid | Zip | City | $\Pr$ |
+|-----|-----|------|-------|
+| $t_1$ | 10001 | NYC | 0.9 |
+| $t_2$ | 10001 | Newark | 0.3 |
+| $t_3$ | 20500 | DC | 1.0 |
+
+Does the FD $\text{Zip} \to \text{City}$ hold? It holds in a world iff that world does **not** contain both $t_1$ and $t_2$ (they share Zip 10001 but disagree on City). Treating tuples independently:
+$$\Pr[\text{Zip}\to\text{City}] = 1 - \Pr[t_1 \wedge t_2] = 1 - (0.9)(0.3) = 1 - 0.27 = 0.73.$$
+
+So this is a **probabilistic FD** $\text{Zip}\to_p \text{City}$ at confidence $\theta = 0.73$. With a normalization threshold $\theta^\star = 0.95$ it would **fail** to qualify (no decomposition warranted); at $\theta^\star = 0.70$ it **qualifies**, suggesting splitting into $R_1(\text{Zip},\text{City})$ and $R_2(\text{Zip},\dots)$. Note the deterministic chase is silent here: classically the FD simply does not hold, whereas the probabilistic view recovers a graded $0.73$ that a thresholded design rule can act on.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -43,12 +43,24 @@ The gap is **genuinely open**: between deployed self-driving systems that empiri
 - Robustness to adversarial / concept-drifting workloads with graceful degradation.
 
 ## 9. Key References
-- **[Foundational]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems (QB5000).* SIGMOD, 2018.
-- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[Foundational]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging / Online Algorithms.* (online with switching costs lineage), FOCS/JACM, 2007–2012.
-- **[SOTA]** S. Das et al. *Automatically Indexing Millions of Databases in Microsoft Azure SQL Database.* SIGMOD, 2019.
-- **[Survey]** P. Bernstein, et al. / G. Graefe. (autonomous & adaptive physical design surveys) — see also X. Zhou et al. *Database Meets AI: A Survey.* IEEE TKDE, 2022.
+- **[Foundational]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [PDF](https://www.cidrdb.org/cidr2017/papers/p42-pavlo-cidr17.pdf), [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, G. Gordon. *Query-based Workload Forecasting for Self-Driving Database Management Systems (QB5000).* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[Foundational]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging / Online Algorithms.* (online with switching costs lineage), FOCS/JACM, 2007–2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[SOTA]** S. Das et al. *Automatically Indexing Millions of Databases in Microsoft Azure SQL Database.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314035)
+- **[Survey]** P. Bernstein, et al. / G. Graefe. (autonomous & adaptive physical design surveys) — see also X. Zhou et al. *Database Meets AI: A Survey.* IEEE TKDE, 2022. — [DOI](https://doi.org/10.1109/TKDE.2020.2994641)
+
+## 10. Worked Example
+
+A tuner picks among $N=2$ index configurations: $X_A$ (index on column A) and $X_B$ (index on B). Building/dropping an index costs a switching penalty $d(X_A,X_B)=d(X_B,X_A)=10$. Per-query service cost: under $X_A$, an A-query costs 1 and a B-query costs 8; symmetrically under $X_B$.
+
+Workload over 4 steps: $w = [A, B, B, B]$. Start in $X_A$.
+
+**Greedy "rebuild every step" policy.** Step 1 ($A$): stay $X_A$, cost 1. Step 2 ($B$): switch to $X_B$, pay $10 + 1 = 11$. Steps 3,4 ($B$): stay, $1+1$. Total $= 1+11+1+1 = 14$.
+
+**Hysteretic policy** (only switch when accumulated regret exceeds the switching cost). Step 1: $X_A$, cost 1. Steps 2-3 ($B,B$) staying in $X_A$: pay $8+8=16$ in service. By step 3 the gap $16 > 10$ justifies a switch; switching at step 2 was the better call. The **offline optimum** here switches once at step 2: $1 + (10+1) + 1 + 1 = 14$.
+
+This is exactly the MTS objective $\sum_t [\text{service}(X_t,w_t) + d(X_{t-1},X_t)]$. With $N=2$ the deterministic competitive ratio is $2N-1 = 3$: no online tuner, ignorant of the future $B$-heavy run, can guarantee better than $3\times$ the offline cost on an adversarial workload.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

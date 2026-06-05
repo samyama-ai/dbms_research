@@ -39,12 +39,34 @@ The gap is **definitional and sociotechnical, not a closed/open complexity gap**
 - Reconciling point-based and interval-based semantics, ideally a model parametric in the choice.
 
 ## 9. Key References
-- **[Foundational]** Jensen, C. S., Snodgrass, R. T., Soo, M. D. *The Bitemporal Conceptual Data Model.* (BCDM) IEEE TKDE / chapter in *The TSQL2 Temporal Query Language*, 1994.
-- **[Foundational]** Snodgrass, R. T. (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995.
-- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J., Jensen, C. S. *Extending the Kernel of a Relational DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016.
-- **[SOTA]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
-- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. (relational-algebra closure and the chase)
-- **[Survey]** Jensen, C. S., Snodgrass, R. T. (eds.). *Temporal Database Entries*, in *Encyclopedia of Database Systems.* Springer, 2009/2018.
+- **[Foundational]** Jensen, C. S., Snodgrass, R. T., Soo, M. D. *The Bitemporal Conceptual Data Model.* (BCDM) IEEE TKDE / chapter in *The TSQL2 Temporal Query Language*, 1994. — *Unifying Temporal Data Models via a Conceptual Model,* Information Systems 1994 [DOI](https://doi.org/10.1016/0306-4379(94)90013-2)
+- **[Foundational]** Snodgrass, R. T. (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP](https://dblp.org/db/books/collections/snodgrass95.html)
+- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J., Jensen, C. S. *Extending the Kernel of a Relational DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016. — [DOI](https://doi.org/10.1145/2967608)
+- **[SOTA]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+- **[Foundational]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995. (relational-algebra closure and the chase) — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Survey]** Jensen, C. S., Snodgrass, R. T. (eds.). *Temporal Database Entries*, in *Encyclopedia of Database Systems.* Springer, 2009/2018. — [DOI](https://doi.org/10.1007/978-0-387-39940-9)
+
+## 10. Worked Example
+
+A BCDM relation `Emp(name, dept)` with bitemporal elements (sets of $(c_t,c_v)$ chronons; times as
+small integers). Suppose we recorded at transaction time $t{=}1$ that *Ann* is in *Sales* for valid
+time $v\in[1,5)$, then at $t{=}3$ corrected it to *Mktg* for $v\in[3,5)$:
+
+| name | dept | bitemporal element (txn $\times$ valid) |
+|------|------|------------------------------------------|
+| Ann | Sales | $\{1,2\}\times\{1,2,3,4\}$ |
+| Ann | Mktg | $\{3,4,\dots\}\times\{3,4\}$ |
+
+**Snapshot reducibility** check for the timeslice $\tau_{(t=3,\,v=4)}$: project to the ordinary
+relation believed at transaction time 3 about valid time 4. Only the *Mktg* tuple contains chronon
+$(3,4)$, so the snapshot is $\{(\text{Ann},\text{Mktg})\}$ — a plain relation, as required by
+*conservative reduction*. At $\tau_{(t=2,\,v=4)}$ we instead get $\{(\text{Ann},\text{Sales})\}$,
+showing transaction time preserving the superseded belief.
+
+**Value-equivalence / coalescing:** the two rows have *different* explicit values
+(Sales $\ne$ Mktg), so BCDM keeps them distinct; had both said *Sales* over abutting valid
+intervals, BCDM would forbid the duplicate and store the union of chronons — the canonical
+coalesced form that makes the model's no-duplicate invariant well-defined.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

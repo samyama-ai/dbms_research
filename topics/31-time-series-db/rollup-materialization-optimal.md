@@ -62,11 +62,24 @@ Genuinely open as an *automated, guaranteed, time-series-specific* problem, desp
 
 ## 9. Key References
 
-- **[Foundational]** V. Harinarayan, A. Rajaraman, J. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996.
-- **[Foundational]** J. Gray, S. Chaudhuri, A. Bosworth, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* Journal of the ACM, 1998.
-- **[SOTA]** F. Yang, E. Tschetter, X. Léauté, et al. *Druid: A Real-time Analytical Data Store.* SIGMOD, 2014.
+- **[Foundational]** V. Harinarayan, A. Rajaraman, J. Ullman. *Implementing Data Cubes Efficiently.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/235968.233333)
+- **[Foundational]** J. Gray, S. Chaudhuri, A. Bosworth, et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843) — [arXiv](https://arxiv.org/abs/cs/0701155)
+- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* Journal of the ACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)
+- **[SOTA]** F. Yang, E. Tschetter, X. Léauté, et al. *Druid: A Real-time Analytical Data Store.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2595631)
+
+## 10. Worked Example
+
+Resolution chain $1s \preceq 1m \preceq 1h \preceq 1d$. Raw data is $1s$; coarser nodes hold SUM rollups, each $60\times$ smaller than its child. Workload: 100 queries/day over $1d$ ranges, 50 over $1h$ ranges, 20 over $1m$ ranges. Query cost = number of source rows scanned from the *finest materialized ancestor* $\preceq$ the query grain.
+
+Always-materialized raw $1s$ alone: a $1d$ query scans $86{,}400$ rows. Materializing $1h$ lets a $1d$ query roll up just $24$ rows; materializing $1m$ lets an $1h$ query scan $60$ rows.
+
+Greedy under budget "materialize 2 extra nodes," benefit = query-rows saved:
+- Add $1h$: saves $100\times(86400-24)\approx 8.64{\times}10^6$ — **picked first**.
+- Add $1d$: now $1d$ queries scan $1$ row, saving $100\times(24-1)=2300$.
+- Add $1m$: saves $50\times(86400-60)+20\times(86400-60)\approx 6.05{\times}10^6$ — **picked second** over $1d$.
+
+Greedy's diminishing returns are exactly submodularity; the $(1-1/e)$ guarantee bounds the gap to the optimal 2-node set. SUM rolls up exactly; a median query could not, needing a mergeable sketch instead.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

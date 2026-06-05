@@ -45,13 +45,21 @@ This is **empirically open**: distribution-free sampling gives guarantees but is
 
 ## 9. Key References
 
-- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998.
-- **[Foundational]** S. Muthukrishnan, V. Poosala, T. Suel. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT, 1999 (NP-hardness).
-- **[SOTA]** N. Bruno, S. Chaudhuri, L. Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* ACM SIGMOD, 2001.
-- **[Foundational]** S. Acharya, V. Poosala, S. Ramaswamy. *Selectivity Estimation in Spatial Databases (min-skew).* ACM SIGMOD, 1999.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM Journal on Computing, 2013.
-- **[Foundational]** Y. Li, P. M. Long, A. Srinivasan. *Improved Bounds on the Sample Complexity of Learning (ε-approximations / VC).* JCSS, 2001.
-- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities (MSCN).* CIDR, 2019.
+- **[Foundational]** H. V. Jagadish, N. Koudas, S. Muthukrishnan, V. Poosala, K. Sevcik, T. Suel. *Optimal Histograms with Quality Guarantees.* VLDB, 1998. — [ACM](https://dl.acm.org/doi/10.5555/645924.671191)
+- **[Foundational]** S. Muthukrishnan, V. Poosala, T. Suel. *On Rectangular Partitionings in Two Dimensions: Algorithms, Complexity, and Applications.* ICDT, 1999 (NP-hardness). — [DOI](https://doi.org/10.1007/3-540-49257-7_16)
+- **[SOTA]** N. Bruno, S. Chaudhuri, L. Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* ACM SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[Foundational]** S. Acharya, V. Poosala, S. Ramaswamy. *Selectivity Estimation in Spatial Databases (min-skew).* ACM SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304184)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM Journal on Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Y. Li, P. M. Long, A. Srinivasan. *Improved Bounds on the Sample Complexity of Learning (ε-approximations / VC).* JCSS, 2001. — [DOI](https://doi.org/10.1006/jcss.2000.1741)
+- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+
+## 10. Worked Example
+
+Take $n=6$ intervals as endpoint points $(s,e)$ in the triangle $s\le e$: three short bursty events near the diagonal $\{(0,1),(2,3),(4,5)\}$ and three long-lived rows $\{(0,5),(0,6),(1,6)\}$.
+
+Query: `period OVERLAPS [3,4)`, i.e. count points with $s<4 \wedge e>3$. Scanning: $(0,5)$ yes, $(0,6)$ yes, $(1,6)$ yes, $(2,3)$ no ($e=3\not>3$), $(4,5)$ no ($s=4\not<4$), $(0,1)$ no. **True selectivity $=3/6$.**
+
+Now estimate with *independent* 1-D histograms. Marginal $P(s<4)=5/6$ (only $s=4$ excluded); marginal $P(e>3)=4/6$ (the three long rows plus $(4,5)$). Independence gives $\hat P = \tfrac{5}{6}\cdot\tfrac{4}{6}=\tfrac{20}{36}\approx 0.56$, predicting $\approx 3.3$ rows — close here by luck, but it credits $(4,5)$ and the short events with overlap mass they don't have, because it ignores that **large $e$ correlates with small $s$** (long-lived rows). A joint $(s,e)$ bucket placed on the long-row cluster captures this; the independence assumption cannot, which is the core failure mode the 2-D endpoint histogram targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

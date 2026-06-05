@@ -52,12 +52,23 @@ The gap is between hand-tuned, per-workload calibrated models (good in practice)
 
 ## 9. Key References
 
-- **[Foundational]** Patricia G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** Qianxi Zhang et al. *VBASE: Unifying Online Vector Similarity Search and Relational Queries via Relaxed Monotonicity.* OSDI, 2023.
-- **[SOTA]** Chunxiao Wei et al. *AnalyticDB-V: A Hybrid Analytical Engine Towards Query Fusion for Structured and Unstructured Data.* VLDB, 2020.
-- **[SOTA]** Liana Patel et al. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024.
-- **[Foundational]** Michael E. Houle. *Local Intrinsic Dimensionality.* SISAP, 2017.
-- **[Foundational]** Yannis E. Ioannidis, Stavros Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
+- **[Foundational]** Patricia G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** Qianxi Zhang et al. *VBASE: Unifying Online Vector Similarity Search and Relational Queries via Relaxed Monotonicity.* OSDI, 2023. — [USENIX](https://www.usenix.org/conference/osdi23/presentation/zhang-qianxi) — [DBLP](https://dblp.org/rec/conf/osdi/ZhangXCSLLSCQLBLLZW23.html)
+- **[SOTA]** Chunxiao Wei et al. *AnalyticDB-V: A Hybrid Analytical Engine Towards Query Fusion for Structured and Unstructured Data.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415541)
+- **[SOTA]** Liana Patel et al. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2403.04871) — [DBLP](https://dblp.org/rec/journals/corr/abs-2403-04871.html)
+- **[Foundational]** Michael E. Houle. *Local Intrinsic Dimensionality I: An Extreme-Value-Theoretic Foundation for Similarity Applications.* SISAP, 2017. — [DOI](https://doi.org/10.1007/978-3-319-68474-1_5)
+- **[Foundational]** Yannis E. Ioannidis, Stavros Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)
+
+## 10. Worked Example
+
+**IVF cost/recall and a pre- vs. post-filter crossover.** Index $n{=}1{,}000{,}000$ vectors with $C{=}1000$ IVF cells, balanced cell size $n/C{=}1000$. Empirically the recall curve fits $R(p)\approx 1-e^{-\gamma p}$ with $\gamma{=}0.5$. To hit $R_0{=}0.90$ we need $1-e^{-0.5p}\ge 0.9 \Rightarrow p\ge \ln(10)/0.5 \approx 4.6$, so $p{=}5$ probes, reading $\approx p\cdot n/C = 5000$ vectors per query.
+
+Now add a metadata predicate of selectivity $s{=}0.002$ (2000 matching rows).
+
+- **Post-filter:** run ANN ($5000$ distance evals), then keep only matches. But of the $\approx k$ returned, a fraction $\approx s$ survive — to return top-$k{=}10$ matches you must over-fetch $\sim k/s = 5000$ candidates, blowing up probes.
+- **Pre-filter then exact:** scan the $s\,n = 2000$ matching vectors directly: $2000$ distance evals, exact recall.
+
+Crossover: pre-filter wins when $s\,n < $ the probes post-filter needs. Here $2000 < 5000$, so the planner should pre-filter. The crossover threshold is roughly $s^\* n \approx p\,n/C$, i.e. $s^\* \approx p/C = 5/1000 = 0.005$; any $s < 0.005$ favors the exact pre-filter scan.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

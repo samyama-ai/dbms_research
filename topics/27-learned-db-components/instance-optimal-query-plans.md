@@ -98,11 +98,19 @@ optimization and a regret theory over the full plan space.
 
 ## 9. Key References
 
-- **[Foundational]** H. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / J. ACM 2018.
-- **[Foundational]** R. Avnur, J. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000.
-- **[SOTA]** I. Trummer et al. *SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning.* SIGMOD 2019.
-- **[SOTA]** H. Ngo, D. Nguyen, C. Ré, A. Rudra. *Beyond Worst-Case Analysis for Joins with Minesweeper.* PODS 2014.
-- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
+- **[Foundational]** H. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS 2012 / J. ACM 2018. — [arXiv](https://arxiv.org/abs/1203.1952) — [DOI](https://doi.org/10.1145/3180143)
+- **[Foundational]** R. Avnur, J. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD 2000. — [DOI](https://doi.org/10.1145/342009.335420) — [DBLP](https://dblp.org/rec/conf/sigmod/AvnurH00.html)
+- **[SOTA]** I. Trummer et al. *SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning.* SIGMOD 2019. — [arXiv](https://arxiv.org/abs/1901.05152) — [DOI](https://doi.org/10.1145/3299869.3300088)
+- **[SOTA]** H. Ngo, D. Nguyen, C. Ré, A. Rudra. *Beyond Worst-Case Analysis for Joins with Minesweeper.* PODS 2014. — [arXiv](https://arxiv.org/abs/1302.0914) — [DOI](https://doi.org/10.1145/2594538.2594547)
+- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+
+## 10. Worked Example
+
+Consider the triangle query $q = R(a,b) \bowtie S(b,c) \bowtie T(a,c)$ with $|R| = |S| = |T| = N$. The **AGM bound** uses fractional edge cover $\mathbf{x}$ minimizing $\prod_e |R_e|^{x_e}$. Assigning $x_e = \tfrac12$ to each of the three edges is a valid cover (every vertex $a,b,c$ is covered by edges summing to $\ge 1$), giving output bound $N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2}$.
+
+A **binary-join** plan, e.g. $(R \bowtie S) \bowtie T$, can materialize an intermediate $R \bowtie S$ of size up to $N^2$ even when the final answer has only $O(N^{3/2})$ tuples — so for $N = 10^6$ it touches $10^{12}$ rows vs. the $10^9$ truly necessary. A bad cardinality estimate that picks this order is catastrophic.
+
+A **WCOJ** algorithm (LeapFrog Triejoin) runs in $\tilde O(N^{3/2})$ regardless of join order, *independent of any selectivity estimate* — matching the AGM lower bound. This is exactly the estimate-free, instance-decoupled guarantee the problem seeks, but it holds only for the single multiway join; extending it to full plans with aggregation remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

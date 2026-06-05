@@ -48,12 +48,20 @@ The gap is **genuinely open**. There is no Selinger-style optimizer that (a) cos
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Popa, Redfield, Zeldovich, Balakrishnan. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011.
-- **[SOTA]** Bater, Elliott, Eggen, Goel, Kho, Rogers. *SMCQL: Secure Querying for Federated Databases.* VLDB, 2017.
-- **[SOTA]** Bater, He, Ehrich, Machanavajjhala, Rogers. *Shrinkwrap: Efficient SQL Query Processing in Differentially Private Data Federations.* VLDB, 2019.
-- **[SOTA]** Zheng, Dave, Beekman, Popa, Gonzalez, Stoica. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [PODS DOI](https://doi.org/10.1145/2213556.2213565) · [JACM DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Popa, Redfield, Zeldovich, Balakrishnan. *CryptDB: Protecting Confidentiality with Encrypted Query Processing.* SOSP, 2011. — [DOI](https://doi.org/10.1145/2043556.2043566)
+- **[SOTA]** Bater, Elliott, Eggen, Goel, Kho, Rogers. *SMCQL: Secure Querying for Federated Databases.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3055330.3055334)
+- **[SOTA]** Bater, He, Ehrich, Machanavajjhala, Rogers. *Shrinkwrap: Efficient SQL Query Processing in Differentially Private Data Federations.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3291264.3291274) · [arXiv](https://arxiv.org/abs/1810.01816)
+- **[SOTA]** Zheng, Dave, Beekman, Popa, Gonzalez, Stoica. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [DBLP](https://dblp.org/rec/conf/nsdi/ZhengDBPGS17.html)
+
+## 10. Worked Example
+
+Plan a 2-way join `A ⋈ B` with $|A|=1000$, $|B|=1000$. The plaintext optimizer needs the join selectivity $\sigma$ to size the intermediate result: if exact stats say $\sigma=0.001$, the join yields $\approx 1000$ tuples and a small hash table wins.
+
+But exposing $\sigma$ is a leakage oracle. Suppose the true intermediate size is $N=1000$; Shrinkwrap-style padding releases a **DP-noised** size $\hat N = N + \mathrm{Lap}(1/\varepsilon)$. At $\varepsilon=0.5$, $\mathrm{Lap}(2)$ noise plus a one-sided safety shift might pad to $\hat N \approx 1006$. The optimizer costs the oblivious join on $\hat N$, not the leaky true $N$.
+
+If instead the optimizer refuses *any* selectivity, the worst-case-optimal join bounds the intermediate by the AGM fractional-edge-cover: here $\mathrm{AGM} = |A|\cdot|B| = 10^6$ (cover weights $1,1$), so a statistics-blind oblivious plan budgets a $10^6$ padded scan — $1000\times$ larger than the DP estimate. The trade-off is explicit: DP statistics ($\pm O(1/\varepsilon)$ error, small budget spend) buy a far tighter plan than the leakage-free AGM bound, at the cost of $\varepsilon$ from the privacy budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

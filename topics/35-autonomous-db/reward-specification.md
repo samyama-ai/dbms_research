@@ -44,12 +44,26 @@ The gap is conceptual, not just quantitative. We can *test* and *bound* reward c
 - Composable multi-tenant objectives with fairness/priority constraints.
 
 ## 9. Key References
-- **[Foundational]** A. Ng, S. Russell. *Algorithms for Inverse Reinforcement Learning.* ICML, 2000.
-- **[Foundational]** B. Ziebart, A. Maas, J. A. Bagnell, A. Dey. *Maximum Entropy Inverse Reinforcement Learning.* AAAI, 2008.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017.
-- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019.
-- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
-- **[Survey]** W. Wiesemann, D. Kuhn, B. Rustem. *Robust Markov Decision Processes.* Mathematics of Operations Research, 2013.
+- **[Foundational]** A. Ng, S. Russell. *Algorithms for Inverse Reinforcement Learning.* ICML, 2000. — [DBLP](https://dblp.org/rec/conf/icml/NgR00.html)
+- **[Foundational]** B. Ziebart, A. Maas, J. A. Bagnell, A. Dey. *Maximum Entropy Inverse Reinforcement Learning.* AAAI, 2008. — [DBLP](https://dblp.org/rec/conf/aaai/ZiebartMBD08.html)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** J. Zhang et al. *An End-to-End Automatic Cloud Database Tuning System Using Deep Reinforcement Learning (CDBTune).* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300085)
+- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+- **[Survey]** W. Wiesemann, D. Kuhn, B. Rustem. *Robust Markov Decision Processes.* Mathematics of Operations Research, 2013. — [DOI](https://doi.org/10.1287/moor.1120.0566)
+
+## 10. Worked Example
+
+Take a single-step reward $R = w_1\,(\text{throughput}) - w_2\,(\text{index-maintenance cost})$ and watch a **perverse optimum** emerge. Suppose configurations:
+
+| config | throughput | maint. cost | $R$ at $w_1{=}1, w_2{=}1$ |
+|---|---|---|---|
+| $A$: full index set | 1000 | 300 | $700$ |
+| $B$: minimal indexes | 600 | 40 | $560$ |
+| $C$: **no indexes** | 200 | 0 | $200$ |
+
+Here $A$ wins, fine. But the operator *truly* cares about throughput, with maintenance only a soft tiebreaker. If a careless operator sets $w_2 = 4$ to "discourage bloat," the scores become $A: 1000-1200=-200$, $B: 600-160=440$, $C: 200-0=200$ — now $B$ wins and, worse, raising $w_2$ to $7$ makes $C$ (drop *all* indexes) optimal at $R=200$ vs $A$'s $-1100$. The agent "reward-hacks" by minimizing the penalty term, exactly the index-thrash degenerate optimum of Section 1.
+
+The constrained-MDP fix avoids weight guessing: $\max(\text{throughput})$ s.t. $\text{maint. cost}\le 250$. That selects $A$ (feasible, highest throughput) and provably never returns $C$. Note also that Ng–Russell potential shaping ($R' = R + \gamma\Phi(s') - \Phi(s)$) would leave this ranking unchanged — illustrating the reward-ambiguity class of Section 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -43,12 +43,27 @@ Active threads: extending the **information-theoretic normal-form** program (Are
 - Cost models trading temporal redundancy (storage/coalescing cost) against query performance on period tables.
 
 ## 9. Key References
-- **[Foundational]** C. S. Jensen, R. T. Snodgrass, M. D. Soo. *Extending Existing Dependency Theory to Temporal Databases.* IEEE TKDE, 1996.
-- **[Foundational]** J. Wijsen. *Temporal FDs on Complex Objects.* ACM TODS, 1999.
-- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005.
-- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemas.* ACM TODS, 1979.
-- **[Survey]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000.
-- **[SOTA]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* ACM SIGMOD Record, 2012.
+- **[Foundational]** C. S. Jensen, R. T. Snodgrass, M. D. Soo. *Extending Existing Dependency Theory to Temporal Databases.* IEEE TKDE, 1996. — [DOI](https://doi.org/10.1109/69.536250)
+- **[Foundational]** J. Wijsen. *Temporal FDs on Complex Objects.* ACM TODS, 1999. — [DOI](https://doi.org/10.1145/310701.310715)
+- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1071596.1071600)
+- **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemas.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320066)
+- **[Survey]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000. — [DBLP](https://dblp.org/rec/books/mk/Snodgrass99.html)
+- **[SOTA]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* ACM SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+
+## 10. Worked Example
+
+Consider valid-time relation `EmpDept(eid, dept, mgr, [vt_start, vt_end))` with TFD $\text{dept} \to_T \text{mgr}$ (within any instant, a department has one manager).
+
+| eid | dept | mgr | vt |
+|-----|------|-----|----|
+| e1 | Sales | Ann | [2020,2023) |
+| e2 | Sales | Ann | [2021,2023) |
+| e2 | Sales | Ann | [2023,2025) |
+
+**Snapshot-redundancy.** Take the timeslice at $t=2022$: $R(2022) = \{(e1,\text{Sales},\text{Ann}),(e2,\text{Sales},\text{Ann})\}$. The FD $\text{dept}\to\text{mgr}$ holds, but "Sales$\to$Ann" is stored twice — snapshot-redundant, so $R$ violates **temporal BCNF** (the TFD's LHS `dept` is not a temporal key).
+
+**Coalescing + decomposition.** Row 2 and row 3 for e2 are value-equivalent over abutting intervals $[2021,2023)$ and $[2023,2025)$; coalescing merges them into $[2021,2025)$. The TBCNF synthesis splits on the TFD into
+`EmpDept'(eid, dept, vt)` and `DeptMgr(dept, mgr, vt)` with `DeptMgr = {(Sales, Ann, [2020,2025))}` — one coalesced fact. The join $\text{EmpDept}'\bowtie_T \text{DeptMgr}$ (temporal natural join, intersecting intervals) is lossless and reconstructs every original snapshot, while the manager-of-Sales fact is now stored once per maximal interval instead of once per employee-instant.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

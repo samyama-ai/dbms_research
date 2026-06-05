@@ -51,11 +51,29 @@ Hot directions: **Shapley- and Banzhaf-value** measures of tuple importance and 
 
 ## 9. Key References
 
-- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach. Part I: Causes.* British J. Phil. Sci., 2005.
-- **[SOTA]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010.
-- **[SOTA]** Livshits, Bertossi, Kimelfeld, Sebag. *The Shapley Value of Tuples in Query Answering.* ICDT, 2020 (LMCS, 2021).
-- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007.
-- **[Survey]** Bertossi, Salimi. *From Causes for Database Queries to Repairs and Model-Based Diagnosis and Back.* Theory of Computing Systems, 2017.
+- **[Foundational]** Halpern, Pearl. *Causes and Explanations: A Structural-Model Approach. Part I: Causes.* British J. Phil. Sci., 2005. — [DOI](https://doi.org/10.1093/bjps/axi147)
+- **[SOTA]** Meliou, Gatterbauer, Moore, Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010. — [arXiv](https://arxiv.org/abs/1009.2021) · [DOI](https://doi.org/10.14778/1880172.1880176)
+- **[SOTA]** Livshits, Bertossi, Kimelfeld, Sebag. *The Shapley Value of Tuples in Query Answering.* ICDT, 2020 (LMCS, 2021). — [arXiv](https://arxiv.org/abs/1904.08679) · [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2020.20)
+- **[Foundational]** Dalvi, Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007. — [DOI](https://doi.org/10.1007/s00778-006-0004-3)
+- **[Survey]** Bertossi, Salimi. *From Causes for Database Queries to Repairs and Model-Based Diagnosis and Back.* Theory of Computing Systems, 2017. — [arXiv](https://arxiv.org/abs/1507.00257) · [DOI](https://doi.org/10.1007/s00224-016-9718-9)
+
+## 10. Worked Example
+
+Tables `R(A)` and `S(A)`, all tuples endogenous. Boolean query $Q :\!-\, R(x), S(x)$ (is there a shared value?).
+
+| $R$ | | $S$ |
+|----|---|----|
+| $r_1: 1$ | | $s_1: 1$ |
+| $r_2: 2$ | | $s_2: 2$ |
+| $r_3: 3$ | | $s_3: 4$ |
+
+$Q(D)=\text{true}$ via two witnesses, $\{r_1,s_1\}$ and $\{r_2,s_2\}$. Lineage: $\lambda = (r_1\wedge s_1)\vee(r_2\wedge s_2)$.
+
+**Is $r_1$ a cause?** Removing $r_1$ alone leaves witness $\{r_2,s_2\}$, so $Q$ stays true — $r_1$ is *not counterfactual*. But take contingency set $\Gamma=\{r_2\}$ (or $\{s_2\}$): with $\Gamma$ gone, $Q(D\setminus\Gamma)$ is still true (via $r_1,s_1$), yet $Q(D\setminus(\Gamma\cup\{r_1\}))$ is false. So $r_1$ **is an actual cause** with minimal contingency set of size $1$.
+
+**Responsibility:** $\rho(r_1)=\dfrac{1}{1+|\Gamma_{\min}|}=\dfrac{1}{1+1}=\tfrac12.$
+
+By symmetry $\rho(r_2)=\rho(s_1)=\rho(s_2)=\tfrac12$, while $r_3,s_3$ contribute to no witness so they are non-causes ($\rho=0$). This self-join-free CQ is hierarchical, so all responsibilities are computed in PTIME — the tractable side of the Meliou–Gatterbauer–Suciu dichotomy. Adding a self-join (e.g. $R(x),R(y),S(x,y)$) is exactly where the dichotomy is still open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

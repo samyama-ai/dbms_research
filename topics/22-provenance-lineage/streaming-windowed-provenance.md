@@ -32,12 +32,22 @@ For *live, in-window, structural* (SPJ) provenance, the gap is essentially **clo
 A formal sliding-window provenance model with tight space lower/upper bounds per operator class. Approximate set-valued lineage with guarantees. Non-monotone expiry under retractions/late data. Retention-horizon policies with audit-coverage SLAs. Benchmarks (a "provenance Nexmark").
 
 ## 9. Key References
-- **[SOTA]** Boris Glavic, Kyumars Sheykh Esmaili, Peter M. Fischer, Nesime Tatbul. *Ariadne: Managing Fine-Grained Provenance on Data Streams.* DEBS, 2013.
-- **[SOTA]** Dimitris Palyvos-Giannas, Vincenzo Gulisano, Marina Papatriantafilou. *GeneaLog: Fine-Grained Data Streaming Provenance in Cyber-Physical Systems.* Parallel Computing, 2018.
-- **[Foundational]** Mayur Datar, Aristides Gionis, Piotr Indyk, Rajeev Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002.
-- **[Foundational]** Vladimir Braverman, Rafail Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007.
-- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Survey]** Boris Glavic. *Data Provenance.* Foundations and Trends in Databases, 2021.
+- **[SOTA]** Boris Glavic, Kyumars Sheykh Esmaili, Peter M. Fischer, Nesime Tatbul. *Ariadne: Managing Fine-Grained Provenance on Data Streams.* DEBS, 2013. — [DOI](https://doi.org/10.1145/2488222.2488256)
+- **[SOTA]** Dimitris Palyvos-Giannas, Vincenzo Gulisano, Marina Papatriantafilou. *GeneaLog: Fine-Grained Data Streaming Provenance in Cyber-Physical Systems.* Parallel Computing, 2018. — [DOI](https://doi.org/10.1145/3274808.3274826)
+- **[Foundational]** Mayur Datar, Aristides Gionis, Piotr Indyk, Rajeev Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Foundational]** Vladimir Braverman, Rafail Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DBLP search](https://dblp.org/search?q=Smooth+Histograms+for+Sliding+Windows)
+- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)
+- **[Survey]** Boris Glavic. *Data Provenance.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
+
+## 10. Worked Example
+
+Consider a count-based sliding window of size $N=4$ over a stream of sensor readings and the continuous query $Q$: "emit the max of the current window." Stream prefix (newest on right):
+
+$$\ldots,\; r_5{=}3,\; r_6{=}9,\; r_7{=}2,\; r_8{=}5 \quad(\text{window} = \{r_5,r_6,r_7,r_8\}).$$
+
+The output is $\max = 9$, with **backward provenance** $\{r_6\}$ — the single witness. A naive scheme storing, for every emitted max ever, a pointer to its witness uses $\Theta(\text{stream length})$ memory. GeneaLog instead keeps $O(1)$ metadata per *live* tuple and reconstructs witnesses from the retained window, so memory is $O(|W|)=O(4)$ regardless of how long the stream runs.
+
+Now advance one step: $r_9{=}1$ arrives, $r_5$ expires. Window $=\{r_6,r_7,r_8,r_9\}$, still $\max=9$, witness still $\{r_6\}$. When $r_6$ eventually expires, the witness must be recomputed — illustrating non-trivial expiry. Contrast distinct-count: an INDEX-style communication lower bound forces $\Omega(|W|)$ space for exact set-valued lineage, which is *why* approximate sketches are needed there.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

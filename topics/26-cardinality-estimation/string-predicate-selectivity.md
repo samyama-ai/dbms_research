@@ -64,12 +64,23 @@ For regex, the match set is the language $L(r)\cap C$; selectivity estimation re
 
 ## 9. Key References
 
-- **[Foundational]** Krishnan, Vitter, Iyer. *Estimating Alphanumeric Selectivity in the Presence of Wildcards.* SIGMOD, 1996.
-- **[Foundational]** Jagadish, Ng, Srivastava. *Substring Selectivity Estimation.* ICDE / PODS, 1999.
-- **[SOTA]** Chaudhuri, Ganti, Gravano. *Selectivity Estimation for String Predicates: Overcoming the Underestimation Problem.* ICDE, 2004.
-- **[SOTA]** Mamouras et al. / *Astrid: Accurate Selectivity Estimation for String Predicates using Deep Learning.* VLDB, 2021.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
-- **[Foundational]** Broder. *On the Resemblance and Containment of Documents (MinHash).* SEQUENCES, 1997.
+- **[Foundational]** Krishnan, Vitter, Iyer. *Estimating Alphanumeric Selectivity in the Presence of Wildcards.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/233269.233341)
+- **[Foundational]** Jagadish, Ng, Srivastava. *Substring Selectivity Estimation.* PODS, 1999. — [DBLP](https://dblp.org/rec/conf/pods/JagadishNS99)
+- **[SOTA]** Chaudhuri, Ganti, Gravano. *Selectivity Estimation for String Predicates: Overcoming the Underestimation Problem.* ICDE, 2004. — [DOI](https://doi.org/10.1109/ICDE.2004.1319999)
+- **[SOTA]** Shetiya, Thirumuruganathan, Augsten, Das. *Astrid: Accurate Selectivity Estimation for String Predicates using Deep Learning.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3436905.3436907)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+- **[Foundational]** Broder. *On the Resemblance and Containment of Documents (MinHash).* SEQUENCES, 1997. — [DOI](https://doi.org/10.1109/SEQUEN.1997.666900)
+
+## 10. Worked Example
+
+Column $C$ = four strings: `data`, `database`, `metadata`, `rate`; $n=4$. Estimate selectivity of `LIKE '%at%'` using **2-grams** under the naive independence model.
+
+Tokenize each string into overlapping bigrams and count how many strings contain each:
+- `at`: in `data`, `database`, `metadata`, `rate` → 4/4, so $\Pr[\texttt{at}]=1.0$.
+
+For the single-bigram pattern `%at%`, the estimate is just $\Pr[\texttt{at}]=1.0$, i.e. $\hat s=1.0$ — and indeed all 4 strings match, so this is exact.
+
+Now `LIKE '%ata%'` (pattern bigrams `at`,`ta`). $\Pr[\texttt{at}]=1.0$; `ta` appears in `data`,`database`,`metadata` → $\Pr[\texttt{ta}]=3/4$. Independence gives $\hat s \approx 1.0 \times 0.75 = 0.75 \Rightarrow 3$ rows. True matches of substring `ata`: `data`, `database`, `metadata` = 3 — here independence happens to be right. But for `%tat%` (bigrams `ta`,`at`), independence predicts $0.75\times1.0=0.75$, yet only `metadata` actually contains `tat` (1/4): independence **overestimates** $3\times$ because the bigrams overlap and are correlated — the core failure mode that q-gram independence cannot bound in the worst case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

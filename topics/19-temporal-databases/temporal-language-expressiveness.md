@@ -46,13 +46,21 @@ The headline FO-vs-FOTL boundary is **closed** (Kamp). What remains genuinely op
 
 ## 9. Key References
 
-- **[Foundational]** J. A. W. Kamp. *Tense Logic and the Theory of Linear Order.* PhD thesis, UCLA, 1968 (expressive completeness of SINCE/UNTIL).
-- **[Foundational]** D. Gabbay, A. Pnueli, S. Shelah, J. Stavi. *On the Temporal Analysis of Fairness.* POPL, 1980 (separation theorem).
-- **[Survey]** J. Chomicki, D. Toman. *Temporal Databases.* In Handbook of Temporal Reasoning in Artificial Intelligence / Foundations of AI, Elsevier, 2005.
-- **[Foundational]** M. Böhlen, R. T. Snodgrass, M. D. Soo. *Coalescing in Temporal Databases.* VLDB, 1996.
-- **[Foundational]** R. T. Snodgrass (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995.
-- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment.* ACM SIGMOD, 2012.
-- **[Foundational]** N. Immerman. *Descriptive Complexity.* Springer, 1999.
+- **[Foundational]** J. A. W. Kamp. *Tense Logic and the Theory of Linear Order.* PhD thesis, UCLA, 1968 (expressive completeness of SINCE/UNTIL). — [PhilPapers](https://philpapers.org/rec/KAMTLA)
+- **[Foundational]** D. Gabbay, A. Pnueli, S. Shelah, J. Stavi. *On the Temporal Analysis of Fairness.* POPL, 1980 (separation theorem). — [ACM](https://dl.acm.org/doi/10.1145/567446.567462)
+- **[Survey]** J. Chomicki, D. Toman. *Temporal Databases.* In Handbook of Temporal Reasoning in Artificial Intelligence / Foundations of AI, Elsevier, 2005. — [DOI](https://doi.org/10.1016/S1574-6526(05)80016-1)
+- **[Foundational]** M. Böhlen, R. T. Snodgrass, M. D. Soo. *Coalescing in Temporal Databases.* VLDB, 1996. — [PDF](https://www.vldb.org/conf/1996/P180.PDF)
+- **[Foundational]** R. T. Snodgrass (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP](https://dblp.org/db/books/collections/snodgrass95.html)
+- **[SOTA]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment.* ACM SIGMOD, 2012. — [ACM](https://dl.acm.org/doi/10.1145/2213836.2213886)
+- **[Foundational]** N. Immerman. *Descriptive Complexity.* Springer, 1999. — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+
+## 10. Worked Example
+
+Consider a single monadic predicate $P(t)$ ("the server is up") over discrete time $\mathbb{T}=\{0,1,\dots,9\}$, with $P$ true exactly at $\{0,1,2,\,5,6,\,9\}$.
+
+**FOTL-expressible query** — "$P$ held at every instant since the last moment it was false, looking back from $t=9$." Using `SINCE`, the formula $\varphi \equiv P \,\mathsf{S}\, \neg P$ at $t=9$ asks: is there an earlier instant where $\neg P$ held, with $P$ true continuously afterward? The last false instant before 9 is $t=7,8$; since $P$ holds at 9 but the gap 7–8 breaks continuity, the "continuous-up run ending at 9" has length 1. Kamp's theorem guarantees this is also FO-definable over $(\mathbb{T},<)$: $\exists u\,(u<9 \wedge \neg P(u) \wedge \forall v\,(u<v\le 9 \to P(v)))$ with $u=8$.
+
+**Non-FO query** — *temporal parity*: "is the number of true instants in $[0,t]$ even?" At $t=9$ the count is $|\{0,1,2,5,6,9\}|=6$ (even). Parity is **not** FO-definable over $(\mathbb{T},<)$ by an Ehrenfeucht–Fraïssé/locality argument, hence not expressible in FOTL or SQL:2011 period predicates — it requires fixpoint (FO+LFP), exactly the separation in §5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -66,13 +66,23 @@ Idempotency lets us replace 2PC with **deduplication keys** $(\text{partition}, 
 
 ## 9. Key References
 
-- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985.
-- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** Carbone, Ewen, Fóra, Haridi, Richter, Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* PVLDB, 2017.
-- **[SOTA]** Akidau et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* PVLDB, 2013.
-- **[SOTA]** Armbrust et al. *Structured Streaming: A Declarative API for Real-Time Applications in Apache Spark.* SIGMOD, 2018.
-- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020.
-- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
+- **[Foundational]** Chandy, Lamport. *Distributed Snapshots: Determining Global States of Distributed Systems.* ACM TOCS, 1985. — [DOI](https://doi.org/10.1145/214451.214456)
+- **[Foundational]** Fischer, Lynch, Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Carbone, Ewen, Fóra, Haridi, Richter, Tzoumas. *State Management in Apache Flink: Consistent Stateful Distributed Stream Processing.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137765.3137777)
+- **[SOTA]** Akidau et al. *MillWheel: Fault-Tolerant Stream Processing at Internet Scale.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536229)
+- **[SOTA]** Armbrust et al. *Structured Streaming: A Declarative API for Real-Time Applications in Apache Spark.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190664)
+- **[Foundational]** Hellerstein, Alvaro. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+- **[Foundational]** Gilbert, Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+A job reads from Kafka topic `clicks` (partition 0), counts events per minute, and writes counts to an external table.
+
+**Idempotent path (minimal coordination).** Tag each output row with the dedup key $(\text{partition}, \text{offset})=(0, 42)$ and `UPSERT`. Suppose offsets 40–42 are processed, the count emitted, then the worker crashes before checkpoint. On recovery the source rewinds to offset 40 and replays 40, 41, 42. The upserts for $(0,40),(0,41),(0,42)$ overwrite identical rows — net effect once. Coordination cost: $O(1)$ dedup check per record, **no commit round**, barriers only $O(|E|)$ markers per checkpoint epoch.
+
+**Non-idempotent path (2PC).** If the sink is a plain SQL table without dedup keys, exactly-once needs a transaction: on barrier the sink *pre-commits* the buffered writes; when the checkpoint completes the coordinator *commits*. A coordinator crash between pre-commit and commit leaves the transaction in-doubt (2PC blocking), and by FLP no asynchronous protocol resolves this without a timeout/leader.
+
+**CALM check.** The count aggregate is non-monotone (a retraction can lower it), so by the CALM theorem this pipeline *provably requires* coordination — the per-epoch barrier+commit is not removable, only minimized.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

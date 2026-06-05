@@ -70,5 +70,25 @@ For finite domains and bounded-arity constraints the *combinatorial* side is wel
 - **[SOTA]** Mahdavi, Abedjan, et al. *Raha / Baran: Configuration-Free and Few-Shot Error Detection & Correction.* SIGMOD, 2019 / VLDB, 2020. — [Raha DOI](https://doi.org/10.1145/3299869.3324956)
 - **[Survey]** Ilyas, Chu. *Data Cleaning.* ACM Books, 2019. — [DOI](https://doi.org/10.1145/3310205)
 
+## 10. Worked Example
+
+Table $I$ with two FDs $\Sigma=\{\textsf{Zip}\to\textsf{City},\ \textsf{City}\to\textsf{State}\}$:
+
+| id | Zip   | City      | State |
+|----|-------|-----------|-------|
+| 1  | 02139 | Cambridge | MA    |
+| 2  | 02139 | Cambridge | MA    |
+| 3  | 02139 | Boston    | NY    |
+
+Tuple 3 conflicts on both FDs: its `City` disagrees with $t_1,t_2$ under $\textsf{Zip}\to\textsf{City}$, and `Boston→NY` disagrees with the (correct) `Boston→MA` mapping.
+
+**Objective.** With $\lambda=0.5$, edit cost $d_{\text{edit}}$ = number of changed cells, and $\ell_{\text{impute}}$ = negative log-likelihood of chosen values under a master-data dictionary that asserts $P(\text{City}=\text{Cambridge}\mid \text{Zip}=02139)=0.95$ and $P(\text{State}=\text{MA}\mid\text{City}=\text{Cambridge})=1$.
+
+**Option A — change `City`:** $t_3.\textsf{City}\to\text{Cambridge}$. Then $\textsf{City}\to\textsf{State}$ forces $t_3.\textsf{State}\to\text{MA}$ too (propagation!). Cost: 2 cell edits, but both values are high-likelihood. Joint cost $\approx 0.5\cdot 2 + 0.5\cdot(-\log 0.95 - \log 1)=1.0+0.026=1.026$.
+
+**Option B — change `Zip`:** edit $t_3.\textsf{Zip}$ to some value mapping to Boston/NY — but no dictionary support, so $\ell_{\text{impute}}$ is large.
+
+Option A wins. Note the **fixpoint** behavior of section 2: repairing one cell to satisfy FD$_1$ triggered a second repair to keep FD$_2$ satisfied. With a single FD this would be poly-time (plurality vote); the two interacting FDs are what make minimum-cardinality U-repair NP-hard.
+
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -39,12 +39,25 @@ GQL/SQL-PGQ standardization and its formal analysis (Libkin, Francis, Green, Mar
 A peer-reviewed denotational semantics for AQL and the MongoDB pipeline; a unified multi-model algebra with conservativity results; strict-separation proofs across the four languages; complexity classification of cross-model equivalence; a principled "minimal complete core" for multi-model querying.
 
 ## 9. Key References
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, EF-games, inexpressibility).
-- **[SOTA]** Francis, Green, Guagliardo, Libkin, Lindaaker, Marsault, Plantikow, Rydberg, Selmer, Taylor. *Cypher: An Evolving Query Language for Property Graphs.* SIGMOD, 2018.
-- **[SOTA]** Francis, Gheerbrant, Guagliardo, Libkin, Marsault, Martens, Murlak, Peterfreund, Rogova, Vrgoč. *A Researcher's Digest of GQL.* ICDT, 2023.
-- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types (NRC).* Theoretical Computer Science, 1995.
-- **[Survey]** Holubová, Svoboda, Lu. *Multi-Model Databases: A Survey.* (ACM Computing Surveys / DEXA tutorials), 2019.
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Foundational]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (locality, EF-games, inexpressibility). — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[SOTA]** Francis, Green, Guagliardo, Libkin, Lindaaker, Marsault, Plantikow, Rydberg, Selmer, Taylor. *Cypher: An Evolving Query Language for Property Graphs.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190657)
+- **[SOTA]** Francis, Gheerbrant, Guagliardo, Libkin, Marsault, Martens, Murlak, Peterfreund, Rogova, Vrgoč. *A Researcher's Digest of GQL.* ICDT, 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2023.1)
+- **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types (NRC).* Theoretical Computer Science, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00024-Q)
+- **[Survey]** Holubová, Svoboda, Lu. *Multi-Model Databases: A Survey.* (ACM Computing Surveys / DEXA tutorials), 2019. — [DOI](https://doi.org/10.1145/3323214)
+
+## 10. Worked Example
+
+Consider a tiny social graph stored as a property graph with `KNOWS` edges:
+$$\text{Ann}\to\text{Bob}\to\text{Carol}\to\text{Dave}.$$
+
+**Query:** "Is Dave reachable from Ann?" — i.e. transitive closure of `KNOWS`.
+
+*In GQL/Cypher* (recursion-enabled), this is one pattern: `MATCH (a {name:'Ann'})-[:KNOWS*]->(d {name:'Dave'}) RETURN d`. The variable-length `*` denotes the reflexive-transitive closure, expressible in $\mathrm{FO+TC}$.
+
+*In non-recursive SQL/JSON or a recursion-free MongoDB pipeline:* you cannot express reachability. By an Ehrenfeucht–Fraïssé argument, for any fixed quantifier rank $k$ the duplicator wins on two paths long enough to be locally indistinguishable, so connectivity is **not** in $\mathrm{FO}$. Concretely, a non-recursive pipeline that joins `KNOWS` to itself $m$ times only finds paths of length $\le m$; pick a chain of length $m{+}1$ and it misses Dave. No fixed-size query covers every chain length.
+
+*The separation:* GQL $\not\subseteq$ FO-fragments of SQL/JSON, witnessed by this single query. This is exactly the kind of strict separation that Section 5 needs, and that a unified lattice (Section 6) must place across all four languages.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

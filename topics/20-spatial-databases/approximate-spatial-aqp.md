@@ -47,13 +47,23 @@ For single-table spatial range aggregates the gap is essentially closed: matchin
 - Certified learned AQP: estimators with monotone/Lipschitz structure and proven coverage, robust to drift.
 
 ## 9. Key References
-- **[Foundational]** Olken, Rotem. *Simple Random Sampling from Relational Databases.* VLDB, 1986.
-- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[SOTA]** Park, Mozafari et al. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018.
-- **[SOTA]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Survey]** Phillips. *Coresets and Sketches.* Handbook of Discrete and Computational Geometry, 3rd ed., 2017.
+- **[Foundational]** Olken, Rotem. *Simple Random Sampling from Relational Databases.* VLDB, 1986. — [DBLP](https://dblp.org/rec/conf/vldb/OlkenR86.html)
+- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD, 1997. — [DBLP](https://dblp.org/rec/conf/sigmod/HellersteinHW97.html)
+- **[SOTA]** Agarwal, Mozafari, Panda, Milner, Madden, Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[SOTA]** Park, Mozafari et al. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[SOTA]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Survey]** Phillips. *Coresets and Sketches.* Handbook of Discrete and Computational Geometry, 3rd ed., 2017. — [arXiv](https://arxiv.org/abs/1601.00617)
+
+## 10. Worked Example
+
+Suppose a table `Pickups` holds $N = 10^7$ taxi pickup points, and we want `COUNT(*)` inside a query rectangle $q$ that covers a downtown block — true selectivity $\theta = 0.002$ (so the true count is $\theta N = 20{,}000$).
+
+Draw a uniform sample of size $s = 100{,}000$. The number of sampled points falling in $q$ is $X \sim \mathrm{Binomial}(s, \theta)$, so the estimate is $\hat\theta = X/s$ and $\hat\theta N$ estimates the count. Expected hits $= s\theta = 200$. The standard error of $\hat\theta$ is
+$$\sqrt{\tfrac{\theta(1-\theta)}{s}} = \sqrt{\tfrac{0.002 \cdot 0.998}{10^5}} \approx 1.41\times10^{-4}.$$
+A $95\%$ CI ($z=1.96$) on the count is $20{,}000 \pm 1.96 \cdot N \cdot 1.41\times10^{-4} \approx 20{,}000 \pm 2{,}770$, i.e. a relative half-width of about $\pm14\%$.
+
+This shows the $1/\theta$ pain: to halve the interval you must quadruple $s$, and for a $10\times$ more selective query ($\theta=0.0002$) the same sample gives only $\approx 20$ hits and a useless $\pm 44\%$ interval — exactly why selective and join-aggregate queries (Section 6) need stratified or index-assisted sampling rather than plain uniform sampling.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -36,12 +36,22 @@ For bounded-width queries the worst-case gap between factorized upper bound and 
 A dichotomy theorem: which CQ/UCQ classes admit polynomial-size recomputation-complete provenance. Instance-optimal factorization with approximation guarantees. Unified accounting that charges both storage *and* recomputation cost. Provenance compression bounds under bag semantics and aggregation, where the semiring is $\mathbb{N}$-weighted and current circuit bounds are loose.
 
 ## 9. Key References
-- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound).
-- **[SOTA]** Dan Olteanu, Jakub Závodný. *Size Bounds for Factorised Representations of Query Results.* ACM TODS, 2015.
-- **[SOTA]** Antoine Amarilli, Pierre Bourhis, Pierre Senellart. *Provenance Circuits for Trees and Treelike Instances.* ICALP, 2015.
-- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018.
-- **[Survey]** Hung Q. Ngo, Christopher Ré, Atri Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Albert Atserias, Martin Grohe, Dániel Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
+- **[SOTA]** Dan Olteanu, Jakub Závodný. *Size Bounds for Factorised Representations of Query Results.* ACM TODS, 2015. — [DOI](https://doi.org/10.1145/2656335)
+- **[SOTA]** Antoine Amarilli, Pierre Bourhis, Pierre Senellart. *Provenance Circuits for Trees and Treelike Instances.* ICALP, 2015. — [arXiv](https://arxiv.org/abs/1511.08723)
+- **[SOTA]** Fotis Psallidas, Eugene Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3199517.3199522)
+- **[Survey]** Hung Q. Ngo, Christopher Ré, Atri Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+Take the triangle-free path query $Q(a,c) \leftarrow R(a,b), S(b,c)$ on a "star" instance: one center value $b_0$ joined to $m$ left tuples $R(a_i,b_0)$ (annotations $x_1,\dots,x_m$) and $m$ right tuples $S(b_0,c_j)$ (annotations $y_1,\dots,y_m$).
+
+**Flat provenance.** The output has $m^2$ tuples, each $(a_i,c_j)$ carrying the monomial $x_i y_j$. Total size $\Theta(m^2) = \Theta(|D|^2)$, matching $\rho^*(Q)=2$ — every pair is a witness.
+
+**Factorized provenance.** All $m^2$ monomials share structure: the whole result polynomial is
+$$ \Big(\sum_{i=1}^m x_i\Big)\cdot\Big(\sum_{j=1}^m y_j\Big), $$
+a nested $\sum/\prod$ circuit of size $\Theta(m)=\Theta(|D|^1)$. Here $\mathsf{fhtw}(Q)=1$, so $|D|^{\mathsf{fhtw}} = |D|$ — a quadratic-to-linear compression. To recompute under deletion of base tuple $a_2$, set $x_2=0$ in the circuit and re-evaluate in $O(m)$ time. This single instance exhibits the $|D|^{\mathsf{fhtw}}$ upper bound and the $|D|^{\rho^*}$ flat lower bound simultaneously.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

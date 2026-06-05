@@ -48,13 +48,24 @@ Active: **adaptive online right-sizing** (Parrotfish-style parametric regression
 
 ## 9. Key References
 
-- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** N. Akhtar, A. Raza, V. Ishakian, I. Matta. *COSE: Configuring Serverless Functions using Statistical Learning.* INFOCOM, 2020.
-- **[SOTA]** S. Eismann et al. *Sizeless: Predicting the Optimal Size of Serverless Functions.* Middleware, 2021.
-- **[SOTA]** A. Casalboni. *AWS Lambda Power Tuning.* Open-source tool / AWS Compute Blog, 2017–.
-- **[SOTA]** Z. Wen, Y. Wang, F. Liu. *StepConf: SLO-Aware Dynamic Resource Configuration for Serverless Function Workflows.* INFOCOM, 2022.
-- **[Foundational]** R. Kleinberg. *Nearly Tight Bounds for the Continuum-Armed Bandit Problem.* NeurIPS, 2004.
-- **[Foundational]** Y. Ioannidis, S. Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
+- **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** N. Akhtar, A. Raza, V. Ishakian, I. Matta. *COSE: Configuring Serverless Functions using Statistical Learning.* INFOCOM, 2020. — [DOI](https://doi.org/10.1109/INFOCOM41043.2020.9155363)
+- **[SOTA]** S. Eismann et al. *Sizeless: Predicting the Optimal Size of Serverless Functions.* Middleware, 2021. — [arXiv](https://arxiv.org/abs/2010.15162)
+- **[SOTA]** A. Casalboni. *AWS Lambda Power Tuning.* Open-source tool / AWS Compute Blog, 2017–. — [GitHub](https://github.com/alexcasalboni/aws-lambda-power-tuning)
+- **[SOTA]** Z. Wen, Y. Wang, F. Liu. *StepConf: SLO-Aware Dynamic Resource Configuration for Serverless Function Workflows.* INFOCOM, 2022. — [DOI](https://doi.org/10.1109/INFOCOM48880.2022.9796962)
+- **[Foundational]** R. Kleinberg. *Nearly Tight Bounds for the Continuum-Armed Bandit Problem.* NeurIPS, 2004. — [NeurIPS](https://proceedings.neurips.cc/paper/2004/hash/b75bd27b5a48a1b48987a18d831f6336-Abstract.html)
+- **[Foundational]** Y. Ioannidis, S. Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)
+
+## 10. Worked Example
+
+Size a Lambda hash-build over a $400$ MB input. Model duration as Amdahl-style $\text{latency}(m)=0.2 + 60/m$ s (CPU $\propto m$ in GB), with a **spill penalty** of $+1.5$ s whenever the footprint $S=512$ MB exceeds $m$. Billing: $\text{cost}=\kappa\,m\,\text{latency}$, $\kappa=1$.
+
+- $m=0.5$ GB: spill ($512>512$? no, equal — assume spill once $S>m$, so $512>500$ MB → spill). $\text{lat}=0.2+60/0.5+1.5=121.7$, $\text{cost}=0.5\cdot121.7=60.85$.
+- $m=1$ GB: $S<m$, no spill. $\text{lat}=0.2+60=60.2$, $\text{cost}=60.2$.
+- $m=2$ GB: $\text{lat}=0.2+30=30.2$, $\text{cost}=60.4$.
+- $m=4$ GB: $\text{lat}=0.2+15=15.2$, $\text{cost}=60.8$.
+
+Cost is nearly flat (quasi-convex) once spill clears, but the **cost–latency product** $\text{cost}\cdot\text{lat}$ keeps falling: $2$ GB gives $1824$ vs $4$ GB's $924$. Ternary search over $f(m)=\text{cost}\cdot\text{lat}$ converges to the larger $m$ in $O(\log(1/\epsilon))$ probes — illustrating that the spill phase-change, not the smooth curve, dominates the sizing decision.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -51,12 +51,24 @@ Active directions: **verifiable ledger databases** (research around QLDB/SQL Led
 
 ## 9. Key References
 
-- **[Foundational]** Schneier, B., Kelsey, J. *Secure Audit Logs to Support Computer Forensics.* ACM TISSEC, 1999.
-- **[Foundational]** Crosby, S.A., Wallach, D.S. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security, 2009.
-- **[Foundational]** Bellare, M., Yee, B. *Forward-Security in Private-Key Cryptography.* CT-RSA, 2003.
-- **[SOTA]** Laurie, B., Langley, A., Kasper, E. *Certificate Transparency.* RFC 6962, IETF, 2013.
-- **[SOTA]** Yang, Y., Wu, L., et al. *LedgerDB: A Centralized Ledger Database for Universal Audit and Verification.* VLDB, 2020.
-- **[Survey]** Ma, D., Tsudik, G. *A New Approach to Secure Logging.* ACM TOS, 2009.
+- **[Foundational]** Schneier, B., Kelsey, J. *Secure Audit Logs to Support Computer Forensics.* ACM TISSEC, 1999. — [DOI](https://doi.org/10.1145/317087.317089)
+- **[Foundational]** Crosby, S.A., Wallach, D.S. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security, 2009. — [USENIX](https://www.usenix.org/conference/usenixsecurity09/technical-sessions/presentation/efficient-data-structures-tamper-evident)
+- **[Foundational]** Bellare, M., Yee, B. *Forward-Security in Private-Key Cryptography.* CT-RSA, 2003. — [DOI](https://doi.org/10.1007/3-540-36563-X_1)
+- **[SOTA]** Laurie, B., Langley, A., Kasper, E. *Certificate Transparency.* RFC 6962, IETF, 2013. — [RFC](https://www.rfc-editor.org/rfc/rfc6962)
+- **[SOTA]** Yang, Y., Wu, L., et al. *LedgerDB: A Centralized Ledger Database for Universal Audit and Verification.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415540)
+- **[Survey]** Ma, D., Tsudik, G. *A New Approach to Secure Logging.* ACM TOS, 2009. — [DOI](https://doi.org/10.1145/1502777.1502779)
+
+## 10. Worked Example
+
+Four audit entries $e_1,e_2,e_3,e_4$ form a Merkle tree. Leaves $h_i = H(e_i)$, internal nodes
+$$a = H(h_1\Vert h_2),\quad b = H(h_3\Vert h_4),\quad R_4 = H(a\Vert b).$$
+The auditor previously anchored $R_4$ out-of-band.
+
+**Membership proof** for $e_3$: the prover sends $\{h_4, a\}$. The auditor recomputes $h_3=H(e_3)$, then $b'=H(h_3\Vert h_4)$, then $R'=H(a\Vert b')$ and checks $R'=R_4$. Proof size $= 2 = \log_2 4$ hashes.
+
+**Tamper detection:** a malicious DBA rewrites $e_3 \to e_3'$. Now $h_3'\neq h_3$, so $b$ and the recomputed root change to $R'\neq R_4$ — the membership check fails. Without finding a hash collision (probability $\le \mathsf{Adv}^{\mathrm{CR}}_H(\lambda)$, negligible), tampering cannot be hidden.
+
+**Freshness limit:** if instead the DBA *truncates* to $e_1,e_2$ and republishes a fresh consistent root $R_2=a$, nothing in the log itself betrays the deletion. Only the *externally anchored* $R_4$ (the high-water mark) reveals that $R_2$ is a prefix-rollback — illustrating the $\Omega$ anti-truncation lower bound of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

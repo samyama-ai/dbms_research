@@ -55,12 +55,22 @@ Empirically open. The *statistical machinery* (changepoint detection, anytime-va
 
 ## 9. Key References
 
-- **[Foundational]** A. Georges, D. Buytaert, L. Eeckhout. *Statistically Rigorous Java Performance Evaluation.* OOPSLA, 2007.
-- **[SOTA]** D. Daly, W. Brown, H. Ingo, J. O'Leary, D. Bradford. *The Use of Change Point Detection to Identify Software Performance Regressions in a Continuous Integration System.* ICPE, 2020.
-- **[Foundational]** R. Killick, P. Fearnhead, I. A. Eckley. *Optimal Detection of Changepoints with a Linear Computational Cost (PELT).* JASA, 2012.
-- **[SOTA]** S. R. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-Uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021.
-- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2013.
-- **[Foundational]** Y. Benjamini, Y. Hochberg. *Controlling the False Discovery Rate.* JRSS-B, 1995.
+- **[Foundational]** A. Georges, D. Buytaert, L. Eeckhout. *Statistically Rigorous Java Performance Evaluation.* OOPSLA, 2007. — [DOI](https://doi.org/10.1145/1297027.1297033)
+- **[SOTA]** D. Daly, W. Brown, H. Ingo, J. O'Leary, D. Bradford. *The Use of Change Point Detection to Identify Software Performance Regressions in a Continuous Integration System.* ICPE, 2020. — [DOI](https://doi.org/10.1145/3358960.3375791) · [arXiv](https://arxiv.org/abs/2003.00584)
+- **[Foundational]** R. Killick, P. Fearnhead, I. A. Eckley. *Optimal Detection of Changepoints with a Linear Computational Cost (PELT).* JASA, 2012. — [DOI](https://doi.org/10.1080/01621459.2012.737745) · [arXiv](https://arxiv.org/abs/1101.1438)
+- **[SOTA]** S. R. Howard, A. Ramdas, J. McAuliffe, J. Sekhon. *Time-Uniform, Nonparametric, Nonasymptotic Confidence Sequences.* Annals of Statistics, 2021. — [DOI](https://doi.org/10.1214/20-AOS1991) · [arXiv](https://arxiv.org/abs/1810.08240)
+- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2732240.2732246)
+- **[Foundational]** Y. Benjamini, Y. Hochberg. *Controlling the False Discovery Rate.* JRSS-B, 1995. — [DOI](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x)
+
+## 10. Worked Example
+
+Nightly p99 latency (ms) for one benchmark over 12 commits:
+
+$$8.0,\ 8.1,\ 7.9,\ 8.2,\ 8.0,\ 8.1,\ \mathbf{9.4},\ 9.5,\ 9.3,\ 9.6,\ 9.4,\ 9.5$$
+
+A 5%-threshold alarm would fire on the noisy spike at commit 4→5 in many runs and miss the *real* shift. Changepoint detection instead minimizes within-segment cost. Pre-shift mean $\hat\mu_1=8.05$ (commits 1–6), post-shift $\hat\mu_2=9.45$ (commits 7–12); pooled noise $\sigma\approx0.12$. The shift is $\Delta=1.40$, so effect size $\Delta/\sigma\approx11.7$ — huge, detected with very few repetitions.
+
+Sample-complexity check: to confirm a mean shift at confidence $1-\delta=0.99$ ($\log(1/\delta)\approx4.6$), the bound $n\gtrsim \sigma^2/\Delta^2\cdot\log(1/\delta) = 0.0144/1.96 \cdot 4.6 \approx 0.034$ — i.e. a single clean repetition suffices here. Contrast a *small* regression $\Delta=0.1$ at the same $\sigma$: $n\gtrsim 0.0144/0.01\cdot4.6\approx6.6$ repetitions per commit. Detecting small regressions in noisy benchmarks is what burns the compute budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

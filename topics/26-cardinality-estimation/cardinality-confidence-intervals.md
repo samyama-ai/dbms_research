@@ -61,12 +61,20 @@ Calibration is formalized via **coverage**: an interval procedure has coverage $
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[Foundational]** Vovk, Gammerman, Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html), [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105), [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Foundational]** Hellerstein, Haas, Wang. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253262.253291), [DBLP](https://dblp.org/rec/conf/sigmod/HellersteinHW97.html)
+- **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[Foundational]** Vovk, Gammerman, Shafer. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+
+## 10. Worked Example
+
+A table has $n = 10^6$ rows; we want a $95\%$ CI ($\alpha=0.05$) for the count matching a predicate $\theta$, from a uniform sample of $r = 10{,}000$ rows.
+
+**Common predicate.** The sample shows $X = 500$ matches, so $\hat s = 500/10000 = 0.05$ and $\hat c = (n/r)X = 100 \times 500 = 5\times10^4$. A normal-approximation half-width on $s$ is $z\sqrt{\hat s(1-\hat s)/r} = 1.96\sqrt{0.05\cdot0.95/10^4} \approx 0.0043$. Scaling by $n$: the CI is roughly $5\times10^4 \pm 4.3\times10^3$, a tight $\pm 8.6\%$ — usable by the optimizer.
+
+**Selective predicate.** Now $X = 2$ matches, $\hat s = 2\times10^{-4}$, $\hat c = 200$. The relative half-width scales as $\sqrt{(1-s)/(rs)} = \sqrt{1/(10^4\cdot 2\times10^{-4})} = \sqrt{0.5} \approx 0.71$, i.e. $\pm 71\%$ — and the exact Clopper–Pearson interval on $X{=}2$ out of $10^4$ runs roughly $[0.024,\,0.72]\times10^{-3}$, so $\hat c\in[24,\,722]$, a $30\times$ span. This is the §5 selectivity blow-up: the rare predicates that most affect plans are exactly where the sampling CI becomes vacuous unless $r \to n$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

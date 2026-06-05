@@ -1,6 +1,7 @@
 # Online / Adaptive Re-Estimation During Execution
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/adaptive-mid-query-estimation` · **Status:** partially-solved
+> **Verification note:** The POP paper (Markl, Raman, Simmen, Lohman, Pirahesh, Cilimdzic) appeared at SIGMOD 2004 (DOI 10.1145/1007568.1007642), not VLDB 2004 as stated in §3.
 
 ## 1. Problem Statement
 
@@ -63,12 +64,20 @@ Status is **partially-solved**: the *mechanism* (checkpoints, validity ranges, A
 
 ## 9. Key References
 
-- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998.
-- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
-- **[Foundational]** Markl, Raman, Simmen, Lohman, Pirahesh, Cilimdzic. *Robust Query Processing through Progressive Optimization (POP).* VLDB, 2004.
-- **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001.
-- **[Survey]** Deshpande, Ives, Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
+- **[Foundational]** Kabra, DeWitt. *Efficient Mid-Query Re-Optimization of Sub-Optimal Query Execution Plans.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276315)
+- **[Foundational]** Avnur, Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+- **[Foundational]** Markl, Raman, Simmen, Lohman, Pirahesh, Cilimdzic. *Robust Query Processing through Progressive Optimization (POP).* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007642)
+- **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01.html)
+- **[Survey]** Deshpande, Ives, Raman. *Adaptive Query Processing.* Foundations and Trends in Databases, 2007. — [DOI](https://doi.org/10.1561/1900000001)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+
+## 10. Worked Example
+
+Plan a 3-way join $A \bowtie B \bowtie C$ with $|A|=10^6$, $|B|=10^3$, $|C|=10^6$. The optimizer's estimate for $A \bowtie B$ is $\hat c = 10^4$ rows (assuming low selectivity), so it picks: materialize $A \bowtie B$, then **nested-loop** it against $C$. Cost model expects $\approx 10^4 \times (\text{index probes})$.
+
+A **statistics-collecting checkpoint** sits at the materialization boundary of $A \bowtie B$. At runtime the actual count is observed: $c_{obs} = 8 \times 10^5$ rows — an $80\times$ under-estimate. The q-error is $\max(c_{obs}/\hat c,\ \hat c/c_{obs}) = 8\times10^5 / 10^4 = 80$.
+
+POP's **validity range** for the chosen plan was, say, $[2\times10^3,\ 5\times10^4]$: the nested-loop is optimal only while the intermediate is below $5\times10^4$. Since $8\times10^5 \notin [2\times10^3, 5\times10^4]$, the check fires and the suffix is re-optimized — switching the second join from nested-loop to **hash join**. Re-optimization cost is $O(1)$ per checkpoint (a range test) and is incurred only after $A\bowtie B$ is already materialized, so the wasted work is bounded by that sunk first join, illustrating both the rescue and the §5 sunk-cost limit.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

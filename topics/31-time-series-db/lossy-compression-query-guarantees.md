@@ -62,12 +62,20 @@ Open and wide. We have query-specific guaranteed synopses (quantiles, range-sums
 
 ## 9. Key References
 
-- **[Foundational]** M. Garofalakis, P. Gibbons. *Wavelet Synopses with Error Guarantees.* SIGMOD, 2002.
-- **[SOTA]** S. Di, F. Cappello. *Fast Error-Bounded Lossy HPC Data Compression with SZ.* IPDPS, 2016.
-- **[Foundational]** P. Lindstrom. *Fixed-Rate Compressed Floating-Point Arrays (ZFP).* IEEE TVCG, 2014.
-- **[SOTA]** C. Masson, J. Rim, H. Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019.
-- **[Foundational]** T. Berger. *Rate Distortion Theory: A Mathematical Basis for Data Compression.* Prentice-Hall, 1971.
-- **[SOTA]** S. Jensen, T. Pedersen, C. Thomsen. *ModelarDB: Modular Model-Based Time Series Management.* VLDB, 2018.
+- **[Foundational]** M. Garofalakis, P. Gibbons. *Wavelet Synopses with Error Guarantees.* SIGMOD, 2002. — [DOI](https://doi.org/10.1145/564691.564746)
+- **[SOTA]** S. Di, F. Cappello. *Fast Error-Bounded Lossy HPC Data Compression with SZ.* IPDPS, 2016. — [DOI](https://doi.org/10.1109/IPDPS.2016.11)
+- **[Foundational]** P. Lindstrom. *Fixed-Rate Compressed Floating-Point Arrays (ZFP).* IEEE TVCG, 2014. — [DOI](https://doi.org/10.1109/TVCG.2014.2346458)
+- **[SOTA]** C. Masson, J. Rim, H. Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3352063.3352135) — [arXiv](https://arxiv.org/abs/1908.10693)
+- **[Foundational]** T. Berger. *Rate Distortion Theory: A Mathematical Basis for Data Compression.* Prentice-Hall, 1971. — [archive.org](https://archive.org/details/ratedistortionth0000berg)
+- **[SOTA]** S. Jensen, T. Pedersen, C. Thomsen. *ModelarDB: Modular Model-Based Time Series Management.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236215)
+
+## 10. Worked Example
+
+Let $x = (10, 12, 11, 13, 14)$ and a codec with per-point bound $\varepsilon = 1$ that happens to round every point *up*, giving error $e = (+1, +1, +1, +1, +1)$, so $\hat x = (11,13,12,14,15)$. Each point satisfies $|e_i| \le \varepsilon$.
+
+**Why per-point bounds mislead downstream:** consider the windowed SUM over all 5 points. True SUM $= 60$, approximate SUM $= 65$. The naive transfer bound is $|W|\varepsilon = 5\times 1 = 5$, and indeed the error is exactly $5$ — the biased errors do *not* cancel. A codec that instead bounded **cumulative/prefix error** $|\sum_{i\le t} e_i| \le \delta$ would directly cap every windowed sum at $\delta$, regardless of window length: a tighter, query-matched guarantee.
+
+**Contrast with MAX:** $\max(x)=14$, $\max(\hat x)=15$, error $1 = \varepsilon$ — order statistics are 1-Lipschitz in $L_\infty$, so the per-point bound transfers cleanly here. The lesson of section 2: SUM wants an integrated ($L_1$/prefix) functional while MAX is fine with $L_\infty$, and the two pull in opposite directions, the Pareto impossibility of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

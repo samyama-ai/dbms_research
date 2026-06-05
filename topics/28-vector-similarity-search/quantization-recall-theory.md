@@ -40,12 +40,20 @@ Directions: (i) provable quantizers — RaBitQ and its multi-bit extensions, pus
 - Extending provable distance-error bounds (RaBitQ-style) to additive/residual quantizers.
 
 ## 9. Key References
-- **[Foundational]** A. Gersho, R. M. Gray. *Vector Quantization and Signal Compression.* Kluwer, 1992.
-- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[SOTA]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization.* IEEE TPAMI, 2014.
-- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024.
-- **[Foundational]** K. G. Larsen, J. Nelson. *Optimality of the Johnson-Lindenstrauss Lemma.* FOCS, 2017.
-- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory.* Wiley, 2006.
+- **[Foundational]** A. Gersho, R. M. Gray. *Vector Quantization and Signal Compression.* Kluwer, 1992. — [DOI](https://doi.org/10.1007/978-1-4615-3626-0)
+- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57)
+- **[SOTA]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization.* IEEE TPAMI, 2014. — [DOI](https://doi.org/10.1109/TPAMI.2013.240)
+- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3654970)
+- **[Foundational]** K. G. Larsen, J. Nelson. *Optimality of the Johnson-Lindenstrauss Lemma.* FOCS, 2017. — [arXiv](https://arxiv.org/abs/1609.02094)
+- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory.* Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+
+## 10. Worked Example
+
+Trace the flip argument with $k=1$. The true nearest neighbor sits at distance $D_{(1)}=2.00$ and the runner-up at $D_{(2)}=2.30$, so the near-neighbor gap is $\gamma = 0.30$. A PQ estimator is approximately unbiased with noise standard deviation $\sigma_{\hat D}$ set by the bit-rate.
+
+At $b=8$ bits/vector, suppose $\sigma_{\hat D}=0.20$. A top-1 *flip* happens when noise reorders the two: roughly $\Pr[\text{flip}] \le \exp(-\gamma^2/2\sigma_{\hat D}^2) = \exp(-0.09/0.08) = \exp(-1.125) \approx 0.32$. Recall@1 $\gtrsim 0.68$ — poor.
+
+Double the budget to $b=16$ bits. High-resolution theory gives MSE $\sim 2^{-2b/d}$, so quadrupling effective resolution roughly halves $\sigma_{\hat D}$ to $0.10$. Now $\Pr[\text{flip}] \le \exp(-0.09/0.02)=\exp(-4.5)\approx 0.011$, i.e. recall@1 $\gtrsim 0.989$. The same gap $\gamma$ that was marginal at 8 bits is comfortably resolved at 16 — illustrating why the *gap distribution* (mass near small $\gamma$) and $\sigma_{\hat D}(b)$ jointly determine the rate–recall curve that section 6 seeks to characterize.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,23 @@ The measurement-side bounds are essentially closed (tight sketches). The *open* 
 - Privacy/multi-tenant-aware telemetry with bounded leakage.
 
 ## 9. Key References
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* Journal of Algorithms, 2005.
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[Foundational]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** L. Ma et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018.
-- **[Foundational]** C. Papadimitriou, J. Tsitsiklis. *The Complexity of Markov Decision Processes.* Mathematics of Operations Research, 1987.
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* Journal of Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166v1)
+- **[Foundational]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** L. Ma et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[Foundational]** C. Papadimitriou, J. Tsitsiklis. *The Complexity of Markov Decision Processes.* Mathematics of Operations Research, 1987. — [DOI](https://doi.org/10.1287/moor.12.3.441)
+
+## 10. Worked Example
+
+**Sizing a Count-Min sketch for hot-query detection.** A controller wants to spot heavy-hitter query templates to decide what to index. Telemetry stream has $\lVert f\rVert_1 = 10^{7}$ executions over the window. We want point-frequency estimates with additive error $\le \epsilon\lVert f\rVert_1 = 10^{4}$ (so error $\epsilon = 10^{-3}$) and failure probability $\delta = 0.01$.
+
+Count-Min uses a $d \times w$ counter table with
+$$w = \Big\lceil \tfrac{e}{\epsilon} \Big\rceil = \lceil 2.718\times 10^{3}\rceil = 2719, \qquad d = \Big\lceil \ln\tfrac1\delta \Big\rceil = \lceil \ln 100 \rceil = \lceil 4.605\rceil = 5.$$
+
+Total counters $= d\cdot w = 5 \times 2719 = 13{,}595$. At 8 bytes each that is $\approx 109$ KB — independent of the $10^7$ executions or the number of distinct templates. Each update touches $d=5$ cells: $O(1)$ time.
+
+A template run $4\times10^4$ times is reported with count in $[4\times10^4,\ 5\times10^4]$ with probability $\ge 0.99$ — comfortably above the $10^4$ noise floor, so it is reliably flagged "hot." This is the §4 upper bound $O(\epsilon^{-1}\log\tfrac1\delta)$ instantiated; the §5 lower bound says no summary beats this asymptotically.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

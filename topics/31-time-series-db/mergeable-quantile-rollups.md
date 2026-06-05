@@ -51,12 +51,20 @@ Prometheus **native histograms** are maturing toward GA, making mergeable relati
 - Hardware-accelerated merge as the bottleneck shifts to query-time fan-in over millions of cells.
 
 ## 9. Key References
-- **[Foundational]** Greenwald, Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001.
-- **[Foundational]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* ACM TODS, 2013.
-- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** Masson, Rim, Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019.
-- **[SOTA]** Cormode, Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Greenwald, Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375670) — [DBLP](https://dblp.org/rec/conf/sigmod/GreenwaldK01.html)
+- **[Foundational]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128) — [DBLP](https://dblp.org/rec/journals/tods/AgarwalCHPWY13.html)
+- **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [DOI](https://doi.org/10.1109/FOCS.2016.17) — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** Masson, Rim, Lee. *DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3352063.3352135) — [arXiv](https://arxiv.org/abs/1908.10693)
+- **[SOTA]** Cormode, Veselý. *A Tight Lower Bound for Comparison-Based Quantile Summaries.* PODS, 2020. — [DOI](https://doi.org/10.1145/3375395.3387650) — [arXiv](https://arxiv.org/abs/1905.03838)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Consider per-minute latency buckets for one service. **DDSketch** with relative accuracy $\gamma = 0.02$ uses log-scaled bucket boundaries $b_k = (1+\gamma)^k / (1) $, i.e. bucket index $k(v) = \lceil \log_{1+\gamma} v \rceil$. A value $v$ lands in bucket $k$, and any reported quantile $\hat q$ satisfies $|\hat q - q| \le \gamma\, q$ — a *relative* guarantee, ideal for tails.
+
+Minute A sees latencies (ms) $\{100, 105, 980, 1000\}$; minute B sees $\{102, 990, 1010, 1020\}$. With $\gamma = 0.02$, $\log_{1.02} \approx \ln/0.0198$, so $100$ and $105$ share a bucket region near index $\lceil \ln 100 / 0.0198\rceil = 233$, while $\sim 1000$ ms values cluster near index $349$. Each sketch is just a map {bucket index → count}.
+
+**Merge across time** $S_{A\cup B} = S_A \oplus S_B$ is element-wise count addition over the shared bucket grid — no realignment, and the $\gamma = 0.02$ relative bound is preserved on the union of all 8 points (governed by final $n=8$, *not* by the fact we merged twice). Querying p99 returns a value within $2\%$ of the true p99. Contrast a non-mergeable sample: merging two independent samples would compound sampling error, exactly what mergeability (§2) avoids.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,22 @@ Directions: (1) extending U-semiring/SMT verifiers to window functions, recursio
 - Integration of verified rules into the optimizer build so soundness is a CI gate.
 
 ## 9. Key References
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings (K-relations).* PODS, 2007.
-- **[Foundational]** Jayram, Kolaitis, Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities / bag semantics.* PODS, 2006.
-- **[SOTA]** Chu, Weitz, Cheung, Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI/SIGMOD, 2017.
-- **[SOTA]** Zhou, Arch, et al. *SPES: A Symbolic Approach to Proving Query Equivalence Under Bag Semantics.* VLDB, 2020.
-- **[SOTA]** Wang, Zhou, Cheung, et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022.
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings (K-relations).* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Jayram, Kolaitis, Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities / bag semantics.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142363)
+- **[SOTA]** Chu, Weitz, Cheung, Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI/SIGMOD, 2017. — [arXiv](https://arxiv.org/abs/1607.04822)
+- **[SOTA]** Zhou, Arch, et al. *SPES: A Symbolic Approach to Proving Query Equivalence Under Bag Semantics.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2004.00481)
+- **[SOTA]** Wang, Zhou, Cheung, et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526125)
+
+## 10. Worked Example
+
+**An unsound "rule" caught by bag semantics.** Consider pushing a join through a projection's duplicate behavior — concretely the candidate rewrite "`SELECT a FROM R, S WHERE R.a = S.a`" vs. "`SELECT a FROM R`" when the optimizer wrongly assumes $S$ acts as a no-op filter.
+
+Take $R(a)$ with row $\{1\}$ (multiplicity 1) and $S(a)$ with rows $\{1,1\}$ (multiplicity 2). Under **bag** semantics the join multiplies multiplicities:
+
+$$[\![R\bowtie S]\!](1) = R(1)\times S(1) = 1\times 2 = 2,\qquad [\![R]\!](1) = 1.$$
+
+So the rewrite changes the result ($2$ copies of `1` vs. $1$) — **unsound**. Under *set* semantics both yield $\{1\}$, so a set-only checker (homomorphism, Chandra–Merlin, NP) would wrongly certify it. A bijection-based prover (SPES) or U-semiring normalizer detects the mismatch because the multiplicity polynomials $R(a)\cdot S(a)$ and $R(a)$ are not equal as functions $\mathbb{N}^{\mathrm{Tup}}$. SQLancer would expose the same bug differentially: seed $R,S$ as above, run both plans, observe row counts $2 \neq 1$. This is exactly why each rule needs per-rule proof under bags rather than a single set-semantics decision procedure.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

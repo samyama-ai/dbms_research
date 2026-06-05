@@ -47,13 +47,23 @@ The "gap" is not between matching bounds but between **marketing claims and repr
 - Cost models incorporating SIMD, NUMA, and persistent memory.
 
 ## 9. Key References
-- **[Foundational]** Codd, E. F. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970.
-- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018.
-- **[SOTA]** Sun, W. et al. *SQLGraph: An Efficient Relational-Based Property Graph Store.* SIGMOD 2015.
-- **[SOTA]** Feng, X. et al. *Kùzu Graph Database Management System.* CIDR 2023.
-- **[Survey]** Angles, R., Gutiérrez, C. *Survey of Graph Database Models.* ACM Computing Surveys, 2008.
-- **[Survey]** LDBC. *The LDBC Social Network Benchmark.* (LDBC Council technical report / VLDB-affiliated), 2015–2024.
+- **[Foundational]** Codd, E. F. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
+- **[Foundational]** Aggarwal, A., Vitter, J. S. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[SOTA]** Ngo, H. Q., Porat, E., Ré, C., Rudra, A. *Worst-Case Optimal Join Algorithms.* PODS 2012 / JACM 2018. — [arXiv](https://arxiv.org/abs/1203.1952) · [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Sun, W. et al. *SQLGraph: An Efficient Relational-Based Property Graph Store.* SIGMOD 2015. — [DOI](https://doi.org/10.1145/2723372.2723732)
+- **[SOTA]** Feng, X. et al. *Kùzu Graph Database Management System.* CIDR 2023. — [PDF](https://www.vldb.org/cidrdb/2023/kuzu-graph-database-management-system.html)
+- **[Survey]** Angles, R., Gutiérrez, C. *Survey of Graph Database Models.* ACM Computing Surveys, 2008. — [DOI](https://doi.org/10.1145/1322432.1322433)
+- **[Survey]** LDBC. *The LDBC Social Network Benchmark.* (LDBC Council technical report / VLDB-affiliated), 2015–2024. — [DBLP](https://dblp.org/rec/conf/sigmod/ErlingALCGPPB15.html)
+
+## 10. Worked Example
+
+A social graph with $|V| = 10^7$ users, average degree $\bar d = 50$. Query: "friends-of-friends" — a 2-hop traversal from a seed user, expected to touch $\bar d^2 = 2500$ vertices.
+
+**Native / IFA (e.g., Neo4j):** the seed record holds a direct pointer to its adjacency list. Step 1 chases $50$ pointers; step 2 chases $50 \times 50 = 2500$. Total $\approx 2550$ pointer dereferences, each $O(1)$, with **no** $\log|V|$ index lookup. If each dereference is a cache-missing random read, cost $\approx 2550$ random memory accesses.
+
+**Relational (edge table $\mathsf{E}(\text{src},\text{dst})$, B-tree on src):** each hop is an index nested-loop join. Hop 1: one B-tree probe of depth $\lceil \log_{2} 10^7 \rceil \approx 24$ comparisons, returning $50$ rows. Hop 2: $50$ probes returning $2500$ rows. Index probes $\approx 51$, comparisons $\approx 51 \times 24 \approx 1224$, plus $2500$ row materializations.
+
+Asymptotically both are $O(\bar d^2 + \text{output})$; the difference is the constant $\log|V|$ factor on probes and cache behavior. Now switch to a **high-fan-out triangle pattern** ($u\!-\!v$, $v\!-\!w$, $w\!-\!u$): the AGM bound gives worst-case output $\le |E|^{3/2}$, and a WCOJ plan on columnar storage achieves $\tilde O(|E|^{3/2})$ — beating naive IFA pairwise traversal that can blow up intermediate results. This is precisely the regime where the "native always wins" claim reverses.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,11 +45,22 @@ The navigational core is essentially **closed** (matches XPath bounds). The genu
 - Provenance- and order-aware evaluation complexity (RFC 9535 insists on output order).
 
 ## 9. Key References
-- **[Foundational]** G. Gottlob, C. Koch, R. Pichler. *Efficient Algorithms for Processing XPath Queries.* ACM TODS / JACM, 2005.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017.
-- **[SOTA]** S. Gorman, G. Normington, et al. (IETF). *RFC 9535: JSONPath: Query Expressions for JSON.* IETF, 2024.
-- **[Survey]** P. Bourhis, J. Reutter, D. Vrgoč. *Querying JSON with the SQL/JSON path language and beyond.* (survey-style treatments in ICDT/PODS proceedings), 2020.
+- **[Foundational]** G. Gottlob, C. Koch, R. Pichler. *Efficient Algorithms for Processing XPath Queries.* ACM TODS / JACM, 2005. — [DOI](https://doi.org/10.1145/1071610.1071614)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
+- **[SOTA]** S. Gorman, G. Normington, et al. (IETF). *RFC 9535: JSONPath: Query Expressions for JSON.* IETF, 2024. — [DOI](https://doi.org/10.17487/RFC9535)
+- **[Survey]** P. Bourhis, J. Reutter, D. Vrgoč. *Querying JSON with the SQL/JSON path language and beyond.* (survey-style treatments in ICDT/PODS proceedings), 2020. — [DBLP search](https://dblp.org/search?q=Querying%20JSON%20SQL%2FJSON%20path%20language%20Vrgoc)
+
+## 10. Worked Example
+
+Take the document $J=\{$ `"store":` $\{$ `"book":` $[\{$`"price":8`$\}, \{$`"price":12`$\}, \{$`"price":40`$\}]$ $\}$ $\}$ and the query $p =$ `$..book[?(@.price < 15)].price`. Evaluate left to right as a nodelist pipeline:
+
+1. `$` → root, 1 node.
+2. `..book` (recursive descent) visits every node of $J$ once ($|J|=8$ nodes here) to find the single `book` array — $O(|J|)$.
+3. `[?(@.price < 15)]` tests each of the 3 array elements: $8<15$ ✓, $12<15$ ✓, $40<15$ ✗ → 2 surviving objects.
+4. `.price` projects → nodelist $[8, 12]$ in document order.
+
+Cost is $O(|p|\cdot|J|)$: each of the $|p|=4$ selectors makes one bottom-up pass, the filter comparison is $O(1)$ per node. This recursion-free + Boolean-filter case stays in PTIME combined / LOGSPACE data, matching $\S 4$. Swapping the filter for a backreferencing regex (e.g. `match(@.id, (.+)\1)`) would push step 3 to NP-hard, illustrating the $\S 5$ tipping point.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

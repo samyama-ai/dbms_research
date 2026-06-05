@@ -29,11 +29,27 @@ The DBSP/Feldera line (Budiu, McSherry) and F-IVM (Olteanu, Schleich, Nikolic) a
 Articulated directions: a sound+incremental model for `MIN`/`MAX`/percentile provenance; provenance for `AVG` and other ratio/holistic aggregates; aggregate provenance under recursion and windows; sketch-based approximate provenance with error guarantees; and integration with differential privacy (provenance as a sensitivity certificate).
 
 ## 9. Key References
-- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** R. Fink, L. Han, D. Olteanu. *Aggregation in Probabilistic Databases via Knowledge Compilation.* VLDB, 2012.
-- **[SOTA]** M. Budiu, T. Chajed, F. McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023.
-- **[SOTA]** M. Nikolic, D. Olteanu. *Incremental View Maintenance with Triple Lock Factorization (F-IVM).* SIGMOD, 2018.
-- **[Survey]** B. Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021.
+- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1101.1110) · [DOI](https://doi.org/10.1145/1989284.1989302)
+- **[SOTA]** R. Fink, L. Han, D. Olteanu. *Aggregation in Probabilistic Databases via Knowledge Compilation.* VLDB, 2012. — [arXiv](https://arxiv.org/abs/1201.6569) · [DOI](https://doi.org/10.14778/2140436.2140445)
+- **[SOTA]** M. Budiu, T. Chajed, F. McSherry, et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+- **[SOTA]** M. Nikolic, D. Olteanu. *Incremental View Maintenance with Triple Lock Factorization (F-IVM).* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1703.07484) · [DOI](https://doi.org/10.1145/3183713.3183758)
+- **[Survey]** B. Glavic. *Data Provenance: Origins, Applications, Algorithms, and Models.* Foundations and Trends in Databases, 2021. — [DOI](https://doi.org/10.1561/1900000068)
+
+## 10. Worked Example
+
+Source relation `Sales(item, region, amt)`, each tuple annotated with a provenance variable in the semiring $K = \mathbb{N}[x_1,x_2,x_3]$:
+
+| tuple | item | region | amt | annot |
+|-------|------|--------|-----|-------|
+| $x_1$ | pen | west | 10 | $x_1$ |
+| $x_2$ | pen | west | 30 | $x_2$ |
+| $x_3$ | pen | east | 20 | $x_3$ |
+
+Query: `SELECT item, SUM(amt) FROM Sales GROUP BY item`. There is one group, `pen`. In the Amsterdamer–Deutch–Tannen model the aggregate lives in the semimodule $K \otimes (\mathbb{R},+)$ as the formal sum
+
+$$ s = x_1\otimes 10 \;+\; x_2\otimes 30 \;+\; x_3\otimes 20. $$
+
+The output value is the projection $10+30+20 = 60$, but $s$ records *how* each source contributed. Now delete $x_2$ (set its annotation to $0$). By bilinearity $0\otimes 30 = 0$, so the new sum is $x_1\otimes 10 + x_3\otimes 20$, value $30$ — an $O(1)$ incremental update: subtract the contribution of the changed tuple, no recomputation of the group. Contrast `MIN(amt)`: deleting the current min ($x_1=10$) needs the *second*-smallest ($x_3=20$), which the semilattice value alone does not retain — illustrating why `MIN`/`MAX` deletion is non-incremental.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

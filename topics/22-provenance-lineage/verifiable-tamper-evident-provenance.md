@@ -58,12 +58,26 @@ Detection and append-only consistency are essentially closed (matching upper bou
 
 ## 9. Key References
 
-- **[Foundational]** Merkle. *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO 1987.
-- **[Foundational]** Crosby, Wallach. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security 2009.
-- **[Foundational]** Laurie, Langley, Kasper. *Certificate Transparency.* RFC 6962, 2013.
-- **[SOTA]** Torres-Arias, Afzali, Kuppusamy, Curtmola, Cappos. *in-toto: Providing Farm-to-Table Guarantees for Bits and Bytes.* USENIX Security 2019.
-- **[SOTA]** Liang et al. *ProvChain: A Blockchain-based Data Provenance Architecture in Cloud.* CCGrid 2017.
-- **[Survey]** Hasan, Sion, Winslett. *The Case of the Fake Picasso: Preventing History Forgery with Secure Provenance.* FAST 2009.
+- **[Foundational]** Merkle. *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO 1987. — [DBLP](https://dblp.org/rec/conf/crypto/Merkle87.html)
+- **[Foundational]** Crosby, Wallach. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security 2009. — [USENIX](https://www.usenix.org/conference/usenixsecurity09/technical-sessions/presentation/efficient-data-structures-tamper-evident)
+- **[Foundational]** Laurie, Langley, Kasper. *Certificate Transparency.* RFC 6962, 2013. — [RFC](https://www.rfc-editor.org/rfc/rfc6962)
+- **[SOTA]** Torres-Arias, Afzali, Kuppusamy, Curtmola, Cappos. *in-toto: Providing Farm-to-Table Guarantees for Bits and Bytes.* USENIX Security 2019. — [USENIX](https://www.usenix.org/conference/usenixsecurity19/presentation/torres-arias)
+- **[SOTA]** Liang et al. *ProvChain: A Blockchain-based Data Provenance Architecture in Cloud.* CCGrid 2017. — [DBLP](https://dblp.org/rec/conf/ccgrid/LiangSTKKN17.html)
+- **[Survey]** Hasan, Sion, Winslett. *The Case of the Fake Picasso: Preventing History Forgery with Secure Provenance.* FAST 2009. — [USENIX](https://www.usenix.org/conference/fast09/technical-sessions/presentation/hasan)
+
+## 10. Worked Example
+
+A pipeline records three steps with a hash chain ($H$ = SHA-256, $h_0 = 0$):
+
+| $i$ | $\mathrm{op}_i$ | $h_i = H(h_{i-1}\,\|\,\mathrm{op}_i\,\|\,\sigma_i)$ |
+|---|---|---|
+| 1 | ingest raw.csv | $h_1$ |
+| 2 | dedup | $h_2 = H(h_1\,\|\,\text{dedup}\,\|\,\sigma_2)$ |
+| 3 | aggregate | $h_3 = H(h_2\,\|\,\text{agg}\,\|\,\sigma_3)$ |
+
+**Tamper detection.** Suppose an adversary rewrites step 2 to "dedup-skipped." Then $h_2' \ne h_2$ (avalanche), so $h_3$ recomputed from $h_2'$ no longer matches the signed $\sigma_3$ — the verifier rejects. Forging undetectably requires a hash collision or signature forgery: $\Pr[\text{undetected}] \le \mathrm{Adv}^{\text{CR}}_H + \mathrm{Adv}^{\text{EUF-CMA}}$, negligible in $\lambda$.
+
+**The truncation gap.** Now the adversary simply *drops* step 3 and presents $(h_1,h_2)$ as the whole chain. Every signature still verifies — the chain is internally consistent. A lone verifier cannot tell "ended at step 2" from "tail suppressed." This is the equivocation problem: resolving it needs an external append-only log. With Certificate-Transparency-style Merkle consistency proofs, the verifier checks that the size-2 log root is a prefix of the size-3 root in $O(\log n)$, exposing the omission.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

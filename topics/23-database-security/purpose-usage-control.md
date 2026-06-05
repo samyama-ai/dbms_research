@@ -54,11 +54,24 @@ Active threads: GDPR purpose-compliance checking integrated into query compilers
 
 ## 9. Key References
 
-- **[Foundational]** Park, J., Sandhu, R. *The UCON$_{ABC}$ Usage Control Model.* ACM TISSEC, 2004.
-- **[Foundational]** Agrawal, R., Kiernan, J., Srikant, R., Xu, Y. *Hippocratic Databases.* VLDB, 2002.
-- **[SOTA]** Byun, J.-W., Bertino, E., Li, N. *Purpose Based Access Control of Complex Data for Privacy Protection.* SACMAT, 2005.
-- **[SOTA]** Basin, D., Klaedtke, F., Müller, S., Zălinescu, E. *Monitoring Metric First-Order Temporal Properties.* Journal of the ACM, 2015.
-- **[Survey]** Lazouski, A., Martinelli, F., Mori, P. *Usage Control in Computer Security: A Survey.* Computer Science Review, 2010.
+- **[Foundational]** Park, J., Sandhu, R. *The UCON$_{ABC}$ Usage Control Model.* ACM TISSEC, 2004. — [DOI](https://doi.org/10.1145/984334.984339)
+- **[Foundational]** Agrawal, R., Kiernan, J., Srikant, R., Xu, Y. *Hippocratic Databases.* VLDB, 2002. — [DBLP](https://dblp.org/rec/conf/vldb/AgrawalKSX02.html)
+- **[SOTA]** Byun, J.-W., Bertino, E., Li, N. *Purpose Based Access Control of Complex Data for Privacy Protection.* SACMAT, 2005. — [DOI](https://doi.org/10.1145/1063979.1063998)
+- **[SOTA]** Basin, D., Klaedtke, F., Müller, S., Zălinescu, E. *Monitoring Metric First-Order Temporal Properties.* Journal of the ACM, 2015. — [DOI](https://doi.org/10.1145/2699444)
+- **[Survey]** Lazouski, A., Martinelli, F., Mori, P. *Usage Control in Computer Security: A Survey.* Computer Science Review, 2010. — [DOI](https://doi.org/10.1016/j.cosrev.2010.02.002)
+
+## 10. Worked Example
+
+A purpose lattice with $\textit{Marketing} \sqsubseteq \textit{Admin}$ and $\textit{Billing} \sqsubseteq \textit{Admin}$ (Admin is most general; Marketing and Billing are incomparable). Each customer row carries an **allowed purpose** $p_a$:
+
+| Cust | Phone | $p_a$ |
+|------|-------|-------|
+| Ann | 555-0101 | Billing |
+| Bob | 555-0102 | Admin |
+
+**Query-time check (Hippocratic / Byun).** A billing job declares intended purpose $p_i = \textit{Billing}$. The rewrite appends predicate "$p_i \sqsubseteq p_a$": Ann passes ($\textit{Billing}\sqsubseteq\textit{Billing}$), Bob passes ($\textit{Billing}\sqsubseteq\textit{Admin}$). A marketing job ($p_i=\textit{Marketing}$) gets Bob only — Ann's row is filtered because $\textit{Marketing}\not\sqsubseteq\textit{Billing}$ (incomparable). This is the **linear** rewrite of §4: one lattice-membership test per row.
+
+**The post-release gap.** Suppose the billing job exports Ann's phone with obligation "delete within 30 days." The DBMS soundly mediated the *read*, but "$\Box\,\textbf{B}$" — the deletion obligation over the future trace — is a property of code *outside* the database. As §5 notes, "use only for Billing" is a hyperproperty: no single-run monitor on the exported copy can certify it, so enforcement needs confinement (TEE) or crypto, not mediation alone.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -46,12 +46,26 @@ Active work: **formal verification of policy combiners** and equivalence of XACM
 
 ## 9. Key References
 
-- **[Foundational]** Jajodia, S., Samarati, P., Sapino, M.L., Subrahmanian, V.S. *Flexible Support for Multiple Access Control Policies.* ACM TODS, 2001.
-- **[Foundational]** Harrison, M.A., Ruzzo, W.L., Ullman, J.D. *Protection in Operating Systems.* CACM, 1976.
-- **[Foundational]** Bertino, E., Samarati, P., Jajodia, S. *An Extended Authorization Model for Relational Databases.* IEEE TKDE, 1997.
-- **[SOTA]** OASIS. *eXtensible Access Control Markup Language (XACML) Version 3.0.* OASIS Standard, 2013.
-- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996.
-- **[SOTA]** Pang, R., Caceres, R., Burrows, M., et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019.
+- **[Foundational]** Jajodia, S., Samarati, P., Sapino, M.L., Subrahmanian, V.S. *Flexible Support for Multiple Access Control Policies.* ACM TODS, 2001. — [DOI](https://doi.org/10.1145/383891.383894)
+- **[Foundational]** Harrison, M.A., Ruzzo, W.L., Ullman, J.D. *Protection in Operating Systems.* CACM, 1976. — [DOI](https://doi.org/10.1145/360303.360333)
+- **[Foundational]** Bertino, E., Samarati, P., Jajodia, S. *An Extended Authorization Model for Relational Databases.* IEEE TKDE, 1997. — [DOI](https://doi.org/10.1109/69.567051)
+- **[SOTA]** OASIS. *eXtensible Access Control Markup Language (XACML) Version 3.0.* OASIS Standard, 2013. — [OASIS](https://docs.oasis-open.org/xacml/3.0/xacml-3.0-core-spec-os-en.html)
+- **[Foundational]** Sandhu, R., Coyne, E., Feinstein, H., Youman, C. *Role-Based Access Control Models.* IEEE Computer, 1996. — [DOI](https://doi.org/10.1109/2.485845)
+- **[SOTA]** Pang, R., Caceres, R., Burrows, M., et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/pang)
+
+## 10. Worked Example
+
+**A conflict resolved by most-specific-overrides + denials-take-precedence.** Role hierarchy $\text{Intern} \preceq_S \text{Employee}$ (Employee is more general; Intern inherits its grants). Object hierarchy: table $\mathsf{Payroll}$ with column $\mathsf{Payroll.salary}$, and $\mathsf{Payroll.salary} \preceq_O \mathsf{Payroll}$.
+
+Policy (signed authorizations):
+- $a_1 = \langle \text{Employee}, \mathsf{Payroll}, \text{read}, +\rangle$ — employees may read Payroll.
+- $a_2 = \langle \text{Intern}, \mathsf{Payroll.salary}, \text{read}, -\rangle$ — interns are denied the salary column.
+
+Query: *may user Carol (an Intern) read $\mathsf{Payroll.salary}$?*
+
+Two authorizations propagate to (Carol, salary): via $a_1$, an **allow** inherited down both hierarchies (Intern $\preceq$ Employee, salary $\preceq$ Payroll); via $a_2$, a **deny** stated directly. **Most-specific-overrides** compares them: $a_2$ targets the more specific subject *and* object, so it wins → **deny**. (Even on an incomparable tie, **denials-take-precedence** yields deny.)
+
+As a stratified Datalog¬ program, stratum 0 derives the propagated allow; stratum 1's $\textsf{deny}$ rule fires and *blocks* the allow via negation-as-failure, so the unique stable model assigns $\textsf{decision}(\text{Carol},\mathsf{Payroll.salary},\text{read}) = \text{deny}$ — computed bottom-up in PTIME.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

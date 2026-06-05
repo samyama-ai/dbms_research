@@ -1,6 +1,7 @@
 # Access-Pattern Leakage Quantification
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/access-pattern-leakage-quantification` · **Status:** open
+> **Verification note:** The Kornaropoulos–Papamanthou–Tamassia S&P 2020 paper is titled *"The State of the Uniform: Attacks on Encrypted Databases Beyond the Uniform Query Distribution"* (corrected in §9).
 
 ## 1. Problem Statement
 Given an encrypted-database scheme that reveals *access patterns* (which encrypted records each query touches), plus auxiliary side channels (result **volume**, query **co-occurrence**, **search/insert timing**), build a **general framework** that (i) formally specifies what a sequence of observed access patterns reveals about the underlying data and the issued queries, and (ii) gives **tight, composable bounds** relating an adversary's reconstruction success to the scheme's leakage profile and any auxiliary distribution.
@@ -40,13 +41,21 @@ Directions: (a) distribution-agnostic / "*uncertainty-aware*" attacks (Kornaropo
 - Standardized benchmarks tying leakage profiles to concrete attack success for deployed systems (CryptDB-style, MongoDB Queryable Encryption).
 
 ## 9. Key References
-- **[Foundational]** R. Curtmola, J. Garay, S. Kamara, R. Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[Foundational]** G. Kellaris, G. Kollios, K. Nissim, A. O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** M-S. Lacharité, B. Minaud, K. Paterson. *Improved Reconstruction Attacks on Encrypted Data Using Range Query Leakage.* IEEE S&P, 2018.
-- **[SOTA]** P. Grubbs, M-S. Lacharité, B. Minaud, K. Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS, 2018.
-- **[SOTA]** E. M. Kornaropoulos, C. Papamanthou, R. Tamassia. *The State of the Uncertainty: ... Reconstruction Attacks without Knowing the Distribution.* IEEE S&P, 2020.
-- **[Survey]** D. Cash, P. Grubbs, J. Perry, T. Ristenpart. *Leakage-Abuse Attacks Against Searchable Encryption.* CCS, 2015.
-- **[Survey]** S. Kamara, T. Moataz. *Leakage and the abstraction of structured encryption* (and the LEAKER framework, USENIX Security 2022).
+- **[Foundational]** R. Curtmola, J. Garay, S. Kamara, R. Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417) · [DBLP](https://dblp.org/rec/conf/ccs/CurtmolaGKO06.html)
+- **[Foundational]** G. Kellaris, G. Kollios, K. Nissim, A. O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386) · [DBLP](https://dblp.org/rec/conf/ccs/KellarisKNO16.html)
+- **[SOTA]** M-S. Lacharité, B. Minaud, K. Paterson. *Improved Reconstruction Attacks on Encrypted Data Using Range Query Leakage.* IEEE S&P, 2018. — [DBLP](https://dblp.org/rec/conf/sp/LachariteMP18.html) · [ePrint](https://eprint.iacr.org/2017/701)
+- **[SOTA]** P. Grubbs, M-S. Lacharité, B. Minaud, K. Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS, 2018. — [ePrint](https://eprint.iacr.org/2018/965) · [DBLP search](https://dblp.org/search?q=Pump+up+the+Volume+Practical+Database+Reconstruction)
+- **[SOTA]** E. M. Kornaropoulos, C. Papamanthou, R. Tamassia. *The State of the Uniform: Attacks on Encrypted Databases Beyond the Uniform Query Distribution.* IEEE S&P, 2020. — [IEEE](https://ieeexplore.ieee.org/document/9152784) · [PDF](https://obj.umiacs.umd.edu/papers_for_stories/Kornaropoulos_paper.pdf)
+- **[Survey]** D. Cash, P. Grubbs, J. Perry, T. Ristenpart. *Leakage-Abuse Attacks Against Searchable Encryption.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813700) · [DBLP](https://dblp.org/rec/conf/ccs/CashGPR15.html)
+- **[Survey]** S. Kamara, A. Kati, T. Moataz, T. Schneider, A. Treiber, M. Yonli. *SoK: Cryptanalysis of Encrypted Search with LEAKER — A framework for LEakage AttacK Evaluation on Real-world data.* IEEE EuroS&P, 2022. — [ePrint](https://eprint.iacr.org/2021/1035)
+
+## 10. Worked Example
+
+**Order reconstruction from access-pattern co-occurrence.** Take a domain of $N=4$ values $\{1,2,3,4\}$ with one record per value, stored encrypted. The server cannot read values but sees *which encrypted records each range query touches*. Suppose the adversary observes these access-pattern sets for four range queries:
+
+- $q_a \to \{r_2,r_3\}$, $\quad q_b \to \{r_1,r_2,r_3\}$, $\quad q_c \to \{r_3,r_4\}$, $\quad q_d \to \{r_2,r_3,r_4\}$.
+
+Each range query returns a *contiguous* interval of values, so each observed set must be consecutive in the true order. Treating records as nodes and "appears together in a query" as constraints, the only linear arrangement consistent with all four sets (up to reflection) is $r_1\,r_2\,r_3\,r_4$: $q_a,q_c$ force $r_2,r_3$ and $r_3,r_4$ adjacent; $q_b,q_d$ pin the endpoints. The adversary thus recovers the full value *order* — value$(r_1)<\dots<$value$(r_4)$ — with zero plaintext access. This is exactly the PQ-tree/interval-order recovery of KKNO; for dense data it needs $\Theta(N\log N)$ random range queries to see enough co-occurrences (here $N=4$ took 4 well-chosen queries).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

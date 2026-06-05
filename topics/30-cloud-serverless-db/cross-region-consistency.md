@@ -46,11 +46,19 @@ The *feasibility floor* (CAP/Attiya–Welch) is closed and tight — we know exa
 - Verified consistency-level downgrades (safely weakening from bounded staleness to eventual during partitions, then re-converging) with formal staleness re-bounding.
 
 ## 9. Key References
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002.
-- **[Foundational]** Attiya, H., Welch, J. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994.
-- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[SOTA]** Bailis, P., Venkataraman, S., Franklin, M., Hellerstein, J., Stoica, I. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012.
-- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design: CAP is Only Part of the Story (PACELC).* IEEE Computer, 2012.
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Foundational]** Attiya, H., Welch, J. *Sequential Consistency versus Linearizability.* ACM TOCS, 1994. — [DOI](https://doi.org/10.1145/176575.176576)
+- **[SOTA]** Corbett, J. et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [DBLP](https://dblp.org/rec/conf/osdi/CorbettDEFFFGGHHHKKLLMMNQRRSSTWW12.html)
+- **[SOTA]** Bailis, P., Venkataraman, S., Franklin, M., Hellerstein, J., Stoica, I. *Probabilistically Bounded Staleness for Practical Partial Quorums.* VLDB, 2012. — [DOI](https://doi.org/10.14778/2212351.2212359) · [arXiv](https://arxiv.org/abs/1204.6082)
+- **[Survey]** Abadi, D. *Consistency Tradeoffs in Modern Distributed Database System Design: CAP is Only Part of the Story (PACELC).* IEEE Computer, 2012. — [DOI](https://doi.org/10.1109/MC.2012.33)
+
+## 10. Worked Example
+
+Three regions $R=\{\text{us-east}, \text{eu-west}, \text{ap-south}\}$ with one-way propagation delays $d_{\text{us},\text{eu}}=40\,\text{ms}$, $d_{\text{us},\text{ap}}=110\,\text{ms}$, $d_{\text{eu},\text{ap}}=90\,\text{ms}$, and a staleness bound $\Delta=150\,\text{ms}$. A write commits in us-east at $t=0$.
+
+*Bounded-staleness check.* A read in ap-south at time $t$ is $\Delta$-fresh if it sees all writes committed before $t-\Delta$. Async replication delivers the us-east write to ap-south at $t=110\,\text{ms}$. So any ap-south read at $t \ge 110$ already reflects it; even a read at $t=110$ is fresh because $110 - 150 = -40 < 0$, i.e. the contract only requires seeing writes older than $t-\Delta$, and $110 \le \Delta$ means the bound is never violated for this single write. The contract is satisfied with pure async replication — no quorum round trip needed.
+
+*Why linearizability would cost more.* By Attiya–Welch, a linearizable read in ap-south needs read+write latency $\ge d$ across the system diameter. The diameter here is $d_{\text{us},\text{ap}}=110\,\text{ms}$, so a strongly-consistent cross-region read pays $\ge 110\,\text{ms}$, versus a local follower read of roughly $1\,\text{ms}$. Bounded staleness buys back $\approx 109\,\text{ms}$ of tail latency at the price of at most $\Delta=150\,\text{ms}$ of version lag — the exact knob Cosmos DB exposes as $(k,\Delta)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

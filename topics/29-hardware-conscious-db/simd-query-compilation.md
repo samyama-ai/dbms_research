@@ -29,11 +29,20 @@ Directions: portable SIMD abstractions (std::simd, Google Highway, ISPC-style SP
 A retargetable, cost-driven vectorizing operator compiler with provable lane-utilization guarantees per selectivity; first-class divergence/compaction cost models; unified handling of variable-length and mixed-type columns; auto-tuning across AVX-512/SVE/RVV/SIMT from one source.
 
 ## 9. Key References
-- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005.
-- **[Foundational]** T. Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB, 2011.
-- **[SOTA]** O. Polychroniou, A. Raman, K. A. Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD, 2015.
-- **[SOTA]** P. Menon, T. C. Mowry, A. Pavlo. *Relaxed Operator Fusion for In-Memory Databases.* VLDB, 2017.
-- **[Survey]** T. Kersten, V. Leis, A. Kemper, T. Neumann, A. Pavlo, P. Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB, 2018.
+- **[Foundational]** P. Boncz, M. Zukowski, N. Nes. *MonetDB/X100: Hyper-Pipelining Query Execution.* CIDR, 2005. — [DBLP](https://dblp.org/rec/conf/cidr/BonczZN05.html)
+- **[Foundational]** T. Neumann. *Efficiently Compiling Efficient Query Plans for Modern Hardware.* VLDB, 2011. — [DOI](https://doi.org/10.14778/2002938.2002940)
+- **[SOTA]** O. Polychroniou, A. Raghavan, K. A. Ross. *Rethinking SIMD Vectorization for In-Memory Databases.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2747645)
+- **[SOTA]** P. Menon, T. C. Mowry, A. Pavlo. *Relaxed Operator Fusion for In-Memory Databases.* VLDB, 2017. — [DOI](https://doi.org/10.14778/3151113.3151114)
+- **[Survey]** T. Kersten, V. Leis, A. Kemper, T. Neumann, A. Pavlo, P. Boncz. *Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3275366.3284966)
+
+## 10. Worked Example
+
+Consider a SIMD filter `WHERE x > 50` over the 8-lane vector $x = [10, 80, 30, 90, 60, 20, 70, 40]$ on a $w=8$ machine.
+
+- **Masked (branch-free) execution.** Compute the predicate mask $m = [0,1,0,1,1,0,1,1]$ in one vector compare. Every lane is "active" ($U=1$), but only $\sigma w = 4$ lanes carry *useful* output: useful throughput is $\sigma = 4/8 = 0.5$.
+- **Compaction.** A permute compresses the 4 surviving values to a dense prefix $[80,90,60,70]$ and advances the output cursor by 4. The next operator now runs at full density. Cost: one extra permute per branch — the $O(1)$ overhead of §4.
+
+Now make selectivity tiny, $\sigma = 1/8$ (one survivor). Without compaction, downstream operators still process all 8 lanes, so $7/8$ of the SIMD work is wasted — exactly the $\le \sigma w$ useful-throughput ceiling of §5. Compaction restores density at the cost of repeated permutes, illustrating the mask-vs-compact lowering choice the compiler must cost-model.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

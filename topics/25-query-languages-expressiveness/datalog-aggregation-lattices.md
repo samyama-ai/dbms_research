@@ -35,12 +35,35 @@ Zaniolo's group continues PreM and "scaling recursive aggregation"; Lhoták/Mads
 A decidable, expressive monotonicity/termination analysis spanning unbounded numeric lattices; a single agreed semantics for recursion + aggregation + negation; complexity dichotomies for recursive-aggregate query classes; and tight integration with incremental maintenance and provenance so that one engine convergently evaluates, updates, and explains recursive-aggregate views.
 
 ## 9. Key References
-- **[Foundational]** K. A. Ross, Y. Sagiv. *Monotonic Aggregation in Deductive Databases.* PODS 1992.
-- **[SOTA]** M. Madsen, M.-H. Yee, O. Lhoták. *From Datalog to Flix: A Declarative Language for Fixed Points on Lattices.* PLDI 2016.
-- **[SOTA]** M. Arntzenius, N. Krishnaswami. *Datafun: A Functional Datalog.* ICFP 2016.
-- **[SOTA]** A. Shkapsky, M. Yang, M. Interlandi, H. Mousavi, T. Condie, C. Zaniolo. *Big Data Analytics with Datalog Queries on Spark (BigDatalog).* SIGMOD 2016.
-- **[SOTA]** C. Zaniolo, M. Yang, A. Das, et al. *Fixpoint Semantics and Optimization of Recursive Datalog Programs with Aggregates.* Theory and Practice of Logic Programming (TPLP), 2017.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog and fixpoint semantics).
+- **[Foundational]** K. A. Ross, Y. Sagiv. *Monotonic Aggregation in Deductive Databases.* PODS 1992. — [DBLP](https://dblp.org/rec/conf/pods/RossS92.html)
+- **[SOTA]** M. Madsen, M.-H. Yee, O. Lhoták. *From Datalog to Flix: A Declarative Language for Fixed Points on Lattices.* PLDI 2016. — [DOI](https://doi.org/10.1145/2908080.2908096)
+- **[SOTA]** M. Arntzenius, N. Krishnaswami. *Datafun: A Functional Datalog.* ICFP 2016. — [DOI](https://doi.org/10.1145/2951913.2951948)
+- **[SOTA]** A. Shkapsky, M. Yang, M. Interlandi, H. Mousavi, T. Condie, C. Zaniolo. *Big Data Analytics with Datalog Queries on Spark (BigDatalog).* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915229)
+- **[SOTA]** C. Zaniolo, M. Yang, A. Das, et al. *Fixpoint Semantics and Optimization of Recursive Datalog Programs with Aggregates.* Theory and Practice of Logic Programming (TPLP), 2017. — [arXiv](https://arxiv.org/abs/1707.05681)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Datalog and fixpoint semantics). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Shortest paths as recursive `min` aggregation. Edges $\mathrm{edge}$: $a\!\to\!b\,(1)$, $a\!\to\!c\,(4)$, $b\!\to\!c\,(1)$, $c\!\to\!d\,(2)$. Rules:
+
+```
+dist(a,0).
+dist(Y, min(D+W)) :- dist(X,D), edge(X,Y,W).
+```
+
+Interpret $\mathrm{dist}(v,\cdot)$ in the lattice $(\mathbb{N}\cup\{\infty\},\;\ge,\;\min,\;\bot{=}\infty)$ — note the order is *reversed*, so $\min$ is the lattice join $\sqcup$ and "smaller cost" means "more information." Each relaxation is monotone in $\sqsubseteq$, so $T_P$ has a least fixpoint.
+
+Trace (semi-naive, tracking the current best cost per node):
+
+| iter | a | b | c | d |
+|------|---|---|---|---|
+| 0 | 0 | $\infty$ | $\infty$ | $\infty$ |
+| 1 | 0 | 1 | 4 | $\infty$ |
+| 2 | 0 | 1 | $\min(4,1{+}1)=2$ | 6 |
+| 3 | 0 | 1 | 2 | $\min(6,2{+}2)=4$ |
+| 4 | 0 | 1 | 2 | 4 (fixpoint) |
+
+Because $\min$ is **PreM**, the optimizer may push it *inside* recursion — keeping only the best cost per node each round rather than enumerating every path — recovering Bellman–Ford. The value lattice has finite height here (costs are bounded and decreasing), satisfying ACC, so convergence is guaranteed in $\le |V|$ rounds. Replace $\min$ by an unbounded `sum` and ACC fails: counting cyclic paths would diverge, illustrating exactly the non-monotone gap of §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

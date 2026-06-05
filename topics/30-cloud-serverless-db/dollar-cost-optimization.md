@@ -42,11 +42,20 @@ Active: budget-aware query optimization, learned cost models calibrated to *mone
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Trummer, Koch. *Multi-Objective Parametric Query Optimization.* VLDB, 2015 / CACM, 2017.
-- **[SOTA]** Dageville, Cruanes, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016.
-- **[SOTA]** Melnik, Gubarev, et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010 (basis of BigQuery's bytes-scanned model).
-- **[Survey]** Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998.
+- **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Trummer, Koch. *Multi-Objective Parametric Query Optimization.* VLDB, 2015 / CACM, 2017. — [VLDB PDF](http://www.vldb.org/pvldb/vol8/p221-trummer.pdf)
+- **[SOTA]** Dageville, Cruanes, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2903741)
+- **[SOTA]** Melnik, Gubarev, et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010 (basis of BigQuery's bytes-scanned model). — [DOI](https://doi.org/10.14778/1920841.1920886)
+- **[Survey]** Chaudhuri. *An Overview of Query Optimization in Relational Systems.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275492)
+
+## 10. Worked Example
+
+Consider `SELECT * FROM events WHERE day = '2026-06-01'` on a 2 TB table, priced at **\$5/TB scanned** (BigQuery-style).
+
+- **Plan A — full scan:** scans all $2\,000$ GB. Cost $= 2.0 \text{ TB} \times \$5 = \$10.00$.
+- **Plan B — partitioned by `day` (365 partitions):** prunes to one day $\approx 2000/365 \approx 5.5$ GB. Cost $= 0.0055 \text{ TB} \times \$5 = \$0.027$ — a $\approx 365\times$ saving. Latency drops too, so it dominates A on the Pareto frontier.
+
+Now add a **latency constraint** and a *credit-priced* (Snowflake-style) engine at \$3/warehouse-hour. Plan B on 1 worker takes $40$ s; on 4 workers it takes $12$ s (serial merge fraction limits Amdahl speedup to $40/12 \approx 3.3\times$). Compute cost is roughly invariant: $1 \times 40\text{s} = 40$ worker-s vs $4 \times 12 = 48$ worker-s, i.e. $\$0.033$ vs $\$0.040$. So under an SLO of $\tau = 15$ s, the cheapest *feasible* plan is **4 workers** at \$0.040 — the constraint forces the slightly pricier shape. This is exactly the *constrained shortest-plan* / knapsack structure that makes the constrained variant NP-hard.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

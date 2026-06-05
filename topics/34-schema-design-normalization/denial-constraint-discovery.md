@@ -39,12 +39,29 @@ Active groups: **HPI (Naumann, Bleifuß, Kruse)** on scalable exact/approximate 
 - Unified discovery over a predicate space spanning FDs, ODs, numeric, and conditional constraints.
 
 ## 9. Key References
-- **[Foundational]** X. Chu, I. F. Ilyas, P. Papotti. *Discovering Denial Constraints.* PVLDB, 2013.
-- **[SOTA]** T. Bleifuß, S. Kruse, F. Naumann. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017.
-- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017.
-- **[Foundational]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011.
-- **[Foundational]** M. L. Fredman, L. Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* J. Algorithms, 1996.
-- **[Survey]** Z. Abedjan, L. Golab, F. Naumann, T. Papenbrock. *Data Profiling.* Morgan & Claypool, 2018.
+- **[Foundational]** X. Chu, I. F. Ilyas, P. Papotti. *Discovering Denial Constraints.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536258.2536262)
+- **[SOTA]** T. Bleifuß, S. Kruse, F. Naumann. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3157794.3157800)
+- **[SOTA]** T. Rekatsinas, X. Chu, I. F. Ilyas, C. Ré. *HoloClean: Holistic Data Repairs with Probabilistic Inference.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3137628.3137631), [arXiv](https://arxiv.org/abs/1702.00820)
+- **[Foundational]** L. Bertossi. *Database Repairing and Consistent Query Answering.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.2200/S00379ED1V01Y201108DTM020)
+- **[Foundational]** M. L. Fredman, L. Khachiyan. *On the Complexity of Dualization of Monotone Disjunctive Normal Forms.* J. Algorithms, 1996. — [DOI](https://doi.org/10.1006/jagm.1996.0062)
+- **[Survey]** Z. Abedjan, L. Golab, F. Naumann, T. Papenbrock. *Data Profiling.* Morgan & Claypool, 2018. — [DOI](https://doi.org/10.1007/978-3-031-01865-7)
+
+## 10. Worked Example
+
+Relation `Emp(name, salary, mgr)` where `mgr` is the name of the employee's manager:
+
+| # | name | salary | mgr |
+|---|------|--------|-----|
+| 1 | Ann | 90 | — |
+| 2 | Bob | 60 | Ann |
+| 3 | Cara | 70 | Ann |
+
+Predicate space includes the atom $p:\ t_x.\text{salary} > t_y.\text{salary}$ and the join atom $q:\ t_x.\text{mgr} = t_y.\text{name}$ (employee $t_x$ reports to $t_y$).
+
+**Candidate DC** "no employee earns more than their manager":
+$$\varphi:\ \forall t_x,t_y:\ \neg\big(\underbrace{t_x.\text{mgr}=t_y.\text{name}}_{q} \ \wedge\ \underbrace{t_x.\text{salary} > t_y.\text{salary}}_{p}\big).$$
+
+**Evidence-set check.** Scan ordered pairs where $q$ holds: $(\text{Bob},\text{Ann})$ satisfies $q$ and $60>90$ is false; $(\text{Cara},\text{Ann})$ satisfies $q$ and $70>90$ is false. No pair satisfies $p\wedge q$, so $I \models \varphi$ — the DC holds. If we changed Bob's salary to 100, the pair $(\text{Bob},\text{Ann})$ would satisfy both $p$ and $q$, adding $\{p,q\}$ to an evidence set and **invalidating** $\varphi$ (its predicate set is no longer a hitting set of the complements). Minimal valid DCs are exactly the minimal hitting sets of these complemented evidence sets — for $n=3$ tuples there are at most $n^2-n=6$ ordered pairs to inspect.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

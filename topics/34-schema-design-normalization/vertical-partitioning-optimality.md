@@ -46,11 +46,30 @@ The gap is between (i) NP-hardness / APX-hardness of the general recon-aware obj
 - Online vertical re-layout with bounded migration cost under workload drift.
 
 ## 9. Key References
-- **[Foundational]** S. Navathe, S. Ceri, G. Wiederhold, J. Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984.
-- **[Foundational]** D. Cornell, P. Yu. *An Effective Approach to Vertical Partitioning for Physical Design of Relational Databases.* IEEE TSE, 1990.
-- **[SOTA]** S. Papadomanolakis, A. Ailamaki. *AutoPart: Automating Schema Design for Large Scientific Databases.* SSDBM, 2004.
-- **[SOTA]** M. Grund, J. Krüger, H. Plattner, A. Zeier, P. Cudre-Mauroux, S. Madden. *HYRISE: A Main Memory Hybrid Storage Engine.* VLDB, 2010.
-- **[SOTA]** A. Jindal, J. Dittrich. *Relax and Let the Database Do the Partitioning Online (O2P).* BIRTE/related, 2011.
+- **[Foundational]** S. Navathe, S. Ceri, G. Wiederhold, J. Dou. *Vertical Partitioning Algorithms for Database Design.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1994.2209)
+- **[Foundational]** D. Cornell, P. Yu. *An Effective Approach to Vertical Partitioning for Physical Design of Relational Databases.* IEEE TSE, 1990. — [DOI](https://doi.org/10.1109/32.44388)
+- **[SOTA]** S. Papadomanolakis, A. Ailamaki. *AutoPart: Automating Schema Design for Large Scientific Databases.* SSDBM, 2004. — [DOI](https://doi.org/10.1109/SSDM.2004.1311234)
+- **[SOTA]** M. Grund, J. Krüger, H. Plattner, A. Zeier, P. Cudre-Mauroux, S. Madden. *HYRISE: A Main Memory Hybrid Storage Engine.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1921071.1921077), [PDF](https://www.vldb.org/pvldb/vol4/p105-grund.pdf)
+- **[SOTA]** A. Jindal, J. Dittrich. *Relax and Let the Database Do the Partitioning Online (O2P).* BIRTE/related, 2011. — [DOI](https://doi.org/10.1007/978-3-642-33500-6_5)
+
+## 10. Worked Example
+
+Relation $R$ with attributes $A=\{a_1,a_2,a_3\}$, each column costing 1 unit to scan. Workload of two queries, each $f_q=1$:
+
+- $q_1$ reads $\{a_1,a_2\}$
+- $q_2$ reads $\{a_2,a_3\}$
+
+A disjoint fragment is scanned in full if it touches *any* attribute the query needs. Ignore reconstruction for simplicity.
+
+**Candidate partitions** (Bell number $B_3 = 5$):
+
+- $\{a_1a_2a_3\}$ (all-in-one): each query scans the single 3-wide fragment → cost $3+3 = 6$.
+- $\{a_1\}\{a_2\}\{a_3\}$ (full split): $q_1$ scans $a_1,a_2$ → 2; $q_2$ scans $a_2,a_3$ → 2; total $= 4$.
+- $\{a_1a_2\}\{a_3\}$: $q_1$ scans the $a_1a_2$ fragment → 2; $q_2$ scans $a_1a_2$ (for $a_2$) + $a_3$ → $2+1=3$; total $= 5$.
+- $\{a_2a_3\}\{a_1\}$: symmetric → $5$.
+- $\{a_1a_3\}\{a_2\}$: $q_1$ scans $a_1a_3$+$a_2$ → 3; $q_2$ scans $a_1a_3$+$a_2$ → 3; total $=6$.
+
+**Optimum:** full split, cost $4$. The shared attribute $a_2$ has conflicting co-access (paired with $a_1$ in $q_1$, $a_3$ in $q_2$), so no grouping helps — isolating it wins. The affinity matrix here has $M_{a_1 a_2}=M_{a_2 a_3}=1$, $M_{a_1 a_3}=0$: a "path" with no clusterable triangle, exactly why BEA finds no profitable merge.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

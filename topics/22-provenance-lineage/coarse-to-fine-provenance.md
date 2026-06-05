@@ -54,12 +54,24 @@ The decision/answerability core is clean (lattice + homomorphism), but the **onl
 
 ## 9. Key References
 
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** R. Ikeda, J. Widom. *Panda: A System for Provenance and Data.* IEEE Data Eng. Bulletin, 2010.
-- **[SOTA]** F. Psallidas, E. Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018.
-- **[SOTA]** M. Interlandi et al. *Titian: Data Provenance Support in Spark.* PVLDB, 2016.
-- **[SOTA]** B. Glavic et al. *GProM: A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018.
-- **[Foundational]** A. Karlin, M. Manasse, L. Rudolph, D. Sleator. *Competitive Snoopy Caching / Ski-Rental.* Algorithmica, 1988.
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** R. Ikeda, J. Widom. *Panda: A System for Provenance and Data.* IEEE Data Eng. Bulletin, 2010. — [DBLP](https://dblp.org/rec/journals/debu/IkedaW10.html)
+- **[SOTA]** F. Psallidas, E. Wu. *Smoke: Fine-grained Lineage at Interactive Speed.* PVLDB, 2018. — [arXiv](https://arxiv.org/abs/1801.07237) · [DOI](https://doi.org/10.14778/3199517.3199522)
+- **[SOTA]** M. Interlandi et al. *Titian: Data Provenance Support in Spark.* PVLDB, 2016. — [DOI](https://doi.org/10.14778/2850583.2850595)
+- **[SOTA]** B. Glavic et al. *GProM: A Swiss Army Knife for Your Provenance Needs.* IEEE Data Eng. Bulletin, 2018. — [DBLP](https://dblp.org/rec/journals/debu/ArabFGLNZ18.html)
+- **[Foundational]** A. Karlin, M. Manasse, L. Rudolph, D. Sleator. *Competitive Snoopy Caching / Ski-Rental.* Algorithmica, 1988. — [DOI](https://doi.org/10.1007/BF01762111)
+
+## 10. Worked Example
+
+A pipeline scans 4 Parquet partitions $P_1,\dots,P_4$ of 1M rows each (4M total), filters, and aggregates. **Eager coarse capture** records only, per output block, the set of source *partitions* that fed it — say answer $a$ depends on $\{P_2,P_3\}$. Cost: $O(1)$ per operator, a couple of partition ids, versus storing 4M cell-level annotations.
+
+Later an auditor asks "which exact rows produced $a$?" — a refinement to tuple granularity. Instead of replaying all 4M rows, we re-execute only the sub-pipeline restricted to $S = P_2 \cup P_3$ (2M rows), cost $O(|\text{IN}_S|+|\text{OUT}_S|)$.
+
+**Rent-or-buy trade-off.** Let eager fine capture cost $b$ (buy) and one refinement cost $r$ (rent), with $r=b$ here. If at most one audit ever arrives, renting wins. Ski-rental says: refine on demand until accumulated refinement cost reaches $b$, then it would have been cheaper to have captured eagerly — the deterministic strategy is $2$-competitive:
+
+$$ \frac{\text{ALG}}{\text{OPT}} \le 2,\qquad \text{randomized } \le \tfrac{e}{e-1}\approx 1.58. $$
+
+The catch: if a second query needs $P_2$ too, refining shares upstream work — breaking the independence ski-rental assumes, which is exactly the open DAG-correlated case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

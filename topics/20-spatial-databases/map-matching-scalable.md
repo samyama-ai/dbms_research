@@ -41,12 +41,27 @@ Active directions: deep sequence map matching (Transformer/GNN labelers) robust 
 - Calibrated uncertainty (path distributions) instead of single best paths.
 
 ## 9. Key References
-- **[Foundational]** Newson, Krumm. *Hidden Markov Map Matching Through Noise and Sparseness.* ACM SIGSPATIAL, 2009.
-- **[Foundational]** Alt, Efrat, Rote, Wenk. *Matching Planar Maps.* Journal of Algorithms, 2003.
-- **[Foundational]** Brakatsoulas, Pfoser, Salas, Wenk. *On Map-Matching Vehicle Tracking Data.* VLDB, 2005.
-- **[SOTA]** Yang, Gidófalvi. *Fast Map Matching, an Algorithm Integrating Hidden Markov Model with Precomputation (fmm).* IJGIS, 2018.
-- **[SOTA]** Zhao et al. *DeepMM: Deep Learning Based Map Matching with Data Augmentation.* ACM SIGSPATIAL, 2019.
-- **[Survey]** Chao, Xu, Hua, Zhou. *A Survey on Map-Matching Algorithms.* In *Databases Theory and Applications (ADC)*, 2020.
+- **[Foundational]** Newson, Krumm. *Hidden Markov Map Matching Through Noise and Sparseness.* ACM SIGSPATIAL, 2009. — [DOI](https://doi.org/10.1145/1653771.1653818)
+- **[Foundational]** Alt, Efrat, Rote, Wenk. *Matching Planar Maps.* Journal of Algorithms, 2003. — [DOI](https://doi.org/10.1016/S0196-6774(03)00085-3)
+- **[Foundational]** Brakatsoulas, Pfoser, Salas, Wenk. *On Map-Matching Vehicle Tracking Data.* VLDB, 2005. — [DBLP](https://dblp.org/rec/conf/vldb/BrakatsoulasPSW05.html)
+- **[SOTA]** Yang, Gidófalvi. *Fast Map Matching, an Algorithm Integrating Hidden Markov Model with Precomputation (fmm).* IJGIS, 2018. — [DOI](https://doi.org/10.1080/13658816.2017.1400548)
+- **[SOTA]** Zhao et al. *DeepMM: Deep Learning Based Map Matching with Data Augmentation.* ACM SIGSPATIAL, 2019. — [DOI](https://doi.org/10.1145/3347146.3359090)
+- **[Survey]** Chao, Xu, Hua, Zhou. *A Survey on Map-Matching Algorithms.* In *Databases Theory and Applications (ADC)*, 2020. — [arXiv](https://arxiv.org/abs/1910.13065), [DOI](https://doi.org/10.1007/978-3-030-39469-1_10)
+
+## 10. Worked Example
+
+Two GPS points $p_1,p_2$, each with two candidate edges. Emission uses $P_{\text{emit}}\propto\exp(-\,\mathrm{gc}^2/2\sigma^2)$ with $\sigma=10$ m; the great-circle distances from each point to each candidate (in metres):
+
+| | edge $a$ | edge $b$ |
+|--|----------|----------|
+| $p_1$ | 5 | 15 |
+| $p_2$ | 8 | 6 |
+
+Emission scores (unnormalised): $p_1$: $a=e^{-25/200}=0.88$, $b=e^{-225/200}=0.32$; $p_2$: $a=e^{-64/200}=0.73$, $b=e^{-36/200}=0.84$.
+
+Transition penalises $|\,\mathrm{gc}(p_1,p_2)-\mathrm{route}(e_i,e_j)\,|$. Say the straight-line $\mathrm{gc}(p_1,p_2)=12$ m. On-network routes: $a\!\to\!a=12$ (perfect), $a\!\to\!b=20$, $b\!\to\!a=25$, $b\!\to\!b=13$. Use $P_{\text{trans}}\propto e^{-|\Delta|/\beta}$, $\beta=5$: $a\!\to\!a=e^{0}=1.0$, $a\!\to\!b=e^{-8/5}=0.20$, $b\!\to\!a=e^{-13/5}=0.07$, $b\!\to\!b=e^{-1/5}=0.82$.
+
+**Viterbi** maximises the product. Path $a\!\to\!a$: $0.88\cdot1.0\cdot0.73=0.64$. Path $b\!\to\!b$: $0.32\cdot0.82\cdot0.84=0.22$. Path $a\!\to\!b$: $0.88\cdot0.20\cdot0.84=0.15$. The winner is $a\!\to\!a$ with likelihood $0.64$: although $p_2$'s emission slightly favours edge $b$, the strong $a\!\to\!a$ transition (route length matches the GPS displacement exactly) overrides it. With $c=2$ candidates and $m=2$ points this is $O(m c^2)=8$ transition evaluations, matching the $O(mc^2)$ Viterbi cost of Section 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

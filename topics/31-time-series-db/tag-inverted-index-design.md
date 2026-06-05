@@ -44,12 +44,25 @@ Roaring continues evolving (Roaring64, SIMD/AVX-512 kernels) as the posting stan
 - Succinct range/regex filters (SuRF-class) co-designed with posting compression.
 
 ## 9. Key References
-- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Lemire, Boytsov, Kurz, et al. *Roaring Bitmaps: Implementation of an Optimized Software Library.* Software: Practice and Experience, 2018.
-- **[SOTA]** Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014.
-- **[Foundational]** Pătraşcu, Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006.
-- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (relational/boolean query foundations).
+- **[Foundational]** Demaine, López-Ortiz, Munro. *Adaptive Set Intersections, Unions, and Differences.* SODA, 2000. — [ACM](https://dl.acm.org/doi/10.5555/338219.338634) — [DBLP](https://dblp.uni-trier.de/rec/conf/soda/DemaineLM00.html)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952) — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Lemire, Boytsov, Kurz, et al. *Roaring Bitmaps: Implementation of an Optimized Software Library.* Software: Practice and Experience, 2018. — [arXiv](https://arxiv.org/abs/1709.07821) — [DOI](https://doi.org/10.1002/spe.2560)
+- **[SOTA]** Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481) — [DOI](https://doi.org/10.5441/002/icdt.2014.13)
+- **[Foundational]** Pătraşcu, Thorup. *Time-Space Trade-offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043) — [DOI](https://doi.org/10.1145/1132516.1132551)
+- **[Survey]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (relational/boolean query foundations). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Universe of 10 series, ids $0..9$. Posting lists:
+- $P_{\text{method=GET}} = \{0,2,3,5,6,8,9\}$ (7 ids)
+- $P_{\text{region=us-east}} = \{2,5,9\}$ (3 ids)
+- $P_{\text{env=staging}} = \{3,5\}$ (2 ids)
+
+Evaluate `method="GET" AND region="us-east" AND NOT env="staging"`.
+
+**Probe ordering matters.** Intersect the two smallest lists first: $P_{\text{region}} \cap P_{\text{method}}$. Galloping the 3-element region list into the 7-element method list, each lookup is $O(\log)$ in the *gap* it skips, not the full list — certificate-driven cost. Result: $\{2,5,9\}$ (all three are GET). Now subtract $P_{\text{env=staging}}=\{3,5\}$: drop $5$, giving $\{2,9\}$.
+
+Had we started with the 7-element list, we would touch more elements for the same answer — the adaptive lower bound $\Omega(\sum\log(\text{gap}))$ says the *intrinsic* certificate here is tiny ($|$answer$|=2$), and gallop-from-smallest nearly achieves it. With Roaring, each list is an array container; AND/ANDNOT run as SIMD-friendly merges over containers, the same plan at machine scale.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

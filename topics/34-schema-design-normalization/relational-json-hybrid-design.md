@@ -47,12 +47,26 @@ The gap is wide and largely **empirical**: we lack (a) accepted, validated cost 
 - Joint optimization with indexing and partitioning rather than in isolation.
 
 ## 9. Key References
-- **[Foundational]** E. F. Codd. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[SOTA]** D. Tahara, T. Diamond, D. J. Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014.
-- **[SOTA]** C. Chasseur, Y. Li, J. M. Patel. *Enabling JSON Document Stores in Relational Systems (Argo).* WebDB, 2013.
-- **[Survey]** M. Stonebraker, U. Çetintemel. *"One Size Fits All": An Idea Whose Time Has Come and Gone.* ICDE, 2005.
-- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** E. F. Codd. *A Relational Model of Data for Large Shared Data Banks.* CACM, 1970. — [DOI](https://doi.org/10.1145/362384.362685)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** D. Tahara, T. Diamond, D. J. Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612183)
+- **[SOTA]** C. Chasseur, Y. Li, J. M. Patel. *Enabling JSON Document Stores in Relational Systems (Argo).* WebDB, 2013. — [DBLP](https://dblp.org/rec/conf/webdb/ChasseurLP13.html)
+- **[Survey]** M. Stonebraker, U. Çetintemel. *"One Size Fits All": An Idea Whose Time Has Come and Gone.* ICDE, 2005. — [DOI](https://doi.org/10.1109/ICDE.2005.1)
+- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+Entity `Order` has attributes $A=\{\text{id}, \text{total}, \text{tags}\}$ and a workload $W$ of two queries:
+- $q_1$ (freq $f_1=900$): `WHERE total > 100` — filters on `total`.
+- $q_2$ (freq $f_2=100$): reads `tags` (a variable-length list) for display only.
+
+Per-attribute read costs (cost units): a relational column scan costs $r_a(\text{REL})=1$; a JSON-path extraction costs $r_a(\text{JSON})=4$ (path navigation + deserialization). Compare the two pure layouts for attribute `total`:
+
+$$C(W,\,\text{total}{=}\text{REL}) = f_1\cdot 1 = 900, \qquad C(W,\,\text{total}{=}\text{JSON}) = f_1\cdot 4 = 3600.$$
+
+So the hot, filtered `total` belongs in a **relational** column. For `tags`, which is only displayed (never filtered) and is heterogeneous/sparse, JSON costs $f_2\cdot 4 = 400$ versus a relational normalization into a side table `OrderTag(order_id, tag)` requiring a join: say $f_2\cdot 6 = 600$. Here **JSON wins** for `tags`.
+
+The optimal hybrid layout is $\ell=\{\text{total}\mapsto\text{REL},\ \text{tags}\mapsto\text{JSON}\}$ with total cost $900+400=1300$, beating all-REL ($900+600=1500$) and all-JSON ($3600+400=4000$). This illustrates the per-attribute, workload-driven split at the heart of the problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

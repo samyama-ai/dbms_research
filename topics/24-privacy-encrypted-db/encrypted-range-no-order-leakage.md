@@ -35,12 +35,18 @@ Active: **DP range query** structures bounding volume/access leakage with tunabl
 - Hardware-enclave-free constructions matching TEE+ORAM performance.
 
 ## 9. Key References
-- **[Foundational]** Boldyreva, Chenette, Lee, O'Neill. *Order-Preserving Symmetric Encryption.* EUROCRYPT, 2009.
-- **[SOTA]** Naveed, Kamara, Wright. *Inference Attacks on Property-Preserving Encrypted Databases.* CCS, 2015.
-- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** Grubbs, Lacharité, Minaud, Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS/S&P, 2018.
-- **[SOTA]** Demertzis, Papadopoulos, Papamanthou, et al. *Practical Private Range Search Revisited.* SIGMOD, 2016.
-- **[SOTA]** Poddar, Boelter, Popa. *Arx: An Encrypted Database using Semantically Secure Encryption.* PVLDB, 2019.
+- **[Foundational]** Boldyreva, Chenette, Lee, O'Neill. *Order-Preserving Symmetric Encryption.* EUROCRYPT, 2009. — [DOI](https://doi.org/10.1007/978-3-642-01001-9_13)
+- **[SOTA]** Naveed, Kamara, Wright. *Inference Attacks on Property-Preserving Encrypted Databases.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813651)
+- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+- **[SOTA]** Grubbs, Lacharité, Minaud, Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS, 2018. — [DOI](https://doi.org/10.1145/3243734.3243864)
+- **[SOTA]** Demertzis, Papadopoulos, Papamanthou, et al. *Practical Private Range Search Revisited.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882911)
+- **[SOTA]** Poddar, Boelter, Popa. *Arx: An Encrypted Database using Semantically Secure Encryption.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342641)
+
+## 10. Worked Example
+
+Take a domain of $N=8$ possible ages, $\{1,\dots,8\}$, indexed by a balanced binary range tree whose internal nodes are the dyadic intervals $\{1,2\},\{3,4\},\{5,6\},\{7,8\},\dots$. A range query `WHERE age BETWEEN 3 AND 6` is covered by the **minimal set of canonical nodes** spanning $\{3,4,5,6\}$: here node $\{3,4\}$ plus node $\{5,6\}$ — **2 nodes**, and $O(\log N)$ in general. Each node becomes one encrypted keyword token, so range search reduces to multi-map SSE: the server matches tokens without learning $3$ or $6$ — no plaintext order revealed.
+
+Contrast OPE: ciphertexts $c_1<c_2<\dots$ directly expose the order. Run enough range queries and the **volume** (result-set sizes) leaks: Grubbs et al. show that once the number of records exceeds $\approx N^2/2 = 32$ here, the per-value counts can be reconstructed up to reflection from volumes alone. Hence pure tree-SSE still needs **volume padding** (round each node's result to a dyadic bound) or DP noise on counts; the residual cost is the $O(\log N)=3$ token blowup plus the $\Omega(\log N)$ ORAM bandwidth floor (Larsen–Nielsen) to also hide access patterns.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

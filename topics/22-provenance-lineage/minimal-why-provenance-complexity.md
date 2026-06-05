@@ -27,11 +27,22 @@ Amarilli, Bourgaux, Bienvenu, and Capelli are actively pushing the **fine-graine
 Articulated directions: a full enumeration-complexity dichotomy for minimal witnesses across CQs/UCQs; tight approximation and parameterized bounds for minimum-cardinality explanations; minimal why-provenance for aggregate, recursive, and ontology-mediated queries; incremental/under-updates minimal-witness maintenance; and human-centered ranking of minimal explanations by responsibility or cost.
 
 ## 9. Key References
-- **[Foundational]** P. Buneman, S. Khanna, W.-C. Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001.
-- **[Foundational]** Y. Cui, J. Widom, J. L. Wiener. *Tracing the Lineage of View Data in a Warehousing Environment.* ACM TODS, 2000.
-- **[SOTA]** A. Meliou, W. Gatterbauer, K. F. Moore, D. Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010.
-- **[SOTA]** M. Bienvenu, C. Bourgaux, et al. *On the Complexity of Why-Provenance for Conjunctive Queries.* ICDT/PODS, 2023–2024.
-- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012.
+- **[Foundational]** P. Buneman, S. Khanna, W.-C. Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001. — [DOI](https://doi.org/10.1007/3-540-44503-X_20) · [DBLP](https://dblp.org/rec/conf/icdt/BunemanKT01.html)
+- **[Foundational]** Y. Cui, J. Widom, J. L. Wiener. *Tracing the Lineage of View Data in a Warehousing Environment.* ACM TODS, 2000. — [DOI](https://doi.org/10.1145/357775.357777) · [DBLP](https://dblp.org/rec/journals/tods/CuiWW00.html)
+- **[SOTA]** A. Meliou, W. Gatterbauer, K. F. Moore, D. Suciu. *The Complexity of Causality and Responsibility for Query Answers and Non-Answers.* VLDB, 2010. — [arXiv](https://arxiv.org/abs/1009.2021) · [DOI](https://doi.org/10.14778/1880172.1880176)
+- **[SOTA]** M. Bienvenu, C. Bourgaux, et al. *On the Complexity of Why-Provenance for Conjunctive Queries.* ICDT/PODS, 2023–2024. — [DBLP search](https://dblp.org/search?q=complexity%20why-provenance%20datalog%20queries) *(unverified; closest confirmed work is Calautti–Livshits–Pieris–Schneider, "The Complexity of Why-Provenance for Datalog Queries," PODS 2024, [DOI](https://doi.org/10.1145/3651146))*
+- **[Foundational]** N. Dalvi, D. Suciu. *The Dichotomy of Probabilistic Inference for Unions of Conjunctive Queries.* J. ACM, 2012. — [DOI](https://doi.org/10.1145/2395116.2395119)
+
+## 10. Worked Example
+
+Consider $R(A,B)$ with tuples $r_1=(1,2),\,r_2=(1,3),\,r_3=(4,2)$ and the self-join CQ
+$Q(x) \leftarrow R(x,y),\,R(z,y)$, asking for $A$-values $x$ that share a $B$-value with *some* row.
+
+For answer $t = (x{=}1)$, the satisfying homomorphisms (matching the two body atoms) give the how-provenance polynomial
+$$\phi_1 = r_1^2 + r_1 r_3 + r_2^2,$$
+since $y{=}2$ pairs $r_1$ with $r_1$ or $r_3$, and $y{=}3$ pairs $r_2$ with itself. Dropping exponents/coefficients into $\mathrm{PosBool}$ gives $r_1 \vee (r_1\wedge r_3) \vee r_2$. Absorbing the subsumed term $r_1\wedge r_3$, the **prime implicants** are $\{r_1\}$ and $\{r_2\}$ — these are the minimal witnesses. The **minimum-cardinality witness** has size $1$ (either single tuple).
+
+Notice the self-join created the monomial $r_1 r_3$, which is *not* minimal — illustrating why self-joins push the problem beyond the trivial self-join-free case where every homomorphism image is already minimal. Here enumeration is still easy ($2$ witnesses), but in general the number of prime implicants of such a monotone DNF can be exponential, and finding the shortest is the NP-hard shortest-prime-implicant problem.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

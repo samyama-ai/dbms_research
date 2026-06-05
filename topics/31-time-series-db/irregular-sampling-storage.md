@@ -56,11 +56,24 @@ For **near-regular** data the gap is essentially closed (delta-of-delta + XOR ne
 
 ## 9. Key References
 
-- **[Foundational]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015.
-- **[SOTA]** D. Blalock, S. Madden, J. Guttag. *Sprintz: Time Series Compression for the Internet of Things.* IMWUT/UbiComp, 2018.
-- **[SOTA]** C. Wang et al. *Apache IoTDB: A Time Series Database for IoT.* (TsFile / IoTDB), VLDB/SIGMOD, 2020–2023.
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Foundational]** T. Cover, J. Thomas. *Elements of Information Theory.* Wiley, 2006.
+- **[Foundational]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824078) — [DBLP](https://dblp.org/rec/journals/pvldb/PelkonenFCHMTV15.html)
+- **[SOTA]** D. Blalock, S. Madden, J. Guttag. *Sprintz: Time Series Compression for the Internet of Things.* IMWUT/UbiComp, 2018. — [arXiv](https://arxiv.org/abs/1808.02515) — [DBLP](https://dblp.org/rec/journals/imwut/BlalockMG18.html)
+- **[SOTA]** C. Wang et al. *Apache IoTDB: A Time Series Database for IoT.* (TsFile / IoTDB), VLDB/SIGMOD, 2020–2023. — [DOI](https://doi.org/10.14778/3415478.3415504) — [DBLP](https://dblp.org/rec/journals/pvldb/WangHSXSKSZK20.html)
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time–Space Trade-Offs for Predecessor Search.* STOC, 2006. — [arXiv](https://arxiv.org/abs/cs/0603043) — [DBLP](https://dblp.org/rec/conf/stoc/PatrascuT06.html)
+- **[Foundational]** T. Cover, J. Thomas. *Elements of Information Theory.* Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+
+## 10. Worked Example
+
+Consider an event-driven sensor reporting at irregular times (seconds): $t = 100, 160, 220, 280, 345$, jitter near a 60 s nominal period. **Delta-of-delta** coding: first store $t_0=100$ and the first delta $\Delta_1 = 60$. Then second differences are $\Delta^2 t_i = \Delta_i - \Delta_{i-1}$:
+
+| $i$ | $t_i$ | $\Delta_i$ | $\Delta^2 t_i$ | bits |
+|---|---|---|---|---|
+| 1 | 160 | 60 | — | 9 (header delta) |
+| 2 | 220 | 60 | 0 | 1 (`0`) |
+| 3 | 280 | 60 | 0 | 1 (`0`) |
+| 4 | 345 | 65 | +5 | 9 (control + value) |
+
+Three of four deltas are stored in a single bit each (Gorilla uses `0` for $\Delta^2=0$), and only the one jittered point costs a full control word — roughly $9+1+1+9 = 20$ bits for 4 timestamps vs. $4\times 64 = 256$ bits raw, a $\sim 12\times$ saving. Now contrast a **bursty** stream $t = 100, 101, 102, 500, 501$: the second differences are $\{-59, 398, -398\}$ — large and sign-flipping, so delta-of-delta degrades toward $\Omega(\log(\text{range}))$ bits/sample, matching the Shannon floor $H(\Delta t)$ for the heavy-tailed inter-arrival distribution. This is exactly the regime section 6 flags as open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -40,11 +40,28 @@ Directions: (i) "anytime"/budget-aware fusion that adapts $\alpha$ per query usi
 - Joint index structures (graph + inverted) that share traversal work.
 
 ## 9. Key References
-- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS (PODS), 2003.
-- **[Foundational]** C. Dwork, R. Kumar, M. Naor, D. Sivakumar. *Rank Aggregation Methods for the Web.* WWW, 2001.
-- **[SOTA]** T. Formal, B. Piwowarski, S. Clinchant. *SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking.* SIGIR, 2021.
-- **[SOTA]** G. V. Cormack, C. L. A. Clarke, S. Büttcher. *Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods.* SIGIR, 2009.
-- **[Survey]** N. Thakur, N. Reimers, A. Rücklé, A. Srivastava, I. Gurevych. *BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models.* NeurIPS Datasets, 2021.
+- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS (PODS), 2003. — [arXiv](https://arxiv.org/abs/cs/0204046)
+- **[Foundational]** C. Dwork, R. Kumar, M. Naor, D. Sivakumar. *Rank Aggregation Methods for the Web.* WWW, 2001. — [DOI](https://doi.org/10.1145/371920.372165)
+- **[SOTA]** T. Formal, B. Piwowarski, S. Clinchant. *SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking.* SIGIR, 2021. — [arXiv](https://arxiv.org/abs/2107.05720)
+- **[SOTA]** G. V. Cormack, C. L. A. Clarke, S. Büttcher. *Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods.* SIGIR, 2009. — [DOI](https://doi.org/10.1145/1571941.1572114)
+- **[Survey]** N. Thakur, N. Reimers, A. Rücklé, A. Srivastava, I. Gurevych. *BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models.* NeurIPS Datasets, 2021. — [arXiv](https://arxiv.org/abs/2104.08663)
+
+## 10. Worked Example
+
+Three docs, two modalities. Dense and sparse similarities (already on $[0,1]$):
+
+| doc | $d(q,x)$ | $l(q,x)$ |
+|-----|----------|----------|
+| A   | 0.90     | 0.10     |
+| B   | 0.40     | 0.80     |
+| C   | 0.55     | 0.50     |
+
+**Linear fusion**, $\alpha=0.5$: $f=0.5\,d+0.5\,l$ gives $A{=}0.50,\ B{=}0.60,\ C{=}0.525$, so top-1 is **B**. With $\alpha=0.8$ (dense-heavy): $A{=}0.74,\ B{=}0.48,\ C{=}0.54$, top-1 flips to **A**. The ranking is not robust to $\alpha$ — the open problem.
+
+**RRF** ($\kappa=60$): dense ranks $A{=}1,C{=}2,B{=}3$; sparse ranks $B{=}1,C{=}2,A{=}3$. Score $\sum_m 1/(\kappa+\text{rank})$:
+$A=\tfrac1{61}+\tfrac1{63}=0.0323$, $B=\tfrac1{63}+\tfrac1{61}=0.0323$, $C=\tfrac1{62}+\tfrac1{62}=0.0323$. A near-tie — RRF, being scale-free, hedges instead of committing, which is exactly why it is empirically robust but offers no top-$k$ error bound.
+
+**TA threshold** intuition: after reading the top dense entry (A, 0.90) and top sparse entry (B, 0.80), the threshold for $\alpha=0.5$ fusion is $0.5(0.90)+0.5(0.80)=0.85$; no seen candidate yet exceeds it, so TA must probe deeper — and because dense access is only *approximate* here, that threshold no longer certifies correctness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

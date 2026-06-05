@@ -35,12 +35,27 @@ Directions: **leakage cryptanalysis as a discipline** — formal models bounding
 - Standardized leakage-abuse benchmarks for fair scheme comparison.
 
 ## 9. Key References
-- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[SOTA]** Cash, Grubbs, Perry, Ristenpart. *Leakage-Abuse Attacks Against Searchable Encryption.* CCS, 2015.
-- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** Kamara, Moataz. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019.
-- **[SOTA]** Grubbs, Khandelwal, Lacharité, Brown, Li, Agarwal, Ristenpart. *PANCAKE: Frequency Smoothing for Encrypted Data Stores.* USENIX Security, 2020.
-- **[Lower bound]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
+- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417)
+- **[SOTA]** Cash, Grubbs, Perry, Ristenpart. *Leakage-Abuse Attacks Against Searchable Encryption.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813700) · [ePrint](https://eprint.iacr.org/2016/718)
+- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+- **[SOTA]** Kamara, Moataz. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019. — [DOI](https://doi.org/10.1007/978-3-030-17656-3_7)
+- **[SOTA]** Grubbs, Khandelwal, Lacharité, Brown, Li, Agarwal, Ristenpart. *PANCAKE: Frequency Smoothing for Encrypted Data Stores.* USENIX Security, 2020. — [USENIX](https://www.usenix.org/conference/usenixsecurity20/presentation/grubbs) · [ePrint](https://eprint.iacr.org/2020/1501)
+- **[Lower bound]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) · [ePrint](https://eprint.iacr.org/2018/423)
+
+## 10. Worked Example
+
+A **volume leakage-abuse attack** in miniature. Suppose the server hosts an encrypted keyword index and, from auxiliary knowledge (e.g., a public corpus), it knows the *true* result counts for four keywords:
+
+| keyword | true #matches |
+|---|---|
+| `flu` | 12 |
+| `covid` | 47 |
+| `cancer | 5 |
+| `asthma` | 23 |
+
+The counts are all distinct. The client now issues four encrypted queries $q_1,\dots,q_4$; the access pattern reveals how many encrypted documents each returns: $|q_1|=23,\ |q_2|=5,\ |q_3|=47,\ |q_4|=12$. Because the volume multiset $\{12,47,5,23\}$ is *injective*, the server matches by volume alone: $q_1\!\to\!$`asthma`, $q_2\!\to\!$`cancer`, $q_3\!\to\!$`covid`, $q_4\!\to\!$`flu`. **Full query recovery with zero cryptanalysis** — this is the set-reconstruction problem the LAA literature formalizes.
+
+**Defense, concretely:** volume-hiding via dyadic padding rounds each count up to the next power of two: $12,47,5,23 \to 16,64,8,32$. These are still distinct here, so padding *alone* fails — illustrating why hiding *one* leakage axis is insufficient and motivating combined access-pattern + volume suppression (ORAM-class cost, per Larsen–Nielsen's $\Omega(\log n)$ bound).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

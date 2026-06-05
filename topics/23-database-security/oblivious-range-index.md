@@ -48,12 +48,24 @@ Active directions: **locality-preserving oblivious structures** that batch the $
 
 ## 9. Key References
 
-- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996.
-- **[Foundational]** Stefanov, E., van Dijk, M., Shi, E., et al. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013.
-- **[SOTA]** Wang, X.S., Nayak, K., Liu, C., Shi, E., et al. *Oblivious Data Structures.* CCS, 2014.
-- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Asharov, G., Komargodski, I., Lin, W.-K., Nayak, K., Peserico, E., Shi, E. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020.
-- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2020.
+- **[Foundational]** Goldreich, O., Ostrovsky, R. *Software Protection and Simulation on Oblivious RAMs.* JACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** Stefanov, E., van Dijk, M., Shi, E., et al. *Path ORAM: An Extremely Simple Oblivious RAM Protocol.* CCS, 2013. — [DOI](https://doi.org/10.1145/2508859.2516660)
+- **[SOTA]** Wang, X.S., Nayak, K., Liu, C., Shi, E., et al. *Oblivious Data Structures.* CCS, 2014. — [DOI](https://doi.org/10.1145/2660267.2660314)
+- **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
+- **[SOTA]** Asharov, G., Komargodski, I., Lin, W.-K., Nayak, K., Peserico, E., Shi, E. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020. — [DOI](https://doi.org/10.1007/978-3-030-45724-2_14)
+- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3364324.3364331)
+
+## 10. Worked Example
+
+**The pointer-chasing tax on a range query.** Outsource $N = 2^{20}$ records keyed $1\ldots N$ in a B-tree with branching $B=16$, so height $h=\log_{16} 2^{20} = 5$. A range query $20{,}000 \le \text{key} \le 20{,}049$ returns $r=50$ records spanning, say, $3$ adjacent leaves.
+
+*Non-oblivious cost:* one root-to-leaf descent ($5$ node reads) plus a leaf scan — $\approx 5 + 3 = 8$ block accesses; the server learns nothing extra because it sees nothing hidden, but it *does* see exactly which blocks.
+
+*Wrapped in Path ORAM* (per-access cost $O(\log^2 N) = (\log 2^{20})^2 = 400$ block transfers): every one of the $h=5$ pointer-chases is a separate oblivious access, and each of the $3$ leaves is fetched obliviously too:
+
+$$\text{cost} \approx (h + r_{\text{leaves}})\cdot O(\log^2 N) = (5+3)\cdot 400 = 3200 \text{ block transfers.}$$
+
+So obliviousness inflates $8 \to 3200$, a $400\times$ blowup — the per-node $\log^2 N$ multiplier. The Larsen–Nielsen $\Omega(\log N)=\Omega(20)$ lower bound says *some* logarithmic tax per access is unavoidable, but it does **not** justify the full $r\cdot\log^2 N$: the open question is whether the $50$ returned records can share one $O(\log N)$ traversal, collapsing the cost toward $O(\log N + r)\approx 20 + 50 = 70$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

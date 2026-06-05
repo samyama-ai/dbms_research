@@ -49,11 +49,21 @@ Directions: learning-augmented tiering (predict object temperature, plug into sk
 
 ## 9. Key References
 
-- **[Foundational]** D. D. Sleator, R. E. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Foundational]** N. E. Young. *On-Line File Caching (Greedy-Dual-Size / LANDLORD).* Algorithmica, 2002.
-- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992.
-- **[SOTA]** M. Purohit, Z. Svitkina, R. Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018.
-- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998.
+- **[Foundational]** D. D. Sleator, R. E. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** N. E. Young. *On-Line File Caching (Greedy-Dual-Size / LANDLORD).* Algorithmica, 2002. — [DOI](https://doi.org/10.1007/s00453-001-0124-5)
+- **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
+- **[SOTA]** M. Purohit, Z. Svitkina, R. Kumar. *Improving Online Algorithms via ML Predictions.* NeurIPS, 2018. — [NeurIPS](https://proceedings.neurips.cc/paper/2018/hash/73a427badebe0e32caa2e1fc7530b7f3-Abstract.html)
+- **[Survey]** A. Borodin, R. El-Yaniv. *Online Computation and Competitive Analysis.* Cambridge University Press, 1998. — [ACM](https://dl.acm.org/doi/book/10.5555/290169)
+
+## 10. Worked Example
+
+Take one object, $1$ GB. Hot tier: storage rent $s_{\text{hot}} = \$0.023$/GB-month, retrieval free. Cold tier: storage $s_{\text{cold}} = \$0.004$/GB-month, but retrieval $r = \$0.09$/GB. Demoting hot→cold is essentially free here. This is **ski-rental**: "renting" = paying the extra hot storage to keep retrieval free; "buying" = demoting and risking a $\$0.09$ retrieval on the next access.
+
+Extra rent for staying hot vs. cold is $0.023 - 0.004 = \$0.019$/GB-month. The break-even is when accumulated extra rent equals the retrieval cost:
+
+$$t^* = \frac{r}{s_{\text{hot}} - s_{\text{cold}}} = \frac{0.09}{0.019} \approx 4.7\ \text{months}.$$
+
+The deterministic $2$-competitive rule: keep the object hot until it has sat idle for $t^* \approx 4.7$ months, then demote. If the next access comes at month $3$ (before $t^*$), we stayed hot and paid only rent — optimal. If no access ever comes, we paid $\approx 4.7$ months of extra rent ($\$0.089$) then demoted, vs. an offline optimum that demotes immediately; the ratio is at most $2$. With a temperature predictor (Purohit et al.), a confident "cold" prediction lets us demote early, pushing the consistency toward $1$ while ski-rental's $t^*$ rule bounds the robustness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

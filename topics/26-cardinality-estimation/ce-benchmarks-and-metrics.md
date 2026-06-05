@@ -1,6 +1,7 @@
 # Cardinality Estimation Benchmarks & Metrics
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/ce-benchmarks-and-metrics` · **Status:** empirically-open
+> **Verification note:** The q-error paper's third author is Gabriele Steidl, not "Steinbrunn" (Moerkotte, Neumann, Steidl, VLDB 2009); the §9 citation has been corrected accordingly.
 
 ## 1. Problem Statement
 
@@ -64,12 +65,26 @@ We have good *workloads* (JOB, STATS-CEB) but no *metric* that is both cheap and
 
 ## 9. Key References
 
-- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* VLDB, 2015.
-- **[Foundational]** Moerkotte, Neumann, Steinbrunn. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009.
-- **[SOTA]** Negi, Marcus, Kipf, Mao, Tatbul, Kraska, Alizadeh. *Flow-Loss: Learning Cardinality Estimates that Matter.* VLDB, 2021.
-- **[Survey/SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022.
-- **[Survey/SOTA]** Wang, Qu, Li, Cui, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021.
-- **[SOTA]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021.
+- **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594), [DBLP](https://dblp.org/rec/journals/pvldb/LeisGMBK015.html)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687738), [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
+- **[SOTA]** Negi, Marcus, Kipf, Mao, Tatbul, Kraska, Alizadeh. *Flow-Loss: Learning Cardinality Estimates that Matter.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476259), [arXiv](https://arxiv.org/abs/2101.04964)
+- **[Survey/SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3503585.3503586), [arXiv](https://arxiv.org/abs/2109.05877)
+- **[Survey/SOTA]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [DOI](https://doi.org/10.14778/3461535.3461552), [DBLP](https://dblp.org/rec/journals/pvldb/WangQWWZ21.html)
+- **[SOTA]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021. — [GitHub](https://github.com/learnedsystems/CEB)
+
+## 10. Worked Example
+
+Why median q-error misleads. Two estimators run on a 5-query workload (true cardinalities $c$, estimates $\hat c$); q-error is $\max(\hat c/c,\ c/\hat c)$.
+
+| query | $c$ | $\hat c_A$ | q-err A | $\hat c_B$ | q-err B |
+|---|---|---|---|---|---|
+| $q_1$ | 100 | 130 | 1.3 | 50  | 2.0 |
+| $q_2$ | 100 | 70  | 1.43 | 60 | 1.67 |
+| $q_3$ | 100 | 120 | 1.2 | 55  | 1.82 |
+| $q_4$ | 100 | 80  | 1.25 | 65  | 1.54 |
+| $q_5$ | $10^6$ | $10^3$ | **1000** | $4\times10^5$ | 2.5 |
+
+**Median q-error:** A = 1.3, B = 1.82 — A "wins." **Max q-error:** A = 1000, B = 2.5 — B wins by a wide margin. Estimator A's catastrophic $1000\times$ under-estimate on $q_5$ (the large join) is exactly the tail error that drives the optimizer into an unbounded nested-loop, yet it is invisible to the median. Moerkotte et al.'s bound is on **max** q-error: if $\max$ q-error $\le \sqrt{2}$ over a plan's subexpressions, the chosen plan is provably within a bounded factor of optimal — so the $L_\infty$ statistic, not the median, is the plan-faithful one. Ranking by median here gives the wrong winner.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

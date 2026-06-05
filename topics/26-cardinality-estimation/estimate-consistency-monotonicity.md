@@ -57,11 +57,21 @@ Deciding realizability of a set of arbitrary marginal/selectivity constraints by
 
 ## 9. Key References
 
-- **[Foundational]** Markl, Megiddo, Kutsch, Tran, Haas, Srivastava. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005.
-- **[SOTA]** Srivastava, Haas, Markl, Kutsch, Tran. *ISOMER: Consistent Histogram Construction Using Query Feedback.* ICDE, 2006.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019.
-- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
+- **[Foundational]** Markl, Megiddo, Kutsch, Tran, Haas, Srivastava. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005. — [VLDB Journal version (DOI)](https://doi.org/10.1007/s00778-006-0030-1)
+- **[SOTA]** Srivastava, Haas, Markl, Kutsch, Tran. *ISOMER: Consistent Histogram Construction Using Query Feedback.* ICDE, 2006. — [DBLP](https://dblp.org/rec/conf/icde/SrivastavaHMKT06.html)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[Survey]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really?* VLDB, 2015. — [DBLP](https://dblp.org/rec/journals/pvldb/LeisGMBK015.html)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [arXiv](https://arxiv.org/abs/1711.03860)
+
+## 10. Worked Example
+
+Take $|R| = 1000$ with two predicates $p$ (`color = red`) and $q$ (`size = L`). An optimizer holds three feedback selectivities: $s_p = 0.30$, $s_q = 0.20$, and the *conjunct* $s_{p\wedge q} = 0.18$.
+
+Check monotonicity: $Q_1 = \sigma_{p\wedge q}$ logically implies $Q_2 = \sigma_p$, so we need $\hat c(p\wedge q) \le \hat c(p)$, i.e. $180 \le 300$. Holds. But the independence guess would predict $s_p\cdot s_q = 0.30\times 0.20 = 0.06$ (60 rows), far below the observed 180 — the attributes are positively correlated.
+
+Now inclusion–exclusion must close: from the four cells $\{pq, p\bar q, \bar p q, \bar p\bar q\}$,
+$$s_{pq}=0.18,\quad s_{p\bar q}=s_p-s_{pq}=0.12,\quad s_{\bar p q}=s_q-s_{pq}=0.02,$$
+and the remainder $s_{\bar p\bar q}=1-0.18-0.12-0.02=0.68$. All four are $\ge 0$ and sum to $1$, so a single measure $\mu$ realizes them — the estimates are consistent. Had feedback instead claimed $s_{p\wedge q}=0.35 > s_p=0.30$, monotonicity would break ($350 > 300$) and the cell $s_{p\bar q}=-0.05<0$ would prove no distribution realizes the set; max-entropy reconciliation would project back to a feasible, consistent point.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

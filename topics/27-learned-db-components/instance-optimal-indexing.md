@@ -97,11 +97,23 @@ against the best layout for that measure.
 
 ## 9. Key References
 
-- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS, 2003.
-- **[Foundational]** M. Pătraşcu, M. Thorup. *Time–Space Trade-offs for Predecessor Search.* STOC 2006.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB 2020.
-- **[SOTA]** T. Kraska et al. *The Case for Learned Index Structures.* SIGMOD 2018.
-- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020.
+- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS, 2003. — [arXiv](https://arxiv.org/abs/cs/0204046) — [DOI](https://doi.org/10.1016/S0022-0000(03)00026-6)
+- **[Foundational]** M. Pătraşcu, M. Thorup. *Time–Space Trade-offs for Predecessor Search.* STOC 2006. — [arXiv](https://arxiv.org/abs/cs/0603043) — [DBLP](https://dblp.org/rec/conf/stoc/PatrascuT06.html)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-index: a Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135) — [DBLP](https://dblp.org/rec/journals/pvldb/FerraginaV20.html)
+- **[SOTA]** T. Kraska et al. *The Case for Learned Index Structures.* SIGMOD 2018. — [arXiv](https://arxiv.org/abs/1712.01208) — [DOI](https://doi.org/10.1145/3183713.3196909)
+- **[SOTA]** J. Ding et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020. — [arXiv](https://arxiv.org/abs/1905.08898) — [DOI](https://doi.org/10.1145/3318464.3389711)
+
+## 10. Worked Example
+
+Take $N = 8$ sorted keys whose values are *nearly linear* in their rank:
+
+| rank $i$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|
+| key $k_i$ | 10 | 20 | 30 | 41 | 50 | 60 | 70 | 80 |
+
+The empirical CDF is almost a straight line, so a single linear model $\hat p(x) = (x-10)/10$ predicts rank. To look up key $41$: $\hat p(41) = 3.1 \Rightarrow$ predicted rank $3$. The true rank is $3$, so the local error is $0$ here; across all keys the max rank-error is $\varepsilon = 1$ (only $41$ deviates). A PGM/RMI segment with $\varepsilon = 1$ needs a final probe window of size $2\varepsilon+1 = 3$.
+
+Contrast an **adversarial** key set $\{1, 2, 4, 8, 16, 32, 64, 128\}$ (geometric): no single line fits, forcing many segments, and the cell-probe bound $\Omega(\log_w N)$ asserts no learned index beats a B-tree here. Instance optimality says: on the *near-linear* instance, achieve near-$O(1)$ search; on the geometric instance, gracefully fall back to $O(\log N)$ — competitive with the best structure *for that realized instance*, not the worst case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

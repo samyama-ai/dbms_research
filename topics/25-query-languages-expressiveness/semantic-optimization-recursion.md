@@ -55,12 +55,29 @@ The gap is **qualitative, not just quantitative**: in the unrestricted case ther
 
 ## 9. Key References
 
-- **[Foundational]** Deutsch, Popa, Tannen. *Physical Data Independence, Constraints, and Optimization with Universal Plans.* VLDB, 1999 (Chase & Backchase).
-- **[Foundational]** Gaifman, Mairson, Sagiv, Vardi. *Undecidable Optimization Problems for Database Logic Programs.* JACM, 1993.
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, Datalog, dependencies).
-- **[SOTA]** Calì, Gottlob, Kifer. *Taming the Infinite Chase: Query Answering under Expressive Relational Constraints.* JAIR, 2013.
-- **[SOTA]** Bellomarini, Gottlob, Sallinger. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* PVLDB, 2018.
-- **[Survey]** Deutsch, Nash, Remmel. *The Chase Revisited.* PODS, 2008.
+- **[Foundational]** Deutsch, Popa, Tannen. *Physical Data Independence, Constraints, and Optimization with Universal Plans.* VLDB, 1999 (Chase & Backchase). — [DBLP](https://dblp.org/rec/conf/vldb/DeutschPT99.html)
+- **[Foundational]** Gaifman, Mairson, Sagiv, Vardi. *Undecidable Optimization Problems for Database Logic Programs.* JACM, 1993. — [DOI](https://doi.org/10.1145/174130.174142)
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (chase, Datalog, dependencies). — [book](http://webdam.inria.fr/Alice/)
+- **[SOTA]** Calì, Gottlob, Kifer. *Taming the Infinite Chase: Query Answering under Expressive Relational Constraints.* JAIR, 2013. — [DOI](https://doi.org/10.1613/jair.3873)
+- **[SOTA]** Bellomarini, Gottlob, Sallinger. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3213880.3213888)
+- **[Survey]** Deutsch, Nash, Remmel. *The Chase Revisited.* PODS, 2008. — [DOI](https://doi.org/10.1145/1376916.1376938)
+
+## 10. Worked Example
+
+Consider the transitive-closure program $P$ over an edge relation $\mathsf{E}$:
+
+$$
+\mathsf{tc}(x,y) \leftarrow \mathsf{E}(x,y) \qquad
+\mathsf{tc}(x,y) \leftarrow \mathsf{E}(x,z),\,\mathsf{tc}(z,y)
+$$
+
+and the query $Q$: $\mathsf{ans}(x,y)\leftarrow \mathsf{tc}(x,y)$. Naively, $\mathrm{lfp}(T_P)$ may iterate up to $n-1$ times on an $n$-node graph.
+
+Now add the constraint $\Sigma$: a denial constraint asserting $\mathsf{E}$ is **acyclic and of depth $\le 1$** — operationally, "every edge target is a sink," i.e. $\mathsf{E}(x,z)\wedge \mathsf{E}(z,y)\to \bot$. Under any $D\models\Sigma$, the recursive rule's body $\mathsf{E}(x,z),\mathsf{tc}(z,y)$ can only fire via $\mathsf{tc}(z,y)=\mathsf{E}(z,y)$ at the base, and then $\mathsf{E}(x,z),\mathsf{E}(z,y)$ is unsatisfiable. So the recursive rule contributes nothing.
+
+**Pruning result:** $P \equiv_\Sigma P'$ where $P'$ is the non-recursive $\mathsf{tc}(x,y)\leftarrow\mathsf{E}(x,y)$. We have *semantically removed recursion* — $P$ is bounded under $\Sigma$ even though it is unbounded with $\Sigma=\emptyset$. Evaluation drops from up to $n-1$ semi-naïve rounds to a single scan, $O(|\mathsf{E}|)$.
+
+The catch the topic flags: deciding such removability for *arbitrary* $\Sigma$ is undecidable (boundedness is undecidable, GMSV), so only restricted constraint classes admit an automatic prover.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

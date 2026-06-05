@@ -34,12 +34,22 @@ Threads: **budgeted retraining scheduling** as a restless-bandit / scheduling pr
 - Standard drift benchmarks at TSDB cardinality (millions of series, realistic regime shifts).
 
 ## 9. Key References
-- **[Foundational]** M. Zinkevich. *Online Convex Programming and Generalized Infinitesimal Gradient Ascent.* ICML, 2003.
-- **[Foundational]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007.
-- **[SOTA]** L. Zhang, S. Lu, Z.-H. Zhou. *Adaptive Online Learning in Dynamic Environments.* NeurIPS, 2018.
-- **[SOTA]** A. Daniely, A. Gonen, S. Shalev-Shwartz. *Strongly Adaptive Online Learning.* ICML, 2015.
-- **[Foundational]** T. L. Lai. *Information Bounds and Quick Detection of Parameter Changes in Stochastic Systems.* IEEE Trans. Information Theory, 1998.
-- **[Survey]** J. Gama, I. Žliobaitė, A. Bifet, M. Pechenizkiy, A. Bouchachia. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014.
+- **[Foundational]** M. Zinkevich. *Online Convex Programming and Generalized Infinitesimal Gradient Ascent.* ICML, 2003. — [ACM](https://dl.acm.org/doi/10.5555/3041838.3041955), [DBLP](https://dblp.org/rec/conf/icml/Zinkevich03.html)
+- **[Foundational]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007. — [DOI](https://doi.org/10.1137/1.9781611972771.42)
+- **[SOTA]** L. Zhang, S. Lu, Z.-H. Zhou. *Adaptive Online Learning in Dynamic Environments.* NeurIPS, 2018. — [arXiv](https://arxiv.org/abs/1810.10815)
+- **[SOTA]** A. Daniely, A. Gonen, S. Shalev-Shwartz. *Strongly Adaptive Online Learning.* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/daniely15.html), [arXiv](https://arxiv.org/abs/1502.07073)
+- **[Foundational]** T. L. Lai. *Information Bounds and Quick Detection of Parameter Changes in Stochastic Systems.* IEEE Trans. Information Theory, 1998. — [DOI](https://doi.org/10.1109/18.737522)
+- **[Survey]** J. Gama, I. Žliobaitė, A. Bifet, M. Pechenizkiy, A. Bouchachia. *A Survey on Concept Drift Adaptation.* ACM Computing Surveys, 2014. — [DOI](https://doi.org/10.1145/2523813)
+
+## 10. Worked Example
+
+A sensor's forecaster tracks a mean that abruptly jumps at $t=500$ from $\mu=10$ to $\mu=14$ (a regime shift). Compare two maintenance policies.
+
+**Periodic retrain (every 100 steps).** Between the drift at $t=500$ and the next scheduled refit at $t=600$, the model predicts $\hat\mu=10$ while truth is $14$, paying squared loss $\approx 16$ per step for $100$ steps $\Rightarrow$ accumulated excess loss $\approx 1600$. Staleness $\le 100$ regardless of when drift happens.
+
+**Drift-triggered (ADWIN + online GD).** ADWIN holds a window and splits it when two sub-windows differ by more than a Hoeffding bound $\epsilon_{\text{cut}}$. With variance $\sigma^2=1$, shift $\delta=4$, confidence $\delta_{\text{conf}}=0.05$, detection delay is $O\!\big(\tfrac{\sigma^2\log(1/\delta_{\text{conf}})}{\delta^2}\big)\approx \tfrac{1\cdot 3}{16}\approx$ a handful of steps; say the cut fires at $t=510$. The model retrains on the post-cut window and excess loss is incurred for only $\approx 10$ steps $\Rightarrow \approx 160$, a $10\times$ reduction.
+
+**Why some lag is unavoidable.** The Lai/Lorden bound forces expected detection delay $\gtrsim \log(\text{ARL})/\mathrm{KL}$. Here $\mathrm{KL}$ between $\mathcal N(10,1)$ and $\mathcal N(14,1)$ is $\delta^2/2 = 8$; targeting average run length to false alarm $\text{ARL}=10^4$ gives delay $\gtrsim \ln(10^4)/8 \approx 1.15$ steps — so even an optimal detector cannot reach zero staleness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

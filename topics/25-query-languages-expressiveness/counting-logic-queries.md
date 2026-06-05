@@ -63,12 +63,20 @@ The flagship gap is **wide open**: *is there any logic that captures PTIME?* IFP
 
 ## 9. Key References
 
-- **[Foundational]** Cai, Fürer, Immerman. *An Optimal Lower Bound on the Number of Variables for Graph Identification.* Combinatorica, 1992 (CFI; IFP+C ≠ P).
-- **[Foundational]** Immerman. *Descriptive Complexity.* Springer, 1999.
-- **[Foundational]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (FO+C, locality, capture results).
-- **[SOTA]** Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017.
-- **[SOTA]** Lichter. *Separating Rank Logic from Polynomial Time.* LICS, 2021.
-- **[SOTA]** Morris, Ritzert, Fey, Hamilton, et al. *Weisfeiler and Leman Go Neural: Higher-Order GNNs.* AAAI, 2019.
+- **[Foundational]** Cai, Fürer, Immerman. *An Optimal Lower Bound on the Number of Variables for Graph Identification.* Combinatorica, 1992 (CFI; IFP+C ≠ P). — [DOI](https://doi.org/10.1007/BF01305232)
+- **[Foundational]** Immerman. *Descriptive Complexity.* Springer, 1999. — [DOI](https://doi.org/10.1007/978-1-4612-0539-5)
+- **[Foundational]** Libkin. *Elements of Finite Model Theory.* Springer, 2004 (FO+C, locality, capture results). — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[SOTA]** Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge Univ. Press, 2017. — [DOI](https://doi.org/10.1017/9781139028868)
+- **[SOTA]** Lichter. *Separating Rank Logic from Polynomial Time.* LICS, 2021. — [arXiv](https://arxiv.org/abs/2104.12999) · [DOI](https://doi.org/10.1145/3572918)
+- **[SOTA]** Morris, Ritzert, Fey, Hamilton, et al. *Weisfeiler and Leman Go Neural: Higher-Order GNNs.* AAAI, 2019. — [arXiv](https://arxiv.org/abs/1810.02244) · [DOI](https://doi.org/10.1609/aaai.v33i01.33014602)
+
+## 10. Worked Example
+
+**Counting beats plain FO; one CFI gadget beats counting.**
+
+*FO cannot say "even".* On a unary relation $P$ with elements $\{p_1,\dots,p_m\}$, no fixed FO sentence expresses "$|P|$ is even": an EF / locality argument lets the duplicator win on $P$ of size $2k$ vs $2k{+}1$ once $k$ exceeds the quantifier rank. But **FO+C** says it trivially: $\exists i\,(2i = \#x.\,P(x))$ on the number sort. So counting strictly adds power here.
+
+*Why even FO+C (indeed IFP+C) is not enough for P.* The CFI construction replaces each edge of an ordered base graph $G$ by a small gadget with a hidden $\mathbb{F}_2$ "twist". Flipping an *odd* number of twists yields a non-isomorphic graph $\tilde G$, yet $G$ and $\tilde G$ agree on **every** property the $k$-dimensional Weisfeiler–Leman test sees, for $k$ up to $\Omega(n)$. Since $\mathrm{C}^{k+1}\equiv$ $k$-WL (Cai–Fürer–Immerman), no fixed-variable counting formula — hence no IFP+C query — distinguishes $G$ from $\tilde G$. But telling them apart is just solving a linear system over $\mathbb{F}_2$, which is in PTIME. Concretely: a counting query computing "number of length-2 walks" assigns identical multisets of vertex colors to $G$ and $\tilde G$, so it returns the same answer on both — yet a Gaussian-elimination algorithm separates them in $O(n^3)$. This single family witnesses $\mathrm{IFP{+}C}\subsetneq\mathrm{PTIME}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

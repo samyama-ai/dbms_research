@@ -53,12 +53,27 @@ For benefit with **submodularity ratio $\gamma$**, greedy achieves $(1 - e^{-\ga
 - Unifying interaction modeling across indexes + MVs + partitions (feeds *joint-physical-design*).
 
 ## 9. Key References
-- **[Foundational]** K. Schnaitter, N. Polyzotis, L. Getoor. *Index Interactions in Physical Design Tuning: Modeling, Analysis, and Applications.* VLDB, 2009.
-- **[Foundational]** A. Das, D. Kempe. *Submodular meets Spectral: Greedy Algorithms for Subset Selection... (submodularity ratio).* ICML, 2011.
-- **[Foundational]** U. Feige, R. Izsak. *Welfare Maximization and the Supermodular Degree.* ITCS, 2013.
-- **[SOTA]** R. Marcus, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor (DTA).* Microsoft, 2020.
-- **[Survey]** F. Bach. *Learning with Submodular Functions: A Convex Optimization Perspective.* Foundations and Trends in ML, 2013.
+- **[Foundational]** K. Schnaitter, N. Polyzotis, L. Getoor. *Index Interactions in Physical Design Tuning: Modeling, Analysis, and Applications.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687766)
+- **[Foundational]** A. Das, D. Kempe. *Submodular meets Spectral: Greedy Algorithms for Subset Selection... (submodularity ratio).* ICML, 2011. — [arXiv](https://arxiv.org/abs/1102.3975)
+- **[Foundational]** U. Feige, R. Izsak. *Welfare Maximization and the Supermodular Degree.* ITCS, 2013. — [DOI](https://doi.org/10.1145/2422436.2422466)
+- **[SOTA]** R. Marcus, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[SOTA]** S. Chaudhuri, V. Narasayya. *Anytime Algorithm of Database Tuning Advisor (DTA).* Microsoft, 2020. — [Microsoft Research](https://www.microsoft.com/en-us/research/publication/anytime-algorithm-of-database-tuning-advisor-for-microsoft-sql-server/)
+- **[Survey]** F. Bach. *Learning with Submodular Functions: A Convex Optimization Perspective.* Foundations and Trends in ML, 2013. — [arXiv](https://arxiv.org/abs/1111.6453)
+
+## 10. Worked Example
+
+**A synergy interaction that breaks submodularity.** Query $q$: `SELECT b FROM R WHERE a = 5`. Base cost (full scan) $c_q = 100$. Two candidate indexes: $a$ = index on column `a`; $b$ = index on column `b`.
+
+| Configuration $S$ | plan | cost $c_S$ |
+|---|---|---|
+| $\emptyset$ | scan | $100$ |
+| $\{a\}$ | index seek on `a`, fetch `b` from heap | $30$ |
+| $\{b\}$ | scan (index on `b` useless for the predicate) | $100$ |
+| $\{a,b\}$ | **index-only** plan: seek `a`, read `b` from a *covering* combination | $5$ |
+
+Marginal benefits ($\mathrm{ben}=c_\emptyset-c_S$): adding $b$ to $\emptyset$ gives $0$; adding $b$ to $\{a\}$ gives $30-5=25$. So
+$$ \Delta_b\,\mathrm{ben}(\{a\}) = 25 \;>\; \Delta_b\,\mathrm{ben}(\emptyset) = 0, $$
+a *positive* cross-derivative — supermodular **synergy**. Submodularity requires $\Delta_b\,\mathrm{ben}(\{a\}) \le \Delta_b\,\mathrm{ben}(\emptyset)$, which fails. A greedy advisor evaluating each index alone sees $b$ as worthless and never builds it, missing the $5$-cost index-only plan. The degree-of-interaction here is $\mathrm{doi}_q(a,b) = |25-0|/100 = 0.25$ — large enough that interaction-blind search is provably suboptimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

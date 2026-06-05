@@ -48,11 +48,21 @@ Directions: (i) **online dependency/constraint mining** (streaming order depende
 
 ## 9. Key References
 
-- **[Foundational]** Peter A. Tucker, David Maier, Tim Sheard, Leonidas Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003.
-- **[SOTA]** Shivnath Babu, Utkarsh Srivastava, Jennifer Widom. *Exploiting k-Constraints to Reduce Memory Overhead in Continuous Queries over Data Streams.* ACM TODS, 2004.
-- **[Foundational]** Utkarsh Srivastava, Jennifer Widom. *Flexible Time Management in Data Stream Systems (Heartbeats).* PODS, 2004.
-- **[SOTA]** Lukasz Golab, Howard Karloff, Flip Korn, Avishek Saha, Divesh Srivastava. *Sequential Dependencies.* PVLDB, 2009.
-- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015.
+- **[Foundational]** Peter A. Tucker, David Maier, Tim Sheard, Leonidas Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003. — [DOI](https://doi.org/10.1109/TKDE.2003.1198390)
+- **[SOTA]** Shivnath Babu, Utkarsh Srivastava, Jennifer Widom. *Exploiting k-Constraints to Reduce Memory Overhead in Continuous Queries over Data Streams.* ACM TODS, 2004. — [DOI](https://doi.org/10.1145/1016028.1016032)
+- **[Foundational]** Utkarsh Srivastava, Jennifer Widom. *Flexible Time Management in Data Stream Systems (Heartbeats).* PODS, 2004. — [DOI](https://doi.org/10.1145/1055558.1055596)
+- **[SOTA]** Lukasz Golab, Howard Karloff, Flip Korn, Avishek Saha, Divesh Srivastava. *Sequential Dependencies.* PVLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687693)
+- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+
+## 10. Worked Example
+
+A stream of orders arrives partitioned by region, with `order_id` issued in **non-decreasing** order *within each partition* (a promised order constraint). A blocking `GROUP BY region` with a downstream `SORT BY order_id` cannot emit until it knows no smaller `order_id` will arrive.
+
+**Sound inference with $k=0$.** Partition $P_1$ has emitted ids $\{101,104,108\}$; the source promises monotonicity. Observing $108$ licenses the punctuation $\rho:$ "no more tuples with `order_id < 108` from $P_1$". The operator can now purge state for ids $<108$ and emit any group fully below that bound, using $O(1)$ state per partition (just the running max).
+
+**Tolerating $k=2$ violations.** If at most $k=2$ out-of-order tuples are allowed (Babu–Srivastava–Widom k-constraints), the safe bound becomes the $k$-th-largest of a recent window: with recent ids $\{108,107,104\}$ the sound punctuation is "no more `order_id < 104`" — it backs off by $k$ slots so a late $105$ or $106$ is still admitted.
+
+**Impossibility without a promise.** Drop the monotonicity guarantee. Whatever bound $b$ the inferrer asserts ("no more id $< b$"), an adversary can later send id $b-1$, violating soundness. So with zero promised structure, no non-trivial sound punctuation exists — the safety/liveness impossibility mirroring watermarks. The middle ground (probabilistic soundness with controllable error) is the open territory.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

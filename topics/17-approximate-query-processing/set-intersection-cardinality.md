@@ -39,11 +39,21 @@ Active directions: combining coordinated sampling with learned models for join-c
 - Combining coordinated sampling with learned priors to beat worst-case sample bounds on real data.
 
 ## 9. Key References
-- **[Foundational]** Broder, A. *On the Resemblance and Containment of Documents (MinHash).* SEQUENCES 1997.
-- **[Foundational]** Beyer, K., Haas, P., Reinwald, B., Sismanis, Y., Gemulla, R. *On Synopses for Distinct-Value Estimation Under Multiset Operations (AKMV).* SIGMOD 2007.
-- **[SOTA]** Cohen, E. *Min-Hash Sketches / Coordinated Sampling.* (estimators for intersections and weighted overlap), 2014–2018.
-- **[Foundational]** Bar-Yossef, Z., Jayram, T.S., Kumar, R., Sivakumar, D. *An Information Statistics Approach to Data Stream and Communication Complexity (Set-Disjointness).* JCSS 2004.
-- **[SOTA]** Apache DataSketches. *Theta and Tuple Sketch Set Operations.* Apache Software Foundation, 2015–.
+- **[Foundational]** Broder, A. *On the Resemblance and Containment of Documents (MinHash).* SEQUENCES 1997. — [DOI](https://doi.org/10.1109/SEQUEN.1997.666900)
+- **[Foundational]** Beyer, K., Haas, P., Reinwald, B., Sismanis, Y., Gemulla, R. *On Synopses for Distinct-Value Estimation Under Multiset Operations (AKMV).* SIGMOD 2007. — [DOI](https://doi.org/10.1145/1247480.1247504)
+- **[SOTA]** Cohen, E. *Min-Hash Sketches / Coordinated Sampling.* (estimators for intersections and weighted overlap), 2014–2018. — [DOI](https://doi.org/10.1007/978-1-4939-2864-4_576)
+- **[Foundational]** Bar-Yossef, Z., Jayram, T.S., Kumar, R., Sivakumar, D. *An Information Statistics Approach to Data Stream and Communication Complexity (Set-Disjointness).* JCSS 2004. — [DOI](https://doi.org/10.1016/j.jcss.2003.11.006)
+- **[SOTA]** Apache DataSketches. *Theta and Tuple Sketch Set Operations.* Apache Software Foundation, 2015–. — [Apache](https://datasketches.apache.org/docs/Theta/ThetaSketches.html)
+
+## 10. Worked Example
+
+**Bottom-$k$ Jaccard from independent sketches.** Let $A=\{1,\dots,100\}$ and $B=\{51,\dots,150\}$, so $|A\cap B|=50$, $|A\cup B|=150$, true Jaccard $J=50/150=1/3$. Each side keeps a bottom-$k$ sketch with $k=6$ under a shared hash $h$.
+
+Take the 6 globally smallest hash values across $A\cup B$ — call this sample $L$ (the merge of the two bottom-$k$ sets, then re-truncated to 6). Suppose, among those 6 items, 2 lie in $A\cap B$. The estimator is $\hat J = 2/6 = 0.33$, and $\widehat{|A\cap B|}=\hat J\cdot\widehat{|A\cup B|}$.
+
+Variance check: $\mathrm{Var}(\hat J)\approx J(1-J)/k = (1/3)(2/3)/6 = 0.037$, so relative std on $\hat J$ is $\sqrt{0.037}/0.33 \approx 0.58$ — large for $k=6$. To pin intersection of Jaccard $\ge J_0=1/3$ to $\varepsilon=0.1$ relative error, Section 4 needs $k=\Theta(1/(\varepsilon^2 J_0)) = 1/(0.01\cdot0.33)\approx 300$ samples per set.
+
+Now shrink the overlap to $|A\cap B|=2$ (so $J=2/198\approx0.01$): the required $k$ balloons to $\approx 1/(0.01\cdot0.01)=10^4$ — the small-overlap barrier, ultimately the $\Omega(n)$ set-disjointness wall as $J\to0$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

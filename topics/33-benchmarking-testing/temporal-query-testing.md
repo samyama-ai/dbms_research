@@ -55,11 +55,26 @@ Per-history checking is polynomial (Section 4); universal correctness certificat
 
 ## 9. Key References
 
-- **[Foundational]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 1999.
-- **[Foundational]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012.
-- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS) / Finding Bugs via Query Optimization (NoREC) / Ternary Logic Partitioning (TLP).* OSDI & ESEC/FSE, 2020.
-- **[Foundational]** J. F. Allen. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983.
-- **[Survey]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
+- **[Foundational]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 1999. — [DBLP](https://dblp.org/rec/books/mk/Snodgrass99.html)
+- **[Foundational]** A. Dignös, M. H. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213886) · [DBLP](https://dblp.org/rec/conf/sigmod/DignosBG12.html)
+- **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS) / Finding Bugs via Query Optimization (NoREC) / Ternary Logic Partitioning (TLP).* OSDI & ESEC/FSE, 2020. — [PQS (USENIX)](https://www.usenix.org/conference/osdi20/presentation/rigger) · [NoREC (DOI)](https://doi.org/10.1145/3368089.3409710) · [TLP (DOI)](https://doi.org/10.1145/3428279)
+- **[Foundational]** J. F. Allen. *Maintaining Knowledge about Temporal Intervals.* CACM, 1983. — [DOI](https://doi.org/10.1145/182.358434) · [DBLP](https://dblp.org/rec/journals/cacm/Allen83.html)
+- **[Survey]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+
+## 10. Worked Example
+
+A snapshot-reducibility oracle catching a **coalescing** bug, single (valid-time) axis. History $H$ for employee Alice's department, half-open valid-time periods:
+
+| dept | [vt_s, vt_e) |
+|------|--------------|
+| Sales | [1, 5) |
+| Sales | [5, 9) |
+
+The breakpoints are $\{1, 5, 9\}$, quotienting time into cells $[1,5)$ and $[5,9)$. A correct coalesced answer to `SELECT dept FROM H` (temporal projection) must merge the two value-equivalent adjacent periods into one fact: $(\text{Sales}, [1,9))$.
+
+Oracle construction: evaluate the *ordinary* projection on each snapshot. $\sigma_2(H)=\{\text{Sales}\}$, $\sigma_4=\{\text{Sales}\}$, $\sigma_6=\{\text{Sales}\}$, $\sigma_8=\{\text{Sales}\}$. Snapshot reducibility requires the temporal result, restricted to each $\tau$, to equal these — true for $(\text{Sales},[1,9))$ since $\tau\in[1,9)$ at every breakpoint cell.
+
+Now a buggy engine that forgets to coalesce returns *two* rows $(\text{Sales},[1,5))$ and $(\text{Sales},[5,9))$. Snapshot-wise it still passes (each $\tau$ sees one Sales), so a naive snapshot oracle misses it — but a coalescing-aware oracle additionally checks that no two value-equivalent rows have adjacent/overlapping periods ($[1,5)$ and $[5,9)$ meet at $5$), flagging the bug. Cost: 3 breakpoints $\Rightarrow O(n)=O(3)$ snapshot evaluations, $O(m\log m)$ endpoint sweep for the coalescing check.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

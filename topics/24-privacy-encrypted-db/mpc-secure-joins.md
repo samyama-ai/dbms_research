@@ -43,13 +43,27 @@ Active: (a) vectorized, GPU/SIMD-friendly secret-sharing relational engines (Sec
 - Cost-model-driven secure query optimizers choosing MPC plans by communication/round budget.
 
 ## 9. Key References
-- **[Foundational]** A. Yao. *Protocols for Secure Computations.* FOCS, 1982; M. Ben-Or, S. Goldwasser, A. Wigderson. *Completeness Theorems for Non-Cryptographic Fault-Tolerant Distributed Computation.* STOC, 1988.
-- **[SOTA]** J. Bater, G. Elliott, C. Eggen, et al. *SMCQL: Secure Querying for Federated Databases.* PVLDB, 2017.
-- **[SOTA]** N. Volgushev, M. Schwarzkopf, et al. *Conclave: Secure Multi-Party Computation on Big Data.* EuroSys, 2019.
-- **[SOTA]** R. Poddar, S. Kalra, A. Yanai, et al. *Senate: A Maliciously-Secure MPC Platform for Collaborative Analytics.* USENIX Security, 2021.
-- **[SOTA]** J. Liagouris, V. Kalavri, M. Faisal, M. Varia. *Secrecy: Secure Collaborative Analytics in Untrusted Clouds.* NSDI, 2023.
-- **[SOTA]** B. Pinkas, T. Schneider, O. Tkachenko, A. Yanai. *Efficient Circuit-based PSI ... (PSTY).* EUROCRYPT, 2019.
-- **[Foundational]** I. Damgård, V. Pastro, N. Smart, S. Zakarias. *Multiparty Computation from Somewhat Homomorphic Encryption (SPDZ).* CRYPTO, 2012.
+- **[Foundational]** A. Yao. *Protocols for Secure Computations.* FOCS, 1982; M. Ben-Or, S. Goldwasser, A. Wigderson. *Completeness Theorems for Non-Cryptographic Fault-Tolerant Distributed Computation.* STOC, 1988. — [Yao DOI](https://doi.org/10.1109/SFCS.1982.38) — [BGW DOI](https://doi.org/10.1145/62212.62213)
+- **[SOTA]** J. Bater, G. Elliott, C. Eggen, et al. *SMCQL: Secure Querying for Federated Databases.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3055330.3055334) — [arXiv](https://arxiv.org/abs/1606.06808)
+- **[SOTA]** N. Volgushev, M. Schwarzkopf, et al. *Conclave: Secure Multi-Party Computation on Big Data.* EuroSys, 2019. — [DOI](https://doi.org/10.1145/3302424.3303982) — [arXiv](https://arxiv.org/abs/1902.06288)
+- **[SOTA]** R. Poddar, S. Kalra, A. Yanai, et al. *Senate: A Maliciously-Secure MPC Platform for Collaborative Analytics.* USENIX Security, 2021. — [USENIX](https://www.usenix.org/conference/usenixsecurity21/presentation/poddar) — [arXiv](https://arxiv.org/abs/2010.13752)
+- **[SOTA]** J. Liagouris, V. Kalavri, M. Faisal, M. Varia. *Secrecy: Secure Collaborative Analytics in Untrusted Clouds.* NSDI, 2023. — [USENIX](https://www.usenix.org/conference/nsdi23/presentation/liagouris)
+- **[SOTA]** B. Pinkas, T. Schneider, O. Tkachenko, A. Yanai. *Efficient Circuit-based PSI ... (PSTY).* EUROCRYPT, 2019. — [DOI](https://doi.org/10.1007/978-3-030-17659-4_5)
+- **[Foundational]** I. Damgård, V. Pastro, N. Smart, S. Zakarias. *Multiparty Computation from Somewhat Homomorphic Encryption (SPDZ).* CRYPTO, 2012. — [DOI](https://doi.org/10.1007/978-3-642-32009-5_38) — [ePrint](https://eprint.iacr.org/2011/535)
+
+## 10. Worked Example
+
+Two hospitals run an MPC equi-join $R(\text{pid},\text{age}) \bowtie_{\text{pid}} S(\text{pid},\text{dx})$ to count diabetic patients over 50, revealing only the COUNT.
+
+Party A holds $R=\{(1,52),(2,47),(3,61)\}$; Party B holds $S=\{(2,\text{flu}),(3,\text{dm}),(5,\text{dm})\}$, $n=3$ each.
+
+**Naive nested-loop circuit:** compare every $(r,s)$ pair: $|R|\cdot|S| = 3\times 3 = 9$ secure equality checks — the $\Theta(n^2)$ barrier.
+
+**Sort-based oblivious join:** secret-share all 6 tuples tagged by relation, run one oblivious bitonic sort on key `pid` ($O(n\log^2 n)$ comparisons). The sorted shared sequence interleaves matching keys adjacently:
+$$1_R,\; 2_R\,2_S,\; 3_R\,3_S,\; 5_S.$$
+A single linear oblivious scan emits a shared match flag at each adjacent $R$–$S$ pair with equal key: matches at pid 2 and pid 3, so the join has $Z=2$ tuples. A second oblivious scan evaluates the predicate ($\text{age}>50 \wedge \text{dx}=\text{dm}$): only pid 3 (age 61, dm) qualifies, giving COUNT $=1$, which is then opened.
+
+Cost: $6\log^2 6 \approx 6\cdot 6.7 \approx 40$ secure comparisons vs. 9 naive here — but for $n=10^6$ the sort's $n\log^2 n \approx 4\times10^8$ crushes $n^2=10^{12}$. Hiding $Z$ would require padding output to the $\mathrm{AGM}$ bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

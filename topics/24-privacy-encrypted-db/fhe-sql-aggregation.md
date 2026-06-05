@@ -42,12 +42,22 @@ Directions: **FHE hardware accelerators** (DARPA DPRIVE program; designs like **
 - Composable FHE + DP so the decrypted aggregate is also privacy-protected.
 
 ## 9. Key References
-- **[Foundational]** Gentry. *Fully Homomorphic Encryption Using Ideal Lattices.* STOC, 2009.
-- **[Foundational]** Brakerski, Gentry, Vaikuntanathan. *(Leveled) Fully Homomorphic Encryption without Bootstrapping.* ITCS, 2012.
-- **[SOTA]** Cheon, Kim, Kim, Song. *Homomorphic Encryption for Arithmetic of Approximate Numbers (CKKS).* ASIACRYPT, 2017.
-- **[SOTA]** Chillotti, Gama, Georgieva, Izabachène. *TFHE: Fast Fully Homomorphic Encryption over the Torus.* Journal of Cryptology, 2020.
-- **[SOTA]** Dathathri, Kostova, Saarikivi, et al. *EVA: An Encrypted Vector Arithmetic Language and Compiler for Efficient Homomorphic Computation.* PLDI, 2020.
-- **[Survey]** Acar, Aksu, Uluagac, Conti. *A Survey on Homomorphic Encryption Schemes: Theory and Implementation.* ACM Computing Surveys, 2018.
+- **[Foundational]** Gentry. *Fully Homomorphic Encryption Using Ideal Lattices.* STOC, 2009. — [DOI](https://doi.org/10.1145/1536414.1536440)
+- **[Foundational]** Brakerski, Gentry, Vaikuntanathan. *(Leveled) Fully Homomorphic Encryption without Bootstrapping.* ITCS, 2012. — [DOI](https://doi.org/10.1145/2090236.2090262)
+- **[SOTA]** Cheon, Kim, Kim, Song. *Homomorphic Encryption for Arithmetic of Approximate Numbers (CKKS).* ASIACRYPT, 2017. — [DOI](https://doi.org/10.1007/978-3-319-70694-8_15)
+- **[SOTA]** Chillotti, Gama, Georgieva, Izabachène. *TFHE: Fast Fully Homomorphic Encryption over the Torus.* Journal of Cryptology, 2020. — [DOI](https://doi.org/10.1007/s00145-019-09319-x)
+- **[SOTA]** Dathathri, Kostova, Saarikivi, et al. *EVA: An Encrypted Vector Arithmetic Language and Compiler for Efficient Homomorphic Computation.* PLDI, 2020. — [DOI](https://doi.org/10.1145/3385412.3386023)
+- **[Survey]** Acar, Aksu, Uluagac, Conti. *A Survey on Homomorphic Encryption Schemes: Theory and Implementation.* ACM Computing Surveys, 2018. — [DOI](https://doi.org/10.1145/3214303)
+
+## 10. Worked Example
+
+Evaluate `SELECT COUNT(*) FROM T WHERE status = 1` over $n=4096$ encrypted rows using CKKS/BGV **SIMD packing**. One ciphertext packs $N=4096$ slots, so the whole `status` column lives in a single ciphertext $\mathbf{c}_{\text{status}}=\mathrm{Enc}(s_0,\dots,s_{4095})$.
+
+The predicate `status = 1` here is just the bit itself, so `COUNT` = sum of the slots. Steps:
+1. Multiply nothing (predicate is the value) — $0$ multiplicative depth for this case; an equality test against a constant $k$ would add depth $\lceil\log_2 p\rceil$ for a degree-$(p-1)$ comparison polynomial.
+2. **Slot-sum** via $\log_2 N = 12$ rotate-and-add steps: rotate by $1,2,4,\dots,2048$, adding each time, so slot $0$ ends holding $\sum_i s_i$.
+
+Cost: $12$ homomorphic rotations + $12$ additions on one ciphertext — sub-second, with multiplicative depth $\approx 0$, so **no bootstrapping**. Contrast `MIN(salary)`: an oblivious comparison network over $4096$ packed values needs depth $\Theta(\log n)=12$ *comparisons*, each a bootstrap-heavy programmable-bootstrap in TFHE — orders of magnitude slower. This is exactly the linear-aggregate-cheap / comparison-expensive split that makes the problem *solved-but-impractical*.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

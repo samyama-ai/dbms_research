@@ -54,11 +54,32 @@ Directions: learned MRC predictors feeding allocators; ML-for-systems cache admi
 
 ## 9. Key References
 
-- **[Foundational]** R. L. Mattson, J. Gecsei, D. R. Slutz, I. L. Traiger. *Evaluation techniques for storage hierarchies.* IBM Systems Journal, 1970.
-- **[SOTA]** C. Waldspurger et al. *Efficient MRC construction with SHARDS.* USENIX FAST, 2015.
-- **[SOTA]** A. Cidon et al. *Cliffhanger: Scaling Performance Cliffs in Web Memory Caches.* USENIX NSDI, 2016.
-- **[SOTA]** D. Berger, B. Berg, et al. *RobinHood: Tail Latency Aware Caching.* USENIX OSDI, 2018.
-- **[Foundational]** T. Ibaraki, N. Katoh. *Resource Allocation Problems: Algorithmic Approaches.* MIT Press, 1988.
+- **[Foundational]** R. L. Mattson, J. Gecsei, D. R. Slutz, I. L. Traiger. *Evaluation techniques for storage hierarchies.* IBM Systems Journal, 1970. — [DOI](https://doi.org/10.1147/sj.92.0078)
+- **[SOTA]** C. Waldspurger et al. *Efficient MRC construction with SHARDS.* USENIX FAST, 2015. — [USENIX](https://www.usenix.org/conference/fast15/technical-sessions/presentation/waldspurger)
+- **[SOTA]** A. Cidon et al. *Cliffhanger: Scaling Performance Cliffs in Web Memory Caches.* USENIX NSDI, 2016. — [USENIX](https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/cidon)
+- **[SOTA]** D. Berger, B. Berg, et al. *RobinHood: Tail Latency Aware Caching.* USENIX OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/berger)
+- **[Foundational]** T. Ibaraki, N. Katoh. *Resource Allocation Problems: Algorithmic Approaches.* MIT Press, 1988. — [DBLP search](https://dblp.org/search?q=Resource+Allocation+Problems+Algorithmic+Approaches+Ibaraki+Katoh)
+
+## 10. Worked Example
+
+Two tenants share $M = 4$ pages. Their miss-ratio curves $m_i(x)$ (convex, decreasing):
+
+| pages $x$ | $m_A(x)$ | $m_B(x)$ |
+|---|---|---|
+| 0 | 1.00 | 1.00 |
+| 1 | 0.50 | 0.80 |
+| 2 | 0.30 | 0.65 |
+| 3 | 0.20 | 0.55 |
+| 4 | 0.15 | 0.50 |
+
+Weights/rates $W_A r_A = 10$, $W_B r_B = 10$. **Greedy marginal allocation:** start at $x_A=x_B=0$ and repeatedly give the next page to the tenant with the largest marginal miss-cost drop $-W_i r_i\,[m_i(x_i{+}1)-m_i(x_i)]$.
+
+- Page 1: A gains $10(1.00-0.50)=5.0$; B gains $10(1.00-0.80)=2.0$. Give to A → $x_A=1$.
+- Page 2: A gains $10(0.50-0.30)=2.0$; B gains $2.0$. Tie; give to A → $x_A=2$.
+- Page 3: A gains $10(0.30-0.20)=1.0$; B gains $2.0$. Give to B → $x_B=1$.
+- Page 4: A gains $1.0$; B gains $10(0.80-0.65)=1.5$. Give to B → $x_B=2$.
+
+Result $x_A=2, x_B=2$, total weighted miss cost $10(0.30)+10(0.65)=9.5$. Check the equimarginal condition: next marginal gains are A$=1.0$, B$=1.5$ — within one page of equalized, confirming optimality of the integer convex allocation. Any reassignment (e.g. $3/1$) raises cost to $10(0.20)+10(0.80)=10.0$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

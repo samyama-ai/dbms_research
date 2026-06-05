@@ -54,13 +54,25 @@ The third variant is the hard, genuinely **open** one: "cost" is plan-dependent,
 - Composability with verifiable carbon/energy reporting (greenwashing-resistant carbon bills).
 
 ## 9. Key References
-- **[Foundational]** Feifei Li, Marios Hadjieleftheriou, George Kollios, Leonid Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006.
-- **[Foundational]** Ralph C. Merkle. *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO, 1987.
-- **[SOTA]** Yupeng Zhang, Daniel Genkin, Jonathan Katz, Dimitrios Papadopoulos, Charalampos Papamanthou. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017.
-- **[SOTA]** Jens Groth. *On the Size of Pairing-Based Non-interactive Arguments (Groth16).* EUROCRYPT, 2016.
-- **[Foundational]** Shafi Goldwasser, Yael Tauman Kalai, Guy N. Rothblum. *Delegating Computation: Interactive Proofs for Muggles (GKR).* STOC, 2008 / JACM, 2015.
-- **[SOTA]** Hung Q. Ngo, Christopher Ré, Atri Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013 (AGM / worst-case-optimal joins as cost floor/ceiling).
-- **[Foundational]** Craig Gentry, Daniel Wichs. *Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions.* STOC, 2011.
+- **[Foundational]** Feifei Li, Marios Hadjieleftheriou, George Kollios, Leonid Reyzin. *Dynamic Authenticated Index Structures for Outsourced Databases.* SIGMOD, 2006. — [DOI](https://doi.org/10.1145/1142473.1142488)
+- **[Foundational]** Ralph C. Merkle. *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO, 1987. — [DBLP](https://dblp.org/rec/conf/crypto/Merkle87.html)
+- **[SOTA]** Yupeng Zhang, Daniel Genkin, Jonathan Katz, Dimitrios Papadopoulos, Charalampos Papamanthou. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017. — [DBLP](https://dblp.org/rec/conf/sp/ZhangGKPP17.html)
+- **[SOTA]** Jens Groth. *On the Size of Pairing-Based Non-interactive Arguments (Groth16).* EUROCRYPT, 2016. — [DBLP](https://dblp.org/rec/conf/eurocrypt/Groth16.html)
+- **[Foundational]** Shafi Goldwasser, Yael Tauman Kalai, Guy N. Rothblum. *Delegating Computation: Interactive Proofs for Muggles (GKR).* STOC, 2008 / JACM, 2015. — [DOI](https://doi.org/10.1145/1374376.1374396)
+- **[SOTA]** Hung Q. Ngo, Christopher Ré, Atri Rudra. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2013 (AGM / worst-case-optimal joins as cost floor/ceiling). — [arXiv](https://arxiv.org/abs/1310.3314)
+- **[Foundational]** Craig Gentry, Daniel Wichs. *Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions.* STOC, 2011. — [DOI](https://doi.org/10.1145/1993636.1993651)
+
+## 10. Worked Example
+
+A tenant runs $Q$: a join $R(x,y)\bowtie S(y,z)\bowtie T(z,x)$ (the triangle query) over $|R|=|S|=|T|=N=10{,}000$ tuples. The provider bills by *intermediate tuples touched*.
+
+**Naive plan (provider-favorable):** compute $R\bowtie S$ first. With skew this can be as large as $N^2 = 10^8$ intermediate tuples before joining $T$ — the provider could legitimately pick this and bill for $\sim10^8$ units.
+
+**AGM floor / WCOJ ceiling.** The AGM bound caps the *output* size at the fractional-cover optimum: for the triangle, $x_e=\tfrac12$ per edge gives $|Q|\le N^{1/2}\cdot N^{1/2}\cdot N^{1/2} = N^{3/2} = 10^6$. A worst-case-optimal join (e.g. Leapfrog Triejoin) runs in $\tilde O(N^{3/2}) = \tilde O(10^6)$ — never materializing the $10^8$ blowup.
+
+So a non-inflation audit certifies the bill must lie in the interval
+$$ [\text{AGM floor},\ \text{WCOJ ceiling}] = [\,\Omega(|Q|),\ \tilde O(10^6)\,]. $$
+A bill of $10^8$ falls **outside** this interval and is provably inflated ($100\times$ the WCOJ ceiling). But within $[10^6 \text{-ish}, \tilde O(10^6)]$ no proof can pin down a unique "true" cost — illustrating exactly why non-inflation is only loosely certifiable and remains open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

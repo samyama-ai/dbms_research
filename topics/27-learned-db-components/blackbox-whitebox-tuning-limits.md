@@ -39,11 +39,21 @@ Directions: (a) using the optimizer's own cost model as a cheap surrogate to war
 - Hybrid tuners that fall back to black-box when white-box signals are detected unreliable.
 
 ## 9. Key References
-- **[Foundational]** Y. Nesterov, V. Spokoiny. *Random Gradient-Free Minimization of Convex Functions.* Foundations of Computational Mathematics, 2017.
-- **[Foundational]** J. Traub, H. Woźniakowski. *Information-Based Complexity.* Academic Press, 1988.
-- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021.
-- **[Foundational]** J. C. Duchi, M. I. Jordan, M. J. Wainwright, A. Wibisono. *Optimal Rates for Zero-Order Convex Optimization: The Power of Two Function Evaluations.* IEEE Trans. Information Theory, 2015.
-- **[SOTA]** D. Van Aken et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
+- **[Foundational]** Y. Nesterov, V. Spokoiny. *Random Gradient-Free Minimization of Convex Functions.* Foundations of Computational Mathematics, 2017. — [DOI](https://doi.org/10.1007/s10208-015-9296-2)
+- **[Foundational]** J. Traub, H. Woźniakowski. *Information-Based Complexity.* Academic Press, 1988. — [DBLP search](https://dblp.org/search?q=Information-Based+Complexity+Traub+Wozniakowski)
+- **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3484224.3484236) · [arXiv](https://arxiv.org/abs/2104.01744)
+- **[Foundational]** J. C. Duchi, M. I. Jordan, M. J. Wainwright, A. Wibisono. *Optimal Rates for Zero-Order Convex Optimization: The Power of Two Function Evaluations.* IEEE Trans. Information Theory, 2015. — [DOI](https://doi.org/10.1109/TIT.2015.2409256) · [arXiv](https://arxiv.org/abs/1312.2139)
+- **[SOTA]** D. Van Aken et al. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+
+## 10. Worked Example
+
+Tune $d=10$ knobs to maximize throughput, response surface $g(\theta)=-\tfrac12\sum_{j=1}^{10}(\theta_j-\theta_j^\*)^2$ (separable, strongly convex, $\kappa=1$), target $\epsilon=10^{-3}$.
+
+**Black-box (Nesterov–Spokoiny zeroth-order).** Each step needs a $d$-vector finite-difference estimate, with rate $O(d/\epsilon)$ for this strongly-convex case. Rough budget $\approx d/\epsilon = 10/10^{-3} = 10{,}000$ workload executions — each execution is a full benchmark run.
+
+**White-box (true gradient oracle).** First-order gradient descent on a strongly-convex surface converges geometrically: $\epsilon_k \le (1-1/\kappa)^k\epsilon_0$. With $\kappa=1$, $\theta_j^* $ is found in one Newton-like step; even modestly, reaching $\epsilon=10^{-3}$ takes $O(\kappa\log(1/\epsilon))=O(\log 10^3)\approx 7$ steps.
+
+**Separation:** $N_{\mathrm{bb}}/N_{\mathrm{wb}} \approx 10{,}000/7 \approx 1400\times$, i.e. the $\mathrm{poly}(d)/\epsilon$ vs $\log(1/\epsilon)$ gap. But if the engine's exposed $\nabla\tilde g$ is miscalibrated (say it points to $\theta_j^\*+5\sigma$ on correlated predicates), white-box descent converges to the wrong knob setting — illustrating why the separation is only conditional on trustworthy structure.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

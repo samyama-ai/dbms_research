@@ -51,12 +51,20 @@ Per-class optimal synopses are known: **KLL** for quantiles ($O(\frac1\varepsilo
 - Unified theory linking AGM/WCOJ worst-case bounds to *distributional* (average-case) join estimation error.
 
 ## 9. Key References
-- **[Foundational]** P. Indyk, D. Woodruff. *Tight Lower Bounds for the Distinct Elements Problem.* FOCS, 2003.
-- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[Foundational]** M. Pătraşcu. *Lower Bounds for Data Structures (cell-probe).* PhD thesis / STOC-FOCS line, 2008–2011.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** P. Indyk, D. Woodruff. *Tight Lower Bounds for the Distinct Elements Problem.* FOCS, 2003. — [DOI](https://doi.org/10.1109/SFCS.2003.1238202)
+- **[Foundational]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [arXiv](https://arxiv.org/abs/1203.1952) · [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** D. Kane, J. Nelson, D. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[Foundational]** M. Pătraşcu. *Lower Bounds for Data Structures (cell-probe).* PhD thesis / STOC-FOCS line, 2008–2011. — [arXiv: Unifying the Landscape of Cell-Probe Lower Bounds](https://arxiv.org/abs/1010.3783)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+A packing/encoding lower bound in miniature. Let the query class $\mathcal Q$ be point-cardinality queries over a domain of size $N=4$, and consider relations whose per-value counts lie in $\{0,1,\dots,7\}$ (3 bits each). Suppose we demand *exact* answers to all 4 point queries.
+
+There are $8^4 = 2^{12}$ distinguishable cardinality vectors. Any synopsis answering all 4 queries exactly must map distinct vectors to distinct states (else two vectors collide and at least one query is wrong), so it needs $\ge \log_2 2^{12} = 12$ bits — exactly storing the 4 counts. No compression is possible against this adversarial class.
+
+Now relax to additive error $\varepsilon\cdot 7$ per count: counts within one $\varepsilon$-bucket become indistinguishable, so the $\varepsilon$-packing number drops to $\big(\lceil 1/(2\varepsilon)\rceil\big)^4$, giving a floor of $B \ge 4\log_2\lceil 1/(2\varepsilon)\rceil$ bits. This is the encoding/packing argument $B \ge \Omega(\log N_\varepsilon(\mathcal Q))$ in section 2: accuracy $\varepsilon$ buys you space only logarithmically in the packing number, which is why distinct-elements bottoms out at $\Theta(\varepsilon^{-2}+\log n)$ and conjunctive multi-D queries stay provably expensive.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

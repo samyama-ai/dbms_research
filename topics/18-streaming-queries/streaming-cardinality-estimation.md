@@ -58,13 +58,30 @@ Per-statistic estimation is **largely closed** (HLL, AMS match lower bounds). Th
 
 ## 9. Key References
 
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013.
-- **[SOTA]** D. M. Kane, J. Nelson, D. P. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007.
-- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000.
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
+- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999. — [DOI](https://doi.org/10.1006/jcss.1997.1545)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[SOTA]** D. M. Kane, J. Nelson, D. P. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** A. Kipf, T. Kipf, B. Radke, V. Leis, P. Boncz, A. Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** A. Bifet, R. Gavaldà. *Learning from Time-Changing Data with Adaptive Windowing (ADWIN).* SDM, 2007. — [DOI](https://doi.org/10.1137/1.9781611972771.42)
+- **[Foundational]** R. Avnur, J. M. Hellerstein. *Eddies: Continuously Adaptive Query Processing.* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335420)
+
+## 10. Worked Example
+
+**HyperLogLog in miniature, and why composition is the hard part.** Use $m=4$ registers ($p=2$ prefix bits selecting the register; the rest count leading zeros). Each key is hashed to a bitstring; the register update keeps the max "position of the first 1" $\rho$ over the remaining bits.
+
+Stream of distinct keys with hashes (register-bits | rest):
+- $h_1=\texttt{01|}\underline{001}\dots\Rightarrow$ reg 1, $\rho=3$
+- $h_2=\texttt{11|}\underline{1}\dots\Rightarrow$ reg 3, $\rho=1$
+- $h_3=\texttt{01|}\underline{1}\dots\Rightarrow$ reg 1, $\rho=1$ (keeps max $3$)
+- $h_4=\texttt{00|}\underline{01}\dots\Rightarrow$ reg 0, $\rho=2$
+
+Registers $M=[2,\,3,\,0,\,1]$ (reg 2 unseen $\to 0$). The estimate is $\hat{n}_d=\alpha_m m^2 / \sum_j 2^{-M_j}$ with $\alpha_4\approx 0.673$:
+$$\sum_j 2^{-M_j}=2^{-2}+2^{-3}+2^{0}+2^{-1}=0.25+0.125+1+0.5=1.875,$$
+$$\hat{n}_d=\frac{0.673\cdot 16}{1.875}\approx 5.7.$$
+True distinct $=4$; with only $m=4$ registers the relative error $\sim 1.04/\sqrt{m}=52\%$ is large, shrinking as $m$ grows. **Mergeability:** two HLLs combine by register-wise max — this is what lets a join optimizer estimate $|A\cup B|$.
+
+The Section-6 gap is precisely that this clean per-sketch guarantee does **not** compose into a bounded *plan-regret* guarantee once such estimates feed join-order choices under drift.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -60,12 +60,22 @@ Partially closed. Marginal calibration and single-axis shift (hardware *or* data
 
 ## 9. Key References
 
-- **[SOTA]** Marcus, Papaemmanouil. *Plan-Structured Deep Neural Network Models for Query Performance Prediction (QPP-Net).* ICDE / VLDB, 2019.
-- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022.
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
-- **[Foundational]** Tibshirani, Foygel Barber, Candès, Ramdas. *Conformal Prediction Under Covariate Shift.* NeurIPS, 2019.
-- **[Foundational]** Foygel Barber, Candès, Ramdas, Tibshirani. *The Limits of Distribution-Free Conditional Predictive Inference.* Information and Inference, 2021.
-- **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO — DB2's LEarning Optimizer.* VLDB, 2001.
+- **[SOTA]** Marcus, Papaemmanouil. *Plan-Structured Deep Neural Network Models for Query Performance Prediction (QPP-Net).* ICDE / VLDB, 2019. — [arXiv](https://arxiv.org/abs/1902.00132)
+- **[SOTA]** Hilprecht, Binnig. *Zero-Shot Cost Models for Out-of-the-Box Learned Cost Prediction.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.00561)
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+- **[Foundational]** Tibshirani, Foygel Barber, Candès, Ramdas. *Conformal Prediction Under Covariate Shift.* NeurIPS, 2019. — [arXiv](https://arxiv.org/abs/1904.06019)
+- **[Foundational]** Foygel Barber, Candès, Ramdas, Tibshirani. *The Limits of Distribution-Free Conditional Predictive Inference.* Information and Inference, 2021. — [arXiv](https://arxiv.org/abs/1903.04684)
+- **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO — DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01.html)
+
+## 10. Worked Example
+
+A model trained on source hardware $e_0$ predicts a hash-join plan's latency as $\hat L=100$ ms. After migration to faster hardware $e_1$ the true latency is $L=62$ ms, so raw predictions are biased high by a roughly constant **scale factor**.
+
+**Ranking fidelity survives a monotone shift.** Two candidate plans predicted at $\hat L(p_1)=100$ and $\hat L(p_2)=140$ keep their order after any monotone rescale, so the optimizer still picks $p_1$ — even though both absolute numbers are wrong (Section 1, ranking variant).
+
+**Conformal recalibration of the interval.** Collect $n=200$ labeled runs on $e_1$ and form residuals $r_i=L_i-\hat L_i$. For nominal $90\%$ coverage take the empirical quantile at rank $\lceil(n+1)(1-\delta)\rceil=\lceil201\cdot0.9\rceil=181$, i.e. the $181$st smallest residual, say $-35$ ms with a symmetric spread of $\pm12$. The calibrated interval becomes $\hat L + [-47,\,-23]$, so for $\hat L=100$ we emit $[53,\,77]$ ms — which covers the true $62$ ms. Coverage error shrinks as $O(1/\sqrt n)\approx 0.07$ (Section 4).
+
+But this only fixes *marginal* coverage. If $e_1$ also changed an unmeasured memory-bandwidth regime, no amount of rescaling removes the residual discrepancy $d(e_0,e_1)$ (Section 5) — the open compositional case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

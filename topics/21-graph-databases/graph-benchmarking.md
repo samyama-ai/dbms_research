@@ -42,12 +42,22 @@ LDBC continues evolving (FinBench, SNB BI refresh, and work toward a **GQL/SQL-P
 - Generators validated to reproduce engine performance *rankings* seen on real data.
 
 ## 9. Key References
-- **[SOTA]** Bagan, Bonifati, Ciucanu, Fletcher, Lemay, Advokaat. *gMark: Schema-Driven Generation of Graphs and Queries.* IEEE TKDE, 2017.
-- **[SOTA]** Aluç, Hartig, Özsu, Daudjee. *Diversified Stress Testing of RDF Data Management Systems (WatDiv).* ISWC, 2014.
-- **[SOTA]** Iosup, Hegeman, Ngai et al. *LDBC Graphalytics: A Benchmark for Large-Scale Graph Analysis.* VLDB, 2016.
-- **[SOTA]** Erling, Averbuch, Larriba-Pey, Chafi, Gubichev, Prat, Pham, Boncz. *The LDBC Social Network Benchmark: Interactive Workload.* SIGMOD, 2015.
-- **[Foundational]** Chakrabarti, Zhan, Faloutsos. *R-MAT: A Recursive Model for Graph Mining.* SDM, 2004.
-- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors (q-error).* VLDB, 2009.
+- **[SOTA]** Bagan, Bonifati, Ciucanu, Fletcher, Lemay, Advokaat. *gMark: Schema-Driven Generation of Graphs and Queries.* IEEE TKDE, 2017. — [arXiv](https://arxiv.org/abs/1511.08386)
+- **[SOTA]** Aluç, Hartig, Özsu, Daudjee. *Diversified Stress Testing of RDF Data Management Systems (WatDiv).* ISWC, 2014. — [DOI](https://doi.org/10.1007/978-3-319-11964-9_13)
+- **[SOTA]** Iosup, Hegeman, Ngai et al. *LDBC Graphalytics: A Benchmark for Large-Scale Graph Analysis.* VLDB, 2016. — [DOI](https://doi.org/10.14778/3007263.3007270)
+- **[SOTA]** Erling, Averbuch, Larriba-Pey, Chafi, Gubichev, Prat, Pham, Boncz. *The LDBC Social Network Benchmark: Interactive Workload.* SIGMOD, 2015. — [ACM](https://doi.org/10.1145/2723372.2742786)
+- **[Foundational]** Chakrabarti, Zhan, Faloutsos. *R-MAT: A Recursive Model for Graph Mining.* SDM, 2004. — [DOI](https://doi.org/10.1137/1.9781611972740.43)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors (q-error).* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687738)
+
+## 10. Worked Example
+
+Illustrate the **q-error** metric that benchmarks use to score cardinality estimation, and how it bounds plan cost. Suppose a query has a join whose *true* output cardinality is $|R \bowtie S| = 10{,}000$ tuples. The optimizer's estimate is $\hat n = 2{,}500$. The q-error is the symmetric multiplicative deviation
+
+$$q(\hat n, n) = \max\!\left(\frac{\hat n}{n}, \frac{n}{\hat n}\right) = \max\!\left(\frac{2500}{10000}, \frac{10000}{2500}\right) = \max(0.25, 4) = 4.$$
+
+The Moerkotte–Neumann–Steidl theorem says the chosen plan's cost is at most $q^4$ times optimal — here $4^4 = 256\times$ worse in the worst case. A 4x under-estimate can therefore make the optimizer pick a nested-loop where a hash join was right.
+
+Why this matters for **benchmark design**: a discriminating workload should include query templates whose *intermediate* cardinalities (governed by the AGM/fractional-edge-cover bound) span a wide range, forcing estimators into high-q-error regions. A generator like gMark tunes path-query selectivity to hit, say, a target $10^4$ intermediate size; reporting per-template q-error then exposes which engine's estimator degrades — rather than rewarding one that memorized a plan for a fixed query.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

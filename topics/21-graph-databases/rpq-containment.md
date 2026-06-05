@@ -54,12 +54,18 @@ Single RPQ containment $r_1 \sqsubseteq r_2$ is exactly **regular-language conta
 
 ## 9. Key References
 
-- **[Foundational]** Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998.
-- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries with Inverse.* KR 2000 / *Reasoning on Regular Path Queries.* SIGMOD Record 2003.
-- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC 1977 (containment via homomorphism).
-- **[SOTA]** Barceló, Romero, Vardi. *Semantic Acyclicity on Graph Databases / Does Query Evaluation Tractability Help?* SIGMOD/PODS 2013–2016.
-- **[SOTA]** Figueira. *Containment of UC2RPQs: The Hard and Easy Cases.* ICDT 2020.
-- **[Survey]** Barceló. *Querying Graph Databases.* PODS 2013 (tutorial); Angles et al. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys 2017.
+- **[Foundational]** Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998. — [DOI](https://doi.org/10.1145/275487.275503)
+- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries with Inverse.* KR 2000 / *Reasoning on Regular Path Queries.* SIGMOD Record 2003. — [KR 2000](https://www.inf.unibz.it/~calvanese/papers-html/KR-2000.html)
+- **[Foundational]** Chandra, Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC 1977 (containment via homomorphism). — [DOI](https://doi.org/10.1145/800105.803397)
+- **[SOTA]** Barceló, Romero, Vardi. *Semantic Acyclicity on Graph Databases / Does Query Evaluation Tractability Help?* SIGMOD/PODS 2013–2016. — [DOI](https://doi.org/10.1145/2463664.2463671)
+- **[SOTA]** Figueira. *Containment of UC2RPQs: The Hard and Easy Cases.* ICDT 2020. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2020.9)
+- **[Survey]** Barceló. *Querying Graph Databases.* PODS 2013 (tutorial); Angles et al. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys 2017. — [DOI](https://doi.org/10.1145/3104031) — [arXiv](https://arxiv.org/abs/1610.06264)
+
+## 10. Worked Example
+
+**Single-RPQ containment as language containment.** Let $r_1 = a\,(b\,a)^{*}$ and $r_2 = (a\,b)^{*}\,a$ over $\Sigma=\{a,b\}$. Both define exactly the words $a, aba, ababa, \dots$ — i.e. $L(r_1)=L(r_2)=a(ba)^{*}$. To decide $r_1 \sqsubseteq r_2$ we build NFAs $A_1,A_2$, complement $A_2$ (subset construction → DFA → swap accepting states), and test $L(A_1)\cap \overline{L(A_2)}=\emptyset$. The product is empty, so $r_1\sqsubseteq r_2$; symmetrically $r_2\sqsubseteq r_1$, hence $r_1\equiv r_2$. The complementation step is the source of the **PSPACE** upper bound: $\overline{L(A_2)}$ can need $2^{|A_2|}$ states, but emptiness is checked on-the-fly in polynomial space.
+
+**Why CRPQs jump to EXPSPACE.** Consider $Q_1(x,y) \leftarrow x \xrightarrow{a^{*}} y$ contained in $Q_2(x,y)\leftarrow x\xrightarrow{a}z_1\xrightarrow{a}\dots\xrightarrow{a}y$. Checking containment requires reasoning over *canonical expansions* of $Q_1$ of every length $a^k$; a single CRPQ atom unfolds into infinitely many CQs, and certifying that $Q_2$ maps into all of them forces an automaton over expansions whose size is single-exponential — matching the EXPSPACE-completeness of (U)C2RPQ containment.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

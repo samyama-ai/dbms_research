@@ -58,13 +58,22 @@ The gap is **wide open**. Upper bounds exist only under strong assumptions (mono
 
 ## 9. Key References
 
-- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Stonebraker et al. *Mariposa: A Wide-Area Distributed Database System.* VLDB Journal, 1996.
-- **[Foundational]** Haas, Kossmann, Wimmers, Yang. *Optimizing Queries Across Diverse Data Sources (Garlic).* VLDB, 1997.
-- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991.
-- **[SOTA]** Duggan et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015.
-- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Survey]** Tan, Kaoudi, et al. *Polystore Systems: A Survey.* (overview of federated/polystore optimization), 2017–2020.
+- **[Foundational]** Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Stonebraker et al. *Mariposa: A Wide-Area Distributed Database System.* VLDB Journal, 1996. — [DOI](https://doi.org/10.1007/s007780050015)
+- **[Foundational]** Haas, Kossmann, Wimmers, Yang. *Optimizing Queries Across Diverse Data Sources (Garlic).* VLDB, 1997. — [DBLP](https://dblp.org/rec/conf/vldb/HaasKWY97.html)
+- **[Foundational]** Ioannidis, Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)
+- **[SOTA]** Duggan et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814713)
+- **[SOTA]** Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Survey]** Tan, Kaoudi, et al. *Polystore Systems: A Survey.* (overview of federated/polystore optimization), 2017–2020. *(unverified)*
+
+## 10. Worked Example
+
+Two stores price the same join sub-plan. Relational $S_1$ reports $c_1 = 4000$ "page reads"; document $S_2$ reports $c_2 = 250$ abstract "cost units". Incommensurable units — $250 < 4000$ tells us nothing. We probe with 3 calibration sub-plans and fit per-store linear maps $g_i(c)=a_i c$ to observed wall-clock seconds:
+
+- $S_1$: $(1000, 0.6),\,(2000,1.1),\,(3000,1.6)$ → $a_1 \approx 0.00053$ s/unit.
+- $S_2$: $(100,0.9),\,(200,1.7),\,(300,2.6)$ → $a_2 \approx 0.0087$ s/unit.
+
+Reconciled estimates: $\hat t_1 = 0.00053 \times 4000 \approx 2.1$ s versus $\hat t_2 = 0.0087 \times 250 \approx 2.2$ s. So $S_1$ wins narrowly — the *opposite* conclusion to comparing raw $c_i$. Note error compounds: a 20% bias in $a_2$ flips the decision, illustrating why depth-$d$ plans inherit a $(1+\epsilon)^d$ worst-case ratio (Ioannidis–Christodoulakis).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

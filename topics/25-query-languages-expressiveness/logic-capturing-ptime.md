@@ -60,13 +60,21 @@ The gap is foundational, not numerical: we lack either (a) a logic proven to cap
 
 ## 9. Key References
 
-- **[Foundational]** Y. Gurevich. *Logic and the challenge of computer science.* In Current Trends in Theoretical Computer Science, 1988. (States the conjecture.)
-- **[Foundational]** N. Immerman. *Relational queries computable in polynomial time.* Information and Control, 1986. / M. Vardi, STOC 1982.
-- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992.
-- **[SOTA]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge University Press, 2017.
-- **[SOTA]** M. Lichter. *Separating rank logic from polynomial time.* LICS 2021 (J. ACM 2023).
-- **[Foundational]** A. Blass, Y. Gurevich, S. Shelah. *Choiceless polynomial time.* Annals of Pure and Applied Logic, 1999.
-- **[Survey]** A. Dawar. *The nature and power of fixed-point logic with counting.* ACM SIGLOG News, 2015.
+- **[Foundational]** Y. Gurevich. *Logic and the challenge of computer science.* In Current Trends in Theoretical Computer Science, 1988. (States the conjecture.) — [DBLP search](https://dblp.org/search?q=Gurevich+Logic+and+the+challenge+of+computer+science)
+- **[Foundational]** N. Immerman. *Relational queries computable in polynomial time.* Information and Control, 1986. / M. Vardi, STOC 1982. — [DOI](https://doi.org/10.1016/S0019-9958(86)80029-8) — [DBLP](https://dblp.org/rec/journals/iandc/Immerman86.html)
+- **[Foundational]** J.-Y. Cai, M. Fürer, N. Immerman. *An optimal lower bound on the number of variables for graph identification.* Combinatorica, 1992. — [DOI](https://doi.org/10.1007/BF01305232) — [PDF](https://people.cs.umass.edu/~immerman/pub/opt.pdf)
+- **[SOTA]** M. Grohe. *Descriptive Complexity, Canonisation, and Definable Graph Structure Theory.* Cambridge University Press, 2017. — [DOI](https://doi.org/10.1017/9781139028868)
+- **[SOTA]** M. Lichter. *Separating rank logic from polynomial time.* LICS 2021 (J. ACM 2023). — [arXiv](https://arxiv.org/abs/2104.12999) — [DOI](https://doi.org/10.1145/3572918)
+- **[Foundational]** A. Blass, Y. Gurevich, S. Shelah. *Choiceless polynomial time.* Annals of Pure and Applied Logic, 1999. — [DOI](https://doi.org/10.1016/S0168-0072(99)00005-6) — [PDF](https://web.eecs.umich.edu/~gurevich/Opera/120.pdf)
+- **[Survey]** A. Dawar. *The nature and power of fixed-point logic with counting.* ACM SIGLOG News, 2015. — [DOI](https://doi.org/10.1145/2728816.2728820)
+
+## 10. Worked Example
+
+Why order matters, in miniature. Consider the query EVEN: "does the input structure have an even number of elements?" Take two bare sets (no relations) $A=\{1,2\}$ and $B=\{1,2,3\}$ — sizes 2 and 3.
+
+EVEN is trivially in PTIME (count the elements). But it is **not** expressible in $\mathrm{FO}{+}\mathrm{LFP}$ on *unordered* structures: a fixpoint formula's truth depends only on the isomorphism type, and with no relations to fix on, the only invariant FO can extract from a bare set is its size *modulo the quantifier rank's reach* — captured exactly by the $k$-pebble Ehrenfeucht–Fraïssé game. For any fixed formula of quantifier rank $k$, Duplicator wins the $k$-pebble game between *any* two sufficiently large sets, so the formula cannot separate even-sized from odd-sized universes.
+
+Add a built-in linear order $1<2<3$ and the obstruction vanishes: "the maximum element is at an even position" is now FO-definable, and Immerman–Vardi gives $\mathrm{FO}{+}\mathrm{LFP}=\mathrm{P}$. This single example — a 2-element vs. 3-element set — is the seed of the whole field: counting/parity is the first thing plain fixpoint logic loses without order, which is why FPC adds counting quantifiers $\exists^{\ge i}$, and why CFI graphs (which defeat even FPC) are needed to push the separation further.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

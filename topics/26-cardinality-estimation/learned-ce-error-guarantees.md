@@ -1,6 +1,7 @@
 # Worst-Case Error Guarantees for Learned CE
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/learned-ce-error-guarantees` · **Status:** open
+> **Verification note:** The VLDB 2009 q-error paper's third author is Gabriele Steidl (the prior "Steinbrunn" was a citation error, now corrected).
 
 ## 1. Problem Statement
 
@@ -62,12 +63,22 @@ Wide and **genuinely open**. We have certified *one-sided* envelopes (often very
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[Foundational]** Moerkotte, Neumann, Steinbrunn. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[SOTA]** Wu, Cong, et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD, 2023.
-- **[Foundational]** Tibshirani, Foygel Barber, Candès, Ramdas. *Conformal Prediction Under Covariate Shift.* NeurIPS, 2019.
-- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[SOTA]** Wu, Cong, et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2212.05526)
+- **[Foundational]** Tibshirani, Foygel Barber, Candès, Ramdas. *Conformal Prediction Under Covariate Shift.* NeurIPS, 2019. — [arXiv](https://arxiv.org/abs/1904.06019)
+- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
+
+## 10. Worked Example
+
+Consider a triangle join $R(a,b)\bowtie S(b,c)\bowtie T(c,a)$ with $|R|=|S|=|T|=N=100$. A learned estimator outputs $\hat c(q)=120$. Is this trustworthy?
+
+**Pessimistic envelope (AGM).** The query hypergraph is a 3-cycle; its minimum fractional edge cover assigns $x_e=\tfrac12$ to each edge (covering every vertex: $\tfrac12+\tfrac12=1$). The AGM bound is
+$$|R\bowtie S\bowtie T|\le \prod_e |R_e|^{x_e}=100^{1/2}\cdot100^{1/2}\cdot100^{1/2}=100^{3/2}=1000.$$
+So *any* certified one-sided estimator may legitimately report up to $1000$ — the learned $120$ is well under the envelope, but the envelope alone cannot rule out the true value being as large as $1000$.
+
+**Why the learned point estimate needs a certificate.** Suppose the true $c(q)=600$. Then the q-error of the learned estimate is $\mathrm{qerr}=\max(120/600,\,600/120)=5$. A factor-5 *under*-estimate can push the optimizer toward a nested-loop plan sized for $120$ rows that must actually process $600$. The AGM cap ($1000$) is a valid never-under guarantee but is $1000/600\approx1.7\times$ loose — illustrating the open gap: certified one-sided bounds exist but are often too loose to replace point estimates, while the learned estimate is tight on average yet uncertified on this instance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

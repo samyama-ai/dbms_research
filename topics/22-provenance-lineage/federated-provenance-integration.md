@@ -56,12 +56,20 @@ No system delivers sound cross-engine annotation-level lineage; the practical SO
 
 ## 9. Key References
 
-- **[Foundational]** L. Moreau, P. Missier et al. *PROV-DM: The PROV Data Model.* W3C Recommendation, 2013.
-- **[SOTA]** J. M. Hellerstein et al. *Ground: A Data Context Service.* CIDR, 2017.
-- **[SOTA]** OpenLineage / Marquez Project (LF AI & Data). *OpenLineage Specification.* 2021–.
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings.* PODS / TODS, 2004–2009.
-- **[Foundational]** N. Bansal, A. Blum, S. Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
+- **[Foundational]** L. Moreau, P. Missier et al. *PROV-DM: The PROV Data Model.* W3C Recommendation, 2013. — [W3C](https://www.w3.org/TR/2013/REC-prov-dm-20130430/)
+- **[SOTA]** J. M. Hellerstein et al. *Ground: A Data Context Service.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/HellersteinSGSA17.html)
+- **[SOTA]** OpenLineage / Marquez Project (LF AI & Data). *OpenLineage Specification.* 2021–. — [GitHub](https://github.com/OpenLineage/OpenLineage)
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Composing Schema Mappings.* PODS / TODS, 2004–2009. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[Foundational]** N. Bansal, A. Blum, S. Chawla. *Correlation Clustering.* Machine Learning / FOCS, 2004. — [DOI](https://doi.org/10.1023/B:MACH.0000033116.57574.95)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)
+
+## 10. Worked Example
+
+Two engines feed one pipeline. System $A$ (warehouse) exports table `orders(oid, cust)` to a Parquet file; System $B$ (Spark) reads it as `o(order_id, customer)` and joins with `c(customer, region)` to produce `revenue_by_region`.
+
+*Reconciliation seam.* $A$'s column `cust` and $B$'s column `customer` must be matched. Name-matching fails ("cust" ≠ "customer"), so a pairwise matcher proposes edges with confidence: $(\texttt{cust},\texttt{customer})=0.9$, $(\texttt{oid},\texttt{order\_id})=0.95$, $(\texttt{cust},\texttt{region})=0.1$. Correlation clustering on these signed edges (treat $>0.5$ as "+", else "−") groups $\{\texttt{cust},\texttt{customer}\}$ and $\{\texttt{oid},\texttt{order\_id}\}$ as same-entity, leaving `region` separate — minimizing disagreements ($1$ disagreement: the spurious $0.1$ edge is correctly cut).
+
+*Composition.* After quotienting $A\sqcup B$ by $\equiv$, an end-to-end ancestry query "which warehouse `orders` rows fed region `EU` revenue?" traverses $\texttt{revenue\_by\_region} \xrightarrow{} \texttt{o} \xrightarrow{\equiv} \texttt{orders}$. Both engines use bag ($\mathbb{N}$) semantics, so the seam map is a semiring homomorphism and propagation is exact (PTIME). If $B$ instead used probabilistic annotations while $A$ used bags, the seam would be lossy — only a sound over-approximation survives.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,22 @@ Active work formalizes **GQL/SQL/PGQ semantics**, defines **graph algebras** clo
 - Unifying property-graph and RDF semantics; expressiveness of **schema/SHACL**-aware querying; counting and aggregation extensions with clean complexity.
 
 ## 9. Key References
-- **[Survey]** R. Angles, M. Arenas, P. Barceló, A. Hogan, J. Reutter, D. Vrgoč. *Foundations of modern query languages for graph databases.* ACM Computing Surveys, 2017.
-- **[Foundational]** N. Francis et al. *Cypher: An evolving query language for property graphs.* SIGMOD, 2018.
-- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023.
-- **[Foundational]** J. Pérez, M. Arenas, C. Gutierrez. *Semantics and complexity of SPARQL.* ACM TODS, 2009.
-- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004.
-- **[Survey]** P. Barceló. *Querying graph databases.* PODS, 2013.
+- **[Survey]** R. Angles, M. Arenas, P. Barceló, A. Hogan, J. Reutter, D. Vrgoč. *Foundations of modern query languages for graph databases.* ACM Computing Surveys, 2017. — [DOI](https://doi.org/10.1145/3104031)
+- **[Foundational]** N. Francis et al. *Cypher: An evolving query language for property graphs.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190657)
+- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023. *(unverified)*
+- **[Foundational]** J. Pérez, M. Arenas, C. Gutierrez. *Semantics and complexity of SPARQL.* ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1567274.1567278)
+- **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004. — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
+- **[Survey]** P. Barceló. *Querying graph databases.* PODS, 2013. — [ACM](https://doi.org/10.1145/2463664.2465216)
+
+## 10. Worked Example
+
+**A CRPQ and the path-mode subtlety.** Take a property graph of flights, edges labelled $\mathsf{flight}$:
+$$\mathsf{LAX}\xrightarrow{\mathsf{flight}}\mathsf{DEN}\xrightarrow{\mathsf{flight}}\mathsf{ORD}\xrightarrow{\mathsf{flight}}\mathsf{LAX}.$$
+The regular-path query "reachable from $\mathsf{LAX}$ by one or more flights" is the RPQ
+$$Q(y)\;=\;(\mathsf{LAX})\;\xrightarrow{\;\mathsf{flight}^+\;}\;(y),$$
+a transitive closure not expressible in plain FO. Its answer is $\{\mathsf{DEN},\mathsf{ORD},\mathsf{LAX}\}$ — under **arbitrary-walk** semantics $\mathsf{LAX}$ is included via the 3-cycle.
+
+**Path modes change the answer set, and the complexity.** Now ask for *simple paths* (no repeated vertex). The walk $\mathsf{LAX}\to\mathsf{DEN}\to\mathsf{ORD}\to\mathsf{LAX}$ is *not* simple, so under `SIMPLE`/`TRAIL` mode $\mathsf{LAX}$ may drop out of the answer. Crucially, evaluating "is there a *simple* path matching a regular expression?" is **NP-complete** in general (Mendelzon–Wood), whereas the arbitrary-walk RPQ is in **NL**. This jump — same syntax, different path mode — is exactly the kind of semantic cell that GQL/SQL-PGQ standardize but for which a complete expressiveness/complexity map is still open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

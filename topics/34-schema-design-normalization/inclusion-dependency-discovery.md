@@ -43,12 +43,22 @@ Active threads: (1) GPU/columnar-vectorized IND discovery and incremental/stream
 - Joint discovery of INDs + FDs + conditional INDs for richer constraint recovery.
 
 ## 9. Key References
-- **[Foundational]** Casanova, M.A., Fagin, R., Papadimitriou, C.H. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* PODS / JCSS, 1984.
-- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Computing, 1985.
-- **[SOTA]** Papenbrock, F., Kruse, S., Quiané-Ruiz, J.-A., Naumann, F. *Divide & Conquer-based Inclusion Dependency Discovery (BINDER).* PVLDB, 2015.
-- **[SOTA]** Bauckmann, J., Leser, U., Naumann, F. *Efficiently Detecting Inclusion Dependencies (SPIDER).* ICDE, 2007.
-- **[SOTA]** Rostin, A., Albrecht, O., Bauckmann, J., Naumann, F., Leser, U. *A Machine Learning Approach to Foreign Key Discovery.* WebDB, 2009.
-- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (IND theory, Ch. 9).
+- **[Foundational]** Casanova, M.A., Fagin, R., Papadimitriou, C.H. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* PODS / JCSS, 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90075-8)
+- **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Computing, 1985. — [DOI](https://doi.org/10.1137/0214049)
+- **[SOTA]** Papenbrock, F., Kruse, S., Quiané-Ruiz, J.-A., Naumann, F. *Divide & Conquer-based Inclusion Dependency Discovery (BINDER).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752946)
+- **[SOTA]** Bauckmann, J., Leser, U., Naumann, F. *Efficiently Detecting Inclusion Dependencies (SPIDER).* ICDE, 2007. — [DOI](https://doi.org/10.1109/ICDE.2007.369009) · [DBLP](https://dblp.org/rec/conf/icde/BauckmannLNT07.html)
+- **[SOTA]** Rostin, A., Albrecht, O., Bauckmann, J., Naumann, F., Leser, U. *A Machine Learning Approach to Foreign Key Discovery.* WebDB, 2009. — [DBLP](https://dblp.org/rec/conf/webdb/RostinABNL09.html)
+- **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (IND theory, Ch. 9). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+
+## 10. Worked Example
+Two relations:
+$$\text{Order}(oid, custid):\ \{(1,10),(2,10),(3,20)\}\qquad \text{Customer}(cid, status):\ \{(10,\text{gold}),(20,\text{silver}),(30,\text{new})\}.$$
+
+**Validity check.** Candidate IND $\sigma:\ \text{Order}[custid]\subseteq\text{Customer}[cid]$. Compute $\pi_{custid}(\text{Order})=\{10,20\}$ and $\pi_{cid}(\text{Customer})=\{10,20,30\}$. Since $\{10,20\}\subseteq\{10,20,30\}$, $\sigma$ **holds** — a genuine FK candidate. The reverse $\text{Customer}[cid]\subseteq\text{Order}[custid]$ fails ($30\notin\{10,20\}$), illustrating the anti-monotone direction.
+
+**Coincidental IND.** Add $\text{Order}[oid]\subseteq\text{Customer}[cid]$: $\pi_{oid}=\{1,2,3\}$, which is *not* $\subseteq\{10,20,30\}$, so it fails — good. But had $oid$ values happened to be $\{10,20,30\}$, this IND would hold by chance despite no referential meaning. The null model quantifies this: for domain size $d=100$, $n_R=3$ draws falling in an $n_S=3$ subset by chance has probability $\approx (3/100)^3 \approx 2.7\times10^{-5}$ — low, so a holding IND here is unlikely coincidental, raising its FK score.
+
+**Cost.** Unary discovery via SPIDER sorts all $N$ cells once and merge-scans: $O(N\log N)$ I/O, here $N=2\cdot3 + 2\cdot3 = 12$ cells. The hard part is not this check but the n-ary lattice: with $a$ attributes the binary-candidate count grows combinatorially, pruned only when a unary sub-IND already fails.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

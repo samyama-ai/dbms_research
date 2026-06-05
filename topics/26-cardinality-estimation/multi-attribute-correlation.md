@@ -29,12 +29,23 @@ Directions: (i) **update-friendly learned estimators** — retraining cost and d
 Certified-error compact joint models; automatic column-group/correlation discovery integrated with the optimizer; lightweight maintenance under inserts/deletes; unifying single-table joint models with join estimation; and benchmarks that stress adversarial and shifting correlations rather than static snapshots.
 
 ## 9. Key References
-- **[Foundational]** Poosala, Ioannidis. *Selectivity Estimation Without the Attribute Value Independence Assumption.* VLDB, 1997.
-- **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001.
-- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2020.
-- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020.
-- **[SOTA]** Wu, Cong. *BayesCard: A Unified Bayesian Framework for Cardinality Estimation.* 2020/VLDB.
-- **[Survey]** Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021.
+- **[Foundational]** Poosala, Ioannidis. *Selectivity Estimation Without the Attribute Value Independence Assumption.* VLDB, 1997. — [ACM](https://dl.acm.org/doi/10.5555/645923.673638)
+- **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1905.04278)
+- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[SOTA]** Wu, Cong. *BayesCard: A Unified Bayesian Framework for Cardinality Estimation.* 2020/VLDB. — [arXiv](https://arxiv.org/abs/2012.14743)
+- **[Survey]** Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+
+## 10. Worked Example
+
+A `cars` relation with $n=10{,}000$ rows has attributes `make` and `model`. Say `make='Toyota'` holds for $2{,}000$ rows ($P(\text{Toyota})=0.20$) and `model='Camry'` holds for $500$ rows ($P(\text{Camry})=0.05$). The predicate is `make='Toyota' AND model='Camry'`.
+
+**AVI estimate.** Assuming independence,
+$$\hat s_{\text{AVI}}=P(\text{Toyota})\cdot P(\text{Camry})=0.20\times0.05=0.01\Rightarrow\hat c=0.01\times10{,}000=100.$$
+
+**Truth under correlation.** A Camry is *always* a Toyota, so every one of the $500$ Camry rows has `make='Toyota'`: $c=500$, $s=0.05$. The functional dependency `model → make` makes the two columns maximally correlated, so $P(\text{Toyota}\mid\text{Camry})=1\ne P(\text{Toyota})=0.20$.
+
+**Error.** $\mathrm{qerr}=\max(100/500,\,500/100)=5$ — a 5× under-estimate from a single 2-column correlation. A compact joint model that stores the factor $\psi(\text{make},\text{model})$ over just this correlated pair (a 1-bucket column-group statistic recording $P(\text{Camry, Toyota})=0.05$) recovers $\hat c=500$ exactly. The combinatorial blow-up the field worries about appears only when *many* attributes are mutually correlated, forcing factors over large $S_c$ whose inference cost grows as $d^{w}$ in the treewidth $w$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

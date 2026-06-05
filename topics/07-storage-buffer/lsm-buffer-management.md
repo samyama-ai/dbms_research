@@ -42,12 +42,12 @@ Active directions: (1) **compaction-aware caching** that pins or pre-warms block
 
 ## 9. Key References
 
-- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996.
-- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017.
-- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018.
-- **[SOTA]** Andy Huynh, Harshal A. Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022.
-- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985.
-- **[Survey]** Chen Luo, Michael J. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020.
+- **[Foundational]** Patrick O'Neil, Edward Cheng, Dieter Gawlick, Elizabeth O'Neil. *The Log-Structured Merge-Tree (LSM-Tree).* Acta Informatica, 1996. — [DOI](https://doi.org/10.1007/s002360050048)
+- **[SOTA]** Niv Dayan, Manos Athanassoulis, Stratos Idreos. *Monkey: Optimal Navigable Key-Value Store.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064054)
+- **[SOTA]** Niv Dayan, Stratos Idreos. *Dostoevsky: Better Space-Time Trade-Offs for LSM-Tree Based Key-Value Stores via Adaptive Removal of Superfluous Merging.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196927)
+- **[SOTA]** Andy Huynh, Harshal A. Chaudhari, Evimaria Terzi, Manos Athanassoulis. *Endure: A Robust Tuning Paradigm for LSM Trees Under Workload Uncertainty.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2110.13801)
+- **[Foundational]** Daniel Sleator, Robert Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Survey]** Chen Luo, Michael J. Carey. *LSM-based Storage Techniques: A Survey.* VLDB Journal, 2020. — [DOI](https://doi.org/10.1007/s00778-019-00555-y)
 
 ## 10. Worked Example
 

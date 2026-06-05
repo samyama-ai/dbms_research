@@ -55,12 +55,24 @@ The decidability frontier of termination is essentially mapped, but it is *stric
 
 ## 9. Key References
 
-- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005 (chase, weak acyclicity, universal models).
-- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986.
-- **[Foundational]** Calì, Gottlob, Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog$^\pm$).* JWS/PODS, 2009/2012.
-- **[SOTA]** Cuenca Grau, Horrocks, Krötzsch, et al. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013.
-- **[SOTA]** Bellomarini, Sallinger, Gottlob. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* PVLDB, 2018.
-- **[Survey]** Gogacz, Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP, 2014.
+- **[Foundational]** Fagin, Kolaitis, Miller, Popa. *Data Exchange: Semantics and Query Answering.* TCS, 2005 (chase, weak acyclicity, universal models). — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** Bancilhon, Maier, Sagiv, Ullman. *Magic Sets and Other Strange Ways to Implement Logic Programs.* PODS, 1986. — [ACM](https://doi.org/10.1145/6012.15399)
+- **[Foundational]** Calì, Gottlob, Lukasiewicz. *A General Datalog-Based Framework for Tractable Query Answering over Ontologies (Datalog$^\pm$).* JWS/PODS, 2009/2012. — [DOI](https://doi.org/10.1016/j.websem.2012.03.001)
+- **[SOTA]** Cuenca Grau, Horrocks, Krötzsch, et al. *Acyclicity Notions for Existential Rules and Their Application to Query Answering in Ontologies.* JAIR, 2013. — [arXiv](https://arxiv.org/abs/1406.4110)
+- **[SOTA]** Bellomarini, Sallinger, Gottlob. *The Vadalog System: Datalog-based Reasoning for Knowledge Graphs.* PVLDB, 2018. — [arXiv](https://arxiv.org/abs/1807.08709)
+- **[Survey]** Gogacz, Marcinkowski. *All-Instances Termination of Chase is Undecidable.* ICALP, 2014. — [DOI](https://doi.org/10.1007/978-3-662-43951-7_25)
+
+## 10. Worked Example
+
+Take database $D = \{\mathit{Mgr}(\mathsf{alice})\}$ and the single TGD
+$$\Sigma:\quad \mathit{Mgr}(x) \;\to\; \exists y\; \mathit{reportsTo}(y, x).$$
+This says every manager has *some* report.
+
+**Restricted (standard) chase.** Step 1 fires the rule on $x=\mathsf{alice}$ since no witness exists, inventing a fresh null $n_1$: add $\mathit{reportsTo}(n_1, \mathsf{alice})$. The rule body only matches $\mathit{Mgr}$-atoms, and $n_1$ is not a manager, so no further firing applies. The chase **terminates** with universal model $U=\{\mathit{Mgr}(\mathsf{alice}),\,\mathit{reportsTo}(n_1,\mathsf{alice})\}$.
+
+**Certain answers.** For $Q(x) \leftarrow \exists z\,\mathit{reportsTo}(z,x)$, evaluating on $U$ gives $\{\mathsf{alice}\}$ — the null $n_1$ is projected away, and $\mathsf{alice}$ is a *null-free* certain answer. But $Q'() \leftarrow \mathit{reportsTo}(\mathsf{bob}, \mathsf{alice})$ is **false**: no model is forced to name the report $\mathsf{bob}$.
+
+**Why magic sets help.** Had $D$ listed $10^6$ managers but $Q$ asked only about $\mathsf{alice}$, a goal-directed rewriting would fire the rule for $\mathsf{alice}$ alone instead of materializing $10^6$ fresh nulls — top-down pruning with bottom-up completeness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -42,13 +42,21 @@ Directions: **leakage-profile taxonomies** and subgraph/SAP-style frameworks pin
 - Co-designing leakage profiles and padding to land on a provable hardness frontier at minimal cost.
 
 ## 9. Key References
-- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[Foundational]** Islam, Kuzu, Kantarcioglu. *Access Pattern Disclosure on Searchable Encryption: Ramification, Attack and Mitigation.* NDSS, 2012.
-- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** Grubbs, Lacharité, Minaud, Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS, 2018.
-- **[SOTA]** Kamara, Moataz. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019.
-- **[SOTA]** Kornaropoulos, Papamanthou, Tamassia. *The State of the Uniform: Attacks on Encrypted Databases Beyond the Uniform Query Distribution.* IEEE S&P, 2020.
-- **[Survey]** Blackstone, Kamara, Moataz. *Revisiting Leakage Abuse Attacks.* NDSS, 2020.
+- **[Foundational]** Curtmola, Garay, Kamara, Ostrovsky. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417) · [DBLP](https://dblp.org/rec/conf/ccs/CurtmolaGKO06.html)
+- **[Foundational]** Islam, Kuzu, Kantarcioglu. *Access Pattern Disclosure on Searchable Encryption: Ramification, Attack and Mitigation.* NDSS, 2012. — [DBLP](https://dblp.org/rec/conf/ndss/IslamKK12.html)
+- **[SOTA]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386) · [DBLP](https://dblp.org/rec/conf/ccs/KellarisKNO16.html)
+- **[SOTA]** Grubbs, Lacharité, Minaud, Paterson. *Pump up the Volume: Practical Database Reconstruction from Volume Leakage on Range Queries.* CCS, 2018. — [DOI](https://doi.org/10.1145/3243734.3243864) · [ePrint](https://eprint.iacr.org/2018/965)
+- **[SOTA]** Kamara, Moataz. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019. — [DOI](https://doi.org/10.1007/978-3-030-17656-3_7)
+- **[SOTA]** Kornaropoulos, Papamanthou, Tamassia. *The State of the Uniform: Attacks on Encrypted Databases Beyond the Uniform Query Distribution.* IEEE S&P, 2020. — [DBLP](https://dblp.org/rec/conf/sp/KornaropoulosPT20.html) · [ePrint](https://eprint.iacr.org/2019/441)
+- **[Survey]** Blackstone, Kamara, Moataz. *Revisiting Leakage Abuse Attacks.* NDSS, 2020. — [DOI](https://doi.org/10.14722/ndss.2020.23103) · [ePrint](https://eprint.iacr.org/2019/1175)
+
+## 10. Worked Example
+
+**Range reconstruction from access patterns on a tiny domain.** Take an encrypted column over domain $[N]$ with $N=4$, one record per value: $\{1,2,3,4\}$. The server sees, for each range query $[a,b]$, the *set of returned record ids* (access pattern) but not the values.
+
+A query $[a,b]$ returns exactly the records whose values lie in $[a,b]$. Across all $\binom{N+1}{2}=10$ possible ranges, the adversary collects returned id-sets, e.g. $\{r_2\}$ (from $[2,2]$), $\{r_2,r_3\}$ (from $[2,3]$), $\{r_1,r_2,r_3,r_4\}$ (from $[1,4]$). Records that *co-occur* in many ranges are adjacent in value; a record returned by a singleton range is at a value extreme or isolated. Building the **interval/PQ-tree** from these co-occurrence sets pins the *order* $r_1\!<\!r_2\!<\!r_3\!<\!r_4$ up to reflection (the symmetry $v\mapsto N{+}1{-}v$ is unrecoverable from access pattern alone).
+
+**Sample complexity:** KKNO show full reconstruction needs every value-pair observed — a coupon-collector argument giving $\Theta(N^2\log N)$ queries under uniform sampling (later $\Theta(N\log N)$). For $N=4$ this is a handful of queries; for $N=10^6$ it is the necessary $\Omega(N\log N)$ lower bound below which reconstruction is information-theoretically impossible.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

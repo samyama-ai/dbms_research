@@ -57,11 +57,21 @@ Practitioners hit a layout/round-trip wall that theory does not characterize: we
 
 ## 9. Key References
 
-- **[SOTA]** Suhas Jayaram Subramanya, Devvrit, Rohan Kadekodi, Ravishankar Krishnaswamy, Harsha Vardhan Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[SOTA]** Qi Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021.
-- **[SOTA]** Mengzhao Wang et al. *Starling: An I/O-Efficient Disk-Resident Graph Index Framework for High-Dimensional Vector Similarity Search on Data Segment.* SIGMOD, 2024.
-- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[Foundational]** Alexandr Andoni, Piotr Indyk, Mihai Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006.
+- **[SOTA]** Suhas Jayaram Subramanya, Devvrit, Rohan Kadekodi, Ravishankar Krishnaswamy, Harsha Vardhan Simhadri. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [PDF](https://suhasjs.github.io/files/diskann_neurips19.pdf)
+- **[SOTA]** Qi Chen et al. *SPANN: Highly-efficient Billion-scale Approximate Nearest Neighbor Search.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2111.08566)
+- **[SOTA]** Mengzhao Wang et al. *Starling: An I/O-Efficient Disk-Resident Graph Index Framework for High-Dimensional Vector Similarity Search on Data Segment.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2401.02116) · [DOI](https://doi.org/10.1145/3639269)
+- **[Foundational]** Alok Aggarwal, Jeffrey Scott Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
+- **[Foundational]** Alexandr Andoni, Piotr Indyk, Mihai Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006. — [PDF](https://www.mit.edu/~andoni/papers/eps2n.pdf) · [DBLP search](https://dblp.org/search?q=On+the+Optimality+of+the+Dimensionality+Reduction+Method)
+
+## 10. Worked Example
+
+Latency vs. bandwidth on object storage. Suppose a greedy graph walk visits $h=12$ hops, each hop a dependent random read from S3 with latency $L=20$ ms and bandwidth $\text{bw}=200$ MB/s; an adjacency+vector page is $B=8$ KB.
+
+Naive serial walk (beam width $w=1$): each hop is one round-trip, so latency $\approx h\cdot L + h\cdot B/\text{bw} = 12\times 20 + 12\times(8\text{KB}/200\text{MB/s})$. The transfer term is $12\times 0.04\ \text{ms}\approx 0.5$ ms — negligible. Total $\approx 240$ ms, entirely latency-bound.
+
+Batched/beam walk ($w=4$): fetch 4 candidate pages per round, cutting rounds to $\lceil h/w\rceil = 3$. Latency $\approx 3\times 20 + 48\times B/\text{bw} = 60 + 48\times0.04 \approx 62$ ms — a $3.9\times$ speedup, paying $4\times$ the bytes (still cheap here because we are far from the bandwidth ceiling).
+
+Contrast a quantization-index posting scan: one sequential read of $\ell=10^5$ PQ codes at $m=16$ subspaces, $b=8$ bits $=1.6$ MB, costing $L + 1.6\text{MB}/200\text{MB/s} = 20 + 8 = 28$ ms — *one* round-trip, bandwidth-amortized. This is exactly the latency-vs-bandwidth lever the layout/co-design variant must choose between per workload.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -41,12 +41,29 @@ Active directions: learned cost models for variant access, reinforcement-learnin
 - Benchmarks capturing realistic schema/field drift.
 
 ## 9. Key References
-- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978.
-- **[Foundational]** S. Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010.
-- **[SOTA]** D. Tahara, T. Diamond, D. Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014.
-- **[SOTA]** D. Durner, V. Leis, T. Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021.
-- **[Foundational]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012.
-- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** G. Nemhauser, L. Wolsey, M. Fisher. *An analysis of approximations for maximizing submodular set functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[Foundational]** S. Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010. — [DBLP](https://dblp.org/rec/journals/pvldb/MelnikGLRSTV10.html)
+- **[SOTA]** D. Tahara, T. Diamond, D. Abadi. *Sinew: A SQL System for Multi-Structured Data.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2612183)
+- **[SOTA]** D. Durner, V. Leis, T. Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021. — [DBLP](https://dblp.org/rec/conf/sigmod/DurnerL021.html)
+- **[Foundational]** N. Bansal, N. Buchbinder, J. Naor. *A Primal-Dual Randomized Algorithm for Weighted Paging.* JACM, 2012. — [DOI](https://doi.org/10.1145/2339123.2339126)
+- **[Survey]** S. Chaudhuri, V. Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+Suppose 3 candidate paths with workload benefit (query-seconds saved per scan) and storage cost (columns):
+
+| Path $p$ | benefit $b(p)$ | cost (cols) |
+|---|---|---|
+| `user.id` | 6 | 1 |
+| `addr.city` | 5 | 1 |
+| `orders[*].price` | 4 | 2 |
+
+Budget $B = 2$ columns. The benefit set function $f$ is monotone submodular (each materialized column only helps queries that touch it, with diminishing overlap). Greedy under a cardinality/knapsack budget:
+
+1. Pick `user.id`: gain $6$, cost $1$, remaining budget $1$. Set $M=\{`user.id`\}$.
+2. Next best affordable item is `addr.city` (gain $5$, cost $1 \le 1$); `orders[*].price` costs $2 > 1$ so it is skipped. Pick it. $M=\{`user.id`, `addr.city`\}$, benefit $= 11$.
+
+Greedy benefit $= 11$. The optimum here is also $\{`user.id`, `addr.city`\} = 11$, so greedy hits OPT, comfortably inside the $(1-1/e)\approx 0.632$ guarantee ($0.632 \times 11 \approx 6.95$ is the worst-case floor). Now suppose workload drift makes `orders[*].price` worth $20$: a drift-aware online policy must pay the switching cost to drop `addr.city` and materialize the (2-column) order path, the metrical-task-system tradeoff section 2 formalizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

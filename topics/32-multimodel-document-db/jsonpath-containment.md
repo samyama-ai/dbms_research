@@ -46,11 +46,24 @@ The decisive boundary results: tree-pattern containment with `{/, //, [], *}` is
 - Sound incomplete procedures with completeness guarantees on practical fragments, wired into real optimizers.
 
 ## 9. Key References
-- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004.
-- **[Foundational]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008.
-- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017.
-- **[Survey]** T. Schwentick. *XPath Query Containment.* SIGMOD Record, 2004.
-- **[Foundational]** M. Bojańczyk, C. David, A. Muscholl, T. Schwentick, L. Segoufin. *Two-Variable Logic on Data Trees and XML Reasoning.* PODS/JACM, 2009.
+- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/602382.602385)
+- **[Foundational]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346333)
+- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
+- **[Survey]** T. Schwentick. *XPath Query Containment.* SIGMOD Record, 2004. — [DOI](https://doi.org/10.1145/974121.974140)
+- **[Foundational]** M. Bojańczyk, C. David, A. Muscholl, T. Schwentick, L. Segoufin. *Two-Variable Logic on Data Trees and XML Reasoning.* PODS/JACM, 2009. — [DOI](https://doi.org/10.1145/1516512.1516515)
+
+## 10. Worked Example
+
+Consider the navigational fragment (no filters, no data values). Let
+$p = \texttt{\$..a.b}$ and $q = \texttt{\$.*.a.b}$, where $..$ is recursive descent and $*$ matches any single child.
+
+Is $p \sqsubseteq q$? As tree patterns: $p$ selects any $b$-child of an $a$-node reachable at *any* depth $\ge 1$ from the root; $q$ selects a $b$-child of an $a$-node at *exactly* depth 2 (root $\to *$ $\to a \to b$). So $p$ is strictly more permissive.
+
+Witness document distinguishing them (depth $k=4$):
+$$J = \{\texttt{x}:\{\texttt{y}:\{\texttt{a}:\{\texttt{b}:1\}\}\}\}.$$
+Here the $a$-node sits at depth 3, so $p(J)=\{1\}$ but $q(J)=\varnothing$. Since one document gives $p(J)\not\subseteq q(J)$, we have $p \not\sqsubseteq q$.
+
+This matches the **coNP** upper bound (Section 4): containment fails iff a counterexample tree of size polynomial in $|p|+|q|$ exists, so a nondeterministic guess-and-check of the witness refutes containment in NP, placing containment itself in coNP.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -34,12 +34,18 @@ Segoufin, Schweikardt, Vigny continue the FO-on-sparse-classes program; Amarilli
 A complete enumeration dichotomy for FO/CQ with negation and arithmetic; constant-delay ranked and aggregate enumeration with optimality proofs; dynamic constant-delay maintenance for the largest possible query class; enumeration meta-theorems for dense-but-tame classes (twin-width, NIP); and unconditional lower bounds to remove reliance on fine-grained hypotheses.
 
 ## 9. Key References
-- **[Foundational]** G. Bagan, A. Durand, E. Grandjean. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL 2007.
-- **[Survey]** L. Segoufin. *Enumerating with Constant Delay the Answers to a Query.* ICDT 2013 (invited tutorial).
-- **[SOTA]** N. Schweikardt, L. Segoufin, A. Vigny. *Enumeration for FO Queries over Nowhere Dense Graphs.* PODS 2018.
-- **[SOTA]** C. Berkholz, J. Keppeler, N. Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017.
-- **[SOTA]** A. Amarilli, P. Bourhis, S. Mengel, M. Niewerth. *Constant-Delay Enumeration for Nondeterministic Document Spanners / Circuits.* ICDT 2019; ACM TODS.
-- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* Journal of the ACM 65(3), 2018 (PODS 2012).
+- **[Foundational]** G. Bagan, A. Durand, E. Grandjean. *On Acyclic Conjunctive Queries and Constant Delay Enumeration.* CSL 2007. — [DOI](https://doi.org/10.1007/978-3-540-74915-8_18)
+- **[Survey]** L. Segoufin. *Enumerating with Constant Delay the Answers to a Query.* ICDT 2013 (invited tutorial). — [DOI](https://doi.org/10.1145/2448496.2448498)
+- **[SOTA]** N. Schweikardt, L. Segoufin, A. Vigny. *Enumeration for FO Queries over Nowhere Dense Graphs.* PODS 2018. — [DOI](https://doi.org/10.1145/3196959.3196971)
+- **[SOTA]** C. Berkholz, J. Keppeler, N. Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017. — [arXiv](https://arxiv.org/abs/1702.06370) · [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** A. Amarilli, P. Bourhis, S. Mengel, M. Niewerth. *Constant-Delay Enumeration for Nondeterministic Document Spanners / Circuits.* ICDT 2019; ACM TODS. — [arXiv](https://arxiv.org/abs/1807.09320) · [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2019.22)
+- **[SOTA]** H. Q. Ngo, E. Porat, C. Ré, A. Rudra. *Worst-Case Optimal Join Algorithms.* Journal of the ACM 65(3), 2018 (PODS 2012). — [arXiv](https://arxiv.org/abs/1203.1952) · [DOI](https://doi.org/10.1145/3180143)
+
+## 10. Worked Example
+
+**A free-connex query that enumerates with constant delay.** Take $R(a,b)$ and $S(b,c)$ and the full-join query $Q(a,b,c)\leftarrow R(a,b),S(b,c)$. Its hypergraph is acyclic (a path $a$–$b$–$c$) and, since all variables are output, it is **free-connex**. So by Bagan–Durand–Grandjean it admits CD$\circ$lin: in $O(|R|+|S|)$ we hash $S$ on $b$, then scan $R$; for each $R$-tuple $(a,b)$ we walk the bucket $S[b]$, emitting each $(a,b,c)$ with $O(1)$ delay. First answer in linear time; total $O(|\mathfrak{D}|+|Q(\mathfrak{D})|)$.
+
+**A query that provably cannot.** Now project: $Q'(a,c)\leftarrow R(a,b),S(b,c)$, with $b$ existentially quantified. This is acyclic but **not** free-connex ($b$ separates the two output variables). Outputting distinct $(a,c)$ pairs with constant delay would let us compute the Boolean product of the $0/1$ matrices for $R$ and $S$ in time $O(n^2 + \#\text{pairs})$ — i.e. Boolean matrix multiplication in $O(n^2)$, contradicting the BMM hardness hypothesis. So $Q'$ has no CD$\circ$lin algorithm under that hypothesis, illustrating the free-connex dichotomy exactly.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

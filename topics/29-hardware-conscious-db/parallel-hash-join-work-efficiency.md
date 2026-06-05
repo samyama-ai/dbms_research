@@ -29,12 +29,26 @@ Active: bridging MPC theory to GPU reality with skew-resilient partitioning; wor
 A single algorithm provably hitting work, depth, and communication optima for cyclic multi-way joins under skew; tighter PRAM↔GPU bridging models that price coalescing and divergence; output-sensitive depth bounds; integrating worst-case-optimal join theory with hardware-conscious radix layout.
 
 ## 9. Key References
-- **[Foundational]** R. P. Brent. *The Parallel Evaluation of General Arithmetic Expressions.* JACM, 1974 (Brent's theorem).
-- **[Foundational]** H. Karloff, S. Suri, S. Vassilvitskii. *A Model of Computation for MapReduce.* SODA, 2010 (MPC model).
-- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity Joins.* PODS, 2017.
-- **[SOTA]** P. Koutris, P. Beame, D. Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016.
-- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013.
-- **[SOTA]** P. Sioulas et al. *Hardware-Conscious Hash-Joins on GPUs.* ICDE, 2019.
+- **[Foundational]** R. P. Brent. *The Parallel Evaluation of General Arithmetic Expressions.* JACM, 1974 (Brent's theorem). — [DOI](https://doi.org/10.1145/321812.321815)
+- **[Foundational]** H. Karloff, S. Suri, S. Vassilvitskii. *A Model of Computation for MapReduce.* SODA, 2010 (MPC model). — [DOI](https://doi.org/10.1137/1.9781611973075.76) — [DBLP](https://dblp.org/rec/conf/soda/KarloffSV10.html)
+- **[SOTA]** X. Hu, Y. Tao, K. Yi. *Output-Optimal Parallel Algorithms for Similarity Joins.* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056110) — [DBLP](https://dblp.org/rec/conf/pods/HuTY17.html)
+- **[SOTA]** P. Koutris, P. Beame, D. Suciu. *Worst-Case Optimal Algorithms for Parallel Query Processing.* ICDT, 2016. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2016.8) — [arXiv](https://arxiv.org/abs/1604.01848)
+- **[SOTA]** C. Balkesen, J. Teubner, G. Alonso, M. T. Özsu. *Main-Memory Hash Joins on Multi-Core CPUs: Tuning to the Underlying Hardware.* ICDE, 2013. — [DBLP](https://dblp.org/rec/conf/icde/BalkesenTAO13.html)
+- **[SOTA]** P. Sioulas et al. *Hardware-Conscious Hash-Joins on GPUs.* ICDE, 2019. — [DOI](https://doi.org/10.1109/ICDE.2019.00068) — [DBLP](https://dblp.org/rec/conf/icde/SioulasCKAA19.html)
+
+## 10. Worked Example
+
+Join $R(a,b)\bowtie_a S(a,c)$ with $|R|=|S|=N=8$ on $p=2$ processors, using radix partitioning on one bit of the key.
+
+$R.a = \{0,2,4,6,1,3,5,7\}$, $S.a=\{0,0,2,4,1,1,3,5\}$. Hash bit = key parity, so partition $0$ = even keys, partition $1$ = odd keys.
+
+**Step 1 — histogram + prefix sum (depth $O(\log N)$).** Count keys per partition: $R$: 4 even, 4 odd; $S$: 3 even (0,0,2,4 → actually 4 even), 4 odd. A parallel scan computes write-offsets; this scan is the $\Omega(\log N)$ depth substep of section 5.
+
+**Step 2 — scatter.** Even keys go to processor 0, odd to processor 1. Each processor now holds an independent sub-join of size $\approx N/p = 4$.
+
+**Step 3 — local build/probe.** Processor 0 builds a hash table on its 4 $R$-tuples, probes its $S$-tuples. Key 0 appears twice in $S$ and once in $R$ → 2 output tuples.
+
+**Work accounting.** Total operations $= O(N + \mathrm{OUT})$: each tuple is hashed/scattered once ($O(N)$) and each join match emitted once ($\mathrm{OUT}=$ here $2$ for key 0, plus matches for 1,2,4,5). **Depth** $= O(\log N)$ from the prefix-sum, with constant-depth local probing. This hits the work optimum $\Theta(N+\mathrm{OUT})$ and depth optimum $\Theta(\log N)$ simultaneously — the binary-join case section 6 calls solved. Skew breaks it: if key 0 had $N/2$ duplicates on each side, processor 0 alone would do $\Theta(N^2)$ work, motivating heavy/light splitting.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

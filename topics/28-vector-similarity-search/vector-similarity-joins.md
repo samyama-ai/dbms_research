@@ -45,12 +45,26 @@ Active directions: GPU- and disk-resident batch $k$-NN-graph construction at bil
 - Joins under learned / non-metric similarities (ties to cross-modal ANN).
 
 ## 9. Key References
-- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[Foundational]** W. Dong, M. Charikar, K. Li. *Efficient k-Nearest Neighbor Graph Construction for Generic Similarity Measures (NN-Descent).* WWW, 2011.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[Foundational]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
-- **[Foundational]** C. Xiao, W. Wang, X. Lin, J. X. Yu. *Efficient Similarity Joins for Near Duplicate Detection.* WWW, 2008.
-- **[SOTA]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs (FAISS).* IEEE Transactions on Big Data, 2021.
+- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876)
+- **[Foundational]** W. Dong, M. Charikar, K. Li. *Efficient k-Nearest Neighbor Graph Construction for Generic Similarity Measures (NN-Descent).* WWW, 2011. — [DOI](https://doi.org/10.1145/1963405.1963487)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[Foundational]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
+- **[Foundational]** C. Xiao, W. Wang, X. Lin, J. X. Yu. *Efficient Similarity Joins for Near Duplicate Detection.* WWW, 2008. — [DOI](https://doi.org/10.1145/1367497.1367516)
+- **[SOTA]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs (FAISS).* IEEE Transactions on Big Data, 2021. — [arXiv](https://arxiv.org/abs/1702.08734)
+
+## 10. Worked Example
+
+Top-1 NN join of $R$ into $S$, both in $\mathbb{R}^2$:
+
+$R = \{r_1{=}(0,0),\ r_2{=}(5,5)\}$, $S = \{s_1{=}(1,0),\ s_2{=}(0,2),\ s_3{=}(6,5)\}$.
+
+**Brute force** ($k$-NN join) costs $|R|\,|S| = 2\times3 = 6$ distance evaluations:
+- $r_1$: $\|r_1{-}s_1\|{=}1,\ \|r_1{-}s_2\|{=}2,\ \|r_1{-}s_3\|{\approx}7.8 \Rightarrow$ NN $= s_1$.
+- $r_2$: $\|r_2{-}s_1\|{\approx}6.4,\ \|r_2{-}s_2\|{\approx}5.8,\ \|r_2{-}s_3\|{=}1 \Rightarrow$ NN $= s_3$.
+
+**LSH-join** instead hashes all five points with a random projection (bucket width $w$). With a grid of width $w=3$, $s_1,s_2,r_1$ fall in cell $(0,0)$ and $s_3,r_2$ in cell $(1,1)$; each $r$ is only compared within its bucket, giving $2 + 1 = 3$ evaluations — half the brute-force work, and it still recovers both true neighbors here.
+
+**Scaling:** at $n = |R| = |S| = 10^6$ and $c = 2$ (Euclidean, $\rho = 1/c^2 = 0.25$), brute force is $n^2 = 10^{12}$ ops, while the LSH join is $\tilde O(n^{1+\rho}) = 10^{7.5} \approx 3.2\times10^7$ — a $\sim 30{,}000\times$ reduction, the subquadratic win the problem targets. Exact dense joins, by Rubinstein/SETH, cannot beat $n^{2-o(1)}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

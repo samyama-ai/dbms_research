@@ -1,6 +1,7 @@
 # Tight Bounds for Conjunctive Query Cardinality
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/agm-bound-tightness` · **Status:** partially-solved
+> **Verification note:** The Cai–Balazinska–Suciu pessimistic estimator cited in §3 appeared as "Pessimistic Cardinality Estimation" at SIGMOD 2019 (DOI 10.1145/3299869.3319894), not as "Cardinality Estimation Done Right" at CIDR 2019.
 
 ## 1. Problem Statement
 Given a conjunctive query (CQ) $Q$ over relations with known statistics (cardinalities, attribute domains, degree/frequency profiles, functional dependencies), produce an *upper bound* on the output cardinality $|Q(D)|$ that is as tight as possible while remaining valid for *every* database $D$ consistent with those statistics. The motivating questions are: (i) how far is the worst-case AGM bound from the *actual* cardinality on realistic instances, (ii) which additional statistics provably shrink the worst-case envelope, and (iii) can a tractable bound match the true cardinality up to a small factor. Variants: the **counting** variant (estimate $|Q(D)|$ numerically), the **bounding** variant (a certified upper bound), and the **optimization** variant (choose the statistics budget that minimizes worst-case looseness).
@@ -29,12 +30,23 @@ Active directions: (i) **certified yet tight** estimators that combine degree se
 Tractable approximations of the entropic bound; data-dependent statistics that provably shrink the worst-case envelope toward observed cardinalities; bounds that compose across query plans (linking to error-propagation work); incremental maintenance of certified statistics under updates; and integrating certified bounds into cost-based optimization with regret guarantees.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008.
-- **[Foundational]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017.
-- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019.
-- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023.
-- **[Survey]** Ngo. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS, 2018.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html), [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Gottlob, Lee, Valiant, Valiant. *Size and Treewidth Bounds for Conjunctive Queries.* JACM, 2012. — [DOI](https://doi.org/10.1145/2220357.2220363)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105), [arXiv](https://arxiv.org/abs/1612.02503)
+- **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
+- **[SOTA]** Deeds, Suciu, Balazinska, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3588907), [arXiv](https://arxiv.org/abs/2211.09864)
+- **[Survey]** Ngo. *Worst-Case Optimal Join Algorithms: Techniques, Results, and Open Problems.* PODS, 2018. — [DOI](https://doi.org/10.1145/3196959.3196990), [arXiv](https://arxiv.org/abs/1803.09930)
+
+## 10. Worked Example
+
+Consider the **triangle query** $Q = R(a,b) \bowtie S(b,c) \bowtie T(c,a)$ with $|R|=|S|=|T|=N$. The hypergraph has vertices $\{a,b,c\}$ and three edges, each covering two vertices. A fractional edge cover must satisfy, per vertex, $x_R+x_T\ge 1$ (covers $a$), $x_R+x_S\ge 1$ (covers $b$), $x_S+x_T\ge 1$ (covers $c$). Minimizing $\sum x_e$ gives the symmetric optimum $x_R=x_S=x_T=\tfrac12$, so $\rho^* = \tfrac32$.
+
+The **AGM bound** is therefore
+$$|Q(D)| \le |R|^{1/2}|S|^{1/2}|T|^{1/2} = N^{3/2}.$$
+
+This is *worst-case tight*: take $R=S=T = [\sqrt N] \times [\sqrt N]$ (a full $\sqrt N \times \sqrt N$ grid of pairs). Each relation has $N$ tuples, and every triple $(a,b,c)\in[\sqrt N]^3$ satisfies all three relations, giving exactly $(\sqrt N)^3 = N^{3/2}$ output triangles — matching the bound.
+
+Yet on a **sparse real graph** with $N$ edges and bounded degree $d$, the true triangle count is $O(Nd) = O(N)$, far below $N^{3/2}$. For $N=10^6,\ d=10$ the bound says $\le 10^9$ but the truth is $\approx 10^7$ — the §6 worst-case-vs-actual gap of two orders of magnitude.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -44,12 +44,22 @@ The signature open gap is the **decidability of bag-containment for pure conjunc
 - Provably complete, scalable equivalence checkers for the full SQL bag fragment, including window functions and recursion.
 
 ## 9. Key References
-- **[Foundational]** S. Chaudhuri, M. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993 (bag equivalence = isomorphism; containment open).
-- **[Foundational]** T. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** T. S. Jayram, P. Kolaitis, E. Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities.* PODS, 2006.
-- **[Foundational]** S. Cohen, W. Nutt, Y. Sagiv. *Deciding Equivalences Among Conjunctive Aggregate Queries.* JACM, 2007.
-- **[SOTA]** S. Chu, C. Wang, K. Weitz, A. Cheung. *Cosette: An Automated Prover for SQL.* CIDR, 2017.
-- **[SOTA]** H. Dell, M. Roth, P. Wellnitz. *Counting Answers to Existential Questions.* ICALP, 2019.
+- **[Foundational]** S. Chaudhuri, M. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993 (bag equivalence = isomorphism; containment open). — [DOI](https://doi.org/10.1145/153850.153856)
+- **[Foundational]** T. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** T. S. Jayram, P. Kolaitis, E. Vee. *The Containment Problem for Real Conjunctive Queries with Inequalities.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142363)
+- **[Foundational]** S. Cohen, W. Nutt, Y. Sagiv. *Deciding Equivalences Among Conjunctive Aggregate Queries.* JACM, 2007. — [DOI](https://doi.org/10.1145/1219092.1219093)
+- **[SOTA]** S. Chu, C. Wang, K. Weitz, A. Cheung. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
+- **[SOTA]** H. Dell, M. Roth, P. Wellnitz. *Counting Answers to Existential Questions.* ICALP, 2019. — [arXiv](https://arxiv.org/abs/1902.04960) · [DOI](https://doi.org/10.4230/LIPIcs.ICALP.2019.113)
+
+## 10. Worked Example
+
+**Set-equivalent but bag-different.** Let $R(x,y)$ be the edge relation $\{(1,2),(2,3),(2,4)\}$. Consider two CQs returning the first column:
+$$q_1(x) \leftarrow R(x,y), \qquad q_2(x) \leftarrow R(x,y), R(x,z).$$
+Under **set** semantics they are equivalent (both fold to $q_1$ by homomorphism: $z$ maps onto $y$), so $q_1\equiv_{\text{set}}q_2$.
+
+Under **bag** semantics, multiplicity = number of homomorphisms. For $x=2$, query $q_1$ has $2$ witnesses ($y\in\{3,4\}$); $q_2$ has $2\times 2 = 4$ witnesses (independent choices of $y,z$). So the output bags differ ($2$ vs $4$ for tuple $2$), hence $q_1\not\equiv_{\text{bag}}q_2$.
+
+**Chaudhuri–Vardi in action.** The bodies of $q_1$ and $q_2$ are *not isomorphic* (one atom vs two atoms over different variable sets), which by the theorem $q_1\equiv_{\text{bag}}q_2 \iff q_1\cong q_2$ immediately certifies bag-inequivalence — no database search needed. This is exactly why bag equivalence is "easy" (isomorphism) while bag *containment* $q_1\sqsubseteq_b q_2$ (here $2\le 4$ pointwise — does it always hold?) stays the long-open hard frontier.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

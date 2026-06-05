@@ -45,12 +45,28 @@ The gap is between **practically-effective heuristics** (union/fusion + greedy M
 - Robust handling of semantic types, units, and cross-field constraints, not just structural shapes.
 
 ## 9. Key References
-- **[Foundational]** Gold, E.M. *Language Identification in the Limit.* Information and Control, 1967.
-- **[Foundational]** Bex, G.J., Gelade, W., Neven, F., Vansummeren, S. *Learning Deterministic Regular Expressions for the Inference of Schemas from XML Data.* ACM TWEB / WWW, 2010.
-- **[SOTA]** Baazizi, M.-A., Colazzo, D., Ghelli, G., Sartiani, C. *Counting Types for Massive JSON Datasets / Schema Inference for Massive JSON Datasets.* EDBT, 2017.
-- **[SOTA]** Papenbrock, F., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016.
-- **[Foundational]** Rissanen, J. *Modeling by Shortest Data Description (MDL).* Automatica, 1978.
-- **[Survey]** Abiteboul, S., Buneman, P., Suciu, D. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000.
+- **[Foundational]** Gold, E.M. *Language Identification in the Limit.* Information and Control, 1967. — [DOI](https://doi.org/10.1016/S0019-9958(67)91165-5)
+- **[Foundational]** Bex, G.J., Gelade, W., Neven, F., Vansummeren, S. *Learning Deterministic Regular Expressions for the Inference of Schemas from XML Data.* ACM TWEB / WWW, 2010. — [DOI](https://doi.org/10.1145/1841909.1841911), [arXiv](https://arxiv.org/abs/1004.2372)
+- **[SOTA]** Baazizi, M.-A., Colazzo, D., Ghelli, G., Sartiani, C. *Counting Types for Massive JSON Datasets / Schema Inference for Massive JSON Datasets.* EDBT, 2017. — [PDF](https://openproceedings.org/2017/conf/edbt/paper-62.pdf), [DBLP](https://dblp.org/rec/conf/edbt/BaaziziLCGS17.html)
+- **[SOTA]** Papenbrock, T., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[Foundational]** Rissanen, J. *Modeling by Shortest Data Description (MDL).* Automatica, 1978. — [DOI](https://doi.org/10.1016/0005-1098(78)90005-5)
+- **[Survey]** Abiteboul, S., Buneman, P., Suciu, D. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000. — [DBLP](https://dblp.org/rec/books/mk/AbiteboulBS2000.html)
+
+## 10. Worked Example
+
+Infer a JSON schema from three documents:
+
+```
+d1 = {id:1, name:"Ann", tags:["x"]}
+d2 = {id:2, name:"Bob"}
+d3 = {id:3, name:"Cy", tags:[]}
+```
+
+**Type fusion (Baazizi et al.).** Per record, the inferred shapes are
+$\{id:\text{Num}, name:\text{Str}, tags:[\text{Str}]\}$, $\{id:\text{Num}, name:\text{Str}\}$, $\{id:\text{Num}, name:\text{Str}, tags:[\,]\}$. The lattice join (least upper bound) merges them: `id` and `name` appear in all 3 records → **required**; `tags` appears in 2 of 3 → **optional**, written $tags?$. Empty and singleton arrays unify to $[\text{Str}]$. Result:
+$$\mathcal{S} = \{\,id:\text{Num},\ name:\text{Str},\ tags?:[\text{Str}]\,\}.$$
+
+**MDL check.** The verbose union-of-shapes schema would list all three variants ($\approx$ 3 shape descriptions). The fused $\mathcal{S}$ costs fewer model bits $L(\mathcal{S})$ while still validating all 3 docs ($L(D\mid\mathcal{S})$ unchanged), so it wins the $L(\mathcal{S})+L(D\mid\mathcal{S})$ objective. Note `tags?` generalizes correctly: a future doc with or without `tags` validates — exactly the compact, generalizing schema the problem seeks.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

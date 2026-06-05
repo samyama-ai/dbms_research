@@ -44,12 +44,27 @@ Active threads: (a) propensity *estimation/imputation* for deterministic logs pl
 - Sensitivity bounds tying Rosenbaum $\Gamma$ to deployable "don't switch unless gain exceeds bias" rules.
 
 ## 9. Key References
-- **[Foundational]** M. Dudík, J. Langford, L. Li. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011.
-- **[Foundational]** C. F. Manski. *Identification for Prediction and Decision.* Harvard University Press, 2007.
-- **[SOTA]** Y. Su, M. Dimakopoulou, A. Krishnamurthy, M. Dudík. *Doubly Robust Off-Policy Evaluation with Shrinkage.* ICML, 2020.
-- **[SOTA]** P. Thomas, G. Theocharous, M. Ghavamzadeh. *High-Confidence Off-Policy Evaluation.* AAAI, 2015.
-- **[Foundational]** S. Chaudhuri, V. Narasayya. *AutoAdmin "What-If" Index Analysis Utility.* SIGMOD, 1998.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** M. Dudík, J. Langford, L. Li. *Doubly Robust Policy Evaluation and Learning.* ICML, 2011. — [arXiv](https://arxiv.org/abs/1103.4601)
+- **[Foundational]** C. F. Manski. *Identification for Prediction and Decision.* Harvard University Press, 2007. — [DBLP search](https://dblp.org/search?q=Manski%20Identification%20for%20Prediction%20and%20Decision)
+- **[SOTA]** Y. Su, M. Dimakopoulou, A. Krishnamurthy, M. Dudík. *Doubly Robust Off-Policy Evaluation with Shrinkage.* ICML, 2020. — [arXiv](https://arxiv.org/abs/1907.09623)
+- **[SOTA]** P. Thomas, G. Theocharous, M. Ghavamzadeh. *High-Confidence Off-Policy Evaluation.* AAAI, 2015. — [DOI](https://doi.org/10.1609/aaai.v29i1.9541)
+- **[Foundational]** S. Chaudhuri, V. Narasayya. *AutoAdmin "What-If" Index Analysis Utility.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276337)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
+
+## 10. Worked Example
+
+A tuner logged $n=4$ runs under a stochastic logging policy $\mu$ over two actions $a\in\{\text{idx},\text{no-idx}\}$. We want $V(\pi)$ for the deterministic target $\pi$ that always builds the index. Reward $r$ = throughput gain (higher better).
+
+| $i$ | $a_i$ | $r_i$ | $\mu(a_i\mid x_i)$ | $\pi(a_i\mid x_i)$ | weight $w_i=\pi/\mu$ |
+|---|---|---|---|---|---|
+| 1 | idx | 0.8 | 0.5 | 1 | 2.0 |
+| 2 | no-idx | 0.3 | 0.5 | 0 | 0.0 |
+| 3 | idx | 0.6 | 0.5 | 1 | 2.0 |
+| 4 | no-idx | 0.1 | 0.5 | 0 | 0.0 |
+
+**IPS:** $\hat V_{\text{IPS}}=\frac1n\sum_i w_i r_i = \frac{1}{4}(2{\cdot}0.8 + 0 + 2{\cdot}0.6 + 0)=\frac{2.8}{4}=0.7$.
+
+Effective sample size $=\dfrac{(\sum w_i)^2}{\sum w_i^2}=\dfrac{4^2}{2(2^2)}=\dfrac{16}{8}=2$ — only the two idx runs inform the estimate; the no-idx logs contribute nothing because $\pi$ never takes that action. This is the variance penalty of importance weighting: with the logging policy near-deterministic for some context, $\sup_x \pi/\mu$ grows and effective $n$ collapses. A doubly-robust estimator would add a reward model $\hat r$ to recover signal from the discarded rows, shrinking variance while staying unbiased if either model is correct.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

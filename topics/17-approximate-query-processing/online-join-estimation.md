@@ -47,13 +47,23 @@ Active directions: (1) **worst-case-optimal join sampling** — uniform/near-uni
 - Integration with worst-case-optimal join *plans* so sampling and execution share work.
 
 ## 9. Key References
-- **[Foundational]** P. J. Haas, J. M. Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999.
-- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016.
-- **[SOTA]** C. Jermaine, S. Arumugam, A. Pol, A. Dobra. *Scalable Approximate Query Processing with the DBO Engine.* SIGMOD, 2007 / TODS, 2008.
-- **[SOTA]** Y. Chen, K. Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT, 2020.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008 / SIAM J. Computing, 2013.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** P. J. Haas, J. M. Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304182.304208)
+- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[SOTA]** F. Li, B. Wu, K. Yu, A. Nakayama. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[SOTA]** C. Jermaine, S. Arumugam, A. Pol, A. Dobra. *Scalable Approximate Query Processing with the DBO Engine.* SIGMOD, 2007 / TODS, 2008. — [DOI](https://doi.org/10.1145/1412331.1412335)
+- **[SOTA]** Y. Chen, K. Yi. *Random Sampling and Size Estimation Over Cyclic Joins.* ICDT, 2020. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2020.7)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008 / SIAM J. Computing, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Let $R(A)$ and $S(A)$ join on $A$. Take $|R| = |S| = 100$. Key value $a_1$ appears $r_{a_1} = 90$ times in $R$ and $s_{a_1} = 90$ in $S$; key $a_2$ appears $r_{a_2} = 10$, $s_{a_2} = 10$. The true join size is
+$$|R \bowtie S| = 90\cdot 90 + 10\cdot 10 = 8{,}100 + 100 = 8{,}200.$$
+
+Estimate it by sampling one tuple from each side and forming the ripple corner. A uniform pair $(t_R, t_S)$ matches iff both share a key; $\Pr[\text{both } a_1] = 0.9 \times 0.9 = 0.81$, $\Pr[\text{both } a_2] = 0.1\times 0.1 = 0.01$, so match probability $= 0.82$. The HT estimator scales an indicator by $|R||S| = 10{,}000$:
+$$\hat C = 10{,}000 \cdot \mathbb{1}[\text{match}], \quad \mathbb{E}[\hat C] = 10{,}000 \times 0.82 = 8{,}200. \checkmark$$
+
+Notice the variance is dominated by the heavy key $a_1$: a single sampled $a_1$-pair contributes $10{,}000$ to the estimate, mirroring the second-moment term $\sum_a r_a^2 s_a^2 = 90^2 90^2 + 10^2 10^2$ of Section 2 — exactly why skew inflates ripple-join variance.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

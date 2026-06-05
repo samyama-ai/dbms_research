@@ -37,12 +37,18 @@ Learned and hybrid estimators (autoregressive density models, query-driven feedb
 - Benchmarks with realistic field-level drift.
 
 ## 9. Key References
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007.
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019.
-- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations & Trends in Databases, 2011.
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm.* AofA, 2007. — [DOI](https://doi.org/10.46298/dmtcs.3545)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** N. Alon, Y. Matias, M. Szegedy. *The Space Complexity of Approximating the Frequency Moments.* JCSS, 1999. — [DOI](https://doi.org/10.1006/jcss.1997.1545)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning.* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Survey]** G. Cormode, M. Garofalakis, P. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations & Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Consider a collection where each document may carry a `shipping.zip` path. We keep one **HyperLogLog** sketch to estimate NDV (distinct zips) and one **Count-Min** sketch for heavy-hitter zips. HLL standard error is $\sigma \approx 1.04/\sqrt{m}$; to hit $2\%$ relative error we need $m \ge (1.04/0.02)^2 \approx 2704$ registers — round up to $m = 2^{12} = 4096$ (about 4 KB at 1 byte/register), giving $\sigma \approx 1.04/64 \approx 1.6\%$.
+
+Now drift hits: a new ingestion source emits `shipping.zip` as a 9-digit *integer* instead of a 5-char *string*. Under per-path-per-type tracking these hash into a *fresh* HLL, so the old sketch reports NDV stably while the new path's count grows. A two-sample drift test on the type-tag stream flags the shift after $\Omega(\delta^{-2})$ samples; for a type-mix change of distance $\delta = 0.1$ that is on the order of $10^2$ documents before the change-point is reliably detectable. The optimizer then knows to treat `shipping.zip` as a union of two typed sub-paths rather than silently averaging an NDV estimate across incompatible value spaces.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

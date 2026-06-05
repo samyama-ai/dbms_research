@@ -57,11 +57,27 @@ Active directions: **typed/effect-system SQL embedding** (e.g., type-safe query 
 
 ## 9. Key References
 
-- **[Foundational]** Su, Z., Wassermann, G. *The Essence of Command Injection Attacks in Web Applications.* POPL, 2006.
-- **[Foundational]** Halfond, W.G.J., Orso, A., Manolios, P. *Using Positive Tainting and Syntax-Aware Evaluation to Counter SQL Injection Attacks.* FSE, 2006 (AMNESIA: ISSTA, 2005).
-- **[SOTA]** Christensen, A.S., Møller, A., Schwartzbach, M.I. *Precise Analysis of String Expressions.* SAS, 2003.
-- **[SOTA]** Yu, F., Alkhalaf, M., Bultan, T. *Stranger: An Automata-Based String Analysis Tool for PHP.* TACAS, 2010.
-- **[Survey]** Halfond, W.G.J., Viegas, J., Orso, A. *A Classification of SQL Injection Attacks and Countermeasures.* ISSSE, 2006.
+- **[Foundational]** Su, Z., Wassermann, G. *The Essence of Command Injection Attacks in Web Applications.* POPL, 2006. — [DOI](https://doi.org/10.1145/1111037.1111070)
+- **[Foundational]** Halfond, W.G.J., Orso, A., Manolios, P. *Using Positive Tainting and Syntax-Aware Evaluation to Counter SQL Injection Attacks.* FSE, 2006 (AMNESIA: ISSTA, 2005). — [DOI](https://doi.org/10.1145/1181775.1181797)
+- **[SOTA]** Christensen, A.S., Møller, A., Schwartzbach, M.I. *Precise Analysis of String Expressions.* SAS, 2003. — [DOI](https://doi.org/10.1007/3-540-44898-5_1)
+- **[SOTA]** Yu, F., Alkhalaf, M., Bultan, T. *Stranger: An Automata-Based String Analysis Tool for PHP.* TACAS, 2010. — [DOI](https://doi.org/10.1007/978-3-642-12002-2_13)
+- **[Survey]** Halfond, W.G.J., Viegas, J., Orso, A. *A Classification of SQL Injection Attacks and Countermeasures.* ISSSE, 2006. — [DBLP](https://dblp.org/rec/conf/issse3/HalfondVO06.html)
+
+## 10. Worked Example
+
+Template: `SELECT * FROM users WHERE name = '` $\langle u\rangle$ `'`, with trusted characters tagged $T$ and the user input $\langle u\rangle$ tagged $U$.
+
+Benign input $u = $ `alice`. The runtime string is
+
+`SELECT * FROM users WHERE name = 'alice'`
+
+Parsing it, the untrusted span `alice` lands entirely inside one *string-literal leaf*. Under the SQLCHECK condition, every parse node spanning $U$-characters is a complete literal leaf, so the query is **legitimate**.
+
+Now $u = $ `x' OR '1'='1`. The string becomes
+
+`SELECT * FROM users WHERE name = 'x' OR '1'='1'`
+
+Here the untrusted span supplies the tokens `'`, `OR`, `'1'`, `=`, `'1'` — the `OR` and the comparison operator are *syntactic* nodes (a `BinaryExpr` in the `WHERE` clause), not literal leaves. Because a parse node spanning $U$-characters is now an operator/keyword rather than an inert leaf, SQLCHECK rejects: the parse tree structurally deviates from the intended single-comparison skeleton. Parse cost is $O(|s|)$ per query.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

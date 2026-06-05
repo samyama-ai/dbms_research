@@ -1,6 +1,7 @@
 # Learned Estimator Generalization & Drift
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/learned-estimator-drift` · **Status:** empirically-open
+> **Verification note:** The VLDB 2009 q-error paper's third author is Gabriele Steidl (the prior "Steinbrunn" was a citation error, now corrected).
 
 ## 1. Problem Statement
 
@@ -60,12 +61,22 @@ The gap is **genuinely open and largely empirical**: we lack (a) a metric on que
 
 ## 9. Key References
 
-- **[Foundational]** Moerkotte, Neumann, Steinbrunn. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009.
-- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2021.
-- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020.
-- **[Survey/SOTA]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021.
-- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010.
+- **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
+- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2021. — [arXiv](https://arxiv.org/abs/1905.04278)
+- **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
+- **[Survey/SOTA]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+- **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
+
+## 10. Worked Example
+
+Train an LCE on a `sales` table where the workload only filters `year IN {2023, 2024}`. For these years the model learns the empirical selectivity of `region='West'` accurately: say true $s=0.30$ and $\hat s=0.31$.
+
+**Drift at inference.** A new query filters `year=2025`, a region/year combination absent from training. Suppose the true 2025 selectivity of `region='West'` is $s=0.05$ (the West market shrank), but the model — having only seen 2023–24 — predicts $\hat s\approx0.30$. On $n=10^6$ rows:
+$$\hat c=0.30\times10^6=300{,}000,\qquad c=0.05\times10^6=50{,}000,\quad \mathrm{qerr}=\frac{300{,}000}{50{,}000}=6.$$
+A factor-6 over-estimate. If a join with this predicate feeds a hash build, the optimizer over-allocates; worse, a factor-6 *under*-estimate on the other branch can flip to a catastrophic nested loop.
+
+**Why detection is hard.** Without executing the 2025 query we have no ground-truth $c$, so the q-error of $6$ is invisible. A label-free OOD signal — e.g. the density model assigning low likelihood to the `year=2025` slice, or a domain-divergence $d_{\mathcal H\Delta\mathcal H}$ spike between the 2025 marginal and training marginal — is exactly what is needed to flag "this estimate is untrustworthy" before the plan commits.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

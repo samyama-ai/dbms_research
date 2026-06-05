@@ -47,12 +47,22 @@ Active themes: **GNFO/UNFO** as a unifying decidable host for OBDA, interpolatio
 - Practical reasoners exploiting bounded-tree-width models for OBDA and graph-constraint checking.
 
 ## 9. Key References
-- **[Foundational]** H. Andréka, J. van Benthem, I. Németi. *Modal languages and bounded fragments of predicate logic.* J. Philosophical Logic, 1998.
-- **[Foundational]** E. Grädel. *On the restraining power of guards.* J. Symbolic Logic, 1999.
-- **[Foundational]** I. Pratt-Hartmann. *Complexity of the two-variable fragment with counting quantifiers.* J. Logic, Language and Information, 2005.
-- **[SOTA]** V. Bárány, B. ten Cate, L. Segoufin. *Guarded negation.* JACM, 2015.
-- **[SOTA]** J.-F. Baget, M. Leclère, M.-L. Mugnier, E. Salvat. *On rules with existential variables: Walking the decidability line.* Artificial Intelligence, 2011.
-- **[Survey]** M. Bienvenu, M. Ortiz. *Ontology-mediated query answering with data-tractable description logics.* Reasoning Web, 2015.
+- **[Foundational]** H. Andréka, J. van Benthem, I. Németi. *Modal languages and bounded fragments of predicate logic.* J. Philosophical Logic, 1998. — [DOI](https://doi.org/10.1023/A:1004275029985)
+- **[Foundational]** E. Grädel. *On the restraining power of guards.* J. Symbolic Logic, 1999. — [DOI](https://doi.org/10.2307/2586808)
+- **[Foundational]** I. Pratt-Hartmann. *Complexity of the two-variable fragment with counting quantifiers.* J. Logic, Language and Information, 2005. — [DOI](https://doi.org/10.1007/s10849-005-5791-1)
+- **[SOTA]** V. Bárány, B. ten Cate, L. Segoufin. *Guarded negation.* JACM, 2015. — [DOI](https://doi.org/10.1145/2701414)
+- **[SOTA]** J.-F. Baget, M. Leclère, M.-L. Mugnier, E. Salvat. *On rules with existential variables: Walking the decidability line.* Artificial Intelligence, 2011. — [DOI](https://doi.org/10.1016/j.artint.2011.03.002)
+- **[Survey]** M. Bienvenu, M. Ortiz. *Ontology-mediated query answering with data-tractable description logics.* Reasoning Web, 2015. — [DOI](https://doi.org/10.1007/978-3-319-21768-0_9)
+
+## 10. Worked Example
+
+**A guarded vs. an unguarded formula.** Consider the sentence "every node with an outgoing $E$-edge has an outgoing $R$-edge":
+$$\varphi \;=\; \forall x\,\big(\exists y\,E(x,y)\;\to\;\exists z\,R(x,z)\big).$$
+Rewrite as $\forall x\,\forall y\,\big(E(x,y)\to \exists z\,R(x,z)\big)$. The universal quantifier over $(x,y)$ is **guarded** by the atom $E(x,y)$, which contains all free variables of the matrix; the existential $\exists z\,R(x,z)$ is guarded by $R(x,z)$. So $\varphi\in\mathrm{GF}$, and its satisfiability is decidable in **2EXPTIME** via a bounded-tree-width model search.
+
+**Why $\mathrm{FO}^2$ counting is needed and where guards break.** "Every author has exactly two coauthors" needs counting: $\forall x\,(\mathit{Auth}(x)\to \exists^{=2} y\,\mathit{Coauth}(x,y))$. This is in $\mathrm{C}^2$ (two variables $x,y$ + counting), satisfiability **NEXPTIME**-complete.
+
+**The undecidability cliff.** Now add *transitivity* of a guard relation, e.g. require $E$ transitive while quantifying guarded by $E$. Guardedness plus an unrestricted transitive guard escapes the bounded-tree-width property — models can encode a grid — and satisfiability becomes **undecidable**. The single feature "transitive guard" moves the problem from 2EXPTIME-decidable to undecidable, illustrating exactly the open interaction cells of §6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

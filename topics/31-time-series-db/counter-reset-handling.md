@@ -45,11 +45,23 @@ Directions: industry-wide adoption of OpenTelemetry delta/cumulative temporality
 - Bridging legacy cumulative counters to OTel start-time temporality automatically.
 
 ## 9. Key References
-- **[Foundational]** Prometheus project. *Counter semantics: `rate()`, `increase()`, `resets()`.* Prometheus documentation, 2015–.
-- **[SOTA]** OpenTelemetry. *Metrics Data Model — Cumulative vs. Delta Temporality and Start Time.* OTel specification, 2021–.
-- **[Foundational]** OpenMetrics. *Counter and `_total` Semantics.* OpenMetrics specification / CNCF, 2020.
-- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017.
-- **[Foundational]** Aminikhanghahi, Cook. *A Survey of Methods for Time Series Change Point Detection.* Knowledge and Information Systems, 2017.
+- **[Foundational]** Prometheus project. *Counter semantics: `rate()`, `increase()`, `resets()`.* Prometheus documentation, 2015–. — [docs](https://prometheus.io/docs/prometheus/latest/querying/functions/#rate)
+- **[SOTA]** OpenTelemetry. *Metrics Data Model — Cumulative vs. Delta Temporality and Start Time.* OTel specification, 2021–. — [spec](https://opentelemetry.io/docs/specs/otel/metrics/data-model/)
+- **[Foundational]** OpenMetrics. *Counter and `_total` Semantics.* OpenMetrics specification / CNCF, 2020. — [spec](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md)
+- **[Survey]** Jensen, Pedersen, Thomsen. *Time Series Management Systems: A Survey.* IEEE TKDE, 2017. — [DOI](https://doi.org/10.1109/TKDE.2017.2740932)
+- **[Foundational]** Aminikhanghahi, Cook. *A Survey of Methods for Time Series Change Point Detection.* Knowledge and Information Systems, 2017. — [DOI](https://doi.org/10.1007/s10115-016-0987-z)
+
+## 10. Worked Example
+
+A request counter is scraped at samples $c = [10,\ 14,\ 3,\ 9]$ (one process restart between samples 2 and 3 zeroed it). True increase: from 10 it rose to (say) 16 before the reset — contributing $16-10=6$ pre-restart — then $0\to9$ after, total $6+9=15$.
+
+The PromQL one-reset-per-interval heuristic:
+
+$$\widehat{\Delta} = \sum_{i:\,c_{i+1}\ge c_i}(c_{i+1}-c_i) \;+\; \sum_{i:\,c_{i+1}<c_i} c_{i+1}.$$
+
+Interval-by-interval: $14\ge10\Rightarrow+4$; $3<14\Rightarrow$ add $c_{i+1}=3$ (reset, add post-drop value); $9\ge3\Rightarrow+6$. So $\widehat{\Delta}=4+3+6=13$.
+
+The estimate **undercounts by 2** ($13$ vs. true $15$): the heuristic adds back the post-reset value $3$, but the *real* pre-reset tail was $16-14=2$ higher — lost because we never sampled the peak $16$. This is the identifiability loss: it is provably exact **iff** $\le 1$ reset per interval *and* the pre-reset value at drop equals the last observed sample, i.e. the Nyquist-style condition $\Delta t<$ (min reset spacing) with dense enough sampling. OTel cumulative-vs-delta temporality with an explicit start timestamp would transmit the true $+15$ directly, removing the ambiguity at the source.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

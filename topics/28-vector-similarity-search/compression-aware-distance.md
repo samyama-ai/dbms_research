@@ -46,11 +46,20 @@ The information-theoretic floor is **rate–distortion**: for a source with give
 
 ## 9. Key References
 
-- **[Foundational]** Jégou, H., Douze, M., Schmid, C. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[Foundational]** Ge, T., He, K., Ke, Q., Sun, J. *Optimized Product Quantization (OPQ).* CVPR, 2013.
-- **[SOTA]** Gao, J., Long, C. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024.
-- **[SOTA]** Guo, R., Sun, P., Lindgren, E., Geng, Q., Simcha, D., Chern, F., Kumar, S. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020.
-- **[Survey]** Cover, T. M., Thomas, J. A. *Elements of Information Theory* (rate–distortion). Wiley, 2006.
+- **[Foundational]** Jégou, H., Douze, M., Schmid, C. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57)
+- **[Foundational]** Ge, T., He, K., Ke, Q., Sun, J. *Optimized Product Quantization (OPQ).* CVPR, 2013. — [DOI](https://doi.org/10.1109/CVPR.2013.379)
+- **[SOTA]** Gao, J., Long, C. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2405.12497) — [DOI](https://doi.org/10.1145/3654970)
+- **[SOTA]** Guo, R., Sun, P., Lindgren, E., Geng, Q., Simcha, D., Chern, F., Kumar, S. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396) — [DBLP](https://dblp.org/rec/conf/icml/GuoSLGSCK20.html)
+- **[Survey]** Cover, T. M., Thomas, J. A. *Elements of Information Theory* (rate–distortion). Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+
+## 10. Worked Example
+
+**Asymmetric beats symmetric: a 2-D, 1-bit-per-coordinate trace.** Let the quantizer round each coordinate to the nearest of $\{0,1\}$ (one bit). Database point $p=(0.9,0.1)\Rightarrow \hat p=(1,0)$. Query $q=(0.8,0.2)$. True squared distance $\|q-p\|^2=(0.8-0.9)^2+(0.2-0.1)^2=0.01+0.01=0.02$.
+
+- **Symmetric** quantizes the query too: $\hat q=(1,0)$, estimate $\|\hat q-\hat p\|^2=0$. Error $=|0-0.02|=0.02$, and worse, it collapses the gap to a competitor.
+- **Asymmetric (ADC)** keeps $q$ full-precision: $\|q-\hat p\|^2=(0.8-1)^2+(0.2-0)^2=0.04+0.04=0.08$. Error $=|0.08-0.02|=0.06$.
+
+In this single draw symmetric looks closer, but bias/variance over the *distribution* tells the real story. With i.i.d. per-coordinate quantization noise of variance $\sigma^2$, symmetric error variance $\propto \mathrm{Var}(\eta_p)+\mathrm{Var}(\eta_q)=2\sigma^2$, asymmetric $\propto \sigma^2$ — half the noise, because the query side carries none. Over many queries ADC's estimator concentrates twice as tightly, which is exactly what preserves the *ranking* between two near-tied neighbors and thus recall — the property RaBitQ formalizes with its $O(1/\sqrt B)$ bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

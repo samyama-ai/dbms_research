@@ -41,5 +41,17 @@ Active directions: robust/adversarial streaming so windowed sketches survive inp
 - **[SOTA]** Karnin, Z., Lang, K., Liberty, E. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
 - **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
 
+## 10. Worked Example
+
+**DGIM exponential histogram** for `COUNT` of 1-bits in a sliding window of $W=16$ over a bit stream, with relative error $\varepsilon = 1/2$ (so at most $1$ bucket per size class). Stream (most recent on the right), timestamps mod $2W$:
+
+```
+... 1 0 1 1 0 1 1 1   (last 8 bits shown, current time t=40)
+```
+
+DGIM keeps buckets of 1-counts that are powers of two, each tagged with the timestamp of its most recent 1. Suppose buckets (size @ end-timestamp) are: $4@33,\; 2@37,\; 2@39,\; 1@40$. Query "how many 1s in last $W=16$"? The window covers timestamps $25..40$. All four buckets' end-times lie inside, so we sum them fully *except* the oldest, which may straddle the window edge — DGIM counts **half** of it: $\hat C = 1 + 2 + 2 + \tfrac{4}{2} = 7$.
+
+The true count might be $5$ to $9$; the half-bucket rule guarantees $|\hat C - C| \le \tfrac12 \cdot(\text{oldest bucket size}) = 2 \le \varepsilon C$. Memory: $O(\tfrac1\varepsilon \log W) = O(2 \cdot 4) = 8$ buckets, each $O(\log W)=4$ bits for its timestamp — i.e. $O(\tfrac1\varepsilon\log^2 W)$ bits total, matching the bound in section 4 rather than the $\Omega(W)=16$ bits exact counting would need.
+
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

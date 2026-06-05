@@ -41,12 +41,24 @@ OBDA and **knowledge-graph** querying drive renewed interest: MCR over property-
 - MCR under partially-closed worlds and access-pattern (binding-pattern) limitations.
 
 ## 9. Key References
-- **[Foundational]** A. Levy, A. Mendelzon, Y. Sagiv, D. Srivastava. *Answering queries using views.* PODS, 1995.
-- **[Foundational]** O. Duschka, M. Genesereth. *Answering recursive queries using views.* PODS, 1997.
-- **[SOTA]** R. Pottinger, A. Halevy. *MiniCon: A scalable algorithm for answering queries using views.* VLDB Journal, 2001.
-- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of answering queries using materialized views.* PODS, 1998.
-- **[SOTA]** D. Calvanese, G. De Giacomo, D. Lembo, M. Lenzerini, R. Rosati. *Tractable reasoning and efficient query answering in description logics: The DL-Lite family.* J. Automated Reasoning, 2007.
-- **[Survey]** A. Halevy. *Answering queries using views: A survey.* VLDB Journal, 2001.
+- **[Foundational]** A. Levy, A. Mendelzon, Y. Sagiv, D. Srivastava. *Answering queries using views.* PODS, 1995. — [DOI](https://doi.org/10.1145/212433.220198)
+- **[Foundational]** O. Duschka, M. Genesereth. *Answering recursive queries using views.* PODS, 1997. — [DOI](https://doi.org/10.1145/263661.263674)
+- **[SOTA]** R. Pottinger, A. Halevy. *MiniCon: A scalable algorithm for answering queries using views.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100048)
+- **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of answering queries using materialized views.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275516)
+- **[SOTA]** D. Calvanese, G. De Giacomo, D. Lembo, M. Lenzerini, R. Rosati. *Tractable reasoning and efficient query answering in description logics: The DL-Lite family.* J. Automated Reasoning, 2007. — [DOI](https://doi.org/10.1007/s10817-007-9078-x)
+- **[Survey]** A. Halevy. *Answering queries using views: A survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
+
+## 10. Worked Example
+
+Query (find advisor–department pairs reachable via co-authorship):
+$$Q(a,d) \leftarrow \text{Advises}(a,s),\ \text{Works}(s,d).$$
+Two sound-but-incomplete views:
+$$V_1(x,y)\leftarrow \text{Advises}(x,y), \qquad V_2(u,w)\leftarrow \text{Works}(u,w).$$
+
+**MiniCon Descriptions (MCDs):** $V_1$ can cover the atom $\text{Advises}(a,s)$, mapping head var $x\mapsto a$ and exposing $s$ (a join var) through $y$; $V_2$ can cover $\text{Works}(s,d)$, mapping $u\mapsto s,\ w\mapsto d$. Neither view alone covers a query atom containing the join variable $s$ in a way the other cannot complete, so MiniCon combines the two MCDs. The maximally contained rewriting is
+$$R(a,d)\leftarrow V_1(a,s),\ V_2(s,d).$$
+
+**Why "maximally contained," not "equivalent":** under OWA the views may be incomplete, so $R$ returns only the *certain* answers — pairs guaranteed by what the views expose. If a real advising edge $(a',s')$ exists but is absent from $V_1$, $R$ misses $(a',d')$; that is sound (every tuple $R$ returns is a true $Q$-answer) but not complete. No CQ rewriting over $\{V_1,V_2\}$ can do better, which is exactly the maximality MiniCon guarantees. Adding a third view $V_3(x,w)\leftarrow\text{Advises}(x,s),\text{Works}(s,w)$ would yield a *second*, redundant MCD, and the MCR becomes the union $R \cup \{R'(a,d)\leftarrow V_3(a,d)\}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

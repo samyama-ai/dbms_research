@@ -42,12 +42,22 @@ Threads: (a) **constrained / safe RL** for tuning with per-tenant penalty shapin
 - Joint admission-control and tuning with provable global-objective optimality on the feasible set.
 
 ## 9. Key References
-- **[Foundational]** A. Badanidiyuru, R. Kleinberg, A. Slivkins. *Bandits with Knapsacks.* JACM, 2018 (FOCS 2013).
-- **[SOTA]** Y. Efroni, S. Mannor, M. Pirotta. *Exploration-Exploitation in Constrained MDPs.* arXiv:2003.02189, 2020.
-- **[Foundational]** V. Narasayya, S. Das, M. Syamala, B. Chandramouli, S. Chaudhuri. *SQLVM: Performance Isolation in Multi-Tenant Relational Database-as-a-Service.* CIDR, 2013.
-- **[SOTA]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015.
-- **[Foundational]** M. Mahdavi, R. Jin, T. Yang. *Trading Regret for Efficiency: Online Convex Optimization with Long-Term Constraints.* JMLR, 2012.
-- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017.
+- **[Foundational]** A. Badanidiyuru, R. Kleinberg, A. Slivkins. *Bandits with Knapsacks.* JACM, 2018 (FOCS 2013). — [arXiv](https://arxiv.org/abs/1305.2545)
+- **[SOTA]** Y. Efroni, S. Mannor, M. Pirotta. *Exploration-Exploitation in Constrained MDPs.* arXiv:2003.02189, 2020. — [arXiv](https://arxiv.org/abs/2003.02189)
+- **[Foundational]** V. Narasayya, S. Das, M. Syamala, B. Chandramouli, S. Chaudhuri. *SQLVM: Performance Isolation in Multi-Tenant Relational Database-as-a-Service.* CIDR, 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper25.pdf)
+- **[SOTA]** Y. Sui, A. Gotovos, J. Burdick, A. Krause. *Safe Exploration for Optimization with Gaussian Processes (SafeOpt).* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/sui15.html)
+- **[Foundational]** M. Mahdavi, R. Jin, T. Yang. *Trading Regret for Efficiency: Online Convex Optimization with Long-Term Constraints.* JMLR, 2012. — [JMLR](https://www.jmlr.org/papers/v13/mahdavi12a.html)
+- **[Survey]** A. Pavlo et al. *Self-Driving Database Management Systems.* CIDR, 2017. — [PDF](https://www.cidrdb.org/cidr2017/papers/p42-pavlo-cidr17.pdf)
+
+## 10. Worked Example
+
+Two tenants share one server. Global objective $g$ = aggregate throughput; the controller picks how to split 10 CPU cores. Each tenant has a hard SLA: p99 latency $\le 100$ ms. Measured contention curves: with $c$ cores, tenant A's p99 $= 250/c$ ms and throughput $=40c$; tenant B's p99 $=180/c$ ms, throughput $=30c$.
+
+Feasibility (admission): A needs $250/c_A\le100\Rightarrow c_A\ge2.5$; B needs $180/c_B\le100\Rightarrow c_B\ge1.8$. So $c_A+c_B\ge 4.3 \le 10$ — admissible.
+
+Constrained optimization: maximize $40c_A+30c_B$ s.t. $c_A+c_B\le10,\ c_A\ge2.5,\ c_B\ge1.8$. A has higher marginal throughput, so push spare cores to A: $c_A=10-1.8=8.2,\ c_B=1.8$, giving throughput $40(8.2)+30(1.8)=328+54=382$.
+
+Online/Lagrangian view: with unknown curves, run primal-dual. If a round measures B's p99 at 105 ms (violation), the multiplier $\lambda_B$ rises, reallocating a core to B next round. Over $T$ rounds, regret and cumulative violation both stay $\tilde O(\sqrt T)$ — but a single round's p99 breach already cost a refund, illustrating the "sublinear cumulative" vs. "never breach" gap of section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

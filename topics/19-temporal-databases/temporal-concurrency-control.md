@@ -44,13 +44,24 @@ Active directions: (i) extending serializable MVCC validation (HyPer/Umbra linea
 - Storage/index co-design so version-chain growth and temporal-index maintenance do not erode the append-mostly advantage.
 
 ## 9. Key References
-- **[Foundational]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. (multiversion serializability theory)
-- **[Foundational]** Papadimitriou, C. *The Serializability of Concurrent Database Updates.* JACM, 1979. (NP-completeness of serializability testing)
-- **[SOTA]** Cahill, M., Röhm, U., Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD 2008 / ACM TODS, 2009.
-- **[SOTA]** Neumann, T., Mühlbauer, T., Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015.
-- **[Foundational]** Adya, A., Liskov, B., O'Neil, P. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
+- **[Foundational]** Bernstein, P., Hadzilacos, V., Goodman, N. *Concurrency Control and Recovery in Database Systems.* Addison-Wesley, 1987. (multiversion serializability theory) — [DBLP search](https://dblp.org/search?q=Concurrency+Control+and+Recovery+in+Database+Systems+Bernstein)
+- **[Foundational]** Papadimitriou, C. *The Serializability of Concurrent Database Updates.* JACM, 1979. (NP-completeness of serializability testing) — [DOI](https://doi.org/10.1145/322154.322158)
+- **[SOTA]** Cahill, M., Röhm, U., Fekete, A. *Serializable Isolation for Snapshot Databases.* SIGMOD 2008 / ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620587)
+- **[SOTA]** Neumann, T., Mühlbauer, T., Kemper, A. *Fast Serializable Multi-Version Concurrency Control for Main-Memory Database Systems.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2749436)
+- **[Foundational]** Adya, A., Liskov, B., O'Neil, P. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DBLP](https://dblp.org/rec/conf/icde/AdyaLO00.html)
+- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [ACM](https://dl.acm.org/doi/10.1145/2380776.2380786)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [ACM](https://dl.acm.org/doi/10.1145/564585.564601)
+
+## 10. Worked Example
+
+Consider a system-versioned `Account` table; key $K=42$ holds balance versions. Two concurrent transactions under snapshot isolation, both reading the snapshot at start time $\tau_0$ where $\text{bal}=100$:
+
+- $T_1$: read $\text{bal}=100$, append new version $\text{bal}=100-30=70$.
+- $T_2$: read $\text{bal}=100$, append new version $\text{bal}=100-50=50$.
+
+Both committed-as-of-$\tau_0$ reads are non-blocking against the immutable history. But the two appends each *read* the same prior version and *write* a successor, giving rw-antidependencies $T_1 \xrightarrow{rw} T_2$ and $T_2 \xrightarrow{rw} T_1$ — a cycle in the MVSG. Serial $T_1;T_2$ would yield $20$; serial $T_2;T_1$ yields $20$; but the snapshot interleaving yields a "lost update": final visible balance is either $70$ or $50$, never $20$.
+
+SSI detects the **dangerous structure** (two incoming/outgoing rw-edges on a pivot) and aborts one transaction. Note the contrast with valid-time: had $T_1$ appended a version for $\text{vt}=[\text{Jan},\text{Mar})$ and $T_2$ for $\text{vt}=[\text{Mar},\text{May})$ on the same key, the valid-time periods are **disjoint**, the appends *commute*, and no real conflict exists — interval-commutativity that key-level locking would needlessly serialize.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

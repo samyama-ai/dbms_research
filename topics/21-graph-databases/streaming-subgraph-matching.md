@@ -35,11 +35,26 @@ Continuous-matching systems work by **Han, Kim, Lee, Park** (TurboFlux/SymBi lin
 - Multi-query plan sharing and skew-adaptive partial-embedding eviction.
 
 ## 9. Key References
-- **[Foundational]** Feigenbaum, Kannan, McGregor, Suri, Zhang. *On Graph Problems in a Semi-Streaming Model.* ICALP 2004 / TCS 2005.
-- **[SOTA]** Kim et al. *TurboFlux: A Fast Continuous Subgraph Matching System for Streaming Graph Data.* SIGMOD 2018.
-- **[SOTA]** Min et al. *Symmetric Continuous Subgraph Matching with Bidirectional Dynamic Programming (SymBi).* VLDB 2021.
-- **[SOTA]** McGregor, Vorotnikova, Vu. *Better Algorithms for Counting Triangles in Data Streams.* PODS 2016.
-- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC 2015.
+- **[Foundational]** Feigenbaum, Kannan, McGregor, Suri, Zhang. *On Graph Problems in a Semi-Streaming Model.* ICALP 2004 / TCS 2005. — [DOI](https://doi.org/10.1007/978-3-540-27836-8_46)
+- **[SOTA]** Kim et al. *TurboFlux: A Fast Continuous Subgraph Matching System for Streaming Graph Data.* SIGMOD 2018. — [DOI](https://doi.org/10.1145/3183713.3196917)
+- **[SOTA]** Min et al. *Symmetric Continuous Subgraph Matching with Bidirectional Dynamic Programming (SymBi).* VLDB 2021. — [arXiv](https://arxiv.org/abs/2104.00886) — [DOI](https://doi.org/10.14778/3523210.3523218)
+- **[SOTA]** McGregor, Vorotnikova, Vu. *Better Algorithms for Counting Triangles in Data Streams.* PODS 2016. — [DOI](https://doi.org/10.1145/2902251.2902283)
+- **[Foundational]** Henzinger, Krinninger, Nanongkai, Saranurak. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Conjecture.* STOC 2015. — [DOI](https://doi.org/10.1145/2746539.2746609) — [DBLP](https://dblp.org/rec/conf/stoc/HenzingerKNS15.html)
+
+## 10. Worked Example
+
+**Continuous triangle matching.** Pattern $Q$ = triangle on vertices $\{a,b,c\}$. Data graph starts with edges $\{(1,2),(2,3)\}$. Stream of updates arrives:
+
+| step | update | current edges | new matches reported |
+|------|--------|---------------|----------------------|
+| 1 | $+(1,3)$ | $\{12,23,13\}$ | **triangle $\{1,2,3\}$** |
+| 2 | $+(3,4)$ | $+34$ | none (no closing edge) |
+| 3 | $+(2,4)$ | $+24$ | none ($\{2,3,4\}$ needs $24,34,23$ — present!) → **$\{2,3,4\}$** |
+| 4 | $-(2,3)$ | delete $23$ | **$\{1,2,3\}$ and $\{2,3,4\}$ disappear** |
+
+A **delta-join** evaluator does not recompute from scratch. On insertion $+(u,v)$ it asks only: how many common neighbors do $u,v$ have? At step 1, $N(1)\cap N(3)=\{2\}$, so exactly one new triangle — $O(\deg)$ work, not $O(|G_t|)$. This output-sensitivity is the whole point.
+
+**Why hardness bites.** The OMv conjecture says no algorithm maintains even *detection* of a triangle under edge updates in $O(m^{1-\epsilon})$ amortized time; here the per-update neighbor-intersection is cheap only because degrees are tiny — on a skewed graph with a degree-$\Theta(m)$ hub, a single insertion can touch $\Theta(m)$ candidate matches, recovering the lower bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,12 +45,36 @@ We have (a) a clean genericity theory for *domain* permutations and (b) a constr
 - Integrating bidirectional lenses with query optimization so plans are provably representation-stable.
 
 ## 9. Key References
-- **[Foundational]** A. Chandra, D. Harel. *Computable Queries for Relational Data Bases.* JCSS, 1980.
-- **[Foundational]** F. Bancilhon. *On the Completeness of Query Languages for Relational Data Bases.* MFCS, 1978; J. Paredaens, *On the Expressive Power of the Relational Algebra*, IPL, 1978.
-- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Quasi-Inverses of Schema Mappings.* ACM TODS, 2008.
-- **[SOTA]** P. Schultz, R. Wisnesky. *Algebraic Data Integration.* J. Functional Programming, 2017 (Categorical Query Language / CQL).
-- **[SOTA]** D. Spivak, R. Wisnesky. *Relational Foundations for Functorial Data Migration.* DBPL, 2015.
-- **[Foundational]** J. N. Foster et al. *Combinators for Bidirectional Tree Transformations: A Linguistic Approach to the View-Update Problem.* ACM TOPLAS, 2007.
+- **[Foundational]** A. Chandra, D. Harel. *Computable Queries for Relational Data Bases.* JCSS, 1980. — [DOI](https://doi.org/10.1016/0022-0000(80)90032-X)
+- **[Foundational]** F. Bancilhon. *On the Completeness of Query Languages for Relational Data Bases.* MFCS, 1978; J. Paredaens, *On the Expressive Power of the Relational Algebra*, IPL, 1978. — [DOI](https://doi.org/10.1016/0020-0190(78)90055-8)
+- **[Foundational]** R. Fagin, P. Kolaitis, L. Popa, W.-C. Tan. *Quasi-Inverses of Schema Mappings.* ACM TODS, 2008. — [DBLP](https://dblp.org/rec/journals/tods/FaginKPT08.html)
+- **[SOTA]** P. Schultz, R. Wisnesky. *Algebraic Data Integration.* J. Functional Programming, 2017 (Categorical Query Language / CQL). — [arXiv](https://arxiv.org/abs/1503.03571)
+- **[SOTA]** D. Spivak, R. Wisnesky. *Relational Foundations for Functorial Data Migration.* DBPL, 2015. — [arXiv](https://arxiv.org/abs/1212.5303)
+- **[Foundational]** J. N. Foster et al. *Combinators for Bidirectional Tree Transformations: A Linguistic Approach to the View-Update Problem.* ACM TOPLAS, 2007. — [DOI](https://doi.org/10.1145/1232420.1232424)
+
+## 10. Worked Example
+
+Take an **EAV pivot**, the canonical schema transformation. Encoding $S_1$ stores a wide relation $\mathsf{Emp}(\underline{id}, name, dept)$:
+
+| id | name | dept |
+|----|------|------|
+| 1 | Ann | Sales |
+| 2 | Bob | Eng |
+
+Encoding $S_2$ stores the same information as triples $\mathsf{EAV}(\underline{id, attr}, val)$:
+
+| id | attr | val |
+|----|------|-----|
+| 1 | name | Ann |
+| 1 | dept | Sales |
+| 2 | name | Bob |
+| 2 | dept | Eng |
+
+The transformation $T$ is invertible: unpivot recovers $\mathsf{EAV}$, and a pivot (group by $id$, spread $attr\!\to\!val$) recovers $\mathsf{Emp}$, so $D_1 \equiv_G D_2$.
+
+Now the query "*ids in dept Sales*". Over $S_1$: $\sigma_{dept=\text{Sales}}\,\mathsf{Emp}$ projected to $id$ gives $\{1\}$. Over $S_2$ the *same* logical query must be phrased $\pi_{id}\,\sigma_{attr=\text{dept}\,\wedge\,val=\text{Sales}}\,\mathsf{EAV}$, again $\{1\}$ — answers correspond under $T_q=\mathrm{id}$, so the query is **schema-independent** here.
+
+But "*return the whole tuple*" is **not**: $S_1$ yields one 3-arity row, $S_2$ yields two 3-arity triples — different shapes, no answer-translation $T_q$ makes them correspond. This shows genericity is property-by-property, motivating the search for a fragment $F$ capturing *exactly* the $G$-invariant queries.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

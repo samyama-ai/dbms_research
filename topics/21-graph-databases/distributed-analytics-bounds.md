@@ -48,12 +48,20 @@ Active groups: Ghaffari (MIT), Czumaj, Assadi (Waterloo), Behnezhad (Northeaster
 - Bridge theory bounds to systems: communication-optimal vertex/edge partitioning with provable guarantees.
 
 ## 9. Key References
-- **[Foundational]** Das Sarma, Holzer, Kor, Korman, Nanongkai, Pandurangan, Peleg, Wattenhofer. *Distributed verification and hardness of distributed approximation.* STOC, 2011.
-- **[SOTA]** Andoni, Song, Stein, Wang, Zhong. *Parallel graph connectivity in log diameter rounds.* FOCS, 2018.
-- **[SOTA]** Czumaj, Łącki, Mądry, Mitrović, Onak, Sankowski. *Round compression for parallel matching algorithms.* STOC, 2018.
-- **[SOTA]** Ghaffari, Kuhn, Uitto. *Conditional hardness results for massively parallel computation.* FOCS, 2019.
-- **[Foundational]** Gonzalez, Low, Gu, Bickson, Guestrin. *PowerGraph: Distributed graph-parallel computation on natural graphs.* OSDI, 2012.
-- **[Survey]** Karloff, Suri, Vassilvitskii. *A model of computation for MapReduce.* SODA, 2010.
+- **[Foundational]** Das Sarma, Holzer, Kor, Korman, Nanongkai, Pandurangan, Peleg, Wattenhofer. *Distributed verification and hardness of distributed approximation.* STOC, 2011. — [arXiv](https://arxiv.org/abs/1011.3049)
+- **[SOTA]** Andoni, Song, Stein, Wang, Zhong. *Parallel graph connectivity in log diameter rounds.* FOCS, 2018. — [arXiv](https://arxiv.org/abs/1805.03055)
+- **[SOTA]** Czumaj, Łącki, Mądry, Mitrović, Onak, Sankowski. *Round compression for parallel matching algorithms.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1707.03478)
+- **[SOTA]** Ghaffari, Kuhn, Uitto. *Conditional hardness results for massively parallel computation.* FOCS, 2019. — [DBLP](https://dblp.org/rec/conf/focs/GhaffariKU19.html)
+- **[Foundational]** Gonzalez, Low, Gu, Bickson, Guestrin. *PowerGraph: Distributed graph-parallel computation on natural graphs.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/gonzalez)
+- **[Survey]** Karloff, Suri, Vassilvitskii. *A model of computation for MapReduce.* SODA, 2010. — [DOI](https://doi.org/10.1137/1.9781611973075.76)
+
+## 10. Worked Example
+
+Take the **1-vs-2-cycle** barrier concretely with $n=8$ vertices and strongly sublinear MPC memory $S=n^{1/2}\approx 3$ (so each machine sees only a few edges). Instance A is one 8-cycle $0\!-\!1\!-\!\cdots\!-\!7\!-\!0$; instance B is two 4-cycles $0\!-\!1\!-\!2\!-\!3\!-\!0$ and $4\!-\!5\!-\!6\!-\!7\!-\!4$. Both have $m=8$ edges, every vertex has degree 2 — locally indistinguishable.
+
+Connectivity must output "1 component" for A but "2" for B. With pointer-jumping each round at most squares the distance any vertex can "see," so after $r$ rounds a vertex knows vertices up to $\approx 2^{r}$ hops away. To tell A from B you must propagate information across the whole cycle (diameter $D=4$ in A), needing $r=\Omega(\log n)=\Omega(\log 8)=3$ rounds here. The conjecture says no $o(\log n)$-round strongly-sublinear algorithm can distinguish them.
+
+Contrast the upper bound: $O(\log D)=O(\log 4)=2$ rounds suffice for A via the Andoni et al. scheme — illustrating exactly the $\log D$ vs. $\log n$ frontier in section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

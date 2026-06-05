@@ -1,6 +1,7 @@
 # Compression of Bitemporal Histories
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/bitemporal-compression` · **Status:** empirically-open
+> **Verification note:** The Bliujute–Jensen–Saltenis–Slivinskas R-tree bitemporal indexing paper appeared at *VLDB 1998*, not ICDE 1998.
 
 ## 1. Problem Statement
 A bitemporal table records every fact with both a **valid-time** period (when the fact is true in the modeled world) and a **transaction-time** period (when the fact was current in the database). The full history is therefore a set of *rectangles* in the 2-D (valid, transaction) plane, and it grows monotonically: corrections, retroactive updates, and as-of snapshots all add rectangles. The problem is to **encode this bitemporal history compactly while preserving efficient random version access** — given any $(\text{as-of transaction time } \tau,\ \text{valid-time } v)$ point or range, reconstruct the relevant tuples without decompressing the whole history.
@@ -44,12 +45,28 @@ Active: (i) **learned / model-based compression** of versioned columns (learned 
 - Hardware-aware (SIMD/GPU) random-access decompression of temporal deltas.
 
 ## 9. Key References
-- **[Foundational]** Driscoll, J., Sarnak, N., Sleator, D., Tarjan, R. *Making Data Structures Persistent.* JCSS, 1989.
-- **[Foundational]** Becker, B., Gschwind, S., Ohler, T., Seeger, B., Widmayer, P. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 1996.
-- **[Foundational]** Lomet, D., Salzberg, B. *The Performance of a Multiversion Access Method (TSB-tree).* SIGMOD, 1990.
-- **[SOTA]** Salzberg, B., Tsotras, V. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999.
-- **[Foundational]** Pătrașcu, M. *Succincter.* FOCS, 2008. (succinct redundancy / cell-probe trade-offs)
-- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018.
+- **[Foundational]** Driscoll, J., Sarnak, N., Sleator, D., Tarjan, R. *Making Data Structures Persistent.* JCSS, 1989. — [DOI](https://doi.org/10.1016/0022-0000(89)90034-2)
+- **[Foundational]** Becker, B., Gschwind, S., Ohler, T., Seeger, B., Widmayer, P. *An Asymptotically Optimal Multiversion B-Tree.* VLDB Journal, 1996. — [DOI](https://doi.org/10.1007/s007780050028)
+- **[Foundational]** Lomet, D., Salzberg, B. *The Performance of a Multiversion Access Method (TSB-tree).* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93605.98744)
+- **[SOTA]** Salzberg, B., Tsotras, V. *Comparison of Access Methods for Time-Evolving Data.* ACM Computing Surveys, 1999. — [DOI](https://doi.org/10.1145/319806.319816)
+- **[Foundational]** Pătrașcu, M. *Succincter.* FOCS, 2008. (succinct redundancy / cell-probe trade-offs) — [DOI](https://doi.org/10.1109/FOCS.2008.83)
+- **[SOTA]** Kraska, T., Beutel, A., Chi, E., Dean, J., Polyzotis, N. *The Case for Learned Index Structures.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196909) · [arXiv](https://arxiv.org/abs/1712.01208)
+
+## 10. Worked Example
+
+Take a transaction-time history of one attribute over 8 versions:
+$\langle 7,7,7,7,9,9,9,12\rangle$. Naive per-version storage costs $8$ values. Delta-of-delta /
+run-length encoding stores only the *change points*: $(v_0{=}7),(v_4{:}+2),(v_7{:}+3)$ — three
+records. Compression ratio $8/3\approx 2.7\times$, and the empirical entropy is low because
+$H(\text{state}_t\mid\text{state}_{t-1})$ is near zero on the long constant runs.
+
+But now answer "value as-of version $\tau=6$?" A pure delta chain must replay from $v_0$:
+$7\xrightarrow{}7\xrightarrow{}9$ — up to $O(m)$ steps for $m$ changes. The succinct fix stores the
+change *positions* in a rank/select bitvector $B=10001001$ (a 1 at each change point). Then
+$\text{rank}_1(6)=2$ gives "2 changes occurred at or before 6", indexing directly into the value
+array $[7,9,12]$ to return $9$ in $O(1)$ probes — matching the Pătrașcu redundancy/probe trade-off:
+near-entropy space *with* fast access. The bitemporal case repeats this per valid-time stripe,
+turning the 1-D rank/select into 2-D point location.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

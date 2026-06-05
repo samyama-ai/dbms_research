@@ -54,12 +54,27 @@ The reduction-to-MIPS approach (MUVERA) gives the first principled bridge, but t
 
 ## 9. Key References
 
-- **[Foundational]** Omar Khattab, Matei Zaharia. *ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT.* SIGIR, 2020.
-- **[SOTA]** Keshav Santhanam, Omar Khattab, Christopher Potts, Matei Zaharia. *PLAID: An Efficient Engine for Late Interaction Retrieval.* CIKM, 2022.
-- **[SOTA]** Laxman Dhulipala, Majid Hadian, Rajesh Jayaram, Jason Lee, Vahab Mirrokni. *MUVERA: Multi-Vector Retrieval via Fixed Dimensional Encodings.* arXiv:2405.19504, 2024.
-- **[SOTA]** Jinhyuk Lee et al. *Rethinking the Role of Token Retrieval in Multi-Vector Retrieval (XTR).* NeurIPS, 2023.
-- **[Foundational]** Ronald Fagin, Amnon Lotem, Moni Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS / PODS, 2003.
-- **[Foundational]** Ryan Williams. *A New Algorithm for Optimal 2-Constraint Satisfaction and Its Implications.* Theoretical Computer Science, 2005.
+- **[Foundational]** Omar Khattab, Matei Zaharia. *ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT.* SIGIR, 2020. — [arXiv](https://arxiv.org/abs/2004.12832)
+- **[SOTA]** Keshav Santhanam, Omar Khattab, Christopher Potts, Matei Zaharia. *PLAID: An Efficient Engine for Late Interaction Retrieval.* CIKM, 2022. — [arXiv](https://arxiv.org/abs/2205.09707)
+- **[SOTA]** Laxman Dhulipala, Majid Hadian, Rajesh Jayaram, Jason Lee, Vahab Mirrokni. *MUVERA: Multi-Vector Retrieval via Fixed Dimensional Encodings.* arXiv:2405.19504, 2024. — [arXiv](https://arxiv.org/abs/2405.19504)
+- **[SOTA]** Jinhyuk Lee et al. *Rethinking the Role of Token Retrieval in Multi-Vector Retrieval (XTR).* NeurIPS, 2023. — [arXiv](https://arxiv.org/abs/2304.01982)
+- **[Foundational]** Ronald Fagin, Amnon Lotem, Moni Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS / PODS, 2003. — [DOI](https://doi.org/10.1016/S0022-0000(03)00026-6)
+- **[Foundational]** Ryan Williams. *A New Algorithm for Optimal 2-Constraint Satisfaction and Its Implications.* Theoretical Computer Science, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2005.09.023)
+
+## 10. Worked Example
+
+Take a query with $n=2$ token vectors and two documents, each with $m=2$ token vectors. Inner products (precomputed):
+
+| | $d_{1,1}$ | $d_{1,2}$ | | $d_{2,1}$ | $d_{2,2}$ |
+|---|---|---|---|---|---|
+| $q_1$ | 0.9 | 0.2 | | 0.5 | 0.6 |
+| $q_2$ | 0.1 | 0.7 | | 0.8 | 0.3 |
+
+MaxSim for $D_1$: $\max(0.9,0.2) + \max(0.1,0.7) = 0.9 + 0.7 = 1.6$.
+For $D_2$: $\max(0.5,0.6) + \max(0.8,0.3) = 0.6 + 0.8 = 1.4$.
+So top-1 is $D_1$.
+
+Now the pruning view: suppose per-token ANN only surfaced $D_2$'s tokens for $q_2$ (score $0.8$) but not for $q_1$. Bound the missing $q_1$ contribution by the global max inner product, say $1.0$. Upper bound for $D_2$ is $0.8 + 1.0 = 1.8 > 1.6$, so $D_2$ cannot yet be pruned — its admissible bound exceeds the current best, forcing exact scoring. Once $q_1$'s true best ($0.6$) is gathered, the bound tightens to $1.4 < 1.6$ and $D_2$ is safely discarded. This is the threshold-algorithm logic of section 2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

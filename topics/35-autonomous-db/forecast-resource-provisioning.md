@@ -42,11 +42,19 @@ Theory gives clean competitive ratios for $1$-D smoothed provisioning, but real 
 - Online recalibration of forecast intervals under workload drift.
 
 ## 9. Key References
-- **[Foundational]** M. Lin, A. Wierman, L. Andrew, E. Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM Transactions on Networking, 2013.
-- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mealy, A. Pavlo, et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018.
-- **[SOTA]** M. Sellke. *Chasing Nested Convex Bodies Nearly Optimally.* SODA, 2020.
-- **[SOTA]** D. Salinas, V. Flunkert, J. Gasthaus. *DeepAR: Probabilistic Forecasting with Autoregressive Recurrent Networks.* International Journal of Forecasting, 2020.
-- **[Survey]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021.
+- **[Foundational]** M. Lin, A. Wierman, L. Andrew, E. Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM Transactions on Networking, 2013. — [DOI](https://doi.org/10.1109/TNET.2012.2226216)
+- **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
+- **[SOTA]** M. Sellke. *Chasing Nested Convex Bodies Nearly Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1811.00999)
+- **[SOTA]** D. Salinas, V. Flunkert, J. Gasthaus. *DeepAR: Probabilistic Forecasting with Autoregressive Recurrent Networks.* International Journal of Forecasting, 2020. — [DOI](https://doi.org/10.1016/j.ijforecast.2019.07.001)
+- **[Survey]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
+
+## 10. Worked Example
+
+**Newsvendor service level for replica provisioning.** A serverless DB provisions read replicas ahead of demand. Each replica-hour costs $c = 1$ unit (over-provisioning waste); each unit of unmet demand costs $p = 9$ units (SLA penalty). The cost-optimal service level is the critical quantile
+$$ q^\* = \frac{p}{p+c} = \frac{9}{9+1} = 0.9. $$
+So we provision to the $90$th percentile of the *predictive distribution* of demand, not its mean.
+
+Suppose the forecaster outputs, for the next hour, demand $\hat d \sim \mathcal{N}(\mu=20,\ \sigma=4)$ replicas. The $0.9$ quantile is $\mu + z_{0.9}\sigma = 20 + 1.282\times 4 \approx 25.1$, so we provision $r=26$ replicas (round up). A naive point-forecast policy provisioning $r=20$ leaves a $50\%$ chance of under-provisioning; its expected penalty alone ($p\cdot\mathbb{E}[(d-20)_+] = 9 \times 4\times\phi(0)/1 \approx 9\times1.6=14.4$) dwarfs the $\approx 6$ units of waste from the calibrated $r=26$ choice. This is why provisioning needs *calibrated quantile* forecasts: the asymmetry $p\gg c$ pushes the optimal target far above the mean. Lead time $L$ only sharpens this — the quantile must be taken over demand $L$ steps ahead.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -56,12 +56,22 @@ The theoretical boundary is **closed in the negative**: with idempotence or tran
 
 ## 9. Key References
 
-- **[Foundational]** J. Gray. *Notes on Database Operating Systems.* In Operating Systems: An Advanced Course, Springer, 1978 (two-phase commit).
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002.
-- **[SOTA]** P. Carbone, G. Fóra, S. Ewen, S. Haridi, K. Tzoumas. *Lightweight Asynchronous Snapshots for Distributed Dataflows (ABS).* arXiv:1506.08603, 2015.
-- **[SOTA]** P. Carbone, A. Katsifodimos, S. Ewen, V. Markl, S. Haridi, K. Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bulletin, 2015.
-- **[Foundational]** C. Mohan, B. Lindsay, R. Obermarck. *Transaction Management in the R* Distributed Database Management System.* ACM TODS, 1986.
+- **[Foundational]** J. Gray. *Notes on Database Operating Systems.* In Operating Systems: An Advanced Course, Springer, 1978 (two-phase commit). — [DOI](https://doi.org/10.1007/3-540-08755-9_9)
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[SOTA]** P. Carbone, G. Fóra, S. Ewen, S. Haridi, K. Tzoumas. *Lightweight Asynchronous Snapshots for Distributed Dataflows (ABS).* arXiv:1506.08603, 2015. — [arXiv](https://arxiv.org/abs/1506.08603)
+- **[SOTA]** P. Carbone, A. Katsifodimos, S. Ewen, V. Markl, S. Haridi, K. Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bulletin, 2015. — [DBLP](https://dblp.org/rec/journals/debu/CarboneKEMHT15.html)
+- **[Foundational]** C. Mohan, B. Lindsay, R. Obermarck. *Transaction Management in the R* Distributed Database Management System.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7266)
+
+## 10. Worked Example
+
+An operator consumes order events and calls a payment API: $e(\text{order}) = \texttt{charge(\$50)}$. Checkpoint $C_1$ is taken; then order $o_7$ is read, the charge is issued, but the worker crashes *before* $C_2$ commits.
+
+**Non-idempotent API (impossible case).** On recovery the engine rolls back to $C_1$ and replays $o_7$, re-issuing `charge($50)`. Was the first charge actually applied? The engine sent the request but never got the ack — by the **two-generals** argument it cannot know. Choices: replay (risk double-charge) or skip (risk lost charge). True exactly-once is unattainable here.
+
+**Idempotency-key fix.** Attach a deterministic key derived from the logical record: `Idempotency-Key: order-7`. The first call charges \$50; the replayed call with the same key is recognized by the gateway and returns the original result without a second charge. Now at-least-once delivery $\Rightarrow$ exactly-once *effect*, at cost $O(1)$ pending-key state and no extra round trip.
+
+**Transactional/XA fix.** Couple the charge into a 2PC: pre-commit on barrier, commit on $C_2$ completion. Correct under partial synchrony, but a coordinator crash in the in-doubt window blocks (and a Paxos/Raft-backed coordinator is needed to avoid a single point of blocking).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -45,13 +45,31 @@ For *flat* aggregates and distinct/quantile sketches, bounds are **essentially c
 - Differentially private variants of path-aggregation sketches.
 
 ## 9. Key References
-- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005.
-- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog.* AofA, 2007.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
-- **[SOTA]** S. Agarwal, B. Mozafari, A. Panda, H. Milner, S. Madden, I. Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[Foundational]** D. M. Kane, J. Nelson, D. P. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[Survey]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253260.253291)
+- **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
+- **[Foundational]** P. Flajolet, É. Fusy, O. Gandouet, F. Meunier. *HyperLogLog.* AofA, 2007. — [DBLP](https://dblp.org/rec/journals/dmtcs/FlajoletFGM07.html)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+- **[SOTA]** S. Agarwal, B. Mozafari, A. Panda, H. Milner, S. Madden, I. Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Foundational]** D. M. Kane, J. Nelson, D. P. Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[Survey]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+A collection of $N = 5$ order documents; query `AVG($.items[*].price)`. The path selects a *variable-arity* multiset, one document is a whale:
+
+| doc | prices in `items[*]` |
+|---|---|
+| $d_1$ | $\{10\}$ |
+| $d_2$ | $\{20, 30\}$ |
+| $d_3$ | $\{15\}$ |
+| $d_4$ | $\{40,40,40,40\}$ (bulk) |
+| $d_5$ | $\{25\}$ |
+
+True flattened multiset has $9$ values summing to $300$, so true $\mathrm{AVG} = 300/9 \approx 33.3$.
+
+**Naive document-uniform sampling** (pick 2 of 5 docs, average their per-doc means) is biased: if we draw $\{d_1, d_3\}$ we estimate $\tfrac{10+15}{2}=12.5$, far off, because it ignores that $d_4$ contributes 4 values. This is the variable-arity variance blow-up of section 1.
+
+**Horvitz–Thompson fix:** sample documents with probability $\pi_d \propto m_d$ (its array length). Total mass $= 9$. Draw with $\pi_d = m_d/9$; the unbiased estimator of the *sum* is $\hat S = \sum_{d \in \text{sample}} \frac{1}{\pi_d}\sum_{v \in p(d)} v$. For a single draw of $d_4$ ($\pi=4/9$): $\hat S = \tfrac{9}{4}\cdot 160 = 360$, and dividing by the separately HT-estimated count recovers $\approx 33.3$ in expectation. Hoeffding then sizes the sample: for additive error $\varepsilon$ over price range $[10,40]$, $n = O\!\big(\tfrac{(40-10)^2}{\varepsilon^2}\log\tfrac1\delta\big)$ documents.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

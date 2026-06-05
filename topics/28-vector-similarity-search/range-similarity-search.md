@@ -41,11 +41,21 @@ Directions: (i) graph indices with provable range-recall via radius-adaptive bea
 
 ## 9. Key References
 
-- **[Foundational]** Indyk, P., Motwani, R. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[SOTA]** Andoni, A., Razenshteyn, I. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[Foundational]** Beygelzimer, A., Kakade, S., Langford, J. *Cover Trees for Nearest Neighbor.* ICML, 2006.
-- **[Lower bound]** Rubinstein, A. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018.
-- **[SOTA]** Johnson, J., Douze, M., Jégou, H. *Billion-Scale Similarity Search with GPUs (FAISS).* IEEE Trans. Big Data, 2021.
+- **[Foundational]** Indyk, P., Motwani, R. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876)
+- **[SOTA]** Andoni, A., Razenshteyn, I. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[Foundational]** Beygelzimer, A., Kakade, S., Langford, J. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857)
+- **[Lower bound]** Rubinstein, A. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
+- **[SOTA]** Johnson, J., Douze, M., Jégou, H. *Billion-Scale Similarity Search with GPUs (FAISS).* IEEE Trans. Big Data, 2021. — [arXiv](https://arxiv.org/abs/1702.08734)
+
+## 10. Worked Example
+
+Take $n=6$ points on the line (so $d=1$, $\rho=\ell_2$): $P=\{0.5, 1.0, 2.2, 3.0, 3.1, 7.0\}$, query $q=3.0$, radius $r=0.5$. The ball $B(q,0.5)$ asks for all $p$ with $|p-3.0|\le 0.5$, i.e. $p\in[2.5,3.5]$.
+
+- **Reporting:** scan/probe yields $\{3.0, 3.1\}$ — output size $|\mathrm{out}|=2$.
+- **Counting:** return $2$ without listing.
+- **Emptiness:** "yes, non-empty" (since $3.0$ itself qualifies).
+
+Now contrast output-sensitivity. Enlarge to $r=2.0$: $B(q,2.0)=[1.0,5.0]$ captures $\{1.0,2.2,3.0,3.1\}$, so $|\mathrm{out}|=4$ — the answer size grew with $r$, unbounded up to $n$. An LSH index aims for query cost $\tilde O(n^{\rho}+|\mathrm{out}|)$: the $n^{\rho}$ term (with $\rho=1/(2c^2-1)$, e.g. $\rho\approx 0.33$ at approximation $c=\sqrt 2$) is the *search overhead* to locate the right buckets, and the additive $|\mathrm{out}|$ is the unavoidable cost of enumerating the answer. For the $(r,c)$-approximate variant with $c=2$, the index must report everything within $r=0.5$ and may also report points up to $cr=1.0$ away (e.g. $2.2$), but never beyond $1.0$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

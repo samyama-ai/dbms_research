@@ -42,11 +42,20 @@ Empirically open. Lower bounds are inherited from classical range-search theory;
 - Learned indexes for high-dimensional / vector k-NN with pruning guarantees.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020.
-- **[SOTA]** J. Ding, et al. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020.
-- **[SOTA]** P. Li, et al. *LISA: A Learned Index Structure for Spatial Data.* SIGMOD, 2020.
-- **[Foundational]** P. Kanellakis, S. Ramaswamy, D. Vengroff, J. Vitter. *Indexing for Data Models with Constraints and Classes.* PODS, 1993 (external-memory range-search bounds).
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** V. Nathan, J. Ding, M. Alizadeh, T. Kraska. *Learning Multi-Dimensional Indexes (Flood).* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1912.01668)
+- **[SOTA]** J. Ding, et al. *Tsunami: A Learned Multi-dimensional Index for Correlated Data and Skewed Workloads.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/2006.13282)
+- **[SOTA]** P. Li, et al. *LISA: A Learned Index Structure for Spatial Data.* SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389703)
+- **[Foundational]** P. Kanellakis, S. Ramaswamy, D. Vengroff, J. Vitter. *Indexing for Data Models with Constraints and Classes.* PODS, 1993 (external-memory range-search bounds). — [DOI](https://doi.org/10.1145/153850.153884)
+
+## 10. Worked Example
+
+Take $n=16$ points in $d=2$ on a $4\times4$ grid (one point per cell), block = one grid cell, and a range query covering the rectangle $x\in[2,3],\,y\in[1,3]$.
+
+- **Z-order curve.** Indexing cells by Morton code, the query rectangle is *not* a contiguous Z-interval: cells $(2,1),(3,1),(2,2),(3,2),(2,3),(3,3)$ have Morton codes $7,13,6,12,3,9$ — splitting into intervals $\{3\},\{6,7\},\{9\},\{12,13\}$ = **4 disjoint runs**. A 1-D learned index over Morton codes must issue 4 separate range scans; fragmentation is the cost driver.
+- **Flood-style learned grid.** A workload-adaptive grid that simply partitions on $x$ then $y$ scans exactly the $2\times3=6$ target cells as one rectangular block sweep — **0 wasted cells**, no interval fragmentation.
+
+So here Flood touches 6 cells vs Z-order's 6 cells across 4 fragmented runs (extra seeks). Asymptotically neither beats the KRVV floor $\Omega(n^{1-1/d}+k)=\Omega(\sqrt{16}+6)=\Omega(10)$; the learned win is the *constant* — eliminating curve-fragmentation seeks — exactly the empirical-but-unproven gain section 6 flags.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -49,13 +49,32 @@ Directions: composable **leakage hierarchies** and "what-you-leak-is-what-you-ge
 
 ## 9. Key References
 
-- **[Foundational]** Curtmola, R., Garay, J., Kamara, S., Ostrovsky, R. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006.
-- **[SOTA]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[SOTA]** Zhang, Y., Katz, J., Papamanthou, C. *All Your Queries Are Belong to Us: The Power of File-Injection Attacks on Searchable Encryption.* USENIX Security, 2016.
-- **[SOTA]** Bost, R. *Σοφος: Forward Secure Searchable Encryption.* CCS, 2016.
-- **[SOTA]** Kamara, S., Moataz, T. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019.
-- **[Survey]** Fuller, B., Varia, M., Yerukhimovich, A., et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017.
-- **[SOTA]** Oya, S., Kerschbaum, F. *Hiding the Access Pattern is Not Enough: Exploiting Search Pattern Leakage in Searchable Encryption.* USENIX Security, 2021.
+- **[Foundational]** Curtmola, R., Garay, J., Kamara, S., Ostrovsky, R. *Searchable Symmetric Encryption: Improved Definitions and Efficient Constructions.* CCS, 2006. — [DOI](https://doi.org/10.1145/1180405.1180417) · [ePrint](https://eprint.iacr.org/2006/210)
+- **[SOTA]** Kellaris, G., Kollios, G., Nissim, K., O'Neill, A. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386)
+- **[SOTA]** Zhang, Y., Katz, J., Papamanthou, C. *All Your Queries Are Belong to Us: The Power of File-Injection Attacks on Searchable Encryption.* USENIX Security, 2016. — [USENIX](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/zhang) · [ePrint](https://eprint.iacr.org/2016/172)
+- **[SOTA]** Bost, R. *Σοφος: Forward Secure Searchable Encryption.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978303) · [ePrint](https://eprint.iacr.org/2016/728)
+- **[SOTA]** Kamara, S., Moataz, T. *Computationally Volume-Hiding Structured Encryption.* EUROCRYPT, 2019. — [DOI](https://doi.org/10.1007/978-3-030-17656-3_7)
+- **[Survey]** Fuller, B., Varia, M., Yerukhimovich, A., et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017. — [DOI](https://doi.org/10.1109/SP.2017.10) · [arXiv](https://arxiv.org/abs/1703.02014)
+- **[SOTA]** Oya, S., Kerschbaum, F. *Hiding the Access Pattern is Not Enough: Exploiting Search Pattern Leakage in Searchable Encryption.* USENIX Security, 2021. — [USENIX](https://www.usenix.org/conference/usenixsecurity21/presentation/oya)
+
+## 10. Worked Example
+
+**Volume leakage on a tiny range column.** A salary column takes values in domain $\{1,2,3,4\}$ ($N=4$). The encrypted DB holds these (hidden) per-value counts:
+
+$$ \text{val }1\!:\!2,\quad 2\!:\!5,\quad 3\!:\!1,\quad 4\!:\!3. $$
+
+The client issues range queries `salary BETWEEN a AND b`. The server cannot read values, but the **access pattern** reveals the *response volume* $|\mathsf{ap}(q)|$ — how many rows match. Observing a few queries:
+
+| query $[a,b]$ | volume |
+|---------------|--------|
+| $[1,1]$ | 2 |
+| $[1,2]$ | 7 |
+| $[3,3]$ | 1 |
+| $[3,4]$ | 4 |
+
+From $[1,1]=2$ and $[1,2]=7$ the server deduces value 2 has count $7-2=5$. From $[3,3]=1$ and $[3,4]=4$, value 4 has count $3$. The adversary has now reconstructed the entire multiset of counts $\{2,5,1,3\}$ purely from volumes — with no decryption.
+
+The only residual ambiguity is **reflection** ($\mathbb{Z}_2$): the profile is identical under reversing the value order ($v \mapsto N+1-v$), so $(2,5,1,3)$ and $(3,1,5,2)$ are indistinguishable. This is exactly the KKNO result: range databases are fully reconstructible from $O(N^4\log N)$ uniform queries up to reflection — leakage that "looks harmless" is information-theoretically fatal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

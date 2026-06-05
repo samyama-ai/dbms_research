@@ -48,13 +48,23 @@ Active threads: learned/predictive partitioning that pre-stages migrations from 
 
 ## 9. Key References
 
-- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993.
-- **[SOTA]** A. Elmore et al. *Squall: Fine-Grained Live Reconfiguration for Partitioned Main Memory Databases.* SIGMOD, 2015.
-- **[SOTA]** R. Taft et al. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing.* VLDB, 2015.
-- **[SOTA]** C. Kulkarni et al. *Rocksteady: Fast Migration for Low-Latency In-memory Storage.* SOSP, 2017.
-- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012.
-- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985.
-- **[SOTA]** C. Avin, M. Bienkowski, A. Loukas, M. Pacut, S. Schmid. *Dynamic Balanced Graph Partitioning.* SIAM J. Discrete Math / SPAA, 2019.
+- **[Foundational]** J. Gray, A. Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
+- **[SOTA]** A. Elmore et al. *Squall: Fine-Grained Live Reconfiguration for Partitioned Main Memory Databases.* SIGMOD, 2015. — [DOI](https://doi.org/10.1145/2723372.2723726)
+- **[SOTA]** R. Taft et al. *E-Store: Fine-Grained Elastic Partitioning for Distributed Transaction Processing.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2735508.2735514)
+- **[SOTA]** C. Kulkarni et al. *Rocksteady: Fast Migration for Low-Latency In-memory Storage.* SOSP, 2017. — [DBLP](https://dblp.org/rec/conf/sosp/KulkarniKZRS17.html)
+- **[SOTA]** J. C. Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
+- **[Foundational]** M. Fischer, N. Lynch, M. Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** C. Avin, M. Bienkowski, A. Loukas, M. Pacut, S. Schmid. *Dynamic Balanced Graph Partitioning.* SIAM J. Discrete Math / SPAA, 2019. — [DOI](https://doi.org/10.1137/17M1158513)
+
+## 10. Worked Example
+
+Take 6 key ranges $\{a,b,c,d,e,f\}$ on $N=2$ nodes. Current map $\pi$: node 1 $=\{a,b,c\}$, node 2 $=\{d,e,f\}$. The transaction stream reveals these co-access hyperedges (with frequencies): $\{a,d\}{:}50$, $\{b,c\}{:}10$, $\{e,f\}{:}10$, $\{a,b\}{:}5$.
+
+Under $\pi$, the heavy $\{a,d\}$ pair (freq $50$) is **cross-node** — every such transaction is distributed (2PC). Cross-node cut weight $= 50 + 5\,(\{a,b\}\text{ stays local, so }0) = 50$ from $\{a,d\}$.
+
+Repartition to $\pi'$: node 1 $=\{a,d\}$, node 2 $=\{b,c,e,f\}$. Now $\{a,d\}$ is co-located (saves the $50$-weight distributed cost), and only $\{a,b\}{:}5$ becomes cross-node. New cut $= 5$ — a $10\times$ reduction in distributed-transaction traffic.
+
+**The migration cost:** moving key $d$ to node 1 and keys $\{b,c\}$ stay, but $d$ must transfer ownership. With **Squall**-style reactive migration, a transaction touching $d$ during cutover pulls it on demand, paying a one-time latency tax $\Delta$ (e.g. $+2$ ms) only on the first access. The online dilemma — was the $50/5$ traffic shift worth migrating $1$ key? — is exactly the dynamic-balanced-partitioning competitive tradeoff: migration cost vs. saved inter-cluster communication.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -66,12 +66,25 @@ For the **finite, fully-materialized** fragment the gap is essentially **closed*
 
 ## 9. Key References
 
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013.
-- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018.
-- **[SOTA]** Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017.
-- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023.
-- **[SOTA]** Arroyuelo, Hogan, Navarro, et al. *Worst-case Optimal Graph Joins in Almost No Space (The Ring).* SIGMOD, 2021.
-- **[Foundational]** Abboud, Williams. *Popular Conjectures Imply Strong Lower Bounds for Dynamic Problems.* FOCS, 2014.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SICOMP, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-case Optimal Join Algorithms.* PODS, 2012 / JACM, 2018. — [DOI](https://doi.org/10.1145/3180143)
+- **[SOTA]** Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (PANDA).* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3056105)
+- **[SOTA]** Wang, Willsey, Suciu. *Free Join: Unifying Worst-Case Optimal and Traditional Joins.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2301.10841)
+- **[SOTA]** Arroyuelo, Hogan, Navarro, et al. *Worst-case Optimal Graph Joins in Almost No Space (The Ring).* SIGMOD, 2021. — [DBLP](https://dblp.org/rec/conf/sigmod/ArroyueloHNRRS21.html)
+- **[Foundational]** Abboud, Williams. *Popular Conjectures Imply Strong Lower Bounds for Dynamic Problems.* FOCS, 2014. — [DOI](https://doi.org/10.1109/FOCS.2014.53)
+
+## 10. Worked Example
+
+Take the triangle-shaped cross-model CQ
+$$Q(a,b,c) \,{:}{-}\, R(a,b),\ D(b,c),\ E(c,a),$$
+where $R$ is a relational join column, $D$ a document array-unnest atom, and $E$ a graph edge relation, each of size $|R|=|D|=|E|=N$.
+
+**AGM bound.** The query hypergraph is a 3-cycle; its minimum fractional edge cover assigns $x_i = \tfrac12$ to each atom (each variable $a,b,c$ is covered: e.g. $a$ by $R,E$ giving $\tfrac12+\tfrac12=1$). So
+$$|Q| \le |R|^{1/2}|D|^{1/2}|E|^{1/2} = N^{3/2}.$$
+
+**Why binary plans lose.** Any pairwise plan, say $(R \bowtie D)\bowtie E$, can produce an intermediate $R\bowtie D$ of size $\Theta(N^2)$ on adversarial data (one heavy value of $b$), then filter most of it away — total work $\Theta(N^2) \gg N^{3/2}$. A worst-case-optimal join (Generic Join / LeapFrog TrieJoin) instead intersects all three atoms variable-by-variable and runs in $\tilde O(N^{3/2})$, matching AGM.
+
+**Cross-model wrinkle.** If $E$ is actually a 2-hop *reachability* atom (graph transitive closure) rather than a materialized edge set, AGM no longer bounds the output directly, the fixpoint can inflate $|E|$ to $\Theta(N^2)$ edges, and interleaving that expansion lazily inside the WCO join with a matching bound is exactly the open part of section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

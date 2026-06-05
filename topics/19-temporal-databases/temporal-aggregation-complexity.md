@@ -46,12 +46,40 @@ Formally, with start-events $+v$ and end-events $-v$, $\textsf{SUM}(t) = \sum_{e
 - Distributed/parallel temporal aggregation with communication-optimal guarantees.
 
 ## 9. Key References
-- **[Foundational]** Kline, N., Snodgrass, R. T. *Computing Temporal Aggregates.* ICDE, 1995.
-- **[Foundational]** Moon, B., Lopez, I. F. V., Immanuel, V. *Efficient Algorithms for Large-Scale Temporal Aggregation.* IEEE TKDE, 2003. (SB-tree)
-- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S., Wu, K.-L. *General Incremental Sliding-Window Aggregation.* VLDB, 2015. (FlatFAT)
-- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time.* DEBS, 2017. (DABA)
-- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002.
-- **[Survey]** Böhlen, M., Gamper, J., Jensen, C. S. *Multi-Dimensional Aggregation for Temporal Data.* EDBT, 2006.
+- **[Foundational]** Kline, N., Snodgrass, R. T. *Computing Temporal Aggregates.* ICDE, 1995. — [DOI](https://doi.org/10.1109/ICDE.1995.380389)
+- **[Foundational]** Moon, B., Lopez, I. F. V., Immanuel, V. *Efficient Algorithms for Large-Scale Temporal Aggregation.* IEEE TKDE, 2003. (SB-tree) — [DOI](https://doi.org/10.1109/TKDE.2003.1198403)
+- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S., Wu, K.-L. *General Incremental Sliding-Window Aggregation.* VLDB, 2015. (FlatFAT) — [DOI](https://doi.org/10.14778/2752939.2752940)
+- **[SOTA]** Tangwongsan, K., Hirzel, M., Schneider, S. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time.* DEBS, 2017. (DABA) — [DOI](https://doi.org/10.1145/3093742.3093925)
+- **[Foundational]** Datar, M., Gionis, A., Indyk, P., Motwani, R. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[Survey]** Böhlen, M., Gamper, J., Jensen, C. S. *Multi-Dimensional Aggregation for Temporal Data.* EDBT, 2006. — [DOI](https://doi.org/10.1007/11687238_18)
+
+## 10. Worked Example
+
+**Instantaneous `COUNT` of active sessions.** Four sessions with valid intervals:
+
+| session | period |
+|---|---|
+| $a$ | $[1,5)$ |
+| $b$ | $[2,7)$ |
+| $c$ | $[4,6)$ |
+| $d$ | $[6,8)$ |
+
+Emit start-events $+1$ and end-events $-1$, then sort the $2n=8$ endpoints:
+
+$$1{:}+1,\; 2{:}+1,\; 4{:}+1,\; 5{:}-1,\; 6{:}-1,\,6{:}+1,\; 7{:}-1,\; 8{:}-1.$$
+
+Sweep and keep the running prefix sum $\textsf{COUNT}(t)=\sum_{e\le t}\Delta_e$, emitting one segment per gap between consecutive distinct endpoints:
+
+| interval | count |
+|---|---|
+| $[1,2)$ | 1 |
+| $[2,4)$ | 2 |
+| $[4,5)$ | 3 |
+| $[5,6)$ | 2 |
+| $[6,7)$ | 2 |
+| $[7,8)$ | 1 |
+
+Note $t=6$: one $-1$ ($c$ ends) and one $+1$ ($d$ starts) net to no change, so $[5,6)$ and $[6,7)$ both read 2. The output has $\le 2n-1=7$ constant segments. Cost: sorting the $8$ endpoints dominates at $O(n\log n)$, then an $O(1)$-per-event sweep — matching the $\Theta(n\log n)$ comparison-model bound, since recovering the sorted endpoint order is an element-distinctness reduction.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

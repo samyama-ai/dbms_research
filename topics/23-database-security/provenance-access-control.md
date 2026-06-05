@@ -62,12 +62,28 @@ We have (a) a complete semantic theory of *what* provenance is (semirings) and (
 
 ## 9. Key References
 
-- **[Foundational]** Green, T. J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Buneman, P., Khanna, S., Tan, W.-C. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001.
-- **[SOTA]** Davidson, S., Khanna, S., Roy, S., et al. *Privacy Issues in Scientific Workflow Provenance / Module Privacy.* VLDB & PODS, 2010–2011.
-- **[SOTA]** Senellart, P., et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018.
-- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
-- **[SOTA]** Glavic, B., et al. *GProM: A Generic Provenance Middleware.* (TaPP / VLDB), 2014–2017.
+- **[Foundational]** Green, T. J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Buneman, P., Khanna, S., Tan, W.-C. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001. — [DOI](https://doi.org/10.1007/3-540-44503-X_20)
+- **[SOTA]** Davidson, S., Khanna, S., Roy, S., et al. *Privacy Issues in Scientific Workflow Provenance / Module Privacy.* VLDB & PODS, 2010–2011. — [arXiv](https://arxiv.org/abs/1005.5543)
+- **[SOTA]** Senellart, P., et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+- **[SOTA]** Glavic, B., et al. *GProM: A Generic Provenance Middleware.* (TaPP / VLDB), 2014–2017. — [DBLP search](https://dblp.org/search?q=Generic+Provenance+Middleware+Queries+Updates+Transactions+Arab+Glavic)
+
+## 10. Worked Example
+
+Relation **Salary**, each tuple tagged with a provenance variable:
+
+| Emp | Salary | prov |
+|-----|--------|------|
+| Ann | 100 | $x_1$ |
+| Bob | 120 | $x_2$ |
+| Cy  | 80  | $x_3$ |
+
+A user may see the aggregate $\text{AVG}(Salary)=100$ but **not** individual rows: policy $\Pi$ hides $\{x_1,x_2,x_3\}$. The query $Q=\;$ "employees earning $>90$" returns $\{Ann, Bob\}$ with **how-provenance** polynomials $p_{Ann}=x_1$, $p_{Bob}=x_2$ in the semiring $\mathbb{N}[X]$.
+
+Releasing $p_{Ann}=x_1$ is **unsafe**: it reveals that Ann's hidden tuple exists and singly caused the result. Formally, $\textit{view}_u(p_{Ann})$ depends on the hidden valuation of $x_1$, violating the noninterference condition $\textit{view}_u(p)|_h = \textit{view}_u(p)|_{h'}$.
+
+A sanitizer applies the homomorphism $\phi$ mapping every hidden $x_i \mapsto \bullet$ (opaque), giving $\phi(p_{Ann})=\bullet$: the user learns "some hidden source contributed" but not which — sound but low-utility. Note that even fully redacting provenance cannot stop inference here: knowing $\text{AVG}=100$, count $=3$, and two visible-via-aggregate facts can still narrow the third salary — the §5 "answer-itself" leak.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

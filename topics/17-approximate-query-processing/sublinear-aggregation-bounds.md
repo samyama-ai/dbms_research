@@ -34,11 +34,22 @@ Work continues on instance-optimal estimators (per-instance rather than worst-ca
 - Sublinear estimators robust to adversarial value distributions and correlated samples.
 
 ## 9. Key References
-- **[Foundational]** Charikar, M., Chaudhuri, S., Motwani, R., Narasayya, V. *Towards Estimation Error Guarantees for Distinct Values.* PODS, 2000.
-- **[Foundational]** Valiant, G., Valiant, P. *Estimating the Unseen: An $n/\log n$-Sample Estimator for Entropy and Support Size.* STOC, 2011.
-- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[Foundational]** Hellerstein, J., Haas, P., Wang, H. *Online Aggregation.* SIGMOD, 1997.
-- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** Charikar, M., Chaudhuri, S., Motwani, R., Narasayya, V. *Towards Estimation Error Guarantees for Distinct Values.* PODS, 2000. — [DOI](https://doi.org/10.1145/335168.335230)
+- **[Foundational]** Valiant, G., Valiant, P. *Estimating the Unseen: An $n/\log n$-Sample Estimator for Entropy and Support Size.* STOC, 2011. — [DOI](https://doi.org/10.1145/1993636.1993727)
+- **[SOTA]** Agarwal, S., Mozafari, B., Panda, A., Milner, H., Madden, S., Stoica, I. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[Foundational]** Hellerstein, J., Haas, P., Wang, H. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253262.253291)
+- **[Survey]** Cormode, G., Garofalakis, M., Haas, P., Jermaine, C. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+**Why `MAX` defeats sampling but `AVG` does not.** Relation $R$ has $n = 10^6$ salary values. Consider two adversarial instances:
+
+- $A$: all values $= 100$.
+- $B$: $999{,}999$ values $= 100$, and **one** value $= 10^9$.
+
+Draw a uniform sample of size $m = 10{,}000$. The probability the sample misses the single spike in $B$ is $(1 - 10^{-6})^{10^4} \approx e^{-0.01} \approx 0.99$. So with $99\%$ probability the samples from $A$ and $B$ are **identical** — no estimator can tell them apart. Yet $\mathrm{MAX}(A)=100$ while $\mathrm{MAX}(B)=10^9$, a $10^7\times$ gap. Hence no relative-error CI for `MAX` from $o(n)$ samples (the $\Omega(1/p)$ "see the spike" bound, section 5).
+
+Contrast `AVG`: $\mu_A = 100$, $\mu_B = 100 + (10^9-100)/10^6 \approx 1100$. Here the spike contributes only $\approx 900$ to a mean of order $10^3$ — a *bounded* shift. With variance $\sigma^2$ and Bernstein's bound, $m = O(\mathrm{cv}^2\varepsilon^{-2}\log\tfrac1\delta)$ samples suffice; e.g. $\mathrm{cv}\approx 30$, $\varepsilon=0.1$, $\delta=0.05$ gives $m \approx 30^2 \cdot 100 \cdot 3 \approx 2.7\times10^5$ — still independent of $n$. Sensitivity, not the SQL keyword, decides sample-friendliness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

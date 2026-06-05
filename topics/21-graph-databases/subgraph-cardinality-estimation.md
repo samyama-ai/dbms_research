@@ -50,12 +50,22 @@ Genuinely **open**. Practical estimators (sampling, learned) have low *average* 
 
 ## 9. Key References
 
-- **[Foundational]** Alon, Yuster, Zwick. *Color-Coding.* JACM 1995.
-- **[Foundational]** Curticapean, Marx (and Dell). *Homomorphisms Are a Good Basis for Counting Small Subgraphs.* STOC 2017.
-- **[SOTA]** Li, Wu, Yu. *Wander Join: Online Aggregation via Random Walks.* SIGMOD 2016.
-- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (degree/entropic bounds).* PODS 2017.
-- **[Survey/Benchmark]** Park, Ko, Kankanamge, Salihoglu, et al. *G-CARE: A Framework for Performance Benchmarking of Cardinality Estimation Techniques for Subgraph Matching.* SIGMOD 2020.
-- **[SOTA]** Kim, Choi, Han, et al. *Learned Cardinality Estimation: An In-depth Study / Alley.* SIGMOD 2021.
+- **[Foundational]** Alon, Yuster, Zwick. *Color-Coding.* JACM 1995. — [DOI](https://doi.org/10.1145/210332.210337)
+- **[Foundational]** Curticapean, Marx (and Dell). *Homomorphisms Are a Good Basis for Counting Small Subgraphs.* STOC 2017. — [arXiv](https://arxiv.org/abs/1705.01595)
+- **[SOTA]** Li, Wu, Yi. *Wander Join: Online Aggregation via Random Walks.* SIGMOD 2016. — [DOI](https://doi.org/10.1145/2882903.2915235)
+- **[SOTA]** Abo Khamis, Ngo, Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another? (degree/entropic bounds).* PODS 2017. — [arXiv](https://arxiv.org/abs/1612.02503)
+- **[Survey/Benchmark]** Park, Ko, Kankanamge, Salihoglu, et al. *G-CARE: A Framework for Performance Benchmarking of Cardinality Estimation Techniques for Subgraph Matching.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3389702)
+- **[SOTA]** Kim, Fletcher, Kim, Han. *Alley: Combining Sampling and Synopses with Worst-Case Optimal Runtime and Quality Guarantees for Graph Pattern Cardinality Estimation.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3457246)
+
+## 10. Worked Example
+
+Estimate triangles in a star-plus-hub graph. Let $G$ have a hub $h$ joined to 100 leaves $\ell_1,\dots,\ell_{100}$, plus one extra edge $(\ell_1,\ell_2)$. So $|V|=101$, $|E|=101$, and the *true* triangle count is exactly **1** (the triangle $h,\ell_1,\ell_2$).
+
+Pattern $Q$ is the triangle, with fractional edge cover $x_e=1/2$ on each of its 3 edges, so the **AGM bound** is $|E|^{3/2}=101^{1.5}\approx 1015$ — three orders of magnitude above the truth, because AGM assumes worst-case degree spread.
+
+Now run a naive *uniform edge-sampling* estimator: pick a random edge $(u,v)$, count common neighbours $|N(u)\cap N(v)|$, and scale by $|E|$. Of the 101 edges, only $(\ell_1,\ell_2)$ closes a triangle (common neighbour $h$). So $\Pr[\text{hit}]=1/101$, and the single-sample estimate is either $0$ (prob. $100/101$) or $101$ (prob. $1/101$); its expectation is $101\cdot\tfrac{1}{101}=1$ — unbiased, but with relative variance $\approx 100$.
+
+This is the core difficulty: the estimator is correct in expectation yet needs $\Theta(100)$ samples just to reduce variance enough to distinguish "1 triangle" from "0", and on hub-heavy real graphs that factor blows up — exactly why no method gives tight two-sided guarantees under degree skew.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

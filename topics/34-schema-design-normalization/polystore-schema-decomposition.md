@@ -42,12 +42,29 @@ Active directions: (1) **learned cost models** and reinforcement-learning placem
 - Benchmarks with ground-truth optimal placements (see *schema-design-benchmarks*).
 
 ## 9. Key References
-- **[Foundational]** Stonebraker, M., et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SIAM J. Comput., 2013.
-- **[SOTA]** LeFevre, J., et al. *MISO: Souping Up Big Data Query Processing with a Multistore System.* SIGMOD, 2014.
-- **[SOTA]** Agrawal, S., Narasayya, V., Yang, B. *Integrating Vertical and Horizontal Partitioning into Automated Physical Database Design.* SIGMOD, 2004.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002.
-- **[Survey]** Tan, R., Chirkova, R., et al. *Enabling Query Processing across Heterogeneous Data Models: A Survey.* IEEE Big Data, 2017.
+- **[Foundational]** Stonebraker, M., et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814713) — [DBLP](https://dblp.org/rec/journals/sigmod/DugganESBHKMMMZ15.html)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 / SIAM J. Comput., 2013. — [DOI](https://doi.org/10.1137/110859440) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[SOTA]** LeFevre, J., et al. *MISO: Souping Up Big Data Query Processing with a Multistore System.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2588568)
+- **[SOTA]** Agrawal, S., Narasayya, V., Yang, B. *Integrating Vertical and Horizontal Partitioning into Automated Physical Database Design.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007609)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services.* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+- **[Survey]** Tan, R., Chirkova, R., et al. *Enabling Query Processing across Heterogeneous Data Models: A Survey.* IEEE Big Data, 2017. — [DOI](https://doi.org/10.1109/BigData.2017.8258302)
+
+## 10. Worked Example
+
+A logical schema has three fragments and two engines: a key-value store $e_{KV}$ (cheap point lookups) and a columnar store $e_{COL}$ (cheap scans/aggregates).
+
+- $F_1 = \text{User}(\text{uid},\text{name})$
+- $F_2 = \text{Session}(\text{sid},\text{uid},\text{ts})$
+- $F_3 = \text{Event}(\text{sid},\text{type},\text{value})$
+
+Workload $W$: $\Pr=0.7$ point lookup "fetch user by uid" (KV-friendly), $\Pr=0.3$ "average $\text{value}$ over all events" (scan-friendly). Per-query unit costs:
+
+| fragment | on $e_{KV}$ | on $e_{COL}$ |
+|----------|-------------|--------------|
+| lookup $F_1$ | 1 | 10 |
+| scan $F_3$ | 50 | 2 |
+
+Assignment $\phi:\{F_1\mapsto e_{KV},\,F_3\mapsto e_{COL}\}$ gives expected cost $0.7\cdot 1 + 0.3\cdot 2 = 1.3$. The naive all-KV placement costs $0.7\cdot1 + 0.3\cdot50 = 15.7$; all-COL costs $0.7\cdot10 + 0.3\cdot2 = 7.6$. So the heterogeneous split is $\approx 6\times$ better. But the lookup-then-aggregate query joining $F_1\bowtie F_2\bowtie F_3$ now spans both engines: keeping the join tree acyclic lets Yannakakis reassemble in $O(\text{in}+\text{out})$, whereas a fragmentation that broke acyclicity would inflate the intermediate result toward the AGM bound $\prod\rho^*$. Choosing $\phi$ jointly over $2^{|F|}\cdot p$ options is the NP-hard core (graph-partitioning / facility-location).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

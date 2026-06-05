@@ -50,11 +50,21 @@ Lines of work: **stream slicing & general window aggregation sharing** (Traub, G
 
 ## 9. Key References
 
-- **[Foundational]** Arvind Arasu, Shivnath Babu, Jennifer Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006.
-- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015.
-- **[SOTA]** Edmon Begoli, Tyler Akidau, Fabian Hueske, Julian Hyde, et al. *One SQL to Rule Them All.* SIGMOD, 2019.
-- **[SOTA]** Jonas Traub et al. *Efficient Window Aggregation with General Stream Slicing.* ICDE/EDBT, 2018.
-- **[SOTA]** Mihai Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023.
+- **[Foundational]** Arvind Arasu, Shivnath Babu, Jennifer Widom. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+- **[Foundational/SOTA]** Tyler Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[SOTA]** Edmon Begoli, Tyler Akidau, Fabian Hueske, Julian Hyde, et al. *One SQL to Rule Them All.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3314040)
+- **[SOTA]** Jonas Traub et al. *Efficient Window Aggregation with General Stream Slicing.* ICDE/EDBT, 2018. — [DBLP](https://dblp.org/rec/conf/edbt/TraubGCBKRM19.html)
+- **[SOTA]** Mihai Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* PVLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+
+## 10. Worked Example
+
+**CQL S2R/R2S round-trip and a session merge.** Take an event-time stream of clicks (event-time in seconds):
+
+$\langle u{=}A, t{=}1\rangle,\ \langle u{=}A, t{=}3\rangle,\ \langle u{=}A, t{=}10\rangle$
+
+A **5-second sliding window** `[Range 5]` is an S2R operator: at processing time $t=10$ it yields the relation $R(10)=\{\langle A,10\rangle\}$ (events at $t=1,3$ have expired, since $10-5=5>3$). At $t=3$ it yielded $R(3)=\{\langle A,1\rangle,\langle A,3\rangle\}$. Applying R2S `Istream` (insertions vs. the previous instant) over $R$ reproduces the new tuples — illustrating the CQL duality $\text{R2S}\circ\text{S2R}$ is *not* the identity (windowing loses then regenerates).
+
+Now a **session window** with gap $g=4$: events at $t=1,3$ are within $g$ (gap $2\le 4$) so they **merge** into session $[1,3]$; the event at $t=10$ starts a new session (gap $10-3=7>4$). This `MergeWindows` step is the union-find/lattice operation absent from sliding windows — and exactly the construct that pushes equivalence-checking of two window expressions beyond first-order logic, the suspected source of undecidability noted in §5. A purely tumbling/sliding algebra has no such merge and stays decidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

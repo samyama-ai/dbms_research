@@ -36,11 +36,22 @@ Groups at **Edinburgh (Libkin, Vrgoč), DCC Chile (Reutter, Vrgoč), TU Berlin /
 - Expressiveness of **graph-construction** (view/closure) semantics.
 
 ## 9. Key References
-- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries.* KR 2000.
-- **[SOTA]** Francis et al. *A Researcher's Digest of GQL.* ICDT 2023.
-- **[SOTA]** Deutsch et al. *Graph Pattern Matching in GQL and SQL/PGQ.* SIGMOD 2022.
-- **[Survey]** Angles et al. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017.
+- **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries.* KR 2000. — [paper](https://www.inf.unibz.it/~calvanese/papers-html/KR-2000.html)
+- **[SOTA]** Francis et al. *A Researcher's Digest of GQL.* ICDT 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2023.1)
+- **[SOTA]** Deutsch et al. *Graph Pattern Matching in GQL and SQL/PGQ.* SIGMOD 2022. — [ACM](https://doi.org/10.1145/3514221.3526057)
+- **[Survey]** Angles et al. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017. — [arXiv](https://arxiv.org/abs/1610.06264)
+
+## 10. Worked Example
+
+Show concretely why GQL's non-recursive fragment **cannot express connectivity**, using an Ehrenfeucht–Fraïssé locality argument. Consider two undirected graphs with no node/edge labels:
+
+- $G_1$: a single cycle on $2m$ vertices, $C_{2m}$.
+- $G_2$: two disjoint cycles on $m$ vertices each, $C_m \sqcup C_m$.
+
+"Is the graph connected?" must answer **yes** on $G_1$, **no** on $G_2$. But every vertex in both graphs has degree 2, and the radius-$r$ neighborhood of any vertex is identical — a simple path of $2r{+}1$ vertices — for both graphs once $m > 2r{+}1$. By Hanf locality, any **FO** sentence of quantifier rank $r$ (and hence any non-recursive GQL-core predicate, which evaluates in $\mathrm{FO}$ over the navigational closure with *fixed-length* patterns) cannot distinguish $G_1$ from $G_2$: a winning duplicator strategy maps each $r$-neighborhood to an isomorphic one.
+
+A fixed GPML pattern like `()-[]->{1,k}()` only tests reachability up to a **bounded** length $k$; with $m>k$ neither graph yields a closing match the other lacks. Connectivity needs *unbounded* transitive closure — expressible in Datalog (`reach(x,y) :- edge(x,y); reach(x,y):-reach(x,z),edge(z,y)`) but not in the standardized non-recursive core. This is exactly the GQL $<$ Datalog separation of section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

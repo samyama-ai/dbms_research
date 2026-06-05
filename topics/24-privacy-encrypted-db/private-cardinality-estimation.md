@@ -35,12 +35,20 @@ Active: **DP-mergeable sketches** with tight privacy/accuracy (Desfontaines, Pag
 - Integrating private cardinality estimation with private *query execution* (so end-to-end answers and plans share one budget).
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS/SIAM J. Comput., 2008/2013.
-- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity.* TCC, 2006.
-- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based estimation and inference for differential privacy (Private-PGM).* ICML, 2019.
-- **[SOTA]** Desfontaines, Lochbihler, Basin. *Cardinality Estimators do not Preserve Privacy.* PoPETs, 2019.
-- **[SOTA]** Pagh, Stausholm. *Efficient Differentially Private $F_0$ Linear Sketching / Mergeable Sketches.* ICDT/PODS line, 2021–2022.
-- **[Survey]** Cormode, Jha, Kulkarni, Li, Srivastava, Wang. *Privacy at Scale: Local Differential Privacy in Practice.* SIGMOD tutorial, 2018.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS/SIAM J. Comput., 2008/2013. — [DOI](https://doi.org/10.1137/110859440) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
+- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based estimation and inference for differential privacy (Private-PGM).* ICML, 2019. — [arXiv](https://arxiv.org/abs/1901.09136)
+- **[SOTA]** Desfontaines, Lochbihler, Basin. *Cardinality Estimators do not Preserve Privacy.* PoPETs, 2019. — [arXiv](https://arxiv.org/abs/1808.05879)
+- **[SOTA]** Pagh, Stausholm. *Efficient Differentially Private $F_0$ Linear Sketching / Mergeable Sketches.* ICDT/PODS line, 2021–2022. — [arXiv](https://arxiv.org/abs/2001.11932) — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2021.18)
+- **[Survey]** Cormode, Jha, Kulkarni, Li, Srivastava, Wang. *Privacy at Scale: Local Differential Privacy in Practice.* SIGMOD tutorial, 2018. — [DOI](https://doi.org/10.1145/3183713.3197390)
+
+## 10. Worked Example
+
+Take a tiny range-count synopsis over the domain $[1,8]$ of an `age_bucket` column with true leaf counts $(3,0,5,2,7,1,4,2)$. An optimizer wants the selectivity of predicate `age_bucket BETWEEN 3 AND 6`, i.e. the sum of leaves $3..6 = 5+2+7+1 = 15$ out of $24$ rows, selectivity $15/24 \approx 0.625$.
+
+Build a binary tree of partial sums and add Laplace noise $\mathrm{Lap}(1/\varepsilon)$ to each node. The range $[3,6]$ is covered by just $2$ dyadic nodes: $[3,4]$ (count $7$) and $[5,6]$ (count $8$). With $\varepsilon=1$, each noised node has stddev $\sqrt2/\varepsilon \approx 1.41$, so the range estimate is $15 \pm \approx 2$ — additive error $O(\varepsilon^{-1}\log n)$ over only $\log_2 8 = 3$ levels, not $O(n)$.
+
+Crucially, once this tree is published DP, the optimizer may ask *unboundedly many* range/selectivity questions ($[1,4]$, $[5,8]$, $[2,7]$, ...) by post-processing — total budget stays $\varepsilon=1$. That is the synopsis route's payoff: combinatorially many estimates, constant budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

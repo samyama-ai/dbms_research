@@ -40,11 +40,19 @@ Partly closed for the worst case (predecessor bounds are tight and apply directl
 - Lower bounds under updates and distribution shift.
 
 ## 9. Key References
-- **[Foundational]** A. Yao. *Should Tables Be Sorted?* JACM, 1981.
-- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC/FOCS, 2006–2007.
-- **[SOTA]** P. Ferragina, F. Lillo, G. Vinciguerra. *Why Are Learned Indexes So Effective?* ICML, 2020.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020.
-- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020.
+- **[Foundational]** A. Yao. *Should Tables Be Sorted?* JACM, 1981. — [DOI](https://doi.org/10.1145/322261.322274)
+- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC/FOCS, 2006–2007. — [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[SOTA]** P. Ferragina, F. Lillo, G. Vinciguerra. *Why Are Learned Indexes So Effective?* ICML, 2020. — [PMLR](https://proceedings.mlr.press/v119/ferragina20a.html)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1911.13014)
+
+## 10. Worked Example
+
+**Benign vs. adversarial CDF, $n = 8$.** Take keys $S = \{10,20,30,40,50,60,70,80\}$ — a perfectly *linear* CDF. One segment $F(x) = (x-10)/10$ predicts $\mathrm{rank}(x)$ exactly, so $\varepsilon = 0$: a lookup needs **zero** last-mile probes beyond evaluating $F$. This is the regime where a learned index crushes a B-tree ($O(\log n)=3$ comparisons).
+
+Now make the key set adversarial: $S' = \{1, 2, 4, 8, 16, 32, 64, 128\}$ (exponential gaps). Any single line through these ranks has max error $\varepsilon = \Omega(n)$. To force error $\le \varepsilon$ an $s$-segment PLA needs $s = \Omega(n/\varepsilon)$ segments; with $o(n)$ model space the last-mile binary search over a residual window of size $\Theta(\varepsilon)$ costs $\log_2 \varepsilon$ probes. Driving $\varepsilon$ down to a constant requires $s = \Theta(n)$ segments — i.e. essentially storing the data, no savings.
+
+**Cell-probe floor.** Pătrașcu–Thorup guarantee that for linear space and word $w=\Theta(\log n)$, worst-case predecessor needs $\Omega(\log_w n)$ probes — here $\approx \log_{\log 8} 8$ — a floor *no* model escapes on worst-case integer keys. The lesson: learned-index gains are *distributional* (smooth CDF $\Rightarrow$ small $\varepsilon$), never worst-case asymptotic.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -52,11 +52,19 @@ Directions: (i) **learned load shedding** — RL/contextual-bandit drop policies
 
 ## 9. Key References
 
-- **[Foundational]** Nesime Tatbul, Uğur Çetintemel, Stan Zdonik, Mitch Cherniack, Michael Stonebraker. *Load Shedding in a Data Stream Manager.* VLDB, 2003.
-- **[Foundational]** Brian Babcock, Mayur Datar, Rajeev Motwani. *Load Shedding for Aggregation Queries over Data Streams.* ICDE, 2004.
-- **[SOTA]** Nesime Tatbul, Stan Zdonik. *Window-Aware Load Shedding for Aggregation Queries over Data Streams.* VLDB, 2006.
-- **[Foundational]** George L. Nemhauser, Laurence A. Wolsey, Marshall L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978.
-- **[SOTA]** Ahmad Slo, Sukanya Bhowmik, Kurt Rothermel. *eSPICE: Probabilistic Load Shedding for Complex Event Processing.* Middleware, 2019.
+- **[Foundational]** Nesime Tatbul, Uğur Çetintemel, Stan Zdonik, Mitch Cherniack, Michael Stonebraker. *Load Shedding in a Data Stream Manager.* VLDB, 2003. — [DBLP](https://dblp.org/rec/conf/vldb/TatbulCZCS03.html)
+- **[Foundational]** Brian Babcock, Mayur Datar, Rajeev Motwani. *Load Shedding for Aggregation Queries over Data Streams.* ICDE, 2004. — [DOI](https://doi.org/10.1109/ICDE.2004.1320010)
+- **[SOTA]** Nesime Tatbul, Stan Zdonik. *Window-Aware Load Shedding for Aggregation Queries over Data Streams.* VLDB, 2006. — [PDF](https://people.csail.mit.edu/tatbul/publications/vldb06.pdf)
+- **[Foundational]** George L. Nemhauser, Laurence A. Wolsey, Marshall L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
+- **[SOTA]** Ahmad Slo, Sukanya Bhowmik, Kurt Rothermel. *eSPICE: Probabilistic Load Shedding for Complex Event Processing.* Middleware, 2019. — [arXiv](https://arxiv.org/abs/2002.05896)
+
+## 10. Worked Example
+
+A query computes `SUM(value)` over two groups in a window. Group $A$ has $n_A = 100$ tuples with values near $10$; group $B$ has $n_B = 100$ tuples with values near $1$. Input rate $\lambda = 200$ tuples/s but capacity $\mu = 120$/s, so we must keep only a fraction $p = 120/200 = 0.6$.
+
+**Random (uniform) shedding** keeps each tuple with $p = 0.6$ and rescales by $1/p$ (Horvitz–Thompson). For a group of $n$ unit-variance values, $\mathrm{Var}(\hat A) = \sum v^2 (1-p)/p$. With $p=0.6$, $(1-p)/p = 0.667$. For group $B$ ($v \approx 1$): $\mathrm{Var} \approx 100 \cdot 0.667 = 66.7$, sd $\approx 8.2$ against a true sum of $100$ — about $8\%$ relative error.
+
+**Variance-optimal (semantic) allocation** instead spends the same budget unequally: keep more of the high-value group $A$ (each dropped $A$-tuple injects $\approx 100\times$ the variance of a $B$-tuple, since variance scales with $v^2 = 100$). Solving $\min \sum_g v_g^2(1-p_g)/p_g$ s.t. $\sum p_g n_g = 120$ pushes $p_A \to 1$, $p_B \to 0.2$. This slashes the dominant $A$-error while accepting larger relative error on the small-magnitude group $B$ — illustrating why utility-weighted (submodular/knapsack) shedding beats uniform sampling at equal load.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

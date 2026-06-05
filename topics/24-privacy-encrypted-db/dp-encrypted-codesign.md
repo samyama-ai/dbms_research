@@ -49,12 +49,18 @@ The gap is **genuinely open** and multi-dimensional. (1) The $\Omega(\log n)$ OR
 
 ## 9. Key References
 
-- **[Foundational]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016.
-- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[SOTA]** Chen, Lacharité, Minaud, Paterson. *Differentially Private Access Patterns in Secure Computation / Encrypted Search.* IEEE S&P, 2020.
-- **[SOTA]** Bater, He, Ehrich, Machanavajjhala, Rogers. *Shrinkwrap: Efficient SQL Query Processing in Differentially Private Data Federations.* VLDB, 2019.
-- **[SOTA]** Patel, Persiano, Yeo, Yung. *Mitigating Leakage in Secure Cloud-Hosted Data Structures: Volume-Hiding for Multi-Maps via Hashing.* CCS, 2019.
-- **[SOTA]** Demertzis, Papadopoulos, Papamanthou, Shintre. *SEAL: Attack Mitigation for Encrypted Databases via Adjustable Leakage.* USENIX Security, 2020.
+- **[Foundational]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386) · [DBLP](https://dblp.org/rec/conf/ccs/KellarisKNO16.html)
+- **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) · [DBLP](https://dblp.org/rec/conf/crypto/LarsenN18.html) · [ePrint](https://eprint.iacr.org/2018/423)
+- **[SOTA]** Chen, Lacharité, Minaud, Paterson. *Differentially Private Access Patterns in Secure Computation / Encrypted Search.* IEEE S&P, 2020. — [Secure Computation with Differentially Private Access Patterns, CCS 2018: DOI](https://doi.org/10.1145/3243734.3243851) · [ePrint](https://eprint.iacr.org/2017/1016)
+- **[SOTA]** Bater, He, Ehrich, Machanavajjhala, Rogers. *Shrinkwrap: Efficient SQL Query Processing in Differentially Private Data Federations.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3291264.3291274) · [PDF](http://www.vldb.org/pvldb/vol12/p307-bater.pdf) · [arXiv](https://arxiv.org/abs/1810.01816)
+- **[SOTA]** Patel, Persiano, Yeo, Yung. *Mitigating Leakage in Secure Cloud-Hosted Data Structures: Volume-Hiding for Multi-Maps via Hashing.* CCS, 2019. — [DOI](https://doi.org/10.1145/3319535.3354213) · [DBLP](https://dblp.org/rec/conf/ccs/PatelPYY19.html) · [ePrint](https://eprint.iacr.org/2019/1292)
+- **[SOTA]** Demertzis, Papadopoulos, Papamanthou, Shintre. *SEAL: Attack Mitigation for Encrypted Databases via Adjustable Leakage.* USENIX Security, 2020. — [USENIX](https://www.usenix.org/conference/usenixsecurity20/presentation/demertzis) · [ePrint](https://eprint.iacr.org/2019/811)
+
+## 10. Worked Example
+
+**One-sided geometric volume padding.** An encrypted multimap maps a keyword to its matching record IDs; the server learns the *volume* (count) returned. Keyword "diabetes" truly matches $v=12$ records; on a neighboring database with one patient removed it would match $v'=11$. To make the released volume $(\varepsilon,0)$-DP we must pad — we can only *add* dummy records, never drop real ones — so we draw padding from a one-sided geometric distribution with parameter $\alpha=e^{-\varepsilon}$: $\Pr[\text{pad}=k]=(1-\alpha)\alpha^{k}$, $k\ge 0$, and release $\tilde v = v+\text{pad}$.
+
+Take $\varepsilon=\ln 2$, so $\alpha=\tfrac12$. The DP guarantee needs $\Pr[\tilde v = m \mid v=12]\le e^{\varepsilon}\Pr[\tilde v=m\mid v'=11]$ for all $m$; since shifting the floor up by one only rescales the geometric tail by $\alpha^{-1}=2=e^{\varepsilon}$, the bound holds exactly. Expected dummy cost is $\mathbb{E}[\text{pad}]=\frac{\alpha}{1-\alpha}=1$ extra record per query — versus full obliviousness, which would pad every query to the worst-case bound (e.g. $N$). The privacy/overhead knob is $\varepsilon$: halving $\alpha$ (raising $\varepsilon$) cuts expected padding but loosens the multiplicative leakage bound $e^{\varepsilon}$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

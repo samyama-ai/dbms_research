@@ -43,12 +43,30 @@ Active: (i) extending alignment-based rewriting to **window functions, outer joi
 - **Mechanically verified** rewriters with snapshot-reducibility proof certificates.
 
 ## 9. Key References
-- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J., Jensen, C. S. *Extending the Kernel of a Relational DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016.
-- **[Foundational]** Dignös, A., Böhlen, M., Gamper, J. *Temporal Alignment.* SIGMOD, 2012.
-- **[Foundational]** Böhlen, M., Jensen, C. S., Snodgrass, R. *Temporal Statement Modifiers.* ACM TODS, 2000.
-- **[Foundational]** Chomicki, J., Toman, D. *Temporal Databases.* (Handbook of Temporal Reasoning in AI / point-based semantics), 2005.
-- **[Foundational]** Snodgrass, R. T. (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995.
-- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012.
+- **[SOTA]** Dignös, A., Böhlen, M., Gamper, J., Jensen, C. S. *Extending the Kernel of a Relational DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016. — [DOI](https://doi.org/10.1145/2967608)
+- **[Foundational]** Dignös, A., Böhlen, M., Gamper, J. *Temporal Alignment.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213886)
+- **[Foundational]** Böhlen, M., Jensen, C. S., Snodgrass, R. *Temporal Statement Modifiers.* ACM TODS, 2000. — [DOI](https://doi.org/10.1145/377674.377665)
+- **[Foundational]** Chomicki, J., Toman, D. *Temporal Databases.* (Handbook of Temporal Reasoning in AI / point-based semantics), 2005. — [DOI](https://doi.org/10.1016/S1574-6526(05)80016-1)
+- **[Foundational]** Snodgrass, R. T. (ed.). *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP](https://dblp.org/db/books/collections/snodgrass95.html)
+- **[Survey]** Kulkarni, K., Michels, J.-E. *Temporal Features in SQL:2011.* SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)
+
+## 10. Worked Example
+
+Take two temporal relations under valid-time intervals $[t_s,t_e)$:
+
+`Emp` (who works) — Ann: $[1,6)$.
+`Dept` (which dept is active) — Sales: $[3,9)$.
+
+We want the **sequenced join** "who works in an active dept, at each instant." A naive nontemporal join ignoring time would wrongly pair them over all time. The alignment rewrite **splits at every relevant endpoint** $\{1,3,6,9\}$ touching each operand:
+
+- `Emp` Ann $[1,6)$ → fragments $[1,3),[3,6)$.
+- `Dept` Sales $[3,9)$ → fragments $[3,6),[6,9)$.
+
+Join applies on aligned, **equal-period** fragments only; the single surviving overlap is $[3,6)$:
+
+$$\text{(Ann, Sales)} \;\text{on}\; [3,6).$$
+
+Check snapshot-reducibility: at $\tau=2$ the result is empty (Dept not yet active); at $\tau=4$ it is $\{(Ann,Sales)\}$; at $\tau=7$ empty (Ann gone) — exactly the nontemporal join of each timeslice. No adjacent equal-value fragments remain, so coalescing leaves $[3,6)$ unchanged. Endpoint count $=4$, so the split blow-up is $O(n+m)$ as the upper bound predicts.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

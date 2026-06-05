@@ -53,12 +53,22 @@ Active threads: **confidence sequences / betting estimators** (Ramdas, Waudby-Sm
 
 ## 9. Key References
 
-- **[Foundational]** D. G. Horvitz, D. J. Thompson. *A Generalization of Sampling Without Replacement from a Finite Universe.* JASA, 1952.
-- **[Foundational]** B. Babcock, S. Chaudhuri, G. Das. *Dynamic Sample Selection for Approximate Query Processing.* SIGMOD, 2003.
-- **[SOTA]** B. Ding, S. Huang, S. Chaudhuri, K. Chakrabarti, C. Wang. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD, 2016.
-- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018.
-- **[SOTA]** I. Waudby-Smith, A. Ramdas. *Estimating Means of Bounded Random Variables by Betting.* JRSS-B, 2024.
+- **[Foundational]** D. G. Horvitz, D. J. Thompson. *A Generalization of Sampling Without Replacement from a Finite Universe.* JASA, 1952. — [DOI](https://doi.org/10.1080/01621459.1952.10483446)
+- **[Foundational]** B. Babcock, S. Chaudhuri, G. Das. *Dynamic Sample Selection for Approximate Query Processing.* SIGMOD, 2003. — [DOI](https://doi.org/10.1145/872757.872822)
+- **[SOTA]** B. Ding, S. Huang, S. Chaudhuri, K. Chakrabarti, C. Wang. *Sample + Seek: Approximating Aggregates with Distribution Precision Guarantee.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915249)
+- **[SOTA]** S. Agarwal et al. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[SOTA]** I. Waudby-Smith, A. Ramdas. *Estimating Means of Bounded Random Variables by Betting.* JRSS-B, 2024. — [DOI](https://doi.org/10.1093/jrsssb/qkad009)
+
+## 10. Worked Example
+
+A relation $R$ has $N = 10^6$ rows split into two strata: stratum $H$ (90% of rows) and stratum $L$ (10%, the "rare" region). We build a stratified sample of $n = 10{,}000$ rows allocated proportionally — $9{,}000$ from $H$ and $1{,}000$ from $L$ — so inclusion probabilities are uniform, $\pi_t = 10^{-2}$.
+
+Now push down a selective predicate $\theta$ whose answer set $R_\theta$ lives entirely in $L$ and has size $|R_\theta| = 500$ (selectivity $5\times10^{-4}$). The surviving sample is
+$$\mathbb{E}[|S_\theta|] = 500 \times \pi_t = 500 \times 10^{-2} = 5 \text{ rows}.$$
+With only 5 survivors, the normal-approximation CI $\hat A \pm 1.96\sqrt{\widehat{\mathrm{Var}}}$ badly under-covers (Section 2).
+
+The bias bites if the design were *not* uniform: suppose an analyst had allocated only $200$ samples to $L$ (because $L$ looked unimportant), giving $\pi_t = 200/10^5 = 2\times10^{-3}$ there and $\mathbb{E}[|S_\theta|] = 500\times 2\times10^{-3} = 1$. One survivor cannot yield a valid interval — the HT weight $1/\pi_t = 500$ makes a single tuple swing $\hat A$ wildly, exactly the pushdown-bias pathology.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

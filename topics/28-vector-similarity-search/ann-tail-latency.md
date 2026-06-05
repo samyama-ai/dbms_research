@@ -44,12 +44,22 @@ Active directions: GPU-native graph indexes with predictable latency (CAGRA / cu
 - Skew-aware replication and hot-partition splitting with tail guarantees.
 
 ## 9. Key References
-- **[Foundational]** J. Dean, L. A. Barroso. *The Tail at Scale.* Communications of the ACM, 2013.
-- **[Foundational]** M. Mitzenmacher. *The Power of Two Choices in Randomized Load Balancing.* IEEE TPDS, 2001.
-- **[SOTA]** H. Ootomo, et al. *CAGRA: Highly Parallel Graph Construction and Approximate Nearest Neighbor Search for GPUs.* ICDE, 2024.
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020.
-- **[Foundational]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs (FAISS).* IEEE Transactions on Big Data, 2021.
+- **[Foundational]** J. Dean, L. A. Barroso. *The Tail at Scale.* Communications of the ACM, 2013. — [DOI](https://doi.org/10.1145/2408776.2408794)
+- **[Foundational]** M. Mitzenmacher. *The Power of Two Choices in Randomized Load Balancing.* IEEE TPDS, 2001. — [DOI](https://doi.org/10.1109/71.963420)
+- **[SOTA]** H. Ootomo, et al. *CAGRA: Highly Parallel Graph Construction and Approximate Nearest Neighbor Search for GPUs.* ICDE, 2024. — [arXiv](https://arxiv.org/abs/2308.15136) — [DOI](https://doi.org/10.1109/ICDE60146.2024.00323)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html) — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
+- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020. — [arXiv](https://arxiv.org/abs/1603.09320) — [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[Foundational]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs (FAISS).* IEEE Transactions on Big Data, 2021. — [arXiv](https://arxiv.org/abs/1702.08734) — [DOI](https://doi.org/10.1109/TBDATA.2019.2921572)
+
+## 10. Worked Example
+
+**Fan-out tail and a hedged-request fix.** A query fans out to $K{=}10$ shards and must wait for the slowest. Suppose each shard independently exceeds $50$ ms with probability $p{=}0.01$ (its own p99). The request is slow iff *any* shard is slow:
+$$\Pr[\text{request} > 50\text{ms}] = 1-(1-p)^K = 1-0.99^{10} \approx 0.0956.$$
+So a per-shard p99 of $50$ ms becomes a request-level p90 — nearly $10\%$ of requests miss the target. To keep the *request* tail at $1\%$ you'd need each shard at $p' = 1-(0.99)^{1/10}\approx 0.001$ — a per-shard p99.9.
+
+**Hedged requests (Dean–Barroso):** send a second copy of any shard probe that hasn't returned by its p95, take the first to finish. With two near-independent draws the effective slow-probability per shard drops to $\approx p^2 = 10^{-4}$, so
+$$1-(1-10^{-4})^{10} \approx 10^{-3},$$
+restoring a request-level p99.9 at roughly $1.05\times$ the work (only the slow tail is duplicated). This shows why tail control at scale needs redundancy, not just a faster mean.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

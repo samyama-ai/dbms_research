@@ -29,11 +29,30 @@ Directions: **learned/adaptive placement** (RL and cost-model learning à la Bao
 Approximation algorithms for placement under realistic communication models; integrating robust (worst-case/bounded-error) cardinality estimates with device costing; multi-GPU and disaggregated-memory placement; adaptive re-optimization that migrates pipelines mid-flight as observed cardinalities deviate.
 
 ## 9. Key References
-- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** J. K. Lenstra, D. B. Shmoys, É. Tardos. *Approximation Algorithms for Scheduling Unrelated Parallel Machines.* Math. Programming, 1990.
-- **[SOTA]** P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019.
-- **[SOTA]** D. Justo, A. Floratou et al. *The Tensor Data Platform / TQP: Querying with Tensor Computation Runtimes.* VLDB/CIDR, 2022–2023.
-- **[Survey]** S. Breß, H. Funke, J. Teubner. *Robust Query Processing in Co-Processor-accelerated Databases.* SIGMOD, 2016.
+- **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** J. K. Lenstra, D. B. Shmoys, É. Tardos. *Approximation Algorithms for Scheduling Unrelated Parallel Machines.* Math. Programming, 1990. — [DOI](https://doi.org/10.1007/BF01585745)
+- **[SOTA]** P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3303753.3303760)
+- **[SOTA]** D. Justo, A. Floratou et al. *The Tensor Data Platform / TQP: Querying with Tensor Computation Runtimes.* VLDB/CIDR, 2022–2023. — [arXiv](https://arxiv.org/abs/2203.01877)
+- **[Survey]** S. Breß, H. Funke, J. Teubner. *Robust Query Processing in Co-Processor-accelerated Databases.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882936)
+
+## 10. Worked Example
+
+Consider a 2-operator pipeline $A \to B$ on a machine with one CPU and one GPU over a PCIe link of bandwidth $\beta = 10$ GB/s. Per-operator costs (ms):
+
+| op | $w^{\mathrm{cpu}}$ | $w^{\mathrm{gpu}}$ | output data |
+|----|------|------|------|
+| $A$ (scan+filter) | 40 | 8 | 2 GB |
+| $B$ (hash-aggregate) | 30 | 6 | — |
+
+A GPU-resident operator needs its input on the GPU; crossing CPU$\to$GPU on edge $A\!\to\!B$ costs $\frac{2\,\mathrm{GB}}{10\,\mathrm{GB/s}} = 200$ ms.
+
+Enumerate the 4 placements (latency = sum of op costs + any cross-device transfer):
+- CPU,CPU: $40+30 = 70$
+- GPU,GPU: $8+6 = 14$ (input of $A$ assumed already staged)
+- CPU,GPU: $40 + 200 + 6 = 246$
+- GPU,CPU: $8 + 200 + 30 = 238$
+
+The all-GPU plan wins at $14$ ms, but only because the $200$ ms transfer dominates any split. Now shrink $A$'s output to $20$ MB (transfer $=2$ ms): CPU,GPU becomes $40+2+6=48$ vs GPU,GPU $14$ — GPU still wins. This shows why transfer cost, not raw per-op speed, drives the placement: the optimizer must price each cross-device edge, and a single mis-estimated cardinality (output size) can flip the winner.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

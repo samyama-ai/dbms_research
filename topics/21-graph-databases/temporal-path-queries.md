@@ -48,11 +48,30 @@ Active groups: Molter/Zschoche/Niedermeier-lineage on parameterized temporal-gra
 - Approximate temporal reachability with sublinear sketches under sliding windows.
 
 ## 9. Key References
-- **[Foundational]** Wu, Cheng, Huang, Ke, Lu, Xu. *Path problems in temporal graphs.* PVLDB, 2014.
-- **[SOTA]** Wu, Huang, Cheng, Zhou, Yu, Lu. *Reachability and time-based path queries in temporal graphs (TopChain).* ICDE, 2016.
-- **[Foundational]** Casteigts, Himmel, Molter, Zschoche. *Finding temporal paths under waiting-time constraints.* Algorithmica, 2021.
-- **[Survey]** Holme, Saramäki. *Temporal networks.* Physics Reports, 2012.
-- **[Survey]** Michail. *An introduction to temporal graphs: An algorithmic perspective.* Internet Mathematics, 2016.
+- **[Foundational]** Wu, Cheng, Huang, Ke, Lu, Xu. *Path problems in temporal graphs.* PVLDB, 2014. — [DOI](https://doi.org/10.14778/2732939.2732945)
+- **[SOTA]** Wu, Huang, Cheng, Zhou, Yu, Lu. *Reachability and time-based path queries in temporal graphs (TopChain).* ICDE, 2016. — [arXiv](https://arxiv.org/abs/1601.05909)
+- **[Foundational]** Casteigts, Himmel, Molter, Zschoche. *Finding temporal paths under waiting-time constraints.* Algorithmica, 2021. — [DOI](https://doi.org/10.1007/s00453-021-00831-w)
+- **[Survey]** Holme, Saramäki. *Temporal networks.* Physics Reports, 2012. — [DOI](https://doi.org/10.1016/j.physrep.2012.03.001)
+- **[Survey]** Michail. *An introduction to temporal graphs: An algorithmic perspective.* Internet Mathematics, 2016. — [DOI](https://doi.org/10.1080/15427951.2016.1177801)
+
+## 10. Worked Example
+
+Earliest-arrival vs. shortest-hop on a 4-node temporal graph. Vertices $s,a,b,t$; timestamped edges (departure time $t$, travel time $\lambda{=}0$):
+
+| edge | time |
+|------|------|
+| $s\to a$ | $1$ |
+| $a\to t$ | $5$ |
+| $s\to b$ | $2$ |
+| $b\to t$ | $3$ |
+
+A path is *time-respecting* if timestamps are non-decreasing along it.
+
+**Earliest-arrival from $s$:** path $s\xrightarrow{2}b\xrightarrow{3}t$ arrives at time $3$. The alternative $s\xrightarrow{1}a\xrightarrow{5}t$ arrives at $5$. So earliest arrival is $3$, via $b$ — even though it departs *later* ($t{=}2$ vs $1$).
+
+**Fewest-hops:** both routes use $2$ hops, so they tie on hops.
+
+The instructive twist: suppose we add $s\xrightarrow{1}a$, $a\xrightarrow{4}b$, $b\xrightarrow{3}t$. The walk $s\to a\to b$ requires timestamps $1\le 4$, then $b\to t$ needs $\ge 4$, but the only $b\to t$ edge departs at $3<4$ — so this 3-hop route is **not** time-respecting and is invalid, illustrating non-FIFO/non-transitivity: a sub-path optimal in a static graph can be infeasible once timestamps are imposed, which is exactly why ordinary Dijkstra breaks here.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

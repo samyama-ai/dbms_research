@@ -31,11 +31,27 @@ Tannen's group (Penn) and the ProvSQL group (Senellart, Inria/ENS) continue mapp
 Articulated directions: a Galois-connection-style "which provenance question ↔ which semiring quotient" duality; a decidability resolution for $\mathbb{N}$-containment; an effective procedure that, given a provenance question expressed in a logic, returns the *coarsest* sufficient semiring; and lifting the hierarchy to recursive/aggregate settings where $\omega$-continuity and monus interact.
 
 ## 9. Key References
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** T. J. Green. *Containment of Conjunctive Queries on Annotated Relations.* ICDT 2009 / Theory of Computing Systems, 2011.
-- **[Survey]** T. J. Green, V. Tannen. *The Semiring Framework for Database Provenance.* PODS (tutorial), 2017.
-- **[SOTA]** E. Grädel, V. Tannen. *Semiring Provenance for First-Order Model Checking.* arXiv:1712.01980, 2017.
-- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018.
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** T. J. Green. *Containment of Conjunctive Queries on Annotated Relations.* ICDT 2009 / Theory of Computing Systems, 2011. — [DOI](https://doi.org/10.1145/1514894.1514930)
+- **[Survey]** T. J. Green, V. Tannen. *The Semiring Framework for Database Provenance.* PODS (tutorial), 2017. — [DOI](https://doi.org/10.1145/3034786.3056125)
+- **[SOTA]** E. Grädel, V. Tannen. *Semiring Provenance for First-Order Model Checking.* arXiv:1712.01980, 2017. — [arXiv](https://arxiv.org/abs/1712.01980)
+- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+
+## 10. Worked Example
+
+Query $Q(z) \leftarrow R(z,x), R(z,y)$ (a self-join) over $R$ with tuples $R(c,1)\!=\!a$, $R(c,2)\!=\!b$ (annotations $a,b \in \mathbb{N}[X]$). Provenance of output $(c)$:
+$$ \mathrm{Prov}_{\mathbb{N}[X]} = a\!\cdot\!a + a\!\cdot\!b + b\!\cdot\!a + b\!\cdot\!b = a^2 + 2ab + b^2. $$
+
+Now push this top-of-hierarchy polynomial down each surjective homomorphism and watch distinctions collapse:
+
+| Semiring | image of the polynomial | what is lost |
+|---|---|---|
+| $\mathbb{N}[X]$ (how) | $a^2+2ab+b^2$ | nothing |
+| $\mathrm{Trio}(X)$ (drop coefficients) | $a^2+ab+b^2$ | the multiplicity $2$ |
+| $\mathrm{PosBool}(X)$ (why, $+$ idempotent, $a\cdot a=a$) | $a+b$ | exponents — minimal witnesses only |
+| $\mathbb{B}$ (which, $a\mapsto\top$) | $\top$ | which tuples, all structure |
+
+Each arrow is a semiring homomorphism, and the table is a literal trace of $\mathbb{N}[X] \twoheadrightarrow \mathrm{Trio} \twoheadrightarrow \mathrm{PosBool} \twoheadrightarrow \mathbb{B}$. The "how-many-derivations" question ($2ab$) is answerable only at the top; "which sources?" survives to $\mathrm{PosBool}$; mere non-emptiness survives to $\mathbb{B}$. This single query separates every adjacent pair, exhibiting the covering edges the open problem asks to chart for the lattice *interior*.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

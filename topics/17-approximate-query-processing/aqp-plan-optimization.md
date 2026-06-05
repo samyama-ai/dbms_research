@@ -51,12 +51,26 @@ Active: **learned query optimizers extended with accuracy SLOs** — routing amo
 
 ## 9. Key References
 
-- **[Foundational]** P. G. Selinger, M. M. Astrahan, D. D. Chamberlin, R. A. Lorie, T. G. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997.
-- **[SOTA]** S. Agarwal, B. Mozafari, A. Panda, H. Milner, S. Madden, I. Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013.
-- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018.
-- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (the AGM bound).* FOCS, 2008 / SICOMP, 2013.
-- **[Survey]** S. Chaudhuri, B. Ding, S. Kandula. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017.
+- **[Foundational]** P. G. Selinger, M. M. Astrahan, D. D. Chamberlin, R. A. Lorie, T. G. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** J. M. Hellerstein, P. J. Haas, H. J. Wang. *Online Aggregation.* SIGMOD, 1997. — [DOI](https://doi.org/10.1145/253260.253291)
+- **[SOTA]** S. Agarwal, B. Mozafari, A. Panda, H. Milner, S. Madden, I. Stoica. *BlinkDB: Queries with Bounded Errors and Bounded Response Times on Very Large Data.* EuroSys, 2013. — [DOI](https://doi.org/10.1145/2465351.2465355)
+- **[SOTA]** Y. Park, B. Mozafari, J. Sorenson, J. Wang. *VerdictDB: Universalizing Approximate Query Processing.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196905)
+- **[Foundational]** A. Atserias, M. Grohe, D. Marx. *Size Bounds and Query Plans for Relational Joins (the AGM bound).* FOCS, 2008 / SICOMP, 2013. — [DOI](https://doi.org/10.1137/110859440)
+- **[Survey]** S. Chaudhuri, B. Ding, S. Kandula. *Approximate Query Processing: No Silver Bullet.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3056097)
+
+## 10. Worked Example
+
+**SLO-constrained plan choice.** A query `SELECT AVG(amount) FROM Sales` must meet relative-error SLO $\varepsilon=2\%$ at $1-\delta=95\%$. Data: $N=10^8$ rows, true $\mu=500$, $\sigma=300$ (so coefficient of variation $c=\sigma/\mu=0.6$). The optimizer has three plans:
+
+| Plan | Sample size $n$ | Cost (s) | Predicted rel. half-width $\approx \frac{1.96\,c}{\sqrt n}$ |
+|------|------|------|------|
+| $P_1$ (1% sample) | $10^6$ | 1.2 | $1.96\cdot 0.6/1000 = 0.12\%$ |
+| $P_2$ (0.01% sample) | $10^4$ | 0.05 | $1.96\cdot 0.6/100 = 1.18\%$ |
+| $P_3$ (0.0025% sample) | $2.5{\times}10^3$ | 0.02 | $1.96\cdot 0.6/50 = 2.35\%$ |
+
+Selection rule: $\min \text{cost s.t. err}\le \varepsilon$. $P_3$ violates ($2.35\% > 2\%$); $P_2$ satisfies ($1.18\%\le 2\%$) at cost 0.05s; $P_1$ over-provisions. The optimizer picks $P_2$.
+
+The catch (section 6): this assumes $\sigma$ is *known*. If a `WHERE` predicate cuts survivors to an unknown count, the post-predicate $\sigma$ and $n$ are themselves estimates — mispredicting $\sigma$ by $2\times$ flips $P_2$ from satisfying to violating the SLO. That a-priori error model is the unsolved hard part.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

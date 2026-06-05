@@ -93,15 +93,28 @@ reductions for the overlap predicate.
 
 ## 9. Key References
 - **[Foundational]** M. Datar, A. Gionis, P. Indyk, R. Motwani. *Maintaining Stream Statistics
-  over Sliding Windows.* SIAM J. Computing / SODA, 2002.
+  over Sliding Windows.* SIAM J. Computing / SODA, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
 - **[Foundational]** J. Li, D. Maier, K. Tufte, V. Papadimos, P. Tucker. *Out-of-Order Processing:
-  A New Architecture for High-Performance Stream Systems.* PVLDB, 2008.
-- **[Foundational]** T. Akidau et al. *The Dataflow Model.* PVLDB, 2015.
-- **[SOTA]** V. Braverman, R. Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007.
+  A New Architecture for High-Performance Stream Systems.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
+- **[Foundational]** T. Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[SOTA]** V. Braverman, R. Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DOI](https://doi.org/10.1109/FOCS.2007.55)
 - **[SOTA]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory of Join
-  Algorithms.* SIGMOD Record, 2013.
+  Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314) · [DOI](https://doi.org/10.1145/2590989.2590991)
 - **[Foundational]** A. Arasu, S. Babu, J. Widom. *The CQL Continuous Query Language.* VLDB
-  Journal, 2006.
+  Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+
+## 10. Worked Example
+
+Two event-time streams with a watermark/lateness bound $\delta = 2$. Stream $A$ tuples carry periods, $B$ tuples too; a pair matches iff their periods overlap.
+
+- $A$: $a_1=[10,14)$, $a_2=[18,22)$
+- $B$: $b_1=[12,16)$, $b_2=[21,25)$
+
+Matches: $a_1 \cap b_1 = [12,14) \ne \emptyset$ (emit); $a_2 \cap b_2 = [21,22) \ne \emptyset$ (emit).
+
+Now consider state retirement. The largest event-time end seen is $25$, so $\textsf{watermark} = 25 - \delta = 23$. Any buffered tuple with end $\le 23$ can be retired *only* if no still-arriving (late) tuple could overlap it. With window width $W=4$ and $\delta=2$, live state must cover event-times $\ge \textsf{watermark} - W = 19$. So $a_1=[10,14)$ and $b_1=[12,16)$ are safely evicted, but $a_2,b_2$ are retained.
+
+Buffered tuples $\approx \lambda(W+\delta)$: with rate $\lambda \approx 0.5$/unit, $0.5 \cdot 6 = 3$ tuples, matching the $\Omega(\lambda(W+\delta))$ lower bound of §5 — evicting earlier risks missing a late overlap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

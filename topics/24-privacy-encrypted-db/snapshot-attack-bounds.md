@@ -40,12 +40,22 @@ Directions: **reconstruction-theoretic snapshot bounds** parameterized by auxili
 - Connecting snapshot bounds to differential-privacy-style guarantees for at-rest data.
 
 ## 9. Key References
-- **[Foundational]** Naveed, Kamara, Wright. *Inference Attacks on Property-Preserving Encrypted Databases.* CCS, 2015.
-- **[SOTA]** Grubbs, Sekniqi, Bindschaedler, Naveed, Ristenpart. *Leakage-Abuse Attacks against Order-Revealing Encryption.* IEEE S&P, 2017.
-- **[SOTA]** Kerschbaum. *Frequency-Hiding Order-Preserving Encryption.* CCS, 2015.
-- **[SOTA]** Lewi, Wu. *Order-Revealing Encryption: New Constructions, Applications, and Lower Bounds.* CCS, 2016.
-- **[SOTA]** Durak, DuBuisson, Cash. *What Else is Revealed by Order-Revealing Encryption?* CCS, 2016.
-- **[Survey]** Fuller, Varia, Hamlin, et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017.
+- **[Foundational]** Naveed, Kamara, Wright. *Inference Attacks on Property-Preserving Encrypted Databases.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813651) · [DBLP](https://dblp.org/rec/conf/ccs/NaveedKW15.html)
+- **[SOTA]** Grubbs, Sekniqi, Bindschaedler, Naveed, Ristenpart. *Leakage-Abuse Attacks against Order-Revealing Encryption.* IEEE S&P, 2017. — [ePrint](https://eprint.iacr.org/2016/895)
+- **[SOTA]** Kerschbaum. *Frequency-Hiding Order-Preserving Encryption.* CCS, 2015. — [DOI](https://doi.org/10.1145/2810103.2813629) · [DBLP](https://dblp.org/rec/conf/ccs/Kerschbaum15.html)
+- **[SOTA]** Lewi, Wu. *Order-Revealing Encryption: New Constructions, Applications, and Lower Bounds.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978376) · [ePrint](https://eprint.iacr.org/2016/612)
+- **[SOTA]** Durak, DuBuisson, Cash. *What Else is Revealed by Order-Revealing Encryption?* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978379) · [ePrint](https://eprint.iacr.org/2016/786)
+- **[Survey]** Fuller, Varia, Hamlin, et al. *SoK: Cryptographically Protected Database Search.* IEEE S&P, 2017. — [arXiv](https://arxiv.org/abs/1703.02014) · [DBLP](https://dblp.org/rec/conf/sp/FullerVYSHGSMC17.html)
+
+## 10. Worked Example
+
+**Frequency analysis on a DET-encrypted column.** A hospital column "discharge disposition" has $N=4$ codes with public reference frequencies (from national statistics): Home $0.60$, SNF $0.25$, Expired $0.10$, AMA $0.05$. The snapshot adversary dumps the DET-encrypted column of $n=1000$ rows and sees only the **equality partition** — four opaque ciphertext groups with sizes:
+
+$$c_A=602,\quad c_B=247,\quad c_C=103,\quad c_D=48.$$
+
+DET hides values but not counts. The adversary matches observed empirical frequencies $(0.602,0.247,0.103,0.048)$ to the reference $(0.60,0.25,0.10,0.05)$ by **min-cost bipartite assignment** (cost = $|{\hat p}-p_{\text{ref}}|$). The unique low-cost matching is $A\!\to\!$Home, $B\!\to\!$SNF, $C\!\to\!$Expired, $D\!\to\!$AMA — recovering **all 1000 cells** with no cryptanalysis, just a frequency histogram.
+
+This is the Naveed–Kamara–Wright attack in miniature: it succeeds precisely because the column has *low entropy* ($H\approx1.5$ bits) and a *skewed, public* distribution. A uniform high-entropy column ($p_i=1/N$) yields indistinguishable group sizes and defeats the matching — illustrating the entropy-dependence of the (missing) general bound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

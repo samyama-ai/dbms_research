@@ -51,12 +51,24 @@ Active directions: GPU/WCOJ hybrids and learned cardinality estimation for cycli
 - Dynamic/streaming motif maintenance under edge updates with sublinear work.
 
 ## 9. Key References
-- **[Foundational]** Curticapean, Dell, Marx. *Homomorphisms are a good basis for counting small subgraphs.* STOC, 2017.
-- **[Foundational]** Alon, Yuster, Zwick. *Finding and counting given length cycles.* Algorithmica, 1997.
-- **[Foundational]** Atserias, Grohe, Marx. *Size bounds and query plans for relational joins (AGM bound).* FOCS 2008 / SICOMP, 2013.
-- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A relational engine for graph processing.* SIGMOD, 2017.
-- **[SOTA]** Pinar, Seshadhri, Vishal. *ESCAPE: Counting all 5-vertex subgraphs.* WWW, 2017.
-- **[Survey]** Ngo, Re, Rudra. *Skew strikes back: New developments in the theory of join algorithms.* SIGMOD Record, 2013.
+- **[Foundational]** Curticapean, Dell, Marx. *Homomorphisms are a good basis for counting small subgraphs.* STOC, 2017. — [arXiv](https://arxiv.org/abs/1705.01595)
+- **[Foundational]** Alon, Yuster, Zwick. *Finding and counting given length cycles.* Algorithmica, 1997. — [DOI](https://doi.org/10.1007/BF02523189)
+- **[Foundational]** Atserias, Grohe, Marx. *Size bounds and query plans for relational joins (AGM bound).* FOCS 2008 / SICOMP, 2013. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
+- **[SOTA]** Aberger, Lamb, Tu, Nötzli, Olukotun, Ré. *EmptyHeaded: A relational engine for graph processing.* ACM TODS, 2017. — [DOI](https://doi.org/10.1145/3129246)
+- **[SOTA]** Pinar, Seshadhri, Vishal. *ESCAPE: Counting all 5-vertex subgraphs.* WWW, 2017. — [arXiv](https://arxiv.org/abs/1610.09411)
+- **[Survey]** Ngo, Re, Rudra. *Skew strikes back: New developments in the theory of join algorithms.* SIGMOD Record, 2013. — [DOI](https://doi.org/10.1145/2590989.2590991)
+
+## 10. Worked Example
+
+Count triangles via the trace formula on a tiny graph. Let $G=K_4$ minus one edge: vertices $\{1,2,3,4\}$ with all edges except $(3,4)$. Adjacency matrix
+
+$$A=\begin{pmatrix}0&1&1&1\\1&0&1&1\\1&1&0&0\\1&1&0&0\end{pmatrix}.$$
+
+The number of (labeled, ordered) closed 3-walks is $\mathrm{tr}(A^3)$, and each triangle is counted $3!=6$ times, so $\#\triangle = \mathrm{tr}(A^3)/6$.
+
+Compute $\mathrm{tr}(A^3)=\sum_i (A^3)_{ii}$. By hand, $(A^2)_{ii}=\deg(i)$, giving diagonal $(3,3,2,2)$. The diagonal of $A^3$ equals twice the number of triangles through each vertex: vertex 1 is in triangles $\{1,2,3\},\{1,2,4\}$ (degree-2 in the triangle-incidence sense), similarly vertex 2; vertices 3 and 4 are each in one triangle. So $(A^3)_{ii}=(4,4,2,2)$, $\mathrm{tr}(A^3)=12$, and $\#\triangle = 12/6 = 2$ — namely $\{1,2,3\}$ and $\{1,2,4\}$. Correct.
+
+Complexity check: this costs one matrix product, $O(n^\omega)$ with fast multiplication, illustrating the $\mathrm{tr}(A^3)/6$ route that beats the naive $\binom{n}{3}$ enumeration for triangle counting.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

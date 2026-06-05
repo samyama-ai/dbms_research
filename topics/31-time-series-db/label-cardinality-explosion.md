@@ -44,11 +44,19 @@ Active directions: **adaptive cardinality limiting** in OTel collectors and Graf
 - Separating "detail" (high-cardinality, trace-like) from "metrics" (low-cardinality, indexed) at the data-model level.
 
 ## 9. Key References
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM Journal on Computing, 2013 (AGM bound).
-- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** Rabenstein, Volz. *Prometheus: A Next-Generation Monitoring System.* SoundCloud / SREcon, 2015 (label data model).
-- **[SOTA]** VictoriaMetrics. *Engineering Articles on High-Cardinality Time Series Storage and Streaming Aggregation.* 2019–2024 (systems design).
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* SIAM Journal on Computing, 2013 (AGM bound). — [DOI](https://doi.org/10.1137/110859440) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [DMTCS](https://dmtcs.episciences.org/3545) — [HAL](https://hal.science/hal-00406166v2)
+- **[SOTA]** Rabenstein, Volz. *Prometheus: A Next-Generation Monitoring System.* SoundCloud / SREcon, 2015 (label data model). — [USENIX](https://www.usenix.org/conference/srecon15europe/program/presentation/rabenstein)
+- **[SOTA]** VictoriaMetrics. *Engineering Articles on High-Cardinality Time Series Storage and Streaming Aggregation.* 2019–2024 (systems design). — [docs](https://docs.victoriametrics.com/keyConcepts.html)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+Take the metric `http_requests` with three labels: `method` ($c_1=2$: GET, POST), `region` ($c_2=3$), and `user_id` ($c_3$). With $10^6$ distinct users the naive product is $2\times 3\times 10^6 = 6{,}000{,}000$ series — one per `user_id` value. The inverted index stores, per (label,value), a posting list of series ids: $d\cdot|A| = 3\times 6{,}000{,}000 = 1.8\times 10^7$ postings, and head state grows $\Theta(|A|)$.
+
+Now suppose a functional dependency holds: `pod ⟶ region` (each pod sits in exactly one region), and we *drop* `user_id` via relabeling. Realized cardinality collapses to the co-occurring subset $A$, here $2\times 3 = 6$ series — a $10^6\times$ reduction. The culprit is the single unbounded-domain label.
+
+**Estimation check:** to detect this early, a HyperLogLog over live series ids with $m=2^{14}=16384$ registers gives relative error $1.04/\sqrt{m}\approx 0.81\%$, estimating $6\times 10^6$ to within $\pm 49{,}000$ using only $\sim 16$ KB — cheap enough to run per-label and flag `user_id` as the explosion driver before ingest blows the memory budget $M$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

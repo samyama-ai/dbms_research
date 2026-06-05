@@ -34,11 +34,17 @@ Threads: conformal-prediction and betting-martingale CIs imported into AQP for d
 - Verifiable, unbiased committed sampling protocols for outsourced/cloud AQP.
 
 ## 9. Key References
-- **[Foundational]** Kleiner, A., Talwalkar, A., Sarkar, P., Jordan, M. *A Scalable Bootstrap for Massive Data (Bag of Little Bootstraps).* JRSS-B, 2014.
-- **[SOTA]** Ben-Eliezer, O., Jayaram, R., Woodruff, D., Yogev, E. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020.
-- **[SOTA]** Agarwal, S., Milner, H., Kleiner, A., Talwalkar, A., Jordan, M., Madden, S., Mozafari, B., Stoica, I. *Knowing When You're Wrong: Building Fast and Reliable Approximate Query Processing Systems.* SIGMOD, 2014.
-- **[Foundational]** Vovk, V., Gammerman, A., Shafer, G. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005.
-- **[SOTA]** Zhang, Y., Genkin, D., Katz, J., Papadopoulos, D., Papamanthou, C. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017.
+- **[Foundational]** Kleiner, A., Talwalkar, A., Sarkar, P., Jordan, M. *A Scalable Bootstrap for Massive Data (Bag of Little Bootstraps).* JRSS-B, 2014. — [DOI](https://doi.org/10.1111/rssb.12050)
+- **[SOTA]** Ben-Eliezer, O., Jayaram, R., Woodruff, D., Yogev, E. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020. — [arXiv](https://arxiv.org/abs/2003.14265)
+- **[SOTA]** Agarwal, S., Milner, H., Kleiner, A., Talwalkar, A., Jordan, M., Madden, S., Mozafari, B., Stoica, I. *Knowing When You're Wrong: Building Fast and Reliable Approximate Query Processing Systems.* SIGMOD, 2014. — [DOI](https://doi.org/10.1145/2588555.2593667)
+- **[Foundational]** Vovk, V., Gammerman, A., Shafer, G. *Algorithmic Learning in a Random World (Conformal Prediction).* Springer, 2005. — [DOI](https://doi.org/10.1007/b106715)
+- **[SOTA]** Zhang, Y., Genkin, D., Katz, J., Papadopoulos, D., Papamanthou, C. *vSQL: Verifying Arbitrary SQL Queries over Dynamic Outsourced Databases.* IEEE S&P, 2017. — [DOI](https://doi.org/10.1109/SP.2017.43)
+
+## 10. Worked Example
+
+**CLT CI under-covers; conformal does not.** Suppose true per-row values are heavy-tailed: $999$ rows $=1$ and $1$ row $=1000$, so $\mu = 1.999$. We sample $m=100$ rows and form the textbook $95\%$ CI $\bar x \pm 1.96\, s/\sqrt{m}$. With probability $(1-1/1000)^{100}\approx 0.905$ the sample contains **no** spike, giving $\bar x = 1$, $s = 0$, hence the interval $[1,1]$ — width zero, and it *misses* $\mu=1.999$. So actual coverage $\le 1 - 0.905 = 0.095 \ll 0.95$: gross under-coverage, the section-2 failure mode.
+
+**Conformal alternative (split conformal).** Reserve a calibration set of $n_c = 200$ rows; compute nonconformity scores (here, residuals $|x_i - \bar x_{\text{train}}|$). Sort them; the prediction band uses the $\lceil (n_c+1)(1-\delta)\rceil = \lceil 201\cdot0.95\rceil = 191$st smallest score $q$. By exchangeability, $\Pr[\,|x_{\text{new}}-\bar x| \le q\,] \ge 1-\delta = 0.95$ for *any* distribution — finite-sample, distribution-free. The price is width: $q$ is driven up by the calibration spike, so the band is honestly wide rather than falsely tight. This is the width-for-honesty trade of section 4 — and it still cannot certify a *relative*-error `MAX` bound (section 5), since one unseen larger value remains unbounded.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

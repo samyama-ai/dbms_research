@@ -47,13 +47,21 @@ From the RDMA/disaggregated lineage, one-sided read-optimized B+-trees (Sherman)
 
 ## 9. Key References
 
-- **[Foundational]** Herlihy, M. P., Wing, J. M. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[SOTA]** Dragojević, A., Narayanan, D., Castro, M., Hodson, O. *FaRM: Fast Remote Memory.* NSDI, 2014.
-- **[SOTA]** Wang, Q. et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022.
-- **[SOTA]** Li, H. et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS, 2023.
-- **[SOTA]** Maruf, H. A. et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered Memory.* ASPLOS, 2023.
-- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002.
+- **[Foundational]** Herlihy, M. P., Wing, J. M. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[SOTA]** Dragojević, A., Narayanan, D., Castro, M., Hodson, O. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevic)
+- **[SOTA]** Wang, Q. et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
+- **[SOTA]** Li, H. et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2203.00241)
+- **[SOTA]** Maruf, H. A. et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered Memory.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2206.02878)
+- **[Foundational]** Gilbert, S., Lynch, N. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
+
+## 10. Worked Example
+
+Consider $h = 4$ hosts mapping a shared CXL region holding one counter cell $c$ (initial value $0$). Hosts $H_2, H_3, H_4$ are readers that have cached $c=0$ in their local caches; $H_1$ is the writer. With **no host-to-host hardware coherence**, when $H_1$ does $c \leftarrow 1$, that store lands in $H_1$'s cache/the device but the readers' caches still hold the stale $0$.
+
+To make the write visible, $H_1$ must **publish**: flush $c$ to the device (1 cache-line flush) and issue a store fence. Each reader must then **acquire**: invalidate its cached copy and reload from the device. With $r = 3$ readers, that is $\Omega(r) = 3$ explicit invalidations per write epoch — matching the coherence-traffic lower bound. A hardware-coherent system would do this in the background; here it is software-visible cost.
+
+Concretely, if a CXL load is $300$ ns and a flush+fence is $\sim 100$ ns, one published increment seen by all readers costs $\approx 100 + 3\times(100 + 300) \approx 1300$ ns — versus a few ns on a coherent single host. This is exactly why a coherence-free index must batch publishes and minimize the reader fan-out $r$ on hot cells.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

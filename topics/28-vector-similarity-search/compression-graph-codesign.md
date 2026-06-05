@@ -43,12 +43,22 @@ Active directions: unbiased/quantization-with-error-bars estimators (RaBitQ and 
 - Principled precision split between navigation and reranking under a single budget.
 
 ## 9. Key References
-- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[Foundational]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization (OPQ).* IEEE TPAMI / CVPR, 2013.
-- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024.
-- **[SOTA]** R. Guo, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020.
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Survey]** L. Prokhorenkova, A. Shekhovtsov. *Graph-based Nearest Neighbor Search: From Practice to Theory.* ICML, 2020.
+- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57)
+- **[Foundational]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization (OPQ).* IEEE TPAMI / CVPR, 2013. — [DOI](https://doi.org/10.1109/TPAMI.2013.240)
+- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound for Approximate Nearest Neighbor Search.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2405.12497) · [DOI](https://doi.org/10.1145/3654970)
+- **[SOTA]** R. Guo, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [PDF](https://suhasjs.github.io/files/diskann_neurips19.pdf)
+- **[Survey]** L. Prokhorenkova, A. Shekhovtsov. *Graph-based Nearest Neighbor Search: From Practice to Theory.* ICML, 2020. — [arXiv](https://arxiv.org/abs/1907.00845)
+
+## 10. Worked Example
+
+Three 1-D points $x_1=0,\ x_2=1,\ x_3=3$, query $q=0.9$. True distances: $d(q,x_1)=0.9,\ d(q,x_2)=0.1,\ d(q,x_3)=2.1$, so the true NN is $x_2$.
+
+Build a tiny graph independently of quantization: edges $x_1\!-\!x_2$ and $x_2\!-\!x_3$ (a path). Greedy search from $x_1$ moves to a neighbor only if it is *closer* under the scoring distance.
+
+Now quantize to 1 bit by rounding to centroids $\{0,2\}$: $x_1\to 0,\ x_2\to 0,\ x_3\to 2$. Quantized distances become $\hat d(q,x_1)=\hat d(q,x_2)=0.9$ (both code to $0$). Greedy from $x_1$ sees neighbor $x_2$ as *no closer* ($0.9 \not< 0.9$) and stops — returning $x_1$, recall@1 $=0$.
+
+The fix a co-design would make: spend the same bit differently, e.g. centroids $\{0.5,3\}$ so $x_1\to0.5,\ x_2\to0.5$ still ties — quantization alone cannot separate $x_1,x_2$. So the *graph* must instead add a shortcut letting navigation rerank the tied pair with full precision. This is exactly the joint $(\mathcal C, G)$ coupling: a bit budget that loses the $x_1$ vs. $x_2$ ordering forces a topology that reranks, illustrating why optimizing codebook and graph separately is suboptimal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

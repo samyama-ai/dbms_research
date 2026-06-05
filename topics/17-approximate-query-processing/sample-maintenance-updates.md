@@ -50,11 +50,23 @@ Active directions: delete-aware **sliding-window** and **expiring** sketches; me
 
 ## 9. Key References
 
-- **[Foundational]** J. S. Vitter. *Random Sampling with a Reservoir.* ACM TOMS, 1985.
-- **[Foundational]** R. Gemulla, W. Lehner, P. J. Haas. *Maintaining Bounded-Size Sample Synopses of Evolving Datasets.* VLDB Journal, 2008.
-- **[SOTA]** H. Jowhari, M. Sağlam, G. Tardos. *Tight Bounds for $L_p$ Samplers, Finding Duplicates in Streams, and Related Problems.* PODS, 2011.
-- **[SOTA]** E. Cohen, N. Duffield, H. Kaplan, C. Lund, M. Thorup. *Stream Sampling for Variance-Optimal Estimation of Subset Sums (VarOpt).* SODA, 2009.
-- **[Survey]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011.
+- **[Foundational]** J. S. Vitter. *Random Sampling with a Reservoir.* ACM TOMS, 1985. — [DOI](https://doi.org/10.1145/3147.3165)
+- **[Foundational]** R. Gemulla, W. Lehner, P. J. Haas. *Maintaining Bounded-Size Sample Synopses of Evolving Datasets.* VLDB Journal, 2008. — [DOI](https://doi.org/10.1007/s00778-007-0065-y)
+- **[SOTA]** H. Jowhari, M. Sağlam, G. Tardos. *Tight Bounds for $L_p$ Samplers, Finding Duplicates in Streams, and Related Problems.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1012.4889)
+- **[SOTA]** E. Cohen, N. Duffield, H. Kaplan, C. Lund, M. Thorup. *Stream Sampling for Variance-Optimal Estimation of Subset Sums (VarOpt).* SODA, 2009. — [arXiv](https://arxiv.org/abs/0803.0473)
+- **[Survey]** G. Cormode, M. Garofalakis, P. J. Haas, C. Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+**Random pairing on a tiny relation.** Keep a uniform sample of size $k=2$ from $R$. Suppose $S=\{t_3,t_7\}$ samples a current $|R|=10$; the "uncompensated deletion" counter $c=0$.
+
+*Delete $t_7$* (a sampled tuple). Now $|R|=9$, $S=\{t_3\}$ (size 1), and we set $c=1$ — one slot is owed.
+
+*Delete $t_4$* (not in $S$). Now $|R|=8$; sample unchanged, but $c=2$.
+
+*Insert $t_{11}$.* Random pairing: an insert first repays outstanding deletions. With $c=2$ uncompensated deletes, the new tuple is admitted into the sample with probability $\tfrac{c}{c+(\text{new arrivals counter})}$; here it fills a freed slot with probability $\tfrac{1}{2}$. Say it does: $S=\{t_3,t_{11}\}$, $c=1$.
+
+Check uniformity: every surviving tuple still has inclusion probability $k/|R|=2/9$ after the operation in expectation — no rescan of the 8 discarded tuples was needed. Underflow risk appears only if deletes outrun inserts so $c$ grows while $|R|$ shrinks below $k$, exactly the impossibility boundary of Section 5.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

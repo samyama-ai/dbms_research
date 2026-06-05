@@ -50,11 +50,23 @@ Directions: serverless-shuffle cost reduction (object-store vs. ephemeral-VM exc
 
 ## 9. Key References
 
-- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* JACM, 2018 (PODS 2012).
-- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013).
-- **[SOTA]** M. Perron et al. *Starling: A Scalable Query Engine on Cloud Functions.* ACM SIGMOD, 2020.
-- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* ACM SIGMOD, 2020.
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018.
+- **[Foundational]** H. Q. Ngo, C. Ré, A. Rudra. *Worst-case Optimal Join Algorithms.* JACM, 2018 (PODS 2012). — [DOI](https://doi.org/10.1145/3180143), [arXiv](https://arxiv.org/abs/1203.1952)
+- **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013). — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
+- **[SOTA]** M. Perron et al. *Starling: A Scalable Query Engine on Cloud Functions.* ACM SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380609)
+- **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* ACM SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389758), [arXiv](https://arxiv.org/abs/1912.00937)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+
+## 10. Worked Example
+
+Join $R(a,b)\bowtie S(b,c)$ on Lambda, $|R|=|S|=10^9$ rows, broadcast not viable (both large), so it's a partitioned/shuffle hash join. The HyperCube load for this single binary join has $\rho^\*=1$, giving per-worker load $\tilde O(|\text{IN}|/K)$. Pick worker count $K$ and read off the dollar model. Total input $|\text{IN}|=2\times10^9$ rows $\approx 200$ GB; shuffle volume $V_{\text{shuffle}}\approx 200$ GB is fixed (each row hashed once). Per-row CPU work gives wall-time $t \approx \tfrac{c\,|\text{IN}|}{K}$ with $c|\text{IN}| = 4000$ worker-seconds of compute.
+
+| $K$ | time $t=4000/K$ | compute $\$=K\,t\,p_{\text{cpu}}$ | network $\$=V\,p_{\text{net}}$ |
+|----|----|----|----|
+| 100 | 40 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+| 400 | 10 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+| 1000 | 4 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+
+Key point: compute dollars $K\cdot t\cdot p_{\text{cpu}} = c|\text{IN}|\,p_{\text{cpu}}$ are **invariant in $K$** (more workers, less time each), and network/materialize dollars are fixed by $V$. So under this idealized model raising $K$ buys latency for free — until per-worker load drops below a function's fixed startup/IO overhead or skew (a heavy hitter on key $b$) makes one worker's load $\gg |\text{IN}|/K$, at which point the $\Omega(|\text{IN}|/K^{1/\tau})$ MPC floor and straggler cost dominate and the free-latency regime ends.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

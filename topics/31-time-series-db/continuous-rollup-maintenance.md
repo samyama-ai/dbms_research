@@ -60,12 +60,25 @@ Closed for distributive/algebraic, append-only, bounded-lateness ingest. Open at
 
 ## 9. Key References
 
-- **[Foundational]** J. Gray et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997.
-- **[Foundational]** T. Akidau et al. *The Dataflow Model.* VLDB, 2015.
-- **[SOTA]** M. Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023.
-- **[SOTA]** K. Tangwongsan, M. Hirzel, S. Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017.
-- **[Foundational]** M. Greenwald, S. Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001.
-- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016.
+- **[Foundational]** J. Gray et al. *Data Cube: A Relational Aggregation Operator Generalizing Group-By, Cross-Tab, and Sub-Totals.* Data Mining and Knowledge Discovery, 1997. — [DOI](https://doi.org/10.1023/A:1009726021843)
+- **[Foundational]** T. Akidau et al. *The Dataflow Model.* VLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[SOTA]** M. Budiu et al. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+- **[SOTA]** K. Tangwongsan, M. Hirzel, S. Schneider. *Low-Latency Sliding-Window Aggregation in Worst-Case Constant Time (DABA).* DEBS, 2017. — [DOI](https://doi.org/10.1145/3093742.3093925)
+- **[Foundational]** M. Greenwald, S. Khanna. *Space-Efficient Online Computation of Quantile Summaries.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375670)
+- **[SOTA]** Z. Karnin, K. Lang, E. Liberty. *Optimal Quantile Approximation in Streams (KLL).* FOCS, 2016. — [arXiv](https://arxiv.org/abs/1603.05346)
+
+## 10. Worked Example
+
+A 1-minute SUM and MAX rollup over bucket $b=[12{:}00,12{:}01)$ receives in-order points $4, 9, 2$:
+
+$$\text{SUM}=15,\qquad \text{MAX}=9.$$
+
+Now a **late** point with value $7$ and event-time inside $b$ arrives at processing-time 12:05.
+
+- **SUM is distributive and invertible (a group under $+$):** apply the delta rule $V'=V\oplus\delta$ with $\delta=+7$, giving $\text{SUM}=22$ in $O(1)$. A *retraction* of the earlier $9$ is just $\delta=-9$, also $O(1)$.
+- **MAX is distributive but not invertible:** the new $7<9$ leaves $\text{MAX}=9$, fine. But retracting the $9$ leaves $\{4,2,7\}$ and there is no $O(1)$ rule to find the new max $7$ — you must keep the full multiset (a heap) or recompute, the fundamental asymmetry.
+
+Watermark/sealing: if the lateness bound is 3 min, then by processing-time 12:04 the watermark $W$ passes 12:01 and bucket $b$ is **sealed** — the 12:05 point would be *dropped* as beyond allowed lateness. With **unbounded** lateness no finite-state rollup can both seal and stay correct (the FLP-flavored impossibility), so a bounded-lateness assumption is required to ever declare a cell final.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -32,11 +32,17 @@ For **CQ counting/enumeration** the boundary is essentially *closed* (q-hierarch
 - Adaptive maintenance under workload/skew drift; provenance-aware deletions.
 
 ## 9. Key References
-- **[Foundational]** Patnaik, Immerman. *Dyn-FO: A Parallel, Dynamic Complexity Class.* PODS 1994 / JCSS 1997.
-- **[Foundational]** Datta, Kulkarni, Mukherjee, Schwentick, Zeume. *Reachability is in DynFO.* J. ACM, 2018.
-- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017.
-- **[SOTA]** Budiu, McSherry, Ryzhyk, Tannen. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB 2023.
-- **[Foundational]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR 2013.
+- **[Foundational]** Patnaik, Immerman. *Dyn-FO: A Parallel, Dynamic Complexity Class.* PODS 1994 / JCSS 1997. — [DOI](https://doi.org/10.1006/jcss.1997.1520)
+- **[Foundational]** Datta, Kulkarni, Mukherjee, Schwentick, Zeume. *Reachability is in DynFO.* J. ACM, 2018. — [DOI](https://doi.org/10.1145/3212685)
+- **[SOTA]** Berkholz, Keppeler, Schweikardt. *Answering Conjunctive Queries under Updates.* PODS 2017. — [DOI](https://doi.org/10.1145/3034786.3034789)
+- **[SOTA]** Budiu, McSherry, Ryzhyk, Tannen. *DBSP: Automatic Incremental View Maintenance for Rich Query Languages.* VLDB 2023. — [DOI](https://doi.org/10.14778/3587136.3587137)
+- **[Foundational]** McSherry, Murray, Isaacs, Isard. *Differential Dataflow.* CIDR 2013. — [PDF](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf)
+
+## 10. Worked Example
+
+**Maintaining a triangle count vs. a hierarchical join.** Let the view be the triangle count $Q_\triangle$ over an edge relation $E$. Start with a 4-cycle $1\!-\!2\!-\!3\!-\!4\!-\!1$: count $=0$. Insert the chord $e=(1,3)$. This single update creates two triangles: $\{1,2,3\}$ and $\{1,3,4\}$. To find the delta we must count common neighbors of $1$ and $3$ — i.e. compute $|N(1)\cap N(3)|=|\{2,4\}|=2$. In the worst case a vertex has $\Theta(|G|)$ neighbors, so this intersection — an Online Matrix–Vector product in disguise — costs $\Omega(|G|^{\gamma})$ per update unless the OMv conjecture fails. Triangle is **not** q-hierarchical, so no $O(1)$ scheme exists (Berkholz–Keppeler–Schweikardt).
+
+Contrast a **q-hierarchical** query, e.g. $Q(x)\!:\!-\,R(x,y),S(x)$. Its atoms' variable sets nest: $\{x\}\subseteq\{x,y\}$. Here inserting one $R$- or $S$-tuple updates the answer and resumes constant-delay enumeration in $O(1)$ amortized time, with linear auxiliary space — landing on the tractable side of the dichotomy.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

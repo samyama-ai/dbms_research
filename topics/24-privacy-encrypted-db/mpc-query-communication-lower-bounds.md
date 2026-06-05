@@ -45,13 +45,24 @@ Directions: (a) **information-complexity** techniques sharpened for secure-compu
 - Fine-grained (conditional) lower bounds importing 3SUM/SETH-hardness of plaintext joins into the MPC setting.
 
 ## 9. Key References
-- **[Foundational]** A. Yao. *Some Complexity Questions Related to Distributive Computing.* STOC, 1979.
-- **[Foundational]** E. Kushilevitz, N. Nisan. *Communication Complexity.* Cambridge University Press, 1997.
-- **[Foundational]** R. Bar-Yehuda, B. Chor, E. Kushilevitz, A. Orlitsky. *Privacy, Additional Information, and Communication.* IEEE Trans. Information Theory, 1993.
-- **[Foundational]** Z. Bar-Yossef, T. S. Jayram, R. Kumar, D. Sivakumar. *An Information Statistics Approach to Data Stream and Communication Complexity.* JCSS / FOCS, 2002/2004.
-- **[SOTA]** D. Data, M. M. Prabhakaran, V. M. Prabhakaran. *On the Communication Complexity of Secure Computation.* CRYPTO, 2014.
-- **[Foundational]** E. Kushilevitz. *Privacy and Communication Complexity.* SIAM J. Discrete Math, 1992.
-- **[Survey]** A. Sherstov. *Communication Complexity Theory: Thirty-Five Years of Set Disjointness* (survey), MFCS, 2014.
+- **[Foundational]** A. Yao. *Some Complexity Questions Related to Distributive Computing.* STOC, 1979. — [DOI](https://doi.org/10.1145/800135.804414) · [DBLP](https://dblp.org/rec/conf/stoc/Yao79.html)
+- **[Foundational]** E. Kushilevitz, N. Nisan. *Communication Complexity.* Cambridge University Press, 1997. — [DBLP search](https://dblp.org/search?q=Kushilevitz+Nisan+Communication+Complexity)
+- **[Foundational]** R. Bar-Yehuda, B. Chor, E. Kushilevitz, A. Orlitsky. *Privacy, Additional Information, and Communication.* IEEE Trans. Information Theory, 1993. — [DOI](https://doi.org/10.1109/18.265501)
+- **[Foundational]** Z. Bar-Yossef, T. S. Jayram, R. Kumar, D. Sivakumar. *An Information Statistics Approach to Data Stream and Communication Complexity.* JCSS / FOCS, 2002/2004. — [DOI](https://doi.org/10.1016/j.jcss.2003.11.006)
+- **[SOTA]** D. Data, M. M. Prabhakaran, V. M. Prabhakaran. *On the Communication Complexity of Secure Computation.* CRYPTO, 2014. — [DOI](https://doi.org/10.1007/978-3-662-44381-1_12) · [arXiv](https://arxiv.org/abs/1311.7584)
+- **[Foundational]** E. Kushilevitz. *Privacy and Communication Complexity.* SIAM J. Discrete Math, 1992. — [DOI](https://doi.org/10.1137/0405021)
+- **[Survey]** A. Sherstov. *Communication Complexity Theory: Thirty-Five Years of Set Disjointness* (survey), MFCS, 2014. — [DOI](https://doi.org/10.1007/978-3-662-44522-8_3)
+
+## 10. Worked Example
+
+How a join inherits the $\Omega(n)$ communication bound from **set-disjointness**. Two parties securely compute `SELECT COUNT(*) FROM A JOIN B ON A.k = B.k > 0?` — i.e., "do Alice's and Bob's key sets intersect?"
+
+Encode the universe of possible keys $\{1,\dots,n\}$ as bit-vectors. Alice's relation $A$ becomes $x\in\{0,1\}^n$ with $x_i=1$ iff key $i\in A$; Bob's $B$ becomes $y\in\{0,1\}^n$. Then
+$$\text{the join is non-empty} \iff \exists i:\, x_i = y_i = 1 \iff \neg\mathrm{DISJ}_n(x,y).$$
+
+Take $n=4$, $x=(1,0,1,0)$ ($A=\{1,3\}$), $y=(0,0,1,1)$ ($B=\{3,4\}$). They share key $3$, so $\mathrm{DISJ}=0$ (sets intersect) and the join count is $\ge 1$.
+
+The randomized communication complexity of disjointness is $R(\mathrm{DISJ}_n)=\Omega(n)$ (Kalyanasundaram–Schnitger; tightened via information complexity by Bar-Yossef et al.). Since *any* protocol — secure or not — that decides join-nonemptiness also decides $\mathrm{DISJ}_n$, it must exchange $\Omega(n)$ bits. A secure protocol inherits this floor and can only pay *more* (the privacy tax). This is why near-linear $\tilde O(n)$ PSI/semi-join protocols are essentially communication-optimal: they meet the $\Omega(n)$ lower bound up to logarithmic and security-parameter factors.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

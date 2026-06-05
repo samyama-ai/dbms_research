@@ -52,12 +52,20 @@ Active work targets containment for **navigational + recursive** fragments motiv
 - Containment under bag (multiset) semantics, largely open beyond CQs.
 
 ## 9. Key References
-- **[Foundational]** A. Chandra, P. Merlin. *Optimal implementation of conjunctive queries in relational data bases.* STOC, 1977.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** S. Chaudhuri, M. Vardi. *On the equivalence of recursive and nonrecursive Datalog programs.* PODS, 1992.
-- **[Foundational]** O. Shmueli. *Equivalence of Datalog queries is undecidable.* J. Logic Programming, 1993.
-- **[SOTA]** D. Calvanese, G. De Giacomo, M. Lenzerini, M. Vardi. *Containment of conjunctive regular path queries with inverse.* KR, 2000.
-- **[Survey]** P. Barceló. *Querying graph databases.* PODS, 2013.
+- **[Foundational]** A. Chandra, P. Merlin. *Optimal implementation of conjunctive queries in relational data bases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[Foundational]** S. Chaudhuri, M. Vardi. *On the equivalence of recursive and nonrecursive Datalog programs.* PODS, 1992. — [DOI](https://doi.org/10.1145/137097.137109)
+- **[Foundational]** O. Shmueli. *Equivalence of Datalog queries is undecidable.* J. Logic Programming, 1993. — [DOI](https://doi.org/10.1016/0743-1066(93)90040-N)
+- **[SOTA]** D. Calvanese, G. De Giacomo, M. Lenzerini, M. Vardi. *Containment of conjunctive regular path queries with inverse.* KR, 2000. — [DBLP](https://dblp.org/rec/conf/kr/CalvaneseGLV00.html)
+- **[Survey]** P. Barceló. *Querying graph databases.* PODS, 2013. — [DOI](https://doi.org/10.1145/2463664.2465216)
+
+## 10. Worked Example
+
+CQ containment via the homomorphism test (Chandra–Merlin). Let
+$$Q_1(x,z) \leftarrow E(x,y), E(y,z) \qquad Q_2(x,z) \leftarrow E(x,w).$$
+$Q_1$ asks for endpoints of a 2-edge path; $Q_2$ asks for any node $x$ with an outgoing edge (projected to $x,z$... here $z$ is free in $Q_1$). To test $Q_1 \sqsubseteq Q_2$ we seek a homomorphism $h: Q_2 \to Q_1$ mapping $Q_2$'s body into $Q_1$'s body and preserving the distinguished variable. Treat $Q_1$'s body as the "frozen" canonical database $D = \{E(x,y), E(y,z)\}$. We need $h$ with $h(x)=x$ and $E(h(x),h(w)) \in D$: take $h(w)=y$, giving $E(x,y) \in D$. ✓ So a homomorphism exists and $Q_1 \sqsubseteq Q_2$.
+
+The reverse fails: mapping $Q_1$ into $Q_2$'s single-edge body would need a length-2 path, which $D'=\{E(x,w)\}$ lacks — so $Q_2 \not\sqsubseteq Q_1$, confirming proper containment. This homomorphism search is the NP-complete core (Section 2); recursion (Datalog $\sqsubseteq$ Datalog) replaces this finite test with unfolding-equivalence, which is undecidable (Shmueli).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

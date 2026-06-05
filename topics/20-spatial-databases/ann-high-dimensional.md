@@ -35,12 +35,21 @@ Heavy activity driven by **vector databases for RAG/embeddings**: theoretical an
 - Theory for filtered, multi-vector, and dynamic/streaming ANN.
 
 ## 9. Key References
-- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[SOTA]** A. Andoni, T. Laarhoven, I. Razenshteyn, E. Waingarten. *Optimal Hashing-Based Time–Space Trade-offs for Approximate Near Neighbors.* SODA, 2017.
-- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2018.
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
-- **[Survey]** A. Andoni, P. Indyk, I. Razenshteyn. *Approximate Nearest Neighbor Search in High Dimensions.* Proc. ICM, 2018.
+- **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DBLP](https://dblp.org/rec/conf/stoc/IndykM98.html)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[SOTA]** A. Andoni, T. Laarhoven, I. Razenshteyn, E. Waingarten. *Optimal Hashing-Based Time–Space Trade-offs for Approximate Near Neighbors.* SODA, 2017. — [arXiv](https://arxiv.org/abs/1608.03580)
+- **[SOTA]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs (HNSW).* IEEE TPAMI, 2018. — [arXiv](https://arxiv.org/abs/1603.09320)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html)
+- **[Survey]** A. Andoni, P. Indyk, I. Razenshteyn. *Approximate Nearest Neighbor Search in High Dimensions.* Proc. ICM, 2018. — [arXiv](https://arxiv.org/abs/1806.09823)
+
+## 10. Worked Example
+
+Take $\ell_2$ ANN with approximation $c=2$ and $N=10^6$ points. Compare the two LSH regimes on the **query-time exponent** $\rho$, where cost is $\tilde O(N^\rho)$.
+
+- **Data-independent (Andoni–Indyk):** $\rho = 1/c^2 = 1/4 = 0.25$, so query touches $\approx N^{0.25} = (10^6)^{0.25} = 10^{1.5} \approx 32$ "buckets'" worth of work.
+- **Optimal data-dependent (Andoni–Razenshteyn):** $\rho = \frac{1}{2c^2-1} = \frac{1}{2\cdot4-1} = \frac{1}{7} \approx 0.143$, giving $\approx N^{0.143} = (10^6)^{0.143} \approx 10^{0.857} \approx 7.2$.
+
+So at $c=2$ the data-dependent bound cuts the exponent from $0.25$ to $\approx 0.143$ — roughly a $32/7 \approx 4.5\times$ asymptotic speedup, and the lower bound $\rho \ge \frac{1}{2c^2-1}$ says no LSH-family scheme can do better. Meanwhile a graph index (HNSW) on the same set empirically answers in $\approx 50$–$200$ distance comparisons at 95% recall — fast in practice, but with no matching worst-case $\rho$ guarantee, which is exactly the theory-vs-systems gap of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

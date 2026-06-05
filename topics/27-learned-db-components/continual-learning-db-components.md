@@ -51,13 +51,23 @@ Directions: drift detection triggering selective replay/refit; replay buffers of
 
 ## 9. Key References
 
-- **[Foundational]** Kirkpatrick, Pascanu, Rabinowitz, et al. *Overcoming Catastrophic Forgetting in Neural Networks (EWC).* PNAS 2017.
-- **[SOTA]** Ding, Minhas, Yu, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index.* PVLDB 2020.
-- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021.
-- **[Foundational]** Zinkevich. *Online Convex Programming and Generalized Infinitesimal Gradient Ascent.* ICML 2003.
-- **[Foundational]** Littlestone. *Learning Quickly When Irrelevant Attributes Abound: A New Linear-threshold Algorithm.* Machine Learning, 1988.
-- **[Survey]** Parisi, Kemker, Part, Kanan, Wermter. *Continual Lifelong Learning with Neural Networks: A Review.* Neural Networks, 2019.
+- **[Foundational]** Kirkpatrick, Pascanu, Rabinowitz, et al. *Overcoming Catastrophic Forgetting in Neural Networks (EWC).* PNAS 2017. — [DOI](https://doi.org/10.1073/pnas.1611835114) · [arXiv](https://arxiv.org/abs/1612.00796)
+- **[SOTA]** Ding, Minhas, Yu, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD 2020. — [DOI](https://doi.org/10.1145/3318464.3389711) · [arXiv](https://arxiv.org/abs/1905.08898)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-index: a fully-dynamic compressed learned index.* PVLDB 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Zinkevich. *Online Convex Programming and Generalized Infinitesimal Gradient Ascent.* ICML 2003. — [DBLP](https://dblp.org/rec/conf/icml/Zinkevich03.html)
+- **[Foundational]** Littlestone. *Learning Quickly When Irrelevant Attributes Abound: A New Linear-threshold Algorithm.* Machine Learning, 1988. — [DOI](https://doi.org/10.1007/BF00116827)
+- **[Survey]** Parisi, Kemker, Part, Kanan, Wermter. *Continual Lifelong Learning with Neural Networks: A Review.* Neural Networks, 2019. — [DOI](https://doi.org/10.1016/j.neunet.2019.01.012) · [arXiv](https://arxiv.org/abs/1802.07569)
+
+## 10. Worked Example
+
+A learned cardinality estimator faces two recurring workload regimes: $T_1$ = OLTP point lookups (daytime), $T_2$ = OLAP range scans (nightly ETL). A single 3-parameter model is fine-tuned per regime.
+
+Day 1 train on $T_1$: $\ell_{\mathcal D_1}(\theta_1)=0.10$ q-error. Night 1 fine-tune on $T_2$: $\ell_{\mathcal D_2}(\theta_2)=0.12$, but now re-measuring $T_1$ gives $\ell_{\mathcal D_1}(\theta_2)=0.35$. **Forgetting** $=\mathrm{Forget}_2(1)=\ell_{\mathcal D_1}(\theta_2)-\ell_{\mathcal D_1}(\theta_1)=0.35-0.10=0.25$ — daytime accuracy collapsed.
+
+**EWC fix.** Add a Fisher penalty $\lambda\sum_i F_i(\theta_i-\theta_{1,i})^2$ pinning $T_1$-important weights. With $\lambda$ tuned, night 1 yields $\ell_{\mathcal D_2}(\theta_2)=0.15$ (slightly worse plasticity) but $\ell_{\mathcal D_1}(\theta_2)=0.13$, so forgetting drops to $0.03$ — the stability/plasticity trade.
+
+**Dynamic-regret view.** Over $T=2$ alternations/day for 30 days, the comparator path length $P_T=\sum_t\|\theta_t^\*-\theta_{t-1}^\*\|$ counts the OLTP$\leftrightarrow$OLAP swings. The $O(\sqrt{T(1+P_T)})$ bound says adaptation cost stays sublinear precisely because the two regimes recur rather than drift unboundedly — detecting recurrence to reuse $\theta_1,\theta_2$ beats blind refit.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

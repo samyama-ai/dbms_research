@@ -44,12 +44,22 @@ Active: predicate-agnostic graph construction (ACORN line) and label-aware graph
 - Range-predicate (numeric window) ANN with logarithmic overhead.
 
 ## 9. Key References
-- **[SOTA]** S. Gollapudi, N. Karia, V. Sivashankar, et al. *Filtered-DiskANN: Graph Algorithms for Approximate Nearest Neighbor Search with Filters.* WWW, 2023.
-- **[SOTA]** L. Patel, P. Kraft, C. Guestrin, M. Zaharia. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024.
-- **[Foundational]** P. Selinger, M. Astrahan, D. Chamberlin, R. Lorie, T. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN.* NeurIPS, 2019.
-- **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021.
-- **[SOTA]** M. Zhao, et al. *SeRF: Segment Graph for Range-Filtering Approximate Nearest Neighbor Search.* SIGMOD, 2024.
+- **[SOTA]** S. Gollapudi, N. Karia, V. Sivashankar, et al. *Filtered-DiskANN: Graph Algorithms for Approximate Nearest Neighbor Search with Filters.* WWW, 2023. — [DOI](https://doi.org/10.1145/3543507.3583552)
+- **[SOTA]** L. Patel, P. Kraft, C. Guestrin, M. Zaharia. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3654923) · [arXiv](https://arxiv.org/abs/2403.04871)
+- **[Foundational]** P. Selinger, M. Astrahan, D. Chamberlin, R. Lorie, T. Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN.* NeurIPS, 2019. — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
+- **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457550)
+- **[SOTA]** C. Zuo, M. Qiao, W. Zhou, F. Li, D. Deng. *SeRF: Segment Graph for Range-Filtering Approximate Nearest Neighbor Search.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3639324)
+
+## 10. Worked Example
+
+**Post-filter recall collapse at low selectivity.** Index $n=10{,}000$ product vectors. The query's true 10 nearest neighbors by vector distance are *all* `category='shoes'`, but only $s=0.5\%$ of the corpus is shoes (50 items), scattered through the distance ranking.
+
+*Post-filter* runs unfiltered ANN with a candidate list of $K=200$, then drops violators. Suppose shoes occur uniformly at rate $s$. The expected number of eligible items in the top-$K$ is $K\cdot s = 200 \times 0.005 = 1$. So on average the post-filter returns **1** result where $k=10$ were requested — recall@10 $\approx 0.1$, a cliff. To recover recall you'd need $K \gtrsim k/s = 10/0.005 = 2000$ candidates, blowing up latency.
+
+*Pre-filter* instead materializes the 50 shoe vectors and brute-forces them: 50 distance evals, exact, fast. Here pre-filter wins decisively.
+
+Now flip to $s=0.95$ (almost everything passes): pre-filter materializes 9500 vectors (wasteful), while post-filter's top-$K$ already contains $\approx 0.95K$ eligible items, so post-filter wins. The crossover near the percolation threshold $M \gtrsim \log n / s$ (§2) is exactly the **middle regime** where neither strategy is safe and a single uniform index is still open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

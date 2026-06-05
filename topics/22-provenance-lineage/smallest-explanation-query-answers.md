@@ -55,11 +55,22 @@ Active directions: **explanations for ML-over-DB pipelines** and natural-languag
 
 ## 9. Key References
 
-- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001.
-- **[SOTA]** Roy, Suciu. *A Formal Approach to Finding Explanations for Database Queries.* SIGMOD, 2014.
-- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB, 2013.
-- **[SOTA]** Deutch, Gilad, Moskovitch. *Selective Provenance for Datalog Programs Using Top-K Queries.* VLDB, 2015.
-- **[Foundational]** Dinur, Steurer. *Analytical Approach to Parallel Repetition (Set Cover Inapproximability).* STOC, 2014.
+- **[Foundational]** Buneman, Khanna, Tan. *Why and Where: A Characterization of Data Provenance.* ICDT, 2001. — [DBLP](https://dblp.org/rec/conf/icdt/BunemanKT01.html)
+- **[SOTA]** Roy, Suciu. *A Formal Approach to Finding Explanations for Database Queries.* SIGMOD, 2014. — [DBLP](https://dblp.org/rec/conf/sigmod/RoyS14.html)
+- **[SOTA]** Wu, Madden. *Scorpion: Explaining Away Outliers in Aggregate Queries.* VLDB, 2013. — [DBLP](https://dblp.org/rec/journals/pvldb/0002M13.html)
+- **[SOTA]** Deutch, Gilad, Moskovitch. *Selective Provenance for Datalog Programs Using Top-K Queries.* VLDB, 2015. — [DBLP](https://dblp.org/rec/journals/pvldb/DeutchGM15.html)
+- **[Foundational]** Dinur, Steurer. *Analytical Approach to Parallel Repetition (Set Cover Inapproximability).* STOC, 2014. — [arXiv](https://arxiv.org/abs/1305.1979)
+
+## 10. Worked Example
+
+Let $D$ have $\textsf{Flight}(\text{from},\text{to})$: $\{(a,b),(b,c),(a,c)\}$ and query $Q$ = "is $c$ reachable from $a$?" via the transitive-closure Datalog rules. Two witnesses derive the answer:
+$w_1 = \{(a,c)\}$ (direct edge) and $w_2 = \{(a,b),(b,c)\}$ (two hops). The lineage DNF is
+$$\lambda = x_{ac} \;\vee\; (x_{ab}\wedge x_{bc}).$$
+Its prime implicants are $\{x_{ac}\}$ (size 1) and $\{x_{ab},x_{bc}\}$ (size 2). With unit costs $c(r)=1$, the **smallest explanation** is the minimum-weight prime implicant $w_1=\{(a,c)\}$, $\text{cost}=1$.
+
+Now reweight: suppose the direct edge is "untrusted," $c((a,c))=5$, while $c((a,b))=c((b,c))=1$. Tropical (min-plus) evaluation gives
+$$\text{cost}(c) = \min(5,\; 1+1) = 2,$$
+so the smallest explanation flips to $w_2=\{(a,b),(b,c)\}$. This tiny instance shows why explanation cost is the min-plus semiring evaluation of the provenance polynomial, not just the fewest tuples.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

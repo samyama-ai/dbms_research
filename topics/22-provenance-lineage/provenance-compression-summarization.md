@@ -55,12 +55,24 @@ Lossless is essentially **closed at the structural level** (width-tight factoriz
 
 ## 9. Key References
 
-- **[Foundational]** D. Olteanu, J. Závodný. *Factorised Representations of Query Results / Size Bounds.* ICDT 2012; ACM TODS, 2015.
-- **[Foundational]** D. Deutch, T. Milo, S. Roy, V. Tannen. *Circuits for Datalog Provenance.* ICDT, 2014.
-- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018.
-- **[SOTA]** X. Niu, B. Glavic et al. *Provenance Sketches / Uncertainty-Annotated Databases.* SIGMOD / PVLDB, 2019–2021.
-- **[Survey]** A. Amarilli, P. Bourhis, M. Monet, P. Senellart. *Knowledge Compilation for Probabilistic Databases.* (compilation/d-DNNF results), 2017–2020.
-- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory* (rate–distortion). Wiley, 2006.
+- **[Foundational]** D. Olteanu, J. Závodný. *Factorised Representations of Query Results / Size Bounds.* ICDT 2012; ACM TODS, 2015. — [arXiv](https://arxiv.org/abs/1104.0867) · [DOI](https://doi.org/10.1145/2656335)
+- **[Foundational]** D. Deutch, T. Milo, S. Roy, V. Tannen. *Circuits for Datalog Provenance.* ICDT, 2014. — [DOI](https://doi.org/10.5441/002/icdt.2014.22) · [DBLP](https://dblp.org/rec/conf/icdt/DeutchMRT14.html)
+- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253) · [DBLP](https://dblp.org/rec/journals/pvldb/SenellartJMR18.html)
+- **[SOTA]** X. Niu, B. Glavic et al. *Provenance Sketches / Uncertainty-Annotated Databases.* SIGMOD / PVLDB, 2019–2021. — [arXiv](https://arxiv.org/abs/2104.12815) · [DOI](https://doi.org/10.14778/3494124.3494130) *(closest confirmed: "Provenance-based Data Skipping," PVLDB 15(3), 2022)*
+- **[Survey]** A. Amarilli, P. Bourhis, M. Monet, P. Senellart. *Knowledge Compilation for Probabilistic Databases.* (compilation/d-DNNF results), 2017–2020. — [DBLP search](https://dblp.org/search?q=Amarilli+Monet+Senellart+knowledge+compilation) *(grouped line; cf. Amarilli–Monet–Senellart, "Connecting Width and Structure in Knowledge Compilation," ICDT 2018, [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2018.6))*
+- **[Foundational]** T. M. Cover, J. A. Thomas. *Elements of Information Theory* (rate–distortion). Wiley, 2006. — [DOI](https://doi.org/10.1002/047174882X)
+
+## 10. Worked Example
+
+Consider the join $Q = R(A,B)\bowtie S(B,C)$ where $B$ takes one value $b$, with $R$ holding $A\in\{a_1,a_2,a_3\}$ and $S$ holding $C\in\{c_1,c_2,c_3\}$. The flat provenance of the $9$ output tuples is the sum-of-products polynomial
+$$\phi = \sum_{i=1}^{3}\sum_{j=1}^{3} a_i\,b\,c_j,$$
+which is $9$ monomials, $27$ variable-occurrences.
+
+**Factorization** exploits that $B$ is shared: pull $b$ out and distribute the join,
+$$\phi = b\cdot\Big(\textstyle\sum_{i} a_i\Big)\cdot\Big(\textstyle\sum_{j} c_j\Big),$$
+a circuit with only $1+3+3 = 7$ leaves and $2$ products. For $n$ values on each side, flat size is $\Theta(n^2)$ but the factorized form is $\Theta(n)$ — matching the $O(|\mathrm{IN}|^{\mathsf{fhtw}})$ bound, since this acyclic query has $\mathsf{fhtw}=1$.
+
+The compression is **lossless**: every why/how query (which sources produced output $(a_i,c_j)$? — answer $\{a_i,b,c_j\}$) is recoverable by evaluating the relevant circuit branch. The contrast with incompressible UCQs is that those have hypergraph structure forcing $2^{\Omega(n)}$-size d-DNNFs, so no such linear factorization exists.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

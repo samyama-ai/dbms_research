@@ -55,12 +55,24 @@ The picture splits cleanly. For **absorptive/closed** semirings, the algebraic-p
 
 ## 9. Key References
 
-- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007.
-- **[Foundational]** Lehmann. *Algebraic Structures for Transitive Closure.* Theoretical Computer Science, 1977 (algebraic path problem / closed semirings).
-- **[Foundational]** Deutch, Milo, Roy, Tannen. *Circuits for Datalog Provenance.* ICDT 2014.
-- **[SOTA]** Ramusat, Maniu, Senellart. *Semiring Provenance over Graph Databases.* TaPP 2018 / *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT 2021.
-- **[SOTA]** Schützenberger. *On the Definition of a Family of Automata.* Information and Control, 1961 (rational power series / weighted automata).
-- **[Survey]** Barceló. *Querying Graph Databases.* PODS 2013 (regular path queries, complexity).
+- **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)
+- **[Foundational]** Lehmann. *Algebraic Structures for Transitive Closure.* Theoretical Computer Science, 1977 (algebraic path problem / closed semirings). — [DOI](https://doi.org/10.1016/0304-3975(77)90056-1)
+- **[Foundational]** Deutch, Milo, Roy, Tannen. *Circuits for Datalog Provenance.* ICDT 2014. — [DBLP](https://dblp.org/rec/conf/icdt/DeutchMRT14.html)
+- **[SOTA]** Ramusat, Maniu, Senellart. *Semiring Provenance over Graph Databases.* TaPP 2018 / *Provenance-Based Algorithms for Rich Queries over Graph Databases.* EDBT 2021. — [TaPP](https://www.usenix.org/conference/tapp2018/presentation/ramusat) · [EDBT](https://inria.hal.science/hal-03140067)
+- **[Foundational]** Schützenberger. *On the Definition of a Family of Automata.* Information and Control, 1961 (rational power series / weighted automata). — [DOI](https://doi.org/10.1016/S0019-9958(61)80020-X)
+- **[Survey]** Barceló. *Querying Graph Databases.* PODS 2013 (regular path queries, complexity). — [DOI](https://doi.org/10.1145/2463664.2465216)
+
+## 10. Worked Example
+
+Consider a 2-node graph with edges annotated by provenance variables: a self-loop on $x$ labeled $a$, and an edge $x \to y$ labeled $b$. Ask the RPQ "reach $y$ from $x$ via $a^*b$" (any number of loops, then the $b$-edge).
+
+The set of witnessing paths is infinite: $b,\ ab,\ aab,\ aaab,\dots$, so the how-provenance in the free polynomial semiring $\mathbb{N}[X]$ is
+$$ \sum_{n\ge 0} a^{n} b = (1 + a + a^2 + \cdots)\,b = a^{*}b, $$
+which has **no finite normal form** in $\mathbb{N}[X]$ — confirming the impossibility noted in section 5.
+
+Move to a *closed/absorptive* semiring and it becomes finite. Over the tropical (min-plus) semiring with edge weights $a=2,\ b=5$, the star is $a^{*}=\min(0, 2, 4,\dots)=0$, so the answer is $a^{*}\otimes b = 0 + 5 = 5$ — the shortest path. The algebraic-path computation is the $(x,y)$ entry of $A^{*}$ for the $2\times 2$ matrix
+$$ A=\begin{pmatrix} a & b \\ \infty & \infty \end{pmatrix}, $$
+solvable by Conway/Lehmann in $O(n^3)=O(8)$ semiring ops — a finite, semiring-correct provenance for an infinite path set.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

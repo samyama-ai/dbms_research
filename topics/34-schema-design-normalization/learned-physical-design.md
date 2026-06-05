@@ -42,12 +42,25 @@ The gap is between (a) empirical RL/learned-cost designers that win on average b
 - Transfer across schemas/engines to reduce per-instance training cost.
 
 ## 9. Key References
-- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** R. Marcus et al. *Neo: A Learned Query Optimizer.* VLDB, 2019.
-- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[SOTA]** R. M. Perera et al. *DBA Bandits: Self-Driving Index Tuning under Ad-hoc, Analytical Workloads with Safety Guarantees.* ICDE, 2021.
-- **[Survey]** Z. Zhou, et al. / X. Zhou et al. *Database Meets Artificial Intelligence: A Survey.* IEEE TKDE, 2022.
+- **[SOTA]** R. Marcus et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[SOTA]** R. Marcus et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** A. Kipf et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[SOTA]** R. M. Perera et al. *DBA Bandits: Self-Driving Index Tuning under Ad-hoc, Analytical Workloads with Safety Guarantees.* ICDE, 2021. — [arXiv](https://arxiv.org/abs/2010.09208)
+- **[Survey]** Z. Zhou, et al. / X. Zhou et al. *Database Meets Artificial Intelligence: A Survey.* IEEE TKDE, 2022. — [DOI](https://doi.org/10.1109/TKDE.2020.2994641)
+
+## 10. Worked Example
+
+Workload: 3 queries, each run with frequency $f=1$. Candidate structures: index $I_1$ (size 2), index $I_2$ (size 3), view $V$ (size 5). Storage budget $B=5$. True costs (from execution) for the best baseline-or-learned config:
+
+| Config | Workload cost |
+|--------|---------------|
+| baseline (none) | 100 |
+| $\{I_1\}$ | 70 |
+| $\{I_2\}$ | 60 |
+| $\{V\}$  | 30 |
+
+A learned cost model $\hat C_\theta$ mis-estimates, predicting $\hat C(\{V\})=20$ but $\hat C(\{I_2\})=80$ — it *overrates* $V$ and *underrates* $I_2$. An unguarded RL agent picks $V$; here that's fine (true cost 30 < 100). But suppose on a *shifted* workload $V$ actually costs 130 (a regression) while the model still predicts 20. The Bao-style safety wrapper executes the chosen config but compares against the baseline: with bandit feedback it observes $130>100$, charges regret $130-30_{\text{best}}=100$ this round, and Thompson sampling down-weights $V$. Over $T$ rounds, regret grows as $\tilde O(\sqrt{T})$, and crucially the wrapper's vetted action set always includes "baseline," bounding any single-round loss. Without the wrapper, the model's confident wrong estimate yields unbounded regret under shift — illustrating the gap between average-case wins and provable anti-regression.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

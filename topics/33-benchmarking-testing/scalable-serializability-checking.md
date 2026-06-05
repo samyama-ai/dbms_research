@@ -68,12 +68,27 @@ The *theory* gap is closed in the classical sense — the problem is NP-complete
 
 ## 9. Key References
 
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000.
-- **[SOTA]** K. Kingsbury, P. Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
-- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
-- **[SOTA]** R. Biswas, C. Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
-- **[Foundational]** A. Cerone, A. Gotsman. *Analysing Snapshot Isolation.* JACM, 2018 (PODC 2016).
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** A. Adya, B. Liskov, P. O'Neil. *Generalized Isolation Level Definitions.* ICDE, 2000. — [DBLP](https://dblp.org/rec/conf/icde/AdyaLO00.html)
+- **[SOTA]** K. Kingsbury, P. Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan)
+- **[SOTA]** R. Biswas, C. Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+- **[Foundational]** A. Cerone, A. Gotsman. *Analysing Snapshot Isolation.* JACM, 2018 (PODC 2016). — [DOI](https://doi.org/10.1145/3152396)
+
+## 10. Worked Example
+
+Observe a history over items $x, y$ with three transactions; reads show which write they observed:
+
+- $T_1$: `w1[x=1]`
+- $T_2$: `r2[x=1] w2[y=1]`
+- $T_3$: `r3[y=1] w3[x=2]`
+
+Build the conflict (serialization) graph $\mathrm{SG}(H)$, one vertex per transaction:
+- $T_2$ reads $x{=}1$ from $T_1$ ⇒ $\mathsf{wr}$ edge $T_1 \to T_2$.
+- $T_3$ reads $y{=}1$ from $T_2$ ⇒ $\mathsf{wr}$ edge $T_2 \to T_3$.
+- $T_3$ writes $x{=}2$; $T_1$ also writes $x$, and $T_2$ read $T_1$'s version, so $T_3$'s write must order *after* $T_2$'s read ⇒ anti-dependency $\mathsf{rw}$ edge $T_2 \to T_3$ (already present) and version order $T_1 \to T_3$ on $x$.
+
+The graph $T_1 \to T_2 \to T_3$ (plus $T_1 \to T_3$) is **acyclic**, so by the conflict-serializability theorem $H$ is serializable, witnessed by the topological order $T_1, T_2, T_3$. Cost: with read-from observed, edges are read off directly and acyclicity is $O(|O| + n^2) = O(7 + 9)$ here — the *easy* regime Elle exploits. Had $T_3$ instead read $x{=}1$ (stale), we'd get $T_3 \to T_1$, closing a cycle $T_1 \to \dots \to T_3 \to T_1$, and the checker would report non-serializability with that cycle as the witness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

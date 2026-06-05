@@ -55,13 +55,26 @@ There is no tight analytical upper bound on prediction error. Best practical res
 
 ## 9. Key References
 
-- **[Foundational]** Selinger, P. G. et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979.
-- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008.
-- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009.
-- **[SOTA]** Shanbhag, A., Madden, S., Yu, X. *A Study of the Fundamental Performance Characteristics of GPUs for Database Primitives (Crystal).* SIGMOD, 2020.
-- **[SOTA]** Marcus, R. et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[SOTA]** Kipf, A. et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[SOTA]** Chrysogelos, P. et al. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019.
+- **[Foundational]** Selinger, P. G. et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
+- **[Foundational]** Atserias, A., Grohe, M., Marx, D. *Size Bounds and Query Plans for Relational Joins (AGM bound).* FOCS, 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Foundational]** Williams, S., Waterman, A., Patterson, D. *Roofline: An Insightful Visual Performance Model for Multicore Architectures.* CACM, 2009. — [DOI](https://doi.org/10.1145/1498765.1498785)
+- **[SOTA]** Shanbhag, A., Madden, S., Yu, X. *A Study of the Fundamental Performance Characteristics of GPUs and CPUs for Database Analytics (Crystal).* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/2003.01178) · [DBLP](https://dblp.org/rec/conf/sigmod/ShanbhagMY20.html)
+- **[SOTA]** Marcus, R. et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[SOTA]** Kipf, A. et al. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677) · [DBLP](https://dblp.org/rec/conf/cidr/KipfKRLBK19.html)
+- **[SOTA]** Chrysogelos, P. et al. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3303753.3303760) · [DBLP](https://dblp.org/rec/journals/pvldb/ChrysogelosKAA19.html)
+
+## 10. Worked Example
+
+Consider a GPU filter `SELECT * FROM R WHERE x > c` over $N = 2^{26}$ rows ($\approx$ 256 MB at 4 B/row). The classical optimizer's affine model predicts cost $\propto N$, identical for *any* value distribution. The accelerator reality differs.
+
+Suppose the GPU has internal bandwidth $\beta = 800$ GB/s, but the data must first cross PCIe 4.0 at $\beta_{io} = 25$ GB/s. Transfer alone: $256\text{ MB} / 25\text{ GB/s} \approx 10.2$ ms, which *dwarfs* the on-device scan time $256\text{ MB}/800\text{ GB/s} \approx 0.32$ ms. So the cardinality-only model (which ignores PCIe) under-predicts runtime by $\sim 30\times$.
+
+Now divergence. With warp width $w = 32$, take two inputs of identical cardinality but different layouts:
+
+- **Sorted** by $x$: each warp sees rows mostly all-pass or all-fail $\Rightarrow$ expected distinct branch targets per warp $\approx 1$, no serialization.
+- **Random** with selectivity $\sigma = 0.5$: $\Pr[\text{warp is uniform}] = 2\cdot 0.5^{32}\approx 0$, so essentially every warp hits both branches $\Rightarrow$ $\approx 2\times$ serialization on the predicate body.
+
+Same $N$, same $\sigma$ — yet runtime differs by a factor of 2 purely from distribution. This concretely shows why a cost model $\hat C(o, I, \theta_{hw})$ keyed only on cardinality has *unbounded* relative error (Section 5): the missing variable is the data distribution itself.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

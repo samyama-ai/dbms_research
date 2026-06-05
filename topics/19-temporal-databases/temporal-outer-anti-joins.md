@@ -89,14 +89,32 @@ unify inner and outer cases.
 
 ## 9. Key References
 - **[Foundational]** M. Soo, R. Snodgrass, C. Jensen. *Efficient Evaluation of the Valid-Time
-  Natural Join.* ICDE, 1994.
+  Natural Join.* ICDE, 1994. — [IEEE](https://ieeexplore.ieee.org/document/283042)
 - **[Foundational]** H. Gunadhi, A. Segev. *Query Processing Algorithms for Temporal
-  Intersection Joins.* ICDE/early temporal join work, 1991.
-- **[SOTA]** A. Dignös, M. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012.
+  Intersection Joins.* ICDE/early temporal join work, 1991. — [IEEE](https://ieeexplore.ieee.org/document/131481/)
+- **[SOTA]** A. Dignös, M. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012. — [ACM](https://dl.acm.org/doi/10.1145/2213836.2213886)
 - **[SOTA]** A. Dignös, M. Böhlen, J. Gamper, C. Jensen. *Extending the Kernel of a Relational
-  DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016.
+  DBMS with Comprehensive Support for Sequenced Temporal Queries.* ACM TODS, 2016. — [ACM](https://dl.acm.org/doi/10.1145/2967608)
 - **[Foundational]** H. Ngo, C. Ré, A. Rudra. *Skew Strikes Back: New Developments in the Theory
-  of Join Algorithms.* SIGMOD Record, 2013.
+  of Join Algorithms.* SIGMOD Record, 2013. — [arXiv](https://arxiv.org/abs/1310.3314)
+
+## 10. Worked Example
+
+Let $R$ hold one employee tuple `(Alice, dept=Sales)` with period $[0,10)$, and let $S$ list the periods Alice had an active project, with two tuples both joining Alice: $[2,4)$ and $[6,7)$.
+
+**Sequenced left outer join.** The matched coverage is the union $M = [2,4)\cup[6,7)$. The null-padded fragments are the complement within Alice's lifespan:
+$$[0,10)\setminus M = [0,2)\,\cup\,[4,6)\,\cup\,[7,10).$$
+So the result is the inner matches plus three null-padded rows:
+
+| name | dept | project | period |
+|---|---|---|---|
+| Alice | Sales | $p_1$ | $[2,4)$ |
+| Alice | Sales | $p_2$ | $[6,7)$ |
+| Alice | Sales | NULL | $[0,2)$ |
+| Alice | Sales | NULL | $[4,6)$ |
+| Alice | Sales | NULL | $[7,10)$ |
+
+The **anti-join** keeps exactly the three NULL fragments (Alice without a project). Checking a snapshot: at $t=5$ the inner outer join is null-padded (no active project), and indeed $5\in[4,6)$. The complement of $m=2$ intervals was computed by the endpoint sweep in $O(m\log m)$, producing $f=3$ fragments — illustrating the $\Theta(n)$ fragment blow-up of §2.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

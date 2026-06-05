@@ -34,12 +34,20 @@ Hot directions: optimal/near-optimal **banded and Toeplitz factorizations** for 
 - Continual release in the shuffle/pan-private models with amplification.
 
 ## 9. Key References
-- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy under Continual Observation.* STOC, 2010.
-- **[Foundational]** Chan, Shi, Song. *Private and Continual Release of Statistics.* ICALP/ACM TISSEC, 2010/2011.
-- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds for Differentially Private Continual Counting.* SODA, 2023.
-- **[SOTA]** Fichtenberger, Henzinger, Upadhyay. *Constant Matters: Fine-Grained Error Bound on Differentially Private Continual Observation.* ICML, 2023.
-- **[SOTA]** Kairouz, McMahan, Song, Thakkar, Thakurta, Xu. *Practical and Private (Deep) Learning without Sampling or Shuffling (DP-FTRL).* ICML, 2021.
-- **[SOTA]** Jain, Kalemaj, Raskhodnikova, Sivakumar, Smith. *Counting Distinct Elements under Continual Observation: Lower Bounds.* 2023.
+- **[Foundational]** Dwork, Naor, Pitassi, Rothblum. *Differential Privacy under Continual Observation.* STOC, 2010. — [DOI](https://doi.org/10.1145/1806689.1806787) · [DBLP](https://dblp.org/rec/conf/stoc/DworkNPR10.html)
+- **[Foundational]** Chan, Shi, Song. *Private and Continual Release of Statistics.* ICALP/ACM TISSEC, 2010/2011. — [ICALP DOI](https://doi.org/10.1007/978-3-642-14162-1_34) · [DBLP](https://dblp.org/rec/conf/icalp/ChanSS10.html) · [TISSEC DOI](https://doi.org/10.1145/2043621.2043626)
+- **[SOTA]** Henzinger, Upadhyay, Upadhyay. *Almost Tight Error Bounds for Differentially Private Continual Counting.* SODA, 2023. — [DOI](https://doi.org/10.1137/1.9781611977554.ch183) · [DBLP search](https://dblp.org/search?q=Almost+Tight+Error+Bounds+Differentially+Private+Continual+Counting)
+- **[SOTA]** Fichtenberger, Henzinger, Upadhyay. *Constant Matters: Fine-Grained Error Bound on Differentially Private Continual Observation.* ICML, 2023. — [PMLR](https://proceedings.mlr.press/v202/fichtenberger23a.html) · [arXiv](https://arxiv.org/abs/2202.11205)
+- **[SOTA]** Kairouz, McMahan, Song, Thakkar, Thakurta, Xu. *Practical and Private (Deep) Learning without Sampling or Shuffling (DP-FTRL).* ICML, 2021. — [PMLR](https://proceedings.mlr.press/v139/kairouz21b.html) · [arXiv](https://arxiv.org/abs/2103.00039)
+- **[SOTA]** Jain, Kalemaj, Raskhodnikova, Sivakumar, Smith. *Counting Distinct Elements in the Turnstile Model with Differential Privacy under Continual Observation.* NeurIPS, 2023. — [arXiv](https://arxiv.org/abs/2306.06723) · [NeurIPS](https://proceedings.neurips.cc/paper_files/paper/2023/hash/0ef1afa0daa888d695dcd5e9513bafa3-Abstract-Conference.html)
+
+## 10. Worked Example
+
+**Binary-tree mechanism for continual counting, $T=4$.** A stream of bits arrives: $x_1,x_2,x_3,x_4 = 1,0,1,1$. We must release every prefix sum $S_t=\sum_{i\le t}x_i$ under event-level DP of the whole transcript. Naively adding fresh Laplace noise to each of the four prefix sums is wasteful and adding noise once to each $x_i$ then summing makes error grow as $\sqrt{t}$.
+
+The dyadic mechanism builds a binary tree over the 4 positions and stores a noisy partial sum at each node: leaves $[1,1],[2,2],[3,3],[4,4]$, internal $[1,2],[3,4]$, root $[1,4]$. Each node gets independent noise $\mathrm{Lap}(1/\varepsilon)$. To answer $S_3$, decompose $\{1,2,3\}$ into the dyadic ranges $[1,2]\cup[3,3]$ — just **2** nodes — so $\tilde S_3$ sums only 2 noisy values, not 3.
+
+In general each prefix $[1,t]$ decomposes into at most $\lceil\log_2 T\rceil$ dyadic ranges (here $\le 2$), and each event $x_i$ affects only $\log_2 T$ tree nodes. So the noise per release is a sum of $O(\log T)$ Laplace variables, giving error $O(\varepsilon^{-1}\log^{1.5}T)$ — exponentially better in $T$ than the $\Theta(\sqrt T)$ of independent-per-step noise.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

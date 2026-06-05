@@ -40,12 +40,21 @@ Directions: (i) GPU-native graph indices minimizing divergence and maximizing co
 - Co-designed quantization + GPU kernels (tensor-core distance tables) and their rate–recall–throughput frontier.
 
 ## 9. Key References
-- **[SOTA]** H. Ootomo, A. Naruse, C. Nolet, R. Wang, T. Feher, Y. Wang. *CAGRA: Highly Parallel Graph Construction and Approximate Nearest Neighbor Search for GPUs.* ICDE, 2024.
-- **[SOTA]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs.* IEEE Transactions on Big Data, 2019.
-- **[SOTA]** F. Groh, L. Wieschollek, H. P. A. Lensch et al. *GGNN: Graph-based GPU Nearest Neighbor Search.* IEEE Transactions on Big Data, 2022.
-- **[SOTA]** W. Zhao, S. Tan, P. Li. *SONG: Approximate Nearest Neighbor Search on GPU.* ICDE, 2020.
-- **[Foundational]** L. Arge, M. T. Goodrich, M. Nelson, N. Sitchinava. *Fundamental Parallel Algorithms for Private-Cache Chip Multiprocessors (PEM model).* SPAA, 2008.
-- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound.* SIGMOD, 2024.
+- **[SOTA]** H. Ootomo, A. Naruse, C. Nolet, R. Wang, T. Feher, Y. Wang. *CAGRA: Highly Parallel Graph Construction and Approximate Nearest Neighbor Search for GPUs.* ICDE, 2024. — [arXiv](https://arxiv.org/abs/2308.15136) · [DOI](https://doi.org/10.1109/ICDE60146.2024.00323)
+- **[SOTA]** J. Johnson, M. Douze, H. Jégou. *Billion-scale Similarity Search with GPUs.* IEEE Transactions on Big Data, 2019. — [arXiv](https://arxiv.org/abs/1702.08734) · [DOI](https://doi.org/10.1109/TBDATA.2019.2921572)
+- **[SOTA]** F. Groh, L. Wieschollek, H. P. A. Lensch et al. *GGNN: Graph-based GPU Nearest Neighbor Search.* IEEE Transactions on Big Data, 2022. — [arXiv](https://arxiv.org/abs/1912.01059) · [DOI](https://doi.org/10.1109/TBDATA.2022.3161156)
+- **[SOTA]** W. Zhao, S. Tan, P. Li. *SONG: Approximate Nearest Neighbor Search on GPU.* ICDE, 2020. — [DOI](https://doi.org/10.1109/ICDE48307.2020.00094)
+- **[Foundational]** L. Arge, M. T. Goodrich, M. Nelson, N. Sitchinava. *Fundamental Parallel Algorithms for Private-Cache Chip Multiprocessors (PEM model).* SPAA, 2008. — [DBLP search](https://dblp.org/search?q=Fundamental+Parallel+Algorithms+for+Private-Cache+Chip+Multiprocessors)
+- **[SOTA]** J. Gao, C. Long. *RaBitQ: Quantizing High-Dimensional Vectors with a Theoretical Error Bound.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3654970) · [arXiv](https://arxiv.org/abs/2405.12497)
+
+## 10. Worked Example
+
+**Why compression is the key to fitting one GPU.** Take $n = 10^9$ vectors, $d = 128$, float32 (4 bytes).
+
+- Raw footprint: $10^9 \times 128 \times 4 = 5.12 \times 10^{11}$ bytes $= 512$ GB. No single GPU's HBM (40–192 GB) holds this — host offload required.
+- **PQ at 16 bytes/vector** (each 128-d vector split into 16 subspaces, one byte codebook index each, a $32\times$ reduction): $10^9 \times 16 = 1.6\times10^{10}$ bytes $= 16$ GB. This **fits** an 80 GB A100/H100 fully resident, leaving room for the codebook distance tables in shared memory and a re-rank buffer.
+
+**Roofline check.** Suppose HBM bandwidth is $2$ TB/s and a query batch scans $W = 16$ GB of resident PQ codes (one full IVF list sweep, worst case). Lower bound on time: $W / \text{bandwidth} = 1.6\times10^{10} / 2\times10^{12} = 8$ ms per batch from bandwidth alone — so to hit sub-millisecond latency you must *not* scan all codes: IVF restricts to $n_{\text{probe}}$ lists, cutting $W$ by $\sim 100\times$ to $\sim 0.08$ ms, now compute-bound on FMA throughput. This is exactly the §5 unconditional bandwidth bound dictating that high QPS requires both compression (shrink $W$) and partitioning (touch less of it).
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

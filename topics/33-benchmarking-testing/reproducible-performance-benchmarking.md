@@ -76,12 +76,22 @@ The statistical machinery is **mature** (CIs, batch means, bootstrap, Kalibera�
 
 ## 9. Key References
 
-- **[Foundational]** A. Georges, D. Buytaert, L. Eeckhout. *Statistically Rigorous Java Performance Evaluation.* OOPSLA, 2007.
-- **[Foundational]** T. Kalibera, R. Jones. *Rigorous Benchmarking in Reasonable Time.* ISMM, 2013.
-- **[SOTA]** B. F. Cooper, A. Silberstein, E. Tam, R. Ramakrishnan, R. Sears. *Benchmarking Cloud Serving Systems with YCSB.* SoCC, 2010.
-- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2014.
-- **[Foundational]** J. Gray (ed.). *The Benchmark Handbook for Database and Transaction Systems.* Morgan Kaufmann, 1993.
-- **[Survey]** Transaction Processing Performance Council. *TPC-C / TPC-H / TPC-DS Specifications.* tpc.org.
+- **[Foundational]** A. Georges, D. Buytaert, L. Eeckhout. *Statistically Rigorous Java Performance Evaluation.* OOPSLA, 2007. — [DOI](https://doi.org/10.1145/1297027.1297033)
+- **[Foundational]** T. Kalibera, R. Jones. *Rigorous Benchmarking in Reasonable Time.* ISMM, 2013. — [DOI](https://doi.org/10.1145/2464157.2464160)
+- **[SOTA]** B. F. Cooper, A. Silberstein, E. Tam, R. Ramakrishnan, R. Sears. *Benchmarking Cloud Serving Systems with YCSB.* SoCC, 2010. — [DOI](https://doi.org/10.1145/1807128.1807152)
+- **[SOTA]** D. E. Difallah, A. Pavlo, C. Curino, P. Cudré-Mauroux. *OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases.* VLDB, 2014. — [DOI](https://doi.org/10.14778/2732240.2732246)
+- **[Foundational]** J. Gray (ed.). *The Benchmark Handbook for Database and Transaction Systems.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/collections/gray93.html)
+- **[Survey]** Transaction Processing Performance Council. *TPC-C / TPC-H / TPC-DS Specifications.* tpc.org. — [TPC](https://www.tpc.org/information/benchmarks5.asp)
+
+## 10. Worked Example
+
+We compare DB versions $A$ and $B$ on TPC-C throughput. Each run yields $n = 10{,}000$ correlated tps samples (post-warmup). I.i.d. CIs are invalid, so use **batch means** with $b = 25$ batches of $400$ samples each.
+
+System $A$: batch means have $\bar X_A = 5000$ tps, batch std $s_A = 120$. The 95% CI is
+$$\bar X_A \pm t_{24,0.975}\,\frac{s_A}{\sqrt b} = 5000 \pm 2.064 \cdot \frac{120}{\sqrt{25}} = 5000 \pm 49.5 = [4950.5,\ 5049.5].$$
+System $B$: $\bar X_B = 5080$, $s_B = 130$ ⇒ CI $= 5080 \pm 53.6 = [5026.4,\ 5133.6]$.
+
+The intervals **overlap** ($[5026.4, 5049.5]$ in common), so $H_0:\Theta_A = \Theta_B$ is *not* rejected at 95% — the apparent $80$-tps edge for $B$ is within noise. To resolve a true $\delta = 80$ tps gap with $\sigma \approx 125$, the sample-size floor is $n \gtrsim (z_{0.975}\,\sigma/\delta)^2 \cdot 2 \approx (1.96\cdot 125/80)^2 \cdot 2 \approx 19$ *independent* batches per side — feasible, but reporting either single peak number ($5000$ vs $5080$) as "B wins" would be the classic benchmarking lie this problem targets.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

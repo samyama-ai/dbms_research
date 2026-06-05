@@ -45,12 +45,20 @@ Active: learned/neural quantizers and residual VQ (RVQ/RQ-VAE) for ANN, with ana
 - Joint optimization of quantization codes and graph topology.
 
 ## 9. Key References
-- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[SOTA]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization.* CVPR, 2013 / IEEE TPAMI 2014.
-- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020.
-- **[Foundational]** D. Arthur, S. Vassilvitskii. *k-means++: The Advantages of Careful Seeding.* SODA, 2007.
-- **[Foundational]** P. Awasthi, M. Charikar, R. Krishnaswamy, A. Sinop. *The Hardness of Approximation of Euclidean k-means.* SoCG, 2015.
-- **[SOTA]** J. Martinez, S. Zakhmi, H. Hoos, J. Little. *LSQ++: Lower Running Time and Higher Recall in Multi-codebook Quantization.* ECCV, 2018.
+- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57)
+- **[SOTA]** T. Ge, K. He, Q. Ke, J. Sun. *Optimized Product Quantization.* CVPR, 2013 / IEEE TPAMI 2014. — [DOI](https://doi.org/10.1109/TPAMI.2013.240)
+- **[SOTA]** R. Guo, P. Sun, E. Lindgren, et al. *Accelerating Large-Scale Inference with Anisotropic Vector Quantization (ScaNN).* ICML, 2020. — [arXiv](https://arxiv.org/abs/1908.10396)
+- **[Foundational]** D. Arthur, S. Vassilvitskii. *k-means++: The Advantages of Careful Seeding.* SODA, 2007. — [DBLP](https://dblp.org/rec/conf/soda/ArthurV07.html)
+- **[Foundational]** P. Awasthi, M. Charikar, R. Krishnaswamy, A. Sinop. *The Hardness of Approximation of Euclidean k-means.* SoCG, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.SOCG.2015.754)
+- **[SOTA]** J. Martinez, S. Zakhmi, H. Hoos, J. Little. *LSQ++: Lower Running Time and Higher Recall in Multi-codebook Quantization.* ECCV, 2018. — [DOI](https://doi.org/10.1007/978-3-030-01270-0_30)
+
+## 10. Worked Example
+
+Take $d=4$, budget $B=4$ bits, split into $m=2$ subspaces of $2$ dims each, so $k=2^{B/m}=2^{2}=4$ centroids per subquantizer. Subspace 1 covers dims $(1,2)$, subspace 2 covers dims $(3,4)$.
+
+Suppose subspace 1 has high variance (centroids spread over $[-3,3]$) while subspace 2 has tiny variance (centroids in $[-0.3,0.3]$). Assigning each subspace its own 4-entry $k$-means codebook gives, say, per-subspace MSE of $0.5$ (sub 1) and $0.005$ (sub 2), total reconstruction error $\approx 0.505$.
+
+OPQ rotates the data so variance is *balanced*: after a rotation $R$, both subspaces carry variance $\sim 1.5$, and reverse-water-filling allocates the same 2 bits each more evenly, dropping total MSE to $\approx 0.30$. The AM–GM intuition: distortion scales with the *product* of per-subspace variances $\prod_j \sigma_j^2$, minimized when variances are equal. The distance estimate $\widehat{\lVert q-x\rVert^2}=\sum_{j} \lVert q^{(j)}-c_{j,\text{idx}}\rVert^2$ then has lower variance, raising recall at the same $4$-bit budget.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -58,11 +58,23 @@ Active directions: (i) learning-augmented scheduling that feeds spot-lifetime/pr
 
 ## 9. Key References
 
-- **[Foundational]** John W. Young. *A first order approximation to the optimum checkpoint interval.* CACM, 1974.
-- **[Foundational]** Jack Daly. *A higher order estimate of the optimum checkpoint interval for restart dumps.* FGCS, 2006.
-- **[SOTA]** A. Harlap et al. *Tributary: spot instances for predictable response.* USENIX ATC, 2018.
-- **[SOTA]** Y. Yan et al. *TR-Spark: Transient Computing for Big Data Analytics.* ACM SoCC, 2016.
-- **[Survey]** T. Herault, Y. Robert (eds.). *Fault-Tolerance Techniques for High-Performance Computing.* Springer, 2015.
+- **[Foundational]** John W. Young. *A first order approximation to the optimum checkpoint interval.* CACM, 1974. — [DOI](https://doi.org/10.1145/361147.361115)
+- **[Foundational]** Jack Daly. *A higher order estimate of the optimum checkpoint interval for restart dumps.* FGCS, 2006. — [DOI](https://doi.org/10.1016/j.future.2004.11.016)
+- **[SOTA]** A. Harlap et al. *Tributary: spot instances for predictable response.* USENIX ATC, 2018. — [USENIX](https://www.usenix.org/conference/atc18/presentation/harlap)
+- **[SOTA]** Y. Yan et al. *TR-Spark: Transient Computing for Big Data Analytics.* ACM SoCC, 2016. — [DOI](https://doi.org/10.1145/2987550.2987576)
+- **[Survey]** T. Herault, Y. Robert (eds.). *Fault-Tolerance Techniques for High-Performance Computing.* Springer, 2015. — [DOI](https://doi.org/10.1007/978-3-319-20943-2)
+
+## 10. Worked Example
+
+Consider one task with work $w = 100$ minutes on a spot node whose lifetime is exponential with hazard $\lambda = 0.01$ per minute (mean lifetime $100$ min). Each checkpoint to object storage costs $c = 1$ minute.
+
+**No checkpointing.** If reclaimed mid-run we restart from scratch. Expected restarts inflate runtime sharply; with $\lambda w = 1$ the work often does not finish in one lifetime.
+
+**Young–Daly optimum.** The optimal interval is
+$$ \tau^\* \approx \sqrt{2c/\lambda} = \sqrt{2\cdot 1/0.01} = \sqrt{200} \approx 14.1 \text{ min}. $$
+So checkpoint every $\approx 14$ minutes ($\lceil 100/14.1\rceil = 8$ segments). The expected wall-time overhead factor is
+$$ 1 + \tfrac{1}{2}\lambda\tau^\* + \tfrac{c}{\tau^\*} = 1 + 0.5(0.01)(14.1) + \tfrac{1}{14.1} \approx 1 + 0.0705 + 0.0709 \approx 1.14, $$
+i.e. only $\sim 14\%$ overhead versus the failure-free $100$ min, giving $\mathbb{E}[T]\approx 114$ min. Checkpointing too often ($\tau=2$) would cost $\tfrac{c}{\tau}=0.5$ alone ($+50\%$); too rarely ($\tau=100$) risks losing nearly the whole run on a single preemption. The $\sqrt{2c/\lambda}$ balance is the sweet spot — but only under the memoryless assumption this example relies on.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

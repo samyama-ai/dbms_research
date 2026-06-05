@@ -61,12 +61,22 @@ Open. Robustness is *solved* for components with a cheap sound fallback whose er
 
 ## 9. Key References
 
-- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** Ferragina, Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020.
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Foundational]** Cohen, Rosenfeld, Kolter. *Certified Adversarial Robustness via Randomized Smoothing.* ICML, 2019.
-- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017.
-- **[Foundational]** Tsipras, Santurkar, Engstrom, Turner, Madry. *Robustness May Be at Odds with Accuracy.* ICLR, 2019.
+- **[Foundational]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Ferragina, Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
+- **[Foundational]** Cohen, Rosenfeld, Kolter. *Certified Adversarial Robustness via Randomized Smoothing.* ICML, 2019. — [arXiv](https://arxiv.org/abs/1902.02918)
+- **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
+- **[Foundational]** Tsipras, Santurkar, Engstrom, Turner, Madry. *Robustness May Be at Odds with Accuracy.* ICLR, 2019. — [arXiv](https://arxiv.org/abs/1805.12152)
+
+## 10. Worked Example
+
+Take a learned index over $n=10^6$ sorted keys. The model predicts a position $\hat p$ for a lookup key, with a guaranteed maximum error $\varepsilon=128$ — i.e. the true position lies in $[\hat p-128,\,\hat p+128]$. A last-mile binary search over this window of $2\varepsilon+1=257$ slots costs at most $\lceil\log_2 257\rceil = 9$ comparisons.
+
+**Average case (in-distribution):** the model is near-perfect, so lookups touch $\approx 1$ extra cache line.
+
+**Adversarial case:** an attacker inserts keys forming a distribution the model never saw, pushing every prediction to the edge of its error budget. The model is now useless — yet because the window is *structurally bounded*, worst-case lookup is still $9$ comparisons, i.e. $O(\log\varepsilon)$, and falling back to a plain binary search over all $n$ keys is $\lceil\log_2 10^6\rceil = 20$. So harm is capped: $\mathcal R \le 20$ comparisons regardless of model error (Section 4, unconditional RAM bound).
+
+Contrast a full learned **optimizer** committing a join order with no correctable last-mile step: one bad prediction can pick a plan that is $100\times$ slower, and $\mathcal R$ is unbounded (Section 5). This is exactly the gap — robustness is free where error is mechanically correctable, open where it is not.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

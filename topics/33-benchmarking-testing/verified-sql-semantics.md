@@ -52,12 +52,25 @@ Partially solved. Executable verified evaluators exist for substantial SQL fragm
 
 ## 9. Key References
 
-- **[SOTA]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI, 2017.
-- **[SOTA]** S. Chu, B. Murphy, J. Roesch, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018.
-- **[SOTA]** V. Benzaken, É. Contejean, S. Dumbrava. *A Coq Formalization of the Relational Data Model.* ESOP, 2014.
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993.
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
+- **[SOTA]** S. Chu, K. Weitz, A. Cheung, D. Suciu. *HoTTSQL: Proving Query Rewrites with Univalent SQL Semantics.* PLDI, 2017. — [arXiv](https://arxiv.org/abs/1607.04822)
+- **[SOTA]** S. Chu, B. Murphy, J. Roesch, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236200)
+- **[SOTA]** V. Benzaken, É. Contejean, S. Dumbrava. *A Coq Formalization of the Relational Data Model.* ESOP, 2014. — [DOI](https://doi.org/10.1007/978-3-642-54833-8_11)
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** S. Chaudhuri, M. Y. Vardi. *Optimization of Real Conjunctive Queries.* PODS, 1993. — [DOI](https://doi.org/10.1145/153850.153856)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+Consider table $R(a)$ as a **bag**: values $\{1, 1, \mathsf{NULL}\}$, i.e. multiplicities $R(1)=2,\ R(\mathsf{NULL})=1$. Compare two "equivalent-looking" queries.
+
+- $Q_1$: `SELECT a FROM R WHERE a = 1`
+- $Q_2$: `SELECT a FROM R WHERE a = 1 OR a <> 1`
+
+Set intuition says $Q_2$'s predicate is a tautology, so $Q_2 \equiv R$. But under **3VL**, on the NULL row both `NULL = 1` and `NULL <> 1` evaluate to $\mathsf{unknown}$, so `unknown OR unknown = unknown`, which `WHERE` does *not* keep. Denotationally, with $[\![\cdot]\!]: \mathrm{Tup}\to\mathbb{N}$:
+
+$$[\![Q_1]\!](1)=2,\quad [\![Q_2]\!](1)=2,\quad [\![Q_2]\!](\mathsf{NULL})=0,\quad [\![R]\!](\mathsf{NULL})=1.$$
+
+So $Q_1 \equiv Q_2$ (both drop the NULL, multiplicity $2$ on $1$), but $Q_2 \not\equiv R$. A U-semiring checker proves $Q_1\equiv Q_2$ by normalizing both to the summation $\sum_{t}[t=1]\cdot R(t)\cdot[\text{ret }t]$; the NULL row contributes $[\mathsf{NULL}=1]=0$ in both. This tiny instance shows why a *bag + 3VL* oracle is needed: a set-semantics or 2-valued checker would wrongly accept $Q_2 \equiv R$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

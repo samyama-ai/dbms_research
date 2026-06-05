@@ -47,12 +47,24 @@ The gap is between **expressive completeness** (SO tgds compose and cover all ma
 - Unifying relational and semi-structured (JSON) evolution operators.
 
 ## 9. Key References
-- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.-C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* ACM TODS, 2005.
-- **[Foundational]** Arenas, M., Pérez, J., Riveros, C. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* ACM TODS, 2009.
-- **[SOTA]** Curino, C., Moon, H.J., Deutsch, A., Zaniolo, C. *Automating the Database Schema Evolution Process (PRISM++).* VLDB Journal, 2013.
-- **[SOTA]** Herrmann, K., Voigt, H., Behrend, A., Rausch, J., Lehner, W. *Living in Parallel Realities: Co-Existing Schema Versions with a Bidirectional Database Evolution Language (InVerDa).* SIGMOD, 2017.
-- **[Foundational]** Bernstein, P.A. *Applying Model Management to Classical Meta Data Problems.* CIDR, 2003.
-- **[Survey]** Fagin, R., Kolaitis, P., Miller, R., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT / TCS, 2003/2005.
+- **[Foundational]** Fagin, R., Kolaitis, P., Popa, L., Tan, W.-C. *Composing Schema Mappings: Second-Order Dependencies to the Rescue.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1114244.1114249)
+- **[Foundational]** Arenas, M., Pérez, J., Riveros, C. *The Recovery of a Schema Mapping: Bringing Exchanged Data Back.* ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1620585.1620589)
+- **[SOTA]** Curino, C., Moon, H.J., Deutsch, A., Zaniolo, C. *Automating the Database Schema Evolution Process (PRISM++).* VLDB Journal, 2013. — [DOI](https://doi.org/10.1007/s00778-012-0302-x)
+- **[SOTA]** Herrmann, K., Voigt, H., Behrend, A., Rausch, J., Lehner, W. *Living in Parallel Realities: Co-Existing Schema Versions with a Bidirectional Database Evolution Language (InVerDa).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064046), [arXiv](https://arxiv.org/abs/1608.05564)
+- **[Foundational]** Bernstein, P.A. *Applying Model Management to Classical Meta Data Problems.* CIDR, 2003. — [DBLP](https://dblp.org/rec/conf/cidr/Bernstein03.html)
+- **[Survey]** Fagin, R., Kolaitis, P., Miller, R., Popa, L. *Data Exchange: Semantics and Query Answering.* ICDT / TCS, 2003/2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+
+## 10. Worked Example
+
+Start with $\mathcal{S}$: one relation `Emp(eid, name, dept, deptCity)`. Apply two operators.
+
+**Op 1 — DECOMPOSE** (split off department data) into `Emp'(eid, name, dept)` and `Dept(dept, deptCity)`. The s-t tgd is
+$$\text{Emp}(e,n,d,c) \to \text{Emp}'(e,n,d) \wedge \text{Dept}(d,c).$$
+On instance `Emp = {(1,Ann,Sales,NYC), (2,Bob,Sales,NYC)}`, the chase yields `Emp' = {(1,Ann,Sales),(2,Bob,Sales)}` and `Dept = {(Sales,NYC)}` — the city is stored once, removing the redundancy.
+
+**Op 2 — RENAME** `deptCity` to `city` in `Dept`, a tgd $\text{Dept}(d,c)\to\text{Dept}_2(d,c)$.
+
+**Composition.** Composing Op1 then Op2 needs only first-order tgds here (both are GAV-style), but had Op1 instead *merged* relations introducing existentials, the composite would require a **second-order tgd** with a Skolem function $f$: $\exists f\,\forall e,n,d\,(\text{Emp}'(e,n,d)\to \text{Out}(e, f(d)))$. **Invertibility:** DECOMPOSE has an exact inverse via the join $\text{Emp}'\bowtie\text{Dept}$ (lossless because `dept` is a key of `Dept`); RENAME is trivially invertible. So the whole composition is rollback-sound.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

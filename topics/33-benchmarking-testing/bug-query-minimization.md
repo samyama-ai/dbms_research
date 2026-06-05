@@ -58,11 +58,21 @@ We have provable **1-minimality** (ddmin) and validity-preserving tree-minimalit
 
 ## 9. Key References
 
-- **[Foundational]** A. Zeller, R. Hildebrandt. *Simplifying and Isolating Failure-Inducing Input (Delta Debugging).* IEEE TSE, 2002.
-- **[Foundational]** G. Misherghi, Z. Su. *HDD: Hierarchical Delta Debugging.* ICSE, 2006.
-- **[SOTA]** C. Sun, Y. Li, Q. Zhang, T. Gu, Z. Su. *Perses: Syntax-Guided Program Reduction.* ICSE, 2018.
-- **[SOTA]** G. Wang, R. Shen, J. Chen, Y. Xiong, L. Zhang. *Probabilistic Delta Debugging (ProbDD).* ESEC/FSE, 2021.
-- **[SOTA]** J. Regehr et al. *Test-Case Reduction for C Compiler Bugs (C-Reduce).* PLDI, 2012.
+- **[Foundational]** A. Zeller, R. Hildebrandt. *Simplifying and Isolating Failure-Inducing Input (Delta Debugging).* IEEE TSE, 2002. — [DOI](https://doi.org/10.1109/32.988498)
+- **[Foundational]** G. Misherghi, Z. Su. *HDD: Hierarchical Delta Debugging.* ICSE, 2006. — [DOI](https://doi.org/10.1145/1134285.1134307)
+- **[SOTA]** C. Sun, Y. Li, Q. Zhang, T. Gu, Z. Su. *Perses: Syntax-Guided Program Reduction.* ICSE, 2018. — [DOI](https://doi.org/10.1145/3180155.3180236)
+- **[SOTA]** G. Wang, R. Shen, J. Chen, Y. Xiong, L. Zhang. *Probabilistic Delta Debugging (ProbDD).* ESEC/FSE, 2021. — [DOI](https://doi.org/10.1145/3468264.3468625)
+- **[SOTA]** J. Regehr et al. *Test-Case Reduction for C Compiler Bugs (C-Reduce).* PLDI, 2012. — [DOI](https://doi.org/10.1145/2345156.2254104)
+
+## 10. Worked Example
+
+A fuzzer finds a crash on the query
+`SELECT a, b FROM t WHERE a>0 AND b<9 GROUP BY a HAVING count(*)>1 ORDER BY b`,
+with 5 deletable AST tokens: $\{$`a,b` (proj), `a>0`, `b<9`, `HAVING`, `ORDER BY`$\}$. The oracle $\psi=1$ iff the engine still crashes.
+
+ddmin runs the oracle on subsets. Suppose only the `GROUP BY a HAVING count(*)>1` core is load-bearing. ddmin first tries the two halves; the half lacking `GROUP BY` passes (no crash). It then tries removing single elements (complements): dropping `ORDER BY b` → still crashes (remove it), dropping `b<9` → still crashes (remove), dropping `a>0` → still crashes (remove), dropping the `HAVING` → no crash (keep). Result: a **1-minimal** `SELECT a FROM t GROUP BY a HAVING count(*)>1`.
+
+Cost: with $n=5$ elements, ddmin's worst case is $O(n^2)=25$ oracle calls; here it converges in $\approx 9$. Note 1-minimality is local: a *globally* smaller reproducer might drop the projection to `SELECT 1`, but ddmin's deletion lattice never explored that token jointly, illustrating the local-vs-global gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

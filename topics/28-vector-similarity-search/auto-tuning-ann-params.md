@@ -46,12 +46,27 @@ Active directions: learned recall/cost predictors that avoid full rebuilds by ex
 - Standard auto-tuning benchmark measuring distance-to-oracle Pareto frontier.
 
 ## 9. Key References
-- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320).
-- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011.
-- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017.
-- **[Foundational]** B. Shahriari, K. Swersky, Z. Wang, R. P. Adams, N. de Freitas. *Taking the Human Out of the Loop: A Review of Bayesian Optimization.* Proceedings of the IEEE, 2016.
-- **[SOTA]** M. Aumüller, E. Bernhardsson, A. Faithfull. *ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms.* Information Systems, 2020.
-- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019.
+- **[Foundational]** Y. Malkov, D. Yashunin. *Efficient and Robust Approximate Nearest Neighbor Search using HNSW graphs.* IEEE TPAMI, 2020 (arXiv:1603.09320). — [arXiv](https://arxiv.org/abs/1603.09320) — [DOI](https://doi.org/10.1109/TPAMI.2018.2889473)
+- **[Foundational]** H. Jégou, M. Douze, C. Schmid. *Product Quantization for Nearest Neighbor Search.* IEEE TPAMI, 2011. — [DOI](https://doi.org/10.1109/TPAMI.2010.57)
+- **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
+- **[Foundational]** B. Shahriari, K. Swersky, Z. Wang, R. P. Adams, N. de Freitas. *Taking the Human Out of the Loop: A Review of Bayesian Optimization.* Proceedings of the IEEE, 2016. — [DOI](https://doi.org/10.1109/JPROC.2015.2494218)
+- **[SOTA]** M. Aumüller, E. Bernhardsson, A. Faithfull. *ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms.* Information Systems, 2020. — [arXiv](https://arxiv.org/abs/1807.05614) — [DOI](https://doi.org/10.1016/j.is.2019.02.006)
+- **[SOTA]** S. J. Subramanya, et al. *DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node.* NeurIPS, 2019. — [NeurIPS](https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html) — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
+
+## 10. Worked Example
+
+**Query-time calibration of $\mathit{efSearch}$ by monotone 1-D search.** Fix an HNSW index; we want the smallest $\mathit{efSearch}$ meeting recall target $\rho{=}0.95$, measured on a held-out sample of $m{=}1000$ queries (ground-truth $k$-NN known). Because recall is anytime-monotone in $\mathit{efSearch}$, binary-search the range $[10, 320]$:
+
+| $\mathit{efSearch}$ | measured $R@10$ | dist-evals/query |
+|---|---|---|
+| 10  | 0.81 | ~120 |
+| 40  | 0.93 | ~480 |
+| 80  | 0.965 | ~960 |
+| 60  | 0.952 | ~720 |
+
+Monotonicity lets us bracket: $40$ fails ($0.93{<}0.95$), $80$ passes; probe the midpoint $60$, which passes ($0.952$); so the answer is $\mathit{efSearch}\in(40,60]$ — pick $60$, halving work vs. the safe default $80$.
+
+**Sampling guard:** with $m{=}1000$, a Hoeffding bound gives recall-estimate half-width $\sqrt{\ln(2/\delta)/(2m)} \approx \sqrt{3.0/2000}\approx 0.039$ at $\delta{=}0.05$. The measured $0.952$ is only $0.002$ above target — within the confidence band — so a prudent tuner bumps to $\mathit{efSearch}{=}80$ for margin. The whole calibration cost $\log_2(320/10)\approx 5$ probes, no index rebuild.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

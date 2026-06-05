@@ -1,6 +1,7 @@
 # Self-Tuning / Feedback-Driven Statistics
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/feedback-driven-statistics` · **Status:** partially-solved
+> **Verification note:** The fourth author of LEO (VLDB 2001) is Mokhtar Kandil, not Raman; corrected here and in §9 per the DBLP record.
 
 ## 1. Problem Statement
 
@@ -21,7 +22,7 @@ Foundations drawn upon: convex optimization (max-entropy is convex), online lear
 ## 3. State of the Art (SOTA)
 
 **Systems-SOTA:**
-- **LEO — DB2's LEarning Optimizer** (Stillger, Lohman, Markl, Raman, VLDB 2001): compares estimated vs. actual cardinalities at runtime and stores adjustments; the canonical feedback-driven system.
+- **LEO — DB2's LEarning Optimizer** (Stillger, Lohman, Markl, Kandil, VLDB 2001): compares estimated vs. actual cardinalities at runtime and stores adjustments; the canonical feedback-driven system.
 - **STHoles** (Bruno–Chaudhuri–Gravano, SIGMOD 2001): workload-aware self-tuning multidimensional histogram built purely from query feedback.
 - **Max-entropy consistency** (Markl et al., VLDB 2005): combines multiple feedback selectivities into a single consistent model.
 - **ISOMER** (Srivastava et al., ICDE 2006): information-theoretic (max-entropy) histogram refinement from feedback, with principled handling of stale feedback.
@@ -55,12 +56,21 @@ The problem is **partially solved**: correcting *seen* queries and reconciling f
 
 ## 9. Key References
 
-- **[Foundational]** Stillger, Lohman, Markl, Raman. *LEO – DB2's LEarning Optimizer.* VLDB, 2001.
-- **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001.
-- **[SOTA]** Markl, Haas, Kutsch, Megiddo, Srivastava, Tran. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005.
-- **[SOTA]** Srivastava, Haas, Markl, Kutsch, Tran. *ISOMER: Consistent Histogram Construction Using Query Feedback.* ICDE, 2006.
-- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019.
-- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007.
+- **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01.html)
+- **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
+- **[SOTA]** Markl, Haas, Kutsch, Megiddo, Srivastava, Tran. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005. — [VLDB Journal version (DOI)](https://doi.org/10.1007/s00778-006-0030-1)
+- **[SOTA]** Srivastava, Haas, Markl, Kutsch, Tran. *ISOMER: Consistent Histogram Construction Using Query Feedback.* ICDE, 2006. — [DBLP](https://dblp.org/rec/conf/icde/SrivastavaHMKT06.html)
+- **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
+- **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)
+
+## 10. Worked Example
+
+A column `country` has true distribution where `country = 'IN'` covers $300$ of $1000$ rows. The optimizer's stale histogram, built when the table was uniform over 10 countries, estimates selectivity $0.10$, so $\hat c = 100$.
+
+A query `... WHERE country = 'IN'` executes; the engine reports the **actual** cardinality $c = 300$. The q-error of this estimate is
+$$\text{q-error} = \max\!\left(\tfrac{\hat c}{c}, \tfrac{c}{\hat c}\right) = \max\!\left(\tfrac{100}{300}, \tfrac{300}{100}\right) = 3.$$
+
+LEO-style feedback stores the correction: next time the identical predicate appears, it returns $300$ (q-error $1$). The harder part is *generalization*. Suppose a later query asks `country = 'IN' AND city = 'Pune'`. Feedback fixed the `IN` marginal to $0.30$, and the histogram gives `Pune` selectivity $0.05$. Independence predicts $0.30\times0.05\times1000 = 15$ rows. If `Pune` rows are entirely inside `IN`, the truth could be $50$ — the single observed marginal does not pin down the joint, illustrating the underdetermination floor: one feedback constraint corrects its own query but leaves a family of distributions consistent with it, so unseen-query error persists until more informative feedback is gathered.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

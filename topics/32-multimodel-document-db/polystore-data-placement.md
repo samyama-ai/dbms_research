@@ -46,13 +46,26 @@ Individual relaxations (metric facility location, generalized assignment) are **
 - Tight integration of placement with cross-store query optimization and pushdown-capability negotiation.
 
 ## 9. Key References
-- **[Foundational]** D. B. Shmoys, É. Tardos. *An Approximation Algorithm for the Generalized Assignment Problem.* Mathematical Programming, 1993.
-- **[Foundational]** K. Jain, V. V. Vazirani. *Approximation Algorithms for Metric Facility Location and k-Median Problems (Primal-Dual).* JACM, 2001.
-- **[Foundational]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010.
-- **[SOTA]** J. Duggan, A. J. Elmore, M. Stonebraker, et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015.
-- **[SOTA]** F. Bugiotti, D. Bursztyn, A. Deutsch, I. Ileana, I. Manolescu. *Invisible Glue: Scalable Self-Tuning Multi-Stores (Estocada).* CIDR, 2015.
-- **[Foundational]** S. Li. *A 1.488 Approximation Algorithm for the Uncapacitated Facility Location Problem.* Information and Computation, 2013.
-- **[Survey]** R. Tan, R. Chirkova, V. Gadepally, T. Mattson. *Enabling Query Processing across Heterogeneous Data Models: A Survey (Polystore).* IEEE Big Data, 2017.
+- **[Foundational]** D. B. Shmoys, É. Tardos. *An Approximation Algorithm for the Generalized Assignment Problem.* Mathematical Programming, 1993. — [DOI](https://doi.org/10.1007/BF01585178)
+- **[Foundational]** K. Jain, V. V. Vazirani. *Approximation Algorithms for Metric Facility Location and k-Median Problems (Primal-Dual).* JACM, 2001. — [DOI](https://doi.org/10.1145/375827.375845)
+- **[Foundational]** C. Curino, E. Jones, Y. Zhang, S. Madden. *Schism: A Workload-Driven Approach to Database Replication and Partitioning.* VLDB, 2010. — [DOI](https://doi.org/10.14778/1920841.1920853)
+- **[SOTA]** J. Duggan, A. J. Elmore, M. Stonebraker, et al. *The BigDAWG Polystore System.* SIGMOD Record, 2015. — [DOI](https://doi.org/10.1145/2814710.2814713)
+- **[SOTA]** F. Bugiotti, D. Bursztyn, A. Deutsch, I. Ileana, I. Manolescu. *Invisible Glue: Scalable Self-Tuning Multi-Stores (Estocada).* CIDR, 2015. — [PDF](https://www.cidrdb.org/cidr2015/Papers/CIDR15_Paper7.pdf)
+- **[Foundational]** S. Li. *A 1.488 Approximation Algorithm for the Uncapacitated Facility Location Problem.* Information and Computation, 2013. — [DOI](https://doi.org/10.1016/j.ic.2012.01.007)
+- **[Survey]** R. Tan, R. Chirkova, V. Gadepally, T. Mattson. *Enabling Query Processing across Heterogeneous Data Models: A Survey (Polystore).* IEEE Big Data, 2017. — [DOI](https://doi.org/10.1109/BigData.2017.8258302)
+
+## 10. Worked Example
+
+Three fragments $\{R, D, G\}$ and two stores: a relational store $s_1$ (can join $R,D$) and a graph store $s_2$ (can traverse $G$; cannot join $R,D$). Workload: $q_1$ joins $R\bowtie D$ ($f=10$); $q_2$ traverses $G$ then joins to $R$ ($f=3$). Cross-store shipping costs 5 per fragment moved per query; local ops are free.
+
+Evaluate the candidate placement $L = \{R\to s_1, D\to s_1, G\to s_2\}$:
+- $q_1$: $R,D$ co-located in $s_1$, which can join them — cost $0$. Contribution $10 \times 0 = 0$.
+- $q_2$: traverse $G$ in $s_2$, then ship the result to $s_1$ to join with $R$ — one cross-store hop, cost $5$. Contribution $3 \times 5 = 15$.
+- Total $= 15$.
+
+Compare $L' = \{R\to s_2,\dots\}$: now $q_1$ must ship $R$ from $s_2$ to $s_1$ (cost $10\times5=50$) while $q_2$ improves to $0$ — total $50$. So $L$ wins.
+
+This is the hyperedge view: $q_1$ is a hyperedge over $\{R,D\}$, $q_2$ over $\{G,R\}$; minimizing weighted cross-store cut while respecting "can $s_1$ join? can $s_2$ traverse?" capability constraints is the min-cost capability-constrained hypergraph partition of section 2 — NP-hard once the graph grows.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

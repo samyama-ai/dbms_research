@@ -43,13 +43,26 @@ Theory cleanly bounds the abstract caching/knapsack problem, yet **real placemen
 - Durability-aware placement: cost models that price persistence and crash-recovery, not just access latency.
 
 ## 9. Key References
-- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. (Competitive caching, $k$-competitiveness.)
-- **[Foundational]** A. Fiat, R. Karp, M. Luby, L. McGeoch, D. Sleator, N. Young. *Competitive Paging Algorithms.* J. Algorithms, 1991. ($\Theta(\log k)$ randomized bound.)
-- **[Foundational]** P. Denning. *The Working Set Model for Program Behavior.* CACM, 1968.
-- **[SOTA]** J. Levandoski, P.-A. Larson, R. Stoica. *Identifying Hot and Cold Data in Main-Memory Databases (Siberia).* ICDE, 2013.
-- **[SOTA]** J. DeBrabant, A. Pavlo, S. Tu, M. Stonebraker, S. Zdonik. *Anti-Caching: A New Approach to Database Management System Architecture.* VLDB, 2013.
-- **[SOTA]** H. A. Maruf, et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered-Memory.* ASPLOS, 2023.
-- **[Survey]** A. van Renen, V. Leis, et al. *Persistent Memory I/O Primitives* / managing NVM in DBMS. VLDB/DaMoN, 2019.
+- **[Foundational]** D. Sleator, R. Tarjan. *Amortized Efficiency of List Update and Paging Rules.* CACM, 1985. (Competitive caching, $k$-competitiveness.) — [DOI](https://doi.org/10.1145/2786.2793)
+- **[Foundational]** A. Fiat, R. Karp, M. Luby, L. McGeoch, D. Sleator, N. Young. *Competitive Paging Algorithms.* J. Algorithms, 1991. ($\Theta(\log k)$ randomized bound.) — [DOI](https://doi.org/10.1016/0196-6774(91)90041-V)
+- **[Foundational]** P. Denning. *The Working Set Model for Program Behavior.* CACM, 1968. — [DOI](https://doi.org/10.1145/363095.363141)
+- **[SOTA]** J. Levandoski, P.-A. Larson, R. Stoica. *Identifying Hot and Cold Data in Main-Memory Databases (Siberia).* ICDE, 2013. — [DOI](https://doi.org/10.1109/ICDE.2013.6544811)
+- **[SOTA]** J. DeBrabant, A. Pavlo, S. Tu, M. Stonebraker, S. Zdonik. *Anti-Caching: A New Approach to Database Management System Architecture.* VLDB, 2013. — [DOI](https://doi.org/10.14778/2556549.2556575)
+- **[SOTA]** H. A. Maruf, et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered-Memory.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2206.02878)
+- **[Survey]** A. van Renen, V. Leis, et al. *Persistent Memory I/O Primitives* / managing NVM in DBMS. VLDB/DaMoN, 2019. — [DBLP](https://dblp.org/rec/conf/damon/RenenVL0K19.html)
+
+## 10. Worked Example
+
+Two tiers: **HBM** (latency $L_{\text{HBM}} = 1$, capacity 2 objects) and **DRAM** ($L_{\text{DRAM}} = 5$). Five equal-size column partitions have access frequencies following a Zipf law, $\text{freq}_{(i)} \propto i^{-1}$:
+
+$$\text{freq} = (1.00,\ 0.50,\ 0.33,\ 0.25,\ 0.20)\ \text{(unnormalized)}.$$
+
+With uniform object sizes, the §2 "fill fastest tier with hottest objects" greedy is **optimal**: place partitions 1 and 2 in HBM, the rest in DRAM.
+
+- Cost $= \sum_o \text{freq}(o)\cdot L_{\pi(o)} = \underbrace{(1.00+0.50)\cdot 1}_{\text{HBM}} + \underbrace{(0.33+0.25+0.20)\cdot 5}_{\text{DRAM}} = 1.50 + 3.90 = 5.40.$
+- Any swap is worse: moving partition 3 into HBM in place of partition 2 gives $(1.00+0.33)\cdot1 + (0.50+0.25+0.20)\cdot5 = 1.33 + 4.75 = 6.08 > 5.40$.
+
+**Congestion twist (the §6 gap).** Suppose HBM bandwidth saturates at total demand $> 1.4$. Our hot pair demands $1.50 > 1.4$, so effective HBM latency inflates (say to $1.8$), raising true cost to $(1.50)\cdot1.8 + 3.90 = 6.60$. The additive model mispredicted the optimum — exactly why bandwidth-aware cost is open.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

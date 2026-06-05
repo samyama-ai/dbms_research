@@ -54,12 +54,24 @@ This is **genuinely open**: the two halves (annotation-semiring algebra and grap
 
 ## 9. Key References
 
-- **[Foundational]** G. Karvounarakis, Z. G. Ives, V. Tannen. *Querying Data Provenance (ProQL).* SIGMOD, 2010.
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (FO=RA, FO+LFP=PTIME, RPQ/CRPQ.)
-- **[SOTA]** S. Lee, B. Glavic et al. *Pug: Provenance and Why-Not Provenance over Datalog.* VLDB Journal / PVLDB, 2019.
-- **[Survey]** P. Barceló. *Querying Graph Databases (RPQ/CRPQ expressiveness and complexity).* PODS, 2013.
-- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. (#P-hardness.)
+- **[Foundational]** G. Karvounarakis, Z. G. Ives, V. Tannen. *Querying Data Provenance (ProQL).* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807269)
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (FO=RA, FO+LFP=PTIME, RPQ/CRPQ.) — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+- **[SOTA]** S. Lee, B. Glavic et al. *Pug: Provenance and Why-Not Provenance over Datalog.* VLDB Journal / PVLDB, 2019. — [DOI](https://doi.org/10.1007/s00778-018-0518-5), [arXiv](https://arxiv.org/abs/1808.05752)
+- **[Survey]** P. Barceló. *Querying Graph Databases (RPQ/CRPQ expressiveness and complexity).* PODS, 2013. — [DOI](https://doi.org/10.1145/2463664.2465216)
+- **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. (#P-hardness.) — [DOI](https://doi.org/10.1137/0208032)
+
+## 10. Worked Example
+
+A provenance graph records derivations as `wasDerivedFrom` edges:
+$$d_4 \to d_3 \to d_2 \to d_1, \qquad d_4 \to d_2,$$
+so $d_1$ is a raw source and $d_4$ a final report. Two flavours of query show the two halves of the open problem.
+
+**Path half (RPQ ancestry).** "Which sources is $d_4$ derived from, transitively?" is the regular path query $d_4 \cdot (\texttt{wasDerivedFrom})^{+}$. Evaluating it is the product of a 1-state automaton with the graph: $O(|Q|\cdot|G|) = O(5)$ edge steps here, reaching $\{d_3,d_2,d_1\}$. Data complexity is NLOGSPACE — cheap and regular.
+
+**Annotation half (semiring).** Now suppose each edge carries a confidence in the tropical (min-plus) semiring: $d_3\!\to\!d_2 = 0.1$, $d_2\!\to\!d_1 = 0.2$, and the shortcut $d_4\!\to\!d_2 = 0.3$. The "most-trusted lineage cost from $d_4$ to $d_1$" multiplies along a path (here, adds costs) and sums across paths (here, takes min):
+$$\min(\underbrace{0.0+0.1+0.2}_{\text{via }d_3}=0.3,\ \underbrace{0.3+0.2}_{\text{shortcut}}=0.5) = 0.3.$$
+A unified language must express *both* the $(\texttt{wasDerivedFrom})^{+}$ path pattern **and** the semiring aggregation in one algebra with a capture theorem — precisely what no current language provides.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

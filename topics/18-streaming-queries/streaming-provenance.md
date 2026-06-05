@@ -49,13 +49,27 @@ The positive, exact, windowed case is largely solved ($O(1)$ overhead). The **op
 - Provenance-driven debugging and SLA root-cause for production stream pipelines.
 
 ## 9. Key References
-- **[Foundational]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007.
-- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011.
-- **[SOTA]** Glavic, B., Sheykh Esmaili, K., Fischer, P.M., Tatbul, N. *Ariadne: Managing Fine-Grained Provenance on Data Streams.* DEBS/EDBT, 2013/2014.
-- **[SOTA]** Palyvos-Giannas, D., Gulisano, V., Papatriantafilou, M. *GeneaLog: Fine-Grained Data Streaming Provenance.* Distributed and Parallel Databases / DEBS, 2018-2019.
-- **[SOTA]** Psallidas, F., Wu, E. *Smoke: Fine-Grained Lineage at Interactive Speed.* PVLDB, 2018.
-- **[Foundational]** Wu, E., Madden, S. *Scorpion: Explaining Away Outliers in Aggregate Queries.* PVLDB, 2013.
-- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009.
+- **[Foundational]** Green, T.J., Karvounarakis, G., Tannen, V. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Amsterdamer, Y., Deutch, D., Tannen, V. *Provenance for Aggregate Queries.* PODS, 2011. — [arXiv](https://arxiv.org/abs/1101.1110) — [DOI](https://doi.org/10.1145/1989284.1989302)
+- **[SOTA]** Glavic, B., Sheykh Esmaili, K., Fischer, P.M., Tatbul, N. *Ariadne: Managing Fine-Grained Provenance on Data Streams.* DEBS/EDBT, 2013/2014. — [DOI](https://doi.org/10.1145/2488222.2488256)
+- **[SOTA]** Palyvos-Giannas, D., Gulisano, V., Papatriantafilou, M. *GeneaLog: Fine-Grained Data Streaming Provenance.* Distributed and Parallel Databases / DEBS, 2018-2019. — [DOI](https://doi.org/10.1145/3274808.3274826)
+- **[SOTA]** Psallidas, F., Wu, E. *Smoke: Fine-Grained Lineage at Interactive Speed.* PVLDB, 2018. — [arXiv](https://arxiv.org/abs/1801.07237) — [DOI](https://doi.org/10.14778/3199517.3199522)
+- **[Foundational]** Wu, E., Madden, S. *Scorpion: Explaining Away Outliers in Aggregate Queries.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536354.2536356)
+- **[Survey]** Cheney, J., Chiticariu, L., Tan, W.-C. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
+
+## 10. Worked Example
+
+Consider a continuous query over a click stream that, per 1-minute tumbling window, emits `SELECT page, COUNT(*) FROM clicks GROUP BY page`. Annotate each input tuple with a distinct provenance variable from the semiring $\mathbb{N}[X]$. In window $[12{:}00,12{:}01)$ three tuples arrive:
+
+| tuple | page | var |
+|---|---|---|
+| $c_1$ | A | $x_1$ |
+| $c_2$ | A | $x_2$ |
+| $c_3$ | B | $x_3$ |
+
+Under bag/semiring semantics the COUNT for page A carries provenance $x_1 + x_2$ (the polynomial degree = the count = 2), and page B carries $x_3$ (count 1). **Why** A=2: the monomials $\{x_1,x_2\}$. **Where** the value came from: the `page=A` attribute of $c_1,c_2$.
+
+Now $c_1$ is **retracted** (a late correction with multiplicity $-1$). In a pure positive semiring there is no inverse of $x_1$; we must move to a semiring-with-monus, and A's count becomes $\,(x_1+x_2)\ominus x_1$. The bounded-overhead win: once the window closes at $12{:}01$, all of $x_1,x_2,x_3$ expire and their annotation slots are reclaimed, so provenance state stays $O(W)$ rather than $O(\text{history})$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

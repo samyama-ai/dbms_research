@@ -1,6 +1,7 @@
 # Oblivious Relational Operators at Scale
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/oblivious-relational-operators` · **Status:** open
+> **Verification note:** The third author of "Efficient Oblivious Database Joins" (PVLDB 2020) is Douglas Stebila, not "Stachowiak"; the author name in §3 should read Krastnikov–Kerschbaum–Stebila.
 
 ## 1. Problem Statement
 Design relational operators — selection, projection, **join**, **group-by/aggregation**, and **sort** — whose memory access patterns are *data-oblivious*: the sequence of physical addresses (and any timing/volume side channels) touched during execution is independent of the actual data values and of which tuples satisfy predicates. The goal is operators that run on a trusted-but-leaky platform (an enclave such as Intel SGX/TDX, or an untrusted-storage/ORAM setting) with overhead **competitive with plaintext** on large inputs.
@@ -42,13 +43,26 @@ Active threads: (a) hardware-enclave operator libraries riding TDX/SEV-SNP with 
 - Co-design with volume-hiding multimaps so intermediate result sizes are not leaked across pipeline stages.
 
 ## 9. Key References
-- **[Foundational]** O. Goldreich, R. Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* J. ACM, 1996.
-- **[Foundational]** K. Batcher. *Sorting Networks and Their Applications.* AFIPS, 1968.
-- **[SOTA]** S. Eskandarian, M. Zaharia. *ObliDB: Oblivious Query Processing for Secure Databases.* PVLDB 13(2), 2019.
-- **[SOTA]** W. Zheng et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017.
-- **[SOTA]** S. Krastnikov, F. Kerschbaum, D. Stachowiak. *Efficient Oblivious Database Joins.* PVLDB 13(11), 2020.
-- **[SOTA]** K. G. Larsen, J. B. Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018.
-- **[Survey]** T-H. H. Chan, K-M. Chung, B. Maggs, E. Shi. *Foundations of Differentially Oblivious Algorithms.* ITCS/J. ACM, 2019/2022.
+- **[Foundational]** O. Goldreich, R. Ostrovsky. *Software Protection and Simulation on Oblivious RAMs.* J. ACM, 1996. — [DOI](https://doi.org/10.1145/233551.233553)
+- **[Foundational]** K. Batcher. *Sorting Networks and Their Applications.* AFIPS, 1968. — [DOI](https://doi.org/10.1145/1468075.1468121)
+- **[SOTA]** S. Eskandarian, M. Zaharia. *ObliDB: Oblivious Query Processing for Secure Databases.* PVLDB 13(2), 2019. — [DOI](https://doi.org/10.14778/3364324.3364331) — [arXiv](https://arxiv.org/abs/1710.00458)
+- **[SOTA]** W. Zheng et al. *Opaque: An Oblivious and Encrypted Distributed Analytics Platform.* NSDI, 2017. — [USENIX](https://www.usenix.org/conference/nsdi17/technical-sessions/presentation/zheng)
+- **[SOTA]** S. Krastnikov, F. Kerschbaum, D. Stebila. *Efficient Oblivious Database Joins.* PVLDB 13(11), 2020. — [PVLDB](http://www.vldb.org/pvldb/vol13/p2132-krastnikov.pdf) — [arXiv](https://arxiv.org/abs/2003.09481)
+- **[SOTA]** K. G. Larsen, J. B. Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) — [ePrint](https://eprint.iacr.org/2018/423)
+- **[Survey]** T-H. H. Chan, K-M. Chung, B. Maggs, E. Shi. *Foundations of Differentially Oblivious Algorithms.* ITCS/J. ACM, 2019/2022. — [DOI](https://doi.org/10.1145/3555984) — [ePrint](https://eprint.iacr.org/2017/1033)
+
+## 10. Worked Example
+
+Oblivious GROUP BY on a salary table inside an SGX enclave. Input (4 tuples, `dept`, `salary`):
+$$(B,30),\ (A,50),\ (B,20),\ (A,40).$$
+Goal: `SELECT dept, SUM(salary) GROUP BY dept` without the access pattern revealing which tuples share a department.
+
+**Step 1 — oblivious sort by `dept`.** A Batcher bitonic network on $n=4$ uses fixed compare-exchange pairs regardless of data: depth $\binom{\log_2 4 + 1}{2}=3$ rounds, $\tfrac{n}{2}\log_2^2 n = 2\cdot 4 = 8$ compare-exchanges. Each compare-exchange conditionally swaps using a data-independent control flow (cmov), so addresses touched are identical for any input. Result:
+$$(A,50),\ (A,40),\ (B,30),\ (B,20).$$
+
+**Step 2 — linear oblivious aggregation scan.** Sweep left to right keeping a running sum; at each step obliviously decide "same group as previous?" and emit either a real partial-sum tuple or a dummy (padded so output length is constant $=n$). Output (dummies marked $\bot$): $(A,90),\ \bot,\ (B,50),\ \bot$.
+
+Total oblivious work $O(n\log^2 n)$ dominated by the sort vs. $O(n)$ for a plaintext hash-aggregate — the modest $\log^2 n$ "obliviousness tax" of Section 6.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

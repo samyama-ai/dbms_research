@@ -68,12 +68,22 @@ Differential dataflow supports incremental updates under arbitrary partial order
 
 ## 9. Key References
 
-- **[Foundational]** Tucker, Maier, Sheard, Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003.
-- **[Foundational]** Li, Tufte, Shkapenyuk, Papadimos, Johnson, Maier. *Out-of-order Processing: A New Architecture for High-performance Stream Systems.* SIGMOD / PVLDB, 2008.
-- **[SOTA]** Murray, McSherry, Isaacs, Isard, Barham, Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013.
-- **[SOTA]** Akidau, Bradshaw, Chambers, et al. *The Dataflow Model.* PVLDB, 2015.
-- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Comput., 2002.
-- **[SOTA]** Carbone, Katsifodimos, Ewen, Markl, Haridi, Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bull., 2015.
+- **[Foundational]** Tucker, Maier, Sheard, Fegaras. *Exploiting Punctuation Semantics in Continuous Data Streams.* IEEE TKDE, 2003. — [DOI](https://doi.org/10.1109/TKDE.2003.1198390)
+- **[Foundational]** Li, Tufte, Shkapenyuk, Papadimos, Johnson, Maier. *Out-of-order Processing: A New Architecture for High-performance Stream Systems.* SIGMOD / PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
+- **[SOTA]** Murray, McSherry, Isaacs, Isard, Barham, Abadi. *Naiad: A Timely Dataflow System.* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522738)
+- **[SOTA]** Akidau, Bradshaw, Chambers, et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
+- **[Foundational]** Datar, Gionis, Indyk, Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Comput., 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
+- **[SOTA]** Carbone, Katsifodimos, Ewen, Markl, Haridi, Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bull., 2015. — [PDF](https://asterios.katsifodimos.com/assets/publications/flink-deb.pdf)
+
+## 10. Worked Example
+
+A 10-second tumbling count window $[0,10)$ over event-time aggregates clicks. Tuples arrive with event times (in seconds) in this disordered order: $3, 7, 2, 9, 6$ — then a late tuple at $4$, then $11$.
+
+**K-slack with $K=3$.** The watermark trails the max-seen event time by $K$: after the $9$ arrives, $W = 9 - 3 = 6$, which is still $< 10$, so window $[0,10)$ stays open. The buffer holds at most the tuples within $K=3$ of the frontier, i.e. $O(K)$ state. When the late $4$ arrives it is $\ge W$, so it is *correctly included* in the window's count.
+
+**Closing the window.** The $11$ arrives; now $\max = 11$, $W = 11 - 3 = 8$ — still $<10$. Only once a tuple with event time $\ge 13$ appears does $W \ge 10$, licensing emission of the final count $= 6$ (events $3,7,2,9,6,4$). Buffer used $= O(w + K) = O(10 + 3)$.
+
+**The trilemma in one line.** If instead the late $4$ had arrived *after* the watermark passed $10$ (true lateness $> K$), K-slack would have dropped it — trading completeness for bounded $O(K)$ memory. To recover it you would need a *retraction*: re-emit a corrected count of $6$ instead of $5$, paying latency-for-correctness. You cannot get exactness, low latency, and bounded memory simultaneously under unbounded lateness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

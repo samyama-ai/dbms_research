@@ -46,13 +46,25 @@ The relational, restricted-dependency-class corner is **closed** (chase-based de
 - Equivalence up to *certain answers* under incomplete/heterogeneous data.
 
 ## 9. Key References
-- **[Foundational]** R. Hull. *Relative Information Capacity of Simple Relational Database Schemata.* SIAM J. Computing / PODS, 1986.
-- **[Foundational]** R. Fagin, P. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005.
-- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977.
-- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995.
-- **[Foundational]** A. Nash, L. Segoufin, V. Vianu. *Views and Queries: Determinacy and Rewriting.* PODS / TODS, 2010.
-- **[SOTA]** R. Fagin. *Inverting Schema Mappings.* PODS / TODS, 2007.
-- **[Survey]** J. Lu, I. Holubová. *Multi-model Databases: A New Journey to Handle the Variety of Data.* ACM Computing Surveys, 2019.
+- **[Foundational]** R. Hull. *Relative Information Capacity of Simple Relational Database Schemata.* SIAM J. Computing / PODS, 1986. — [DOI](https://doi.org/10.1137/0215061)
+- **[Foundational]** R. Fagin, P. Kolaitis, R. J. Miller, L. Popa. *Data Exchange: Semantics and Query Answering.* TCS / ICDT, 2005. — [DOI](https://doi.org/10.1016/j.tcs.2004.10.033)
+- **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
+- **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
+- **[Foundational]** A. Nash, L. Segoufin, V. Vianu. *Views and Queries: Determinacy and Rewriting.* PODS / TODS, 2010. — [DOI](https://doi.org/10.1145/1806907.1806913)
+- **[SOTA]** R. Fagin. *Inverting Schema Mappings.* PODS / TODS, 2007. — [DOI](https://doi.org/10.1145/1292609.1292615)
+- **[Survey]** J. Lu, I. Holubová. *Multi-model Databases: A New Journey to Handle the Variety of Data.* ACM Computing Surveys, 2019. — [DOI](https://doi.org/10.1145/3323214)
+
+## 10. Worked Example
+
+Take source relation $\mathit{Emp}(\underline{eid}, name, dept)$ with rows $\{(1,\text{Ann},\text{HR}),(2,\text{Bob},\text{HR})\}$.
+
+**Encoding $E_1$ (document):** group by $dept$ into JSON: `{"dept":"HR","emps":[{"eid":1,"name":"Ann"},{"eid":2,"name":"Bob"}]}`.
+
+**Encoding $E_2$ (graph triples):** edges `(1,name,Ann),(1,dept,HR),(2,name,Bob),(2,dept,HR)`.
+
+*Information preservation.* Both are lossless: $E_1^{-1}$ unnests the `emps` array and re-attaches `dept`; $E_2^{-1}$ pivots triples back on subject $eid$. Each is injective, so $E_1 \equiv E_2$ in information capacity.
+
+*Query equivalence — a trap.* Consider $Q$ = "employees whose dept has $\ge 2$ members." Over $E_1$, $Q$ is `array_length(emps) >= 2` — first-order over the nested value. Over $E_2$ this needs a **count over edges sharing a $dept$ value**, still FO with aggregation, so $\tau(Q)$ exists. But change $Q$ to "employees reachable via a same-dept chain of length $k$ for arbitrary $k$": that is transitive closure, **not** expressible over the flat document $E_1$ without recursion, while a property-graph language expresses it natively. So $E_1 \equiv E_2$ for information capacity yet *not* query-equivalent once the target language gains recursion — illustrating why Section 6's gap is about pinning the language $\mathcal{L}$, not just losslessness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

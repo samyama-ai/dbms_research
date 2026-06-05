@@ -91,14 +91,30 @@ point-faithfulness silently matters *(frontier — verify)*.
 - Cost-aware compilers that choose point vs interval physical representation per subquery.
 
 ## 9. Key References
-- **[Foundational]** R. Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995.
+- **[Foundational]** R. Snodgrass et al. *The TSQL2 Temporal Query Language.* Kluwer, 1995. — [DBLP](https://dblp.org/db/books/collections/snodgrass95.html)
 - **[Foundational]** M. Böhlen, C. Jensen, R. Snodgrass. *Evaluating and Enhancing the
-  Completeness of TSQL2.* (and related TODS work on snapshot reducibility), 1996.
-- **[Foundational]** D. Toman. *Point-Based Temporal Extensions of SQL.* DOOD, 1997.
-- **[SOTA]** A. Dignös, M. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012.
-- **[Foundational]** P. Kanellakis, G. Kuper, P. Revesz. *Constraint Query Languages.* JCSS, 1995.
+  Completeness of TSQL2.* (and related TODS work on snapshot reducibility), 1996. — [DBLP search](https://dblp.org/search?q=Evaluating%20and%20Enhancing%20the%20Completeness%20of%20TSQL2)
+- **[Foundational]** D. Toman. *Point-Based Temporal Extensions of SQL.* DOOD, 1997. — [DOI](https://doi.org/10.1007/3-540-63792-3_11)
+- **[SOTA]** A. Dignös, M. Böhlen, J. Gamper. *Temporal Alignment.* SIGMOD, 2012. — [DOI](https://doi.org/10.1145/2213836.2213886)
+- **[Foundational]** P. Kanellakis, G. Kuper, P. Revesz. *Constraint Query Languages.* JCSS, 1995. — [DOI](https://doi.org/10.1006/jcss.1995.1051)
 - **[Survey]** C. Jensen, R. Snodgrass. *Temporal Database Entries* in the Encyclopedia of
-  Database Systems, Springer, 2009/2018.
+  Database Systems, Springer, 2009/2018. — [DOI](https://doi.org/10.1007/978-0-387-39940-9)
+
+## 10. Worked Example
+
+Let `Emp(name, dept)` hold over discrete time. Interval relation $I$:
+
+| name | dept | $[s,e)$ |
+|------|------|---------|
+| Ann  | Sales | $[1,4)$ |
+| Ann  | Sales | $[4,7)$ |
+| Bob  | Sales | $[2,5)$ |
+
+**Snapshot equivalence vs representation.** Ann's two adjacent tuples coalesce to one period $[1,7)$ — same *snapshot history* ($\forall t,\ I(t)$ unchanged), different representation.
+
+Now run a temporal `SELECT DISTINCT dept`. Pointwise (snapshot-reducible target): at each $t$ the set of departments is $\{$Sales$\}$, so the faithful answer is the single period $[1,7)$ with `Sales`. But evaluated *per stored tuple* the engine emits three `Sales` rows over $[1,4),[4,7),[2,5)$ — duplicates the user shouldn't see. Duplicate-eliminating projection is **not** snapshot-reducible without coalescing.
+
+**Alignment fix.** Split all intervals on the distinct endpoints $\{1,2,4,5,7\}$, dedupe per resulting chunk, then re-coalesce: $[1,2),[2,4),[4,5),[5,7)$ all carry `Sales`, merging back to $[1,7)$ — the point-faithful result. Cost: a sort-merge on $\le 5$ endpoints, i.e. $O(n\log n)$.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

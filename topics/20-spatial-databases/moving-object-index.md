@@ -46,13 +46,27 @@ Two dual representations:
 - Integration with concurrency and high-churn maintenance for real fleet/IoT telemetry.
 
 ## 9. Key References
-- **[Foundational]** S. Šaltenis, C. S. Jensen, S. T. Leutenegger, M. A. Lopez. *Indexing the positions of continuously moving objects (TPR-tree).* SIGMOD, 2000.
-- **[Foundational]** G. Kollios, D. Gunopulos, V. J. Tsotras. *On indexing mobile objects.* PODS, 1999.
-- **[Foundational]** P. K. Agarwal, L. Arge, J. Erickson. *Indexing moving points.* PODS, 2000 (JCSS, 2003).
-- **[Foundational]** J. Basch, L. J. Guibas, J. Hershberger. *Data structures for mobile data (kinetic data structures).* SODA, 1997 / J. Algorithms, 1999.
-- **[SOTA]** Y. Tao, D. Papadias, J. Sun. *The TPR\*-tree: an optimized spatio-temporal access method for predictive queries.* VLDB, 2003.
-- **[SOTA]** C. S. Jensen, D. Lin, B. C. Ooi. *Query and update efficient B+-tree based indexing of moving objects (B^x-tree).* VLDB, 2004.
-- **[Survey]** L. H. U, et al. / M. F. Mokbel, T. M. Ghanem, W. G. Aref. *Spatio-temporal access methods.* IEEE Data Eng. Bull., 2003.
+- **[Foundational]** S. Šaltenis, C. S. Jensen, S. T. Leutenegger, M. A. Lopez. *Indexing the positions of continuously moving objects (TPR-tree).* SIGMOD, 2000. — [DOI](https://doi.org/10.1145/342009.335427), [DBLP](https://dblp.org/rec/conf/sigmod/SaltenisJLL00.html)
+- **[Foundational]** G. Kollios, D. Gunopulos, V. J. Tsotras. *On indexing mobile objects.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.304002)
+- **[Foundational]** P. K. Agarwal, L. Arge, J. Erickson. *Indexing moving points.* PODS, 2000 (JCSS, 2003). — [DOI](https://doi.org/10.1145/335168.335220)
+- **[Foundational]** J. Basch, L. J. Guibas, J. Hershberger. *Data structures for mobile data (kinetic data structures).* SODA, 1997 / J. Algorithms, 1999. — [DOI](https://doi.org/10.1006/jagm.1998.0988)
+- **[SOTA]** Y. Tao, D. Papadias, J. Sun. *The TPR\*-tree: an optimized spatio-temporal access method for predictive queries.* VLDB, 2003. — [DBLP](https://dblp.org/rec/conf/vldb/TaoPS03.html)
+- **[SOTA]** C. S. Jensen, D. Lin, B. C. Ooi. *Query and update efficient B+-tree based indexing of moving objects (B^x-tree).* VLDB, 2004. — [DBLP](https://dblp.org/rec/conf/vldb/JensenLO04.html)
+- **[Survey]** L. H. U, et al. / M. F. Mokbel, T. M. Ghanem, W. G. Aref. *Spatio-temporal access methods.* IEEE Data Eng. Bull., 2003. — [DBLP](https://dblp.org/rec/journals/debu/MokbelGA03.html)
+
+## 10. Worked Example
+
+Three objects on a 1-D line at reference time $t_0=0$, each with position $x_i(t)=x_i(0)+v_i t$:
+
+| obj | $x_i(0)$ | $v_i$ |
+|-----|----------|-------|
+| A | 0 | $+2$ |
+| B | 4 | $-1$ |
+| C | 6 | $+1$ |
+
+A **TPR-tree** groups them in one node with a time-parameterized bounding interval. The lower bound moves with $v^-=\min v_i=-1$ (B), the upper with $v^+=\max v_i=+2$ (A); the box at $t_0$ is $[0,6]$. So $\text{TPBR}(t)=[\,0 + (-1)t,\; 6 + 2t\,]=[-t,\,6+2t]$, with width $w(t)=6+3t$ — it **dilates** linearly even though the objects stay within $[\,0,\,6+2t\,]$ tightly.
+
+A predictive query "who is in $[10,12]$ at $t_q=4$?" first tests the TPBR: $\text{TPBR}(4)=[-4,14]$, which overlaps $[10,12]$, so the node is opened. Actual positions at $t{=}4$: $A=8$, $B=0$, $C=10$. Only $C$ qualifies — but the conservative box forced us to examine all three. The integrated-area cost $\int_0^4 w(t)\,dt=\int_0^4(6+3t)\,dt=24+24=48$ is exactly the TPR\*-tree insertion objective (Section 2): far-future queries pay because the swept area grows, which is why velocity updates must arrive before boxes "balloon."
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -39,11 +39,22 @@ The asymptotics (SFC $\Theta(\sqrt{|Q|})$ clustering, $\Theta(\log_B n + k/B)$ I
 A principled object-store cost model (latency + request price + cold start) and an optimizer that uses it; update handling on immutable spatial lakes; pushdown of joins/kNN into storage; standardized spatial-data-lake benchmarks across cold/warm regimes.
 
 ## 9. Key References
-- **[Foundational]** Faloutsos, Roseman. *Fractals for Secondary Key Retrieval (Hilbert/SFC locality).* PODS, 1989.
-- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988.
-- **[SOTA]** Yu, Zhang, Sarwat. *Spatial Data Management in Apache Spark: The GeoSpark Perspective.* GeoInformatica, 2019.
-- **[SOTA]** Müller et al. (OGC). *GeoParquet Specification.* Open Geospatial Consortium / community standard, 2023–2024.
-- **[SOTA]** Perron, Castro Fernandez, DeWitt, Madden. *Starling / Lambada: Serverless Query Processing on Object Storage.* SIGMOD / CIDR, 2020.
+- **[Foundational]** Faloutsos, Roseman. *Fractals for Secondary Key Retrieval (Hilbert/SFC locality).* PODS, 1989. — [ACM](https://dl.acm.org/doi/10.1145/73721.73746)
+- **[Foundational]** Aggarwal, Vitter. *The Input/Output Complexity of Sorting and Related Problems.* CACM, 1988. — [ACM](https://dl.acm.org/doi/10.1145/48529.48535)
+- **[SOTA]** Yu, Zhang, Sarwat. *Spatial Data Management in Apache Spark: The GeoSpark Perspective.* GeoInformatica, 2019. — [DOI](https://doi.org/10.1007/s10707-018-0330-9)
+- **[SOTA]** Müller et al. (OGC). *GeoParquet Specification.* Open Geospatial Consortium / community standard, 2023–2024. — [spec](https://geoparquet.org/) · [GitHub](https://github.com/opengeospatial/geoparquet)
+- **[SOTA]** Perron, Castro Fernandez, DeWitt, Madden. *Starling / Lambada: Serverless Query Processing on Object Storage.* SIGMOD / CIDR, 2020. — [ACM](https://dl.acm.org/doi/10.1145/3318464.3380609) · [arXiv](https://arxiv.org/abs/1911.11727)
+
+## 10. Worked Example
+
+A GeoParquet file on S3 holds $10^6$ points in $1{,}000$ row groups of $1{,}000$ points each, each carrying a bbox zone map. Object-store latency $L = 30$ ms/GET, bandwidth $B = 100$ MB/s, cold start $= 200$ ms.
+
+**Layout matters.** Query window $Q$ covers $1\%$ of the area.
+
+- *Random order:* the $10{,}000$ matching points are spread across nearly all $1{,}000$ row groups; with bbox pruning few groups can be skipped, so $\approx 900$ GETs. Wall time $\approx 200 + 900\times 30 = 27{,}200$ ms.
+- *Hilbert-ordered:* by the SFC clustering bound, the query box maps to $\mathbb{E}[C(Q)] = O(\sqrt{|Q|})$ runs. With area fraction $0.01$, runs $\propto \sqrt{0.01}=0.1$ of the linear extent $\Rightarrow \approx 100$ contiguous row groups, coalesced into, say, $10$ ranged GETs. Wall time $\approx 200 + 10\times 30 = 500$ ms.
+
+The $\approx 50\times$ speedup comes entirely from request count, not bytes read (both touch $\approx 10{,}000$ points $\approx$ same payload) — illustrating why this is a *request-minimizing* external-memory problem, not a byte-minimizing one.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

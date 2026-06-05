@@ -33,11 +33,26 @@ Senellart's group (ProvSQL, m-semirings, probabilistic provenance) and Tannen/De
 A single algebraic structure (semiring + semimodule + lattice) with proven convergence and finiteness for stratified Datalog with aggregation; tight circuit-size lower bounds; soundness for negation via provenance for well-founded/stable semantics; and systems support that keeps provenance overhead sublinear for recursive workloads.
 
 ## 9. Key References
-- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS 2007.
-- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS 2011.
-- **[SOTA]** Y. Ramusat, S. Maniu, P. Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* / *Semiring Provenance over Graph Databases.* ICDT 2018 / EDBT 2021.
-- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB 11(12), 2018.
-- **[Survey]** P. Senellart. *Provenance and Probabilities in Relational Databases.* SIGMOD Record 46(4), 2017.
+- **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
+- **[Foundational]** Y. Amsterdamer, D. Deutch, V. Tannen. *Provenance for Aggregate Queries.* PODS 2011. — [DOI](https://doi.org/10.1145/1989284.1989302)
+- **[SOTA]** Y. Ramusat, S. Maniu, P. Senellart. *Provenance-Based Algorithms for Rich Queries over Graph Databases.* / *Semiring Provenance over Graph Databases.* TaPP 2018 / EDBT 2021. — [EDBT 2021](https://inria.hal.science/hal-03140067) · [TaPP 2018](https://hal.science/hal-01850510)
+- **[SOTA]** P. Senellart, L. Jachiet, S. Maniu, Y. Ramusat. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB 11(12), 2018. — [DOI](https://doi.org/10.14778/3229863.3236253)
+- **[Survey]** P. Senellart. *Provenance and Probabilities in Relational Databases.* SIGMOD Record 46(4), 2017. — [DOI](https://doi.org/10.1145/3186549.3186551)
+
+## 10. Worked Example
+
+Take a tiny weighted graph with edges annotated by the **tropical semiring** $(\mathbb{R}_{\ge0}\cup\{\infty\},\min,+,\infty,0)$, where $\oplus=\min$ and $\otimes=+$:
+
+$$ a \xrightarrow{2} b,\quad b \xrightarrow{3} c,\quad a \xrightarrow{6} c $$
+
+The reachability program $\mathsf{path}(x,y)\leftarrow \mathsf{E}(x,y)$; $\mathsf{path}(x,y)\leftarrow \mathsf{E}(x,z),\mathsf{path}(z,y)$ computes, under semiring provenance, the **least fixpoint** of $T_P$ over $K$. For the answer $\mathsf{path}(a,c)$ the two derivations are:
+
+- direct edge $a\to c$: annotation $6$;
+- via $b$: $\mathsf{E}(a,b)\otimes\mathsf{path}(b,c) = 2 + 3 = 5$.
+
+Combine with $\oplus=\min$: $\min(6,\,5)=5$ — the **shortest path**. So tropical-semiring provenance *is* the shortest-distance computation.
+
+**Why finiteness holds here:** the tropical semiring is **absorptive** ($a\oplus(a\otimes b)=a$ since $a\le a+b$ for nonnegative weights), so adding a cycle never improves a distance and the lfp stabilizes in $\le n{=}3$ rounds. Contrast with the counting semiring $\mathbb{N}$: over a graph with a cycle the number of paths is unbounded, the power series is genuinely **infinite**, and no finite annotation exists. This is exactly the absorptive-vs-non-absorptive dichotomy the topic characterizes.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

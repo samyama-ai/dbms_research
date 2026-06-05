@@ -39,11 +39,19 @@ Open in a refined sense. Asymptotically the question is closed (no distribution-
 - Distribution-free guarantees for multidimensional and string keys.
 
 ## 9. Key References
-- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018.
-- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020.
-- **[SOTA]** A. Kipf, et al. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD, 2020.
-- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006.
-- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020.
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196909) · [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
+- **[SOTA]** A. Kipf, et al. *RadixSpline: A Single-Pass Learned Index.* aiDM @ SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3401071.3401659) · [arXiv](https://arxiv.org/abs/2004.14541)
+- **[Foundational]** M. Pătrașcu, M. Thorup. *Time-Space Trade-Offs for Predecessor Search.* STOC, 2006. — [DOI](https://doi.org/10.1145/1132516.1132551) · [arXiv](https://arxiv.org/abs/cs/0603043)
+- **[Survey]** R. Marcus, et al. *Benchmarking Learned Indexes (SOSD).* VLDB, 2020. — [DOI](https://doi.org/10.14778/3421424.3421425) · [arXiv](https://arxiv.org/abs/1911.13014)
+
+## 10. Worked Example
+
+Take an adversarial **step-CDF** on $n=8$ keys: $\{1, 2, 3, 4, 1000, 1001, 1002, 1003\}$ at ranks $0..7$. The empirical key$\to$rank function has a near-vertical cliff between key $4$ (rank $3$) and key $1000$ (rank $4$).
+
+**One linear segment fails.** Fit a single line through the 8 points: slope $\approx 7/1002\approx 0.007$. At key $4$ it predicts rank $\approx 0.007\cdot 4\approx 0.03$ (true $3$); at key $1000$, rank $\approx 7.0$ (true $4$). Max error $\varepsilon\approx 3$ — about $n/s$ with $s=1$ segment, matching the $\varepsilon\ge\Omega(n/s)$ barrier: the cliff is not compressible.
+
+**To drive $\varepsilon\to O(1)$** you need $s\approx n$ segments (one per cliff), i.e. $\Omega(n)$ model space — collapsing to a B-tree. **PGM's distribution-free escape:** recurse on the $s$ segment-keys. Here $s=2$ segments (one for $1$–$4$, one for $1000$–$1003$), then index those $2$ keys; lookup cost $O(\log n)=O(3)$ probes regardless of the cliff. The cell-probe bound $\Omega(\log_w n)$ confirms no learned index beats this asymptotically on such adversarial keys — only constants improve.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -48,12 +48,20 @@ The gap is **partially closed for single tables, open for relational data**. Sin
 
 ## 9. Key References
 
-- **[Foundational]** Hardt, Ligett, McSherry. *A Simple and Practical Algorithm for Differentially Private Data Release (MWEM).* NeurIPS, 2012.
-- **[Foundational]** Nikolov, Talwar, Zhang. *The Geometry of Differential Privacy: The Sparse and Approximate Cases (discrepancy bounds).* STOC, 2013.
-- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based Estimation and Inference for Differential Privacy (Private-PGM).* ICML, 2019.
-- **[SOTA]** McKenna, Miklau, Sheldon, et al. *AIM: An Adaptive and Iterative Mechanism for Differentially Private Synthetic Data.* VLDB, 2022.
-- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008.
-- **[Survey]** Bowen, Liu. *Comparative Study of Differentially Private Data Synthesis Methods.* Statistical Science, 2020.
+- **[Foundational]** Hardt, Ligett, McSherry. *A Simple and Practical Algorithm for Differentially Private Data Release (MWEM).* NeurIPS, 2012. — [arXiv](https://arxiv.org/abs/1012.4763)
+- **[Foundational]** Nikolov, Talwar, Zhang. *The Geometry of Differential Privacy: The Sparse and Approximate Cases (discrepancy bounds).* STOC, 2013. — [DOI](https://doi.org/10.1145/2488608.2488652) — [arXiv](https://arxiv.org/abs/1212.0297)
+- **[SOTA]** McKenna, Sheldon, Miklau. *Graphical-model based Estimation and Inference for Differential Privacy (Private-PGM).* ICML, 2019. — [arXiv](https://arxiv.org/abs/1901.09136)
+- **[SOTA]** McKenna, Miklau, Sheldon, et al. *AIM: An Adaptive and Iterative Mechanism for Differentially Private Synthetic Data.* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2201.12677) — [DOI](https://doi.org/10.14778/3551793.3551817)
+- **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins (AGM bound).* SIAM J. Computing / FOCS, 2008. — [DOI](https://doi.org/10.1137/110859440) — [arXiv](https://arxiv.org/abs/1711.03860)
+- **[Survey]** Bowen, Liu. *Comparative Study of Differentially Private Data Synthesis Methods.* Statistical Science, 2020. — [DOI](https://doi.org/10.1214/19-STS742) — [arXiv](https://arxiv.org/abs/1602.01063)
+
+## 10. Worked Example
+
+Schema: `Customer(cid, region)` and `Order(oid, cid, amount)`, FK `Order.cid → Customer.cid`. Real data: 100 customers, region $\in\{N,S\}$ split $60/40$; each customer has $0$–$5$ orders. Target workload: `SELECT region, COUNT(*) FROM Order JOIN Customer USING(cid) GROUP BY region`.
+
+Single-table marginals are easy: a DP histogram of `region` gives $\hat n_N = 60 \pm \mathrm{Lap}(1/\varepsilon)$. The trouble is the **join**. One customer with $5$ orders contributes $5$ join tuples, so the sensitivity of the per-region order count is the **max join multiplicity** $\Delta=5$, not $1$. Naively adding $\mathrm{Lap}(\Delta/\varepsilon)$ inflates noise $5\times$; truncating each customer to $\le 2$ orders caps $\Delta=2$ but biases the count downward.
+
+Suppose true join counts are $(N\!:\!180,\ S\!:\!120)$. With multiplicity cap $\tau=2$ we keep at most $2$ orders/customer, true capped counts become $(N\!:\!110,\ S\!:\!75)$ — a large bias — then add $\mathrm{Lap}(2/\varepsilon)$. The bias–variance tension here is exactly the open problem: there is no general rule choosing $\tau$ that bounds *join-aggregate* error with provable utility on many-to-many schemas.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

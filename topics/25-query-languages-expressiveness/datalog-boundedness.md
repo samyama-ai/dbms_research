@@ -62,11 +62,29 @@ For the *general* problem the gap is closed in the strongest sense: **undecidabl
 
 ## 9. Key References
 
-- **[Foundational]** H. Gaifman, H. Mairson, Y. Sagiv, M. Vardi. *Undecidable optimization problems for database logic programs.* JACM, 1993.
-- **[Foundational]** S. Cosmadakis, H. Gaifman, P. Kanellakis, M. Vardi. *Decidable optimization problems for database logic programs.* STOC 1988.
-- **[SOTA]** M. Benedikt, B. ten Cate, T. Colcombet, M. Vanden Boom. *The complexity of boundedness for guarded logics.* LICS 2015.
-- **[SOTA]** P. Barceló, D. Figueira, M. Romero, et al. work on guarded/frontier-guarded Datalog boundedness (LICS/ICDT).
-- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on Datalog optimization and boundedness).
+- **[Foundational]** H. Gaifman, H. Mairson, Y. Sagiv, M. Vardi. *Undecidable optimization problems for database logic programs.* JACM, 1993. — [DOI](https://doi.org/10.1145/174130.174142)
+- **[Foundational]** S. Cosmadakis, H. Gaifman, P. Kanellakis, M. Vardi. *Decidable optimization problems for database logic programs.* STOC 1988. — [DOI](https://doi.org/10.1145/62212.62259)
+- **[SOTA]** M. Benedikt, B. ten Cate, T. Colcombet, M. Vanden Boom. *The complexity of boundedness for guarded logics.* LICS 2015. — [DOI](https://doi.org/10.1109/LICS.2015.36)
+- **[SOTA]** P. Barceló, D. Figueira, M. Romero, et al. work on guarded/frontier-guarded Datalog boundedness (LICS/ICDT). — [DBLP search](https://dblp.org/search?q=frontier-guarded%20Datalog%20boundedness)
+- **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (Ch. on Datalog optimization and boundedness). — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
+
+## 10. Worked Example
+
+**A bounded program vs. an unbounded one.** Consider two ways to define a "buys" relation from a `likes` EDB.
+
+*Program $P_1$ (bounded).*
+```
+buys(X,Y) :- likes(X,Y).
+buys(X,Y) :- buys(X,Z), sameMaker(Z,Y).
+```
+Suppose `sameMaker` is known to be *transitively closed already* (an equivalence relation stored in the EDB). Then one extra step suffices: any chain $\mathrm{buys}(X,Z),\mathrm{sameMaker}(Z,Y)$ collapses because $\mathrm{sameMaker}$ composes with itself. Here $T_{P_1}^2(D)=T_{P_1}^3(D)$ for **every** $D$, so $\mathrm{stage}_{P_1}(D)\le 2$ uniformly: $P_1$ is **bounded** with $k=2$, equivalent to the non-recursive UCQ $\{\,\mathrm{likes}(X,Y)\,\}\cup\{\,\mathrm{likes}(X,Z)\wedge\mathrm{sameMaker}(Z,Y)\,\}$.
+
+*Program $P_2$ (unbounded).* The classic linear transitive closure:
+```
+tc(X,Y) :- edge(X,Y).
+tc(X,Y) :- tc(X,Z), edge(Z,Y).
+```
+On a path $v_0\!\to\!v_1\!\to\!\cdots\!\to\!v_n$, deriving $\mathrm{tc}(v_0,v_n)$ needs a proof tree of depth $n$, so $\mathrm{stage}_{P_2}(D_n)=n$ grows with the database. No constant $k$ works, hence **no equivalent non-recursive (FO) program** exists — TC is the textbook witness that boundedness fails and that $\mathrm{boundedness}\Rightarrow\mathrm{FO}$ but not conversely. For *monadic* programs deciding which case holds is decidable (2EXPTIME); for general programs like these, the decision problem is undecidable.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

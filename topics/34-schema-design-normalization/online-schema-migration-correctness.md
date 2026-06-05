@@ -42,11 +42,22 @@ For **single-node, single-table** changes the gap is largely closed: linear back
 - Automatic synthesis of double-write/backfill plans from a declarative target schema with proof certificates.
 
 ## 9. Key References
-- **[Foundational]** Rae, I., Rollins, E., Shute, J., Sodhi, S., Vingralek, R. *Online, Asynchronous Schema Change in F1.* PVLDB, 2013.
-- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985.
-- **[SOTA]** Noach, S. (GitHub). *gh-ost: Triggerless Online Schema Migrations for MySQL.* GitHub Engineering, 2016.
-- **[SOTA]** Percona. *pt-online-schema-change* (design documentation), 2011–.
-- **[Survey]** Curino, C., Moon, H.J., Zaniolo, C. *Graceful Database Schema Evolution: the PRISM Workbench.* PVLDB, 2008.
+- **[Foundational]** Rae, I., Rollins, E., Shute, J., Sodhi, S., Vingralek, R. *Online, Asynchronous Schema Change in F1.* PVLDB, 2013. — [DOI](https://doi.org/10.14778/2536222.2536230)
+- **[Foundational]** Fischer, M., Lynch, N., Paterson, M. *Impossibility of Distributed Consensus with One Faulty Process (FLP).* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
+- **[SOTA]** Noach, S. (GitHub). *gh-ost: Triggerless Online Schema Migrations for MySQL.* GitHub Engineering, 2016. — [GitHub](https://github.com/github/gh-ost)
+- **[SOTA]** Percona. *pt-online-schema-change* (design documentation), 2011–. — [docs](https://docs.percona.com/percona-toolkit/pt-online-schema-change.html)
+- **[Survey]** Curino, C., Moon, H.J., Zaniolo, C. *Graceful Database Schema Evolution: the PRISM Workbench.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453939)
+
+## 10. Worked Example
+
+Rename column `phone` to `mobile` on a live `users` table, $N=10^6$ rows, using expand–migrate–contract.
+
+1. **Expand.** Add nullable `mobile`; install a trigger so every write of `phone` also writes `mobile` (the invariant $\text{mobile}=f(\text{phone})$ with $f=\text{identity}$). Cost: an $O(1)$ short metadata lock.
+2. **Backfill.** One pass copies `phone`$\to$`mobile` in batches of, say, $5{,}000$ rows: $200$ batches, $O(N)$ data touch. Concurrent writes during the pass already maintain the invariant via the trigger, so the backlog drains to a fixpoint — no row is missed.
+3. **Dual-read window.** App reads `COALESCE(mobile, phone)`; at most two schema "versions" coexist (the F1 max-two-versions invariant).
+4. **Contract.** Once every server reads `mobile`, drop `phone` and the trigger: $O(1)$ lock.
+
+If aborted mid-backfill, `mobile` is simply discarded — `phone` was never mutated, so rollback to $\mathcal{S}_{\text{old}}$ is trivial. Total: $\Theta(N)$ unavoidable data touch (lower bound) but only $O(1)$ blocking time, versus a stop-the-world `ALTER` that would lock all $10^6$ rows.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

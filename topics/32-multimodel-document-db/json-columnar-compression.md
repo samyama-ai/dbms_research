@@ -56,12 +56,22 @@ The gap is **empirical, not a clean theory gap**. Entropy gives a tight lower bo
 
 ## 9. Key References
 
-- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010.
-- **[Foundational]** Abadi, Boncz, Harizopoulos. *The Design and Implementation of Modern Column-Oriented Database Systems.* FnT Databases, 2013.
-- **[SOTA]** Durner, Leis, Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021.
-- **[SOTA]** Afroozeh, Boncz. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB, 2023.
-- **[SOTA]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006.
-- **[Survey]** Boncz, Neumann, Leis. *Compression and analytics over semi-structured/columnar data.* (modern columnar systems overview), 2020–2023.
+- **[Foundational]** Melnik et al. *Dremel: Interactive Analysis of Web-Scale Datasets.* VLDB, 2010. — [DBLP](https://dblp.uni-trier.de/rec/journals/pvldb/MelnikGLRSTV10.html)
+- **[Foundational]** Abadi, Boncz, Harizopoulos. *The Design and Implementation of Modern Column-Oriented Database Systems.* FnT Databases, 2013. — [DOI](https://doi.org/10.1561/1900000024)
+- **[SOTA]** Durner, Leis, Neumann. *JSON Tiles: Fast Analytics on Semi-Structured Data.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452809)
+- **[SOTA]** Afroozeh, Boncz. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+- **[SOTA]** Zukowski, Heman, Nes, Boncz. *Super-Scalar RAM-CPU Cache Compression.* ICDE, 2006. — [DOI](https://doi.org/10.1109/ICDE.2006.150)
+- **[Survey]** Boncz, Neumann, Leis. *Compression and analytics over semi-structured/columnar data.* (modern columnar systems overview), 2020–2023. — [DBLP search](https://dblp.org/search?q=Boncz%20Neumann%20Leis%20compression%20semi-structured%20columnar) *(unverified)*
+
+## 10. Worked Example
+
+Take 1,000 JSON docs. The path `user.age` appears in only 50 of them (presence $p=0.05$); when present it is always an int.
+
+**Dremel def-levels:** with `max-def` $=2$ the level column stores $\lceil\log_2 3\rceil = 2$ bits per *document* (present or not), i.e. $1000 \times 2 = 2000$ bits $= 250$ B, independent of $p$.
+
+**Presence bitmap:** the per-doc presence flag is a Bernoulli($0.05$) source with entropy
+$$H(p) = -0.05\log_2 0.05 - 0.95\log_2 0.95 \approx 0.286 \text{ bits/doc}.$$
+A roaring/RLE-compressed bitmap approaches $1000 \times 0.286 \approx 286$ bits $= 36$ B — about **7× smaller** than the def-level column for this sparse path. The 50 present int values are then packed in one homogeneous FOR/bit-packed column (e.g. ages $\le 127$ → 7 bits each → ~44 B), scannable vectorized. This is exactly why JSON Tiles tiles frequent typed sub-paths but encodes presence with bitmaps rather than per-value def-levels on heavy-tailed sparsity.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

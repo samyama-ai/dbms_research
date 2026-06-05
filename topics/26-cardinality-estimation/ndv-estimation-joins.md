@@ -58,12 +58,25 @@ For a *single column* in streaming, the gap is **closed** ($\Theta(\varepsilon^{
 
 ## 9. Key References
 
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimating the Number of Distinct Values of an Attribute.* PODS / VLDB, 2000.
-- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996.
-- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010.
-- **[SOTA]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007.
-- **[SOTA]** Gibbons. *Distinct Sampling for Highly-Accurate Answers to Distinct Values Queries and Event Reports.* VLDB, 2001.
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012.
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimating the Number of Distinct Values of an Attribute.* PODS / VLDB, 2000. — [DBLP](https://dblp.org/rec/conf/pods/CharikarCMN00.html)
+- **[Foundational]** Alon, Matias, Szegedy. *The Space Complexity of Approximating the Frequency Moments.* STOC, 1996. — [DOI](https://doi.org/10.1145/237814.237823)
+- **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
+- **[SOTA]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
+- **[SOTA]** Gibbons. *Distinct Sampling for Highly-Accurate Answers to Distinct Values Queries and Event Reports.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/Gibbons01.html)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+
+## 10. Worked Example
+
+A column $A$ has $n=10^6$ rows. Two distributions share the *same sample* of size $r=100$ in which all $100$ rows are distinct ($d=100$, all singletons):
+
+- **Distribution X:** every value in $A$ is unique, so $D=10^6$.
+- **Distribution Y:** there are only $D=10^4$ distinct values, but they are skewed so a size-$100$ sample happens to draw $100$ distinct singletons.
+
+From this sample the two cases are *indistinguishable*, yet the truths differ by $100\times$. This is the CCMN barrier in action: the ratio error scales as
+$$\sqrt{n/r}=\sqrt{10^6/100}=\sqrt{10^4}=100,$$
+so no sample-based estimator can pin $D$ to better than a $\sim100\times$ multiplicative factor here.
+
+**Contrast — streaming sketch.** HyperLogLog with $m=1024$ registers reads all $10^6$ rows in one pass and gives relative standard error $1.04/\sqrt{m}=1.04/32\approx3.3\%$ — independent of $n$, using $\sim1.5$ KB. **Composition limit:** if $R.A$ and $S.A$ each have an HLL sketch, union NDV $|\pi_A(R)\cup\pi_A(S)|$ merges exactly by register-wise max, but the *join-output* NDV $|\pi_A(R\bowtie S)|$ cannot be recovered from the two marginal sketches — that requires cross-table value correlation, the genuinely open case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

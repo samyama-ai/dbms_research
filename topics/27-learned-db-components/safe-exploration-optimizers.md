@@ -62,11 +62,19 @@ Open. We can bound *cumulative* damage against a known baseline (conservative ba
 
 ## 9. Key References
 
-- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021.
-- **[Foundational]** Kazerouni, Ghavamzadeh, Abbasi-Yadkori, Van Roy. *Conservative Contextual Linear Bandits.* NeurIPS, 2017.
-- **[Foundational]** Wu, Shariff, Lattimore, Szepesvári. *Conservative Bandits.* ICML, 2016.
-- **[Foundational]** Berkenkamp, Turchetta, Schoellig, Krause. *Safe Model-Based Reinforcement Learning with Stability Guarantees.* NeurIPS, 2017.
-- **[Foundational]** Markl, Raman, et al. *Robust Query Processing Through Progressive Optimization.* SIGMOD, 2004.
+- **[SOTA]** Marcus, Negi, Mao, Tatbul, Alizadeh, Kraska. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838) — [DBLP](https://dblp.org/rec/conf/sigmod/MarcusNMTAK21.html)
+- **[Foundational]** Kazerouni, Ghavamzadeh, Abbasi-Yadkori, Van Roy. *Conservative Contextual Linear Bandits.* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1611.06426) — [DBLP](https://dblp.org/rec/conf/nips/KazerouniGAR17.html)
+- **[Foundational]** Wu, Shariff, Lattimore, Szepesvári. *Conservative Bandits.* ICML, 2016. — [arXiv](https://arxiv.org/abs/1602.04282) — [PMLR](http://proceedings.mlr.press/v48/wu16.html)
+- **[Foundational]** Berkenkamp, Turchetta, Schoellig, Krause. *Safe Model-Based Reinforcement Learning with Stability Guarantees.* NeurIPS, 2017. — [arXiv](https://arxiv.org/abs/1705.08551) — [NeurIPS](https://proceedings.neurips.cc/paper/2017/hash/766ebcd59621e305170616ba3d3dac32-Abstract.html)
+- **[Foundational]** Markl, Raman, et al. *Robust Query Processing Through Progressive Optimization.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007642)
+
+## 10. Worked Example
+
+Take a Bao-style learner with $K=3$ hint sets per query; the native optimizer is the trusted baseline. For one query $q$ the true latencies are: baseline $\text{cost}_{\text{base}}=100$ ms, arm $a_1=70$ ms (a genuine win), arm $a_2=400$ ms (a trap). Set per-query safety factor $\beta=1.5$, so any plan above $150$ ms is unsafe.
+
+Suppose the calibrated cost model returns intervals $[\ell,u]$: $a_1\to[60,95]$, $a_2\to[120,460]$. The safe set keeps only arms with **upper** bound $u\le\beta\cdot\text{cost}_{\text{base}}=150$. Then $a_1$ qualifies ($u=95\le150$) but $a_2$ is excluded ($u=460>150$) — even though its optimistic $\ell=120$ would tempt a UCB explorer. Playing $a_1$ gives realized excess latency $70-100=-30$ ms (a saving), never violating $\beta$.
+
+Conservative-bandit accounting: with budget slack $\alpha=0.1$, after $t$ safe-or-better plays the accumulated cushion is $\sum(\text{cost}_{\text{base}}-\text{cost})\ge \alpha\sum\text{cost}_{\text{base}}$; only once the cushion exceeds the worst-case downside of an untried arm may the learner spend it on exploration. Here the $-30$ ms per query builds cushion while $a_2$ stays shielded until its interval tightens below $150$ ms — illustrating safety from the **upper** bound, exploration value from the **lower**.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

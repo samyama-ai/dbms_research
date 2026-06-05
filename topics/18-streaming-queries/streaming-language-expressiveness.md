@@ -50,12 +50,22 @@ There is **no complete, decidable syntactic characterization** of exactly the bo
 - Expressiveness of out-of-order/late-event semantics (watermarks) as a logical primitive.
 
 ## 9. Key References
-- **[Foundational]** Babcock, B., Babu, S., Datar, M., Motwani, R., Widom, J. *Models and Issues in Data Stream Systems.* PODS, 2002.
-- **[Foundational]** Arasu, A., Babu, S., Widom, J. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006.
-- **[Foundational]** Ameloot, T.J., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* JACM, 2013.
-- **[SOTA]** Grez, A., Riveros, C., Ugarte, M. *A Formal Framework for Complex Event Processing (CEL).* ICDT/PODS, 2019.
-- **[Foundational]** Kaminski, M., Francez, N. *Finite-Memory Automata.* Theoretical Computer Science, 1994.
-- **[Survey]** Hellerstein, J.M., Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020.
+- **[Foundational]** Babcock, B., Babu, S., Datar, M., Motwani, R., Widom, J. *Models and Issues in Data Stream Systems.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543615)
+- **[Foundational]** Arasu, A., Babu, S., Widom, J. *The CQL Continuous Query Language: Semantic Foundations and Query Execution.* VLDB Journal, 2006. — [DOI](https://doi.org/10.1007/s00778-004-0147-z)
+- **[Foundational]** Ameloot, T.J., Neven, F., Van den Bussche, J. *Relational Transducers for Declarative Networking (CALM).* JACM, 2013. — [DOI](https://doi.org/10.1145/2450142.2450151)
+- **[SOTA]** Grez, A., Riveros, C., Ugarte, M. *A Formal Framework for Complex Event Processing (CEL).* ICDT/PODS, 2019. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2019.5)
+- **[Foundational]** Kaminski, M., Francez, N. *Finite-Memory Automata.* Theoretical Computer Science, 1994. — [DOI](https://doi.org/10.1016/0304-3975(94)90242-9)
+- **[Survey]** Hellerstein, J.M., Alvaro, P. *Keeping CALM: When Distributed Consistency Is Easy.* CACM, 2020. — [DOI](https://doi.org/10.1145/3369736)
+
+## 10. Worked Example
+
+**A query that is *not* bounded-memory, proven by an INDEX reduction.** Consider the continuous query "is the newest element a *duplicate* of some earlier element?" — a 1-bit-per-prefix slice of exact `DISTINCT`. Claim: no $O(1)$-memory (indeed no $o(n)$-memory) streaming algorithm computes it over a universe $[n]$.
+
+Reduction from the INDEX communication problem. Alice holds a set $A\subseteq[n]$ (a bit-vector); Bob holds an index $j\in[n]$ and must learn whether $j\in A$. Alice feeds the elements of $A$ into the stream, then passes the algorithm's memory state to Bob. Bob appends $j$ and queries: the answer "duplicate" is yes iff $j\in A$.
+
+Tiny instance, $n=4$, $A=\{1,3\}$, stream prefix $1,3$. Bob's index $j=3$: appending $3$ makes it a duplicate $\Rightarrow$ "yes, $3\in A$." With $j=2$: appending $2$ is fresh $\Rightarrow$ "no, $2\notin A$."
+
+Since INDEX has one-way communication complexity $\Omega(n)$ bits, the memory state Bob received must carry $\Omega(n)$ bits — so the streaming algorithm uses $\Omega(n)$ space. Hence exact `DISTINCT` lies *outside* any $O(1)$-space streaming language, formally separating full SQL from the bounded-memory fragment (Section 5). Contrast a monotone query like "has value $7$ ever appeared?", which needs a single bit — and, by CALM, is also coordination-free.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

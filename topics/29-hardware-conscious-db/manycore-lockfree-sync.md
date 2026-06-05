@@ -47,13 +47,23 @@ The mutual-exclusion gap is **closed up to constants**: $\Theta(\log p)$ RMR. Th
 
 ## 9. Key References
 
-- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* ACM TOPLAS, 1991.
-- **[Foundational]** Mellor-Crummey, J. M., Scott, M. L. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors (MCS Locks).* ACM TOCS, 1991.
-- **[Lower Bound]** Attiya, H., Hendler, D., Woelfel, P. *Tight RMR Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008.
-- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013.
-- **[SOTA]** Leis, V., Haubenschild, M., Neumann, T. *Optimistic Lock Coupling: A Scalable and Efficient General-Purpose Synchronization Method.* IEEE Data Eng. Bulletin / DaMoN, 2019.
-- **[SOTA]** Shalev, O., Shavit, N. *Split-Ordered Lists: Lock-Free Extensible Hash Tables.* JACM, 2006.
+- **[Foundational]** Herlihy, M., Wing, J. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
+- **[Foundational]** Mellor-Crummey, J. M., Scott, M. L. *Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors (MCS Locks).* ACM TOCS, 1991. — [DOI](https://doi.org/10.1145/103727.103729)
+- **[Lower Bound]** Attiya, H., Hendler, D., Woelfel, P. *Tight RMR Lower Bounds for Mutual Exclusion and Other Problems.* STOC, 2008. — [DOI](https://doi.org/10.1145/1374376.1374410)
+- **[SOTA]** Tu, S., Zheng, W., Kohler, E., Liskov, B., Madden, S. *Speedy Transactions in Multicore In-Memory Databases (Silo).* SOSP, 2013. — [DOI](https://doi.org/10.1145/2517349.2522713)
+- **[SOTA]** Leis, V., Haubenschild, M., Neumann, T. *Optimistic Lock Coupling: A Scalable and Efficient General-Purpose Synchronization Method.* IEEE Data Eng. Bulletin / DaMoN, 2019. — [DBLP](https://dblp.org/rec/journals/debu/LeisH019.html)
+- **[SOTA]** Shalev, O., Shavit, N. *Split-Ordered Lists: Lock-Free Extensible Hash Tables.* JACM, 2006. — [DOI](https://doi.org/10.1145/1147954.1147958)
+
+## 10. Worked Example
+
+Consider a global transaction-ID counter incremented by $p = 64$ cores, each doing one `fetch_and_add` per transaction, on a cache-coherent (CC) machine.
+
+**Shared hot counter:** the counter's cache line lives in one core's L1; every other core's `fetch_and_add` must invalidate and pull the line. Under the RMR model each contended update costs $\Theta(p)$ serialized coherence transactions, so issuing $p$ increments costs $\Theta(p^2) = 64^2 \approx 4096$ line transfers per round — throughput *falls* as $p$ grows (contention collapse).
+
+**Flat-combining / sharding:** instead, give each core a private per-core counter and derive global order lazily (Silo-style decentralized commit). Each increment is now a local, uncontended write: $O(1)$ RMR, $O(p)=64$ transfers per round total — a $64\times$ reduction.
+
+**Lower-bound reality check:** even the best *mutual-exclusion* lock cannot beat $\Omega(\log p) = \log_2 64 = 6$ RMR per passage (Attiya–Hendler–Woelfel). So if exclusion is truly required the floor is $\sim 6$ coherence steps per op; the winning move here is to *avoid* the shared counter entirely, not to lock it faster.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -40,12 +40,27 @@ Active: (i) learned cost/recall models per index family feeding query-level plan
 - Per-query (not just per-dataset) routing with regret guarantees.
 
 ## 9. Key References
-- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS, 2003.
-- **[Foundational]** P. Afshani, J. Barbay, T. M. Chan. *Instance-Optimal Geometric Algorithms.* FOCS, 2009 / JACM, 2017.
-- **[Foundational]** R. Gupta, T. Roughgarden. *A PAC Approach to Application-Specific Algorithm Selection.* SIAM J. Computing, 2017.
-- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015.
-- **[SOTA]** M.-F. Balcan, T. Dick, T. Sandholm, E. Vitercik. *Learning to Branch / Data-Driven Algorithm Design.* (various) ICML/JACM, 2018–2021.
-- **[Survey]** M. Aumüller, E. Bernhardsson, A. Faithfull. *ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms.* Information Systems, 2020.
+- **[Foundational]** R. Fagin, A. Lotem, M. Naor. *Optimal Aggregation Algorithms for Middleware.* JCSS, 2003. — [arXiv](https://arxiv.org/abs/cs/0204046)
+- **[Foundational]** P. Afshani, J. Barbay, T. M. Chan. *Instance-Optimal Geometric Algorithms.* FOCS, 2009 / JACM, 2017. — [arXiv](https://arxiv.org/abs/1505.00184) · [DOI](https://doi.org/10.1145/3046673)
+- **[Foundational]** R. Gupta, T. Roughgarden. *A PAC Approach to Application-Specific Algorithm Selection.* SIAM J. Computing, 2017. — [arXiv](https://arxiv.org/abs/1511.07147) · [DOI](https://doi.org/10.1137/15M1050276)
+- **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
+- **[SOTA]** M.-F. Balcan, T. Dick, T. Sandholm, E. Vitercik. *Learning to Branch / Data-Driven Algorithm Design.* (various) ICML/JACM, 2018–2021. — [arXiv](https://arxiv.org/abs/1803.10150)
+- **[Survey]** M. Aumüller, E. Bernhardsson, A. Faithfull. *ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms.* Information Systems, 2020. — [arXiv](https://arxiv.org/abs/1807.05614) · [DOI](https://doi.org/10.1016/j.is.2019.02.006)
+
+## 10. Worked Example
+
+Two candidate configs on one dataset $P$, two query types in distribution $\mathcal{Q}$ (60% "easy" near-centroid queries $q_e$, 40% "hard" boundary queries $q_h$). Per-query scan cost (vectors touched) to hit recall $0.95$:
+
+| config | cost on $q_e$ | cost on $q_h$ |
+|--------|---------------|---------------|
+| $C_1$ (small graph degree $R{=}16$) | 120 | 900 |
+| $C_2$ (large degree $R{=}48$)       | 200 | 400 |
+
+**Per-instance optimal** (oracle picks the cheaper config *per query*): $0.6(120)+0.4(400)=72+160=232$.
+
+**Best single config in hindsight**: $\mathbb{E}[C_1]=0.6(120)+0.4(900)=432$; $\mathbb{E}[C_2]=0.6(200)+0.4(400)=280$. So $C_2$ wins at 280.
+
+The competitive ratio of the best *single* index against the per-query oracle is $280/232\approx 1.21$. Instance-optimality asks for an index (or selector) provably within $O(1)$ of the **232** oracle, not the 280 single-config optimum — and to express that gap via a difficulty measure (here, the easy/hard mix). A learned router that reads a cheap per-query feature and dispatches $q_e\!\to\!C_1$, $q_h\!\to\!C_2$ would achieve 232; bounding its regret is the open question.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

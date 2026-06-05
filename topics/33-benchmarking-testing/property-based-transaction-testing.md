@@ -54,12 +54,23 @@ Partially solved. For histories with **recorded read-from**, polynomial checkers
 
 ## 9. Key References
 
-- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979.
-- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990.
-- **[SOTA]** R. Biswas, C. Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019.
-- **[SOTA]** K. Kingsbury, P. Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020.
-- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020.
-- **[Foundational]** A. Fekete, D. Liarokapis, E. O'Neil, P. O'Neil, D. Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005.
+- **[Foundational]** C. H. Papadimitriou. *The Serializability of Concurrent Database Updates.* JACM, 1979. — [DOI](https://doi.org/10.1145/322154.322158)
+- **[Foundational]** M. Herlihy, J. Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
+- **[SOTA]** R. Biswas, C. Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [DOI](https://doi.org/10.1145/3360591)
+- **[SOTA]** K. Kingsbury, P. Alvaro. *Elle: Inferring Isolation Anomalies from Experimental Observations.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3430915.3430918)
+- **[SOTA]** C. Tan, C. Zhao, S. Mu, M. Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan)
+- **[Foundational]** A. Fekete, D. Liarokapis, E. O'Neil, P. O'Neil, D. Shasha. *Making Snapshot Isolation Serializable.* ACM TODS, 2005. — [DOI](https://doi.org/10.1145/1071610.1071615)
+
+## 10. Worked Example
+
+**Write-skew under Snapshot Isolation.** Two doctors share an on-call invariant: at least one of $x, y$ must stay $1$ (on call). Start state $x = y = 1$. A PBT generator emits two concurrent transactions:
+
+- $T_1$: `r1[x=1] r1[y=1] w1[x=0]` (doctor 1 goes off call after seeing doctor 2 is on)
+- $T_2$: `r2[x=1] r2[y=1] w2[y=0]` (doctor 2 goes off, symmetric)
+
+Under SI both read the same snapshot ($x{=}y{=}1$), neither writes what the other reads, so there is **no write–write conflict** — both commit. Final state $x = y = 0$, violating the invariant.
+
+Now check the recorded history $H$. Build dependency edges: $T_1$ reads $y$, $T_2$ later overwrites $y$ ⇒ anti-dependency $T_1 \xrightarrow{\mathsf{rw}} T_2$. Symmetrically $T_2 \xrightarrow{\mathsf{rw}} T_1$. The serialization graph has a cycle $T_1 \to T_2 \to T_1$ with **two consecutive $\mathsf{rw}$ edges** — exactly the *dangerous structure* of Fekete et al. So $H$ is **not serializable** (the checker reports it), yet it **is** admissible under SI. A PBT oracle parameterized by isolation level returns: *serializability violated, SI satisfied* — pinpointing write skew with a minimal 2-transaction witness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*
