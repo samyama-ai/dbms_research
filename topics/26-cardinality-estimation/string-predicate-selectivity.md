@@ -67,8 +67,8 @@ For regex, the match set is the language $L(r)\cap C$; selectivity estimation re
 - **[Foundational]** Krishnan, Vitter, Iyer. *Estimating Alphanumeric Selectivity in the Presence of Wildcards.* SIGMOD, 1996. — [DOI](https://doi.org/10.1145/233269.233341)
 - **[Foundational]** Jagadish, Ng, Srivastava. *Substring Selectivity Estimation.* PODS, 1999. — [DBLP](https://dblp.org/rec/conf/pods/JagadishNS99)
 - **[SOTA]** Chaudhuri, Ganti, Gravano. *Selectivity Estimation for String Predicates: Overcoming the Underestimation Problem.* ICDE, 2004. — [DOI](https://doi.org/10.1109/ICDE.2004.1319999)
-- **[SOTA]** Shetiya, Thirumuruganathan, Augsten, Das. *Astrid: Accurate Selectivity Estimation for String Predicates using Deep Learning.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3436905.3436907)
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+- **[SOTA]** Shetiya, Thirumuruganathan, Koudas, Das. *Astrid: Accurate Selectivity Estimation for String Predicates using Deep Learning.* PVLDB, 2021. — [DOI](https://doi.org/10.14778/3436905.3436907)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
 - **[Foundational]** Broder. *On the Resemblance and Containment of Documents (MinHash).* SEQUENCES, 1997. — [DOI](https://doi.org/10.1109/SEQUEN.1997.666900)
 
 ## 10. Worked Example

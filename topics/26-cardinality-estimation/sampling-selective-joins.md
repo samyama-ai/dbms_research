@@ -71,7 +71,7 @@ The unavoidable barrier: for a predicate of selectivity $s$, a uniform sample ne
 - **[Foundational]** Haas, Hellerstein. *Ripple Joins for Online Aggregation.* SIGMOD, 1999. — [DOI](https://doi.org/10.1145/304181.304208) — [DBLP](https://dblp.org/rec/conf/sigmod/HaasH99.html)
 - **[SOTA]** Li, Wu, Yi, Zhao. *Wander Join: Online Aggregation via Random Walks.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915235) — [PDF](https://www.cse.ust.hk/~yike/sigmod16.pdf)
 - **[SOTA]** Chen, Yi. *Two-Level Sampling for Join Size Estimation.* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3035921) — [PDF](https://www.cse.ust.hk/~yike/sigmod17.pdf)
-- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimating the Number of Distinct Values of an Attribute.* PODS, 2000. — [DBLP](https://dblp.org/rec/conf/pods/CharikarCMN00.html)
+- **[Foundational]** Charikar, Chaudhuri, Motwani, Narasayya. *Towards Estimation Error Guarantees for Distinct Values.* PODS, 2000. — [DBLP](https://dblp.org/rec/conf/pods/CharikarCMN00.html)
 - **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894) — [PDF](https://homes.cs.washington.edu/~suciu/sigmod-2019-pessimistic.pdf)
 - **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004) — [PDF](https://dsf.berkeley.edu/cs286/papers/synopses-fntdb2012.pdf)
 

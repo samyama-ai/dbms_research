@@ -21,7 +21,7 @@ A plan $p$ has cost $C(p;\,\mathbf c)$ depending on the vector of subplan cardin
 
 Foundations:
 
-- **Moerkotte–Neumann–Steinbrunn (VLDB 2009):** a factor-$\theta$ q-error bound on all estimates implies at most a $\theta^{?}$ factor on plan cost — linking multiplicative estimation error to bounded suboptimality. This is an *upper* sensitivity; the per-estimate *exact* sensitivity is sharper.
+- **Moerkotte–Neumann–Steidl (VLDB 2009):** a factor-$\theta$ q-error bound on all estimates implies at most a $\theta^{?}$ factor on plan cost — linking multiplicative estimation error to bounded suboptimality. This is an *upper* sensitivity; the per-estimate *exact* sensitivity is sharper.
 - **Parametric query optimization (PQO):** the plan-optimal regions tessellate cardinality space into polytopes; the boundary geometry determines sensitivity (Hulgeri–Sudarshan; Ganguly).
 - **Robustness radius:** the largest perturbation of $\hat c_i$ keeping $\hat p$ optimal — a per-coordinate distance to the nearest plan-switch hyperplane in the cost model.
 - Cost models are typically posynomial/monotone in cardinalities, so $C$ is well-behaved (often log-convex) between boundaries, enabling interval propagation.

@@ -47,7 +47,7 @@ Active work formalizes **GQL/SQL/PGQ semantics**, defines **graph algebras** clo
 ## 9. Key References
 - **[Survey]** R. Angles, M. Arenas, P. Barceló, A. Hogan, J. Reutter, D. Vrgoč. *Foundations of modern query languages for graph databases.* ACM Computing Surveys, 2017. — [DOI](https://doi.org/10.1145/3104031)
 - **[Foundational]** N. Francis et al. *Cypher: An evolving query language for property graphs.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190657)
-- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023. *(unverified)*
+- **[SOTA]** N. Francis et al. *GQL and SQL/PGQ: The ISO standards for property graph querying.* SIGMOD, 2023. — [DBLP search](https://dblp.org/search?q=GQL+and+SQL%2FPGQ+The+ISO+Standards+for+Property+Graph+Querying)
 - **[Foundational]** J. Pérez, M. Arenas, C. Gutierrez. *Semantics and complexity of SPARQL.* ACM TODS, 2009. — [DOI](https://doi.org/10.1145/1567274.1567278)
 - **[Foundational]** L. Libkin. *Elements of Finite Model Theory.* Springer, 2004. — [DOI](https://doi.org/10.1007/978-3-662-07003-1)
 - **[Survey]** P. Barceló. *Querying graph databases.* PODS, 2013. — [ACM](https://doi.org/10.1145/2463664.2465216)

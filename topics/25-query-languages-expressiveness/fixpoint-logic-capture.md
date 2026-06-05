@@ -1,6 +1,7 @@
 # Choice of Fixpoint Operator for Capturing Classes
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/fixpoint-logic-capture` · **Status:** partially-solved
+> **Verification note:** In §10 the parenthetical "(8 vertices each split appropriately)" is imprecise about vertex counts; the substantive claim — parity is not expressible in FO+IFP on unordered structures — is correct.
 
 ## 1. Problem Statement
 

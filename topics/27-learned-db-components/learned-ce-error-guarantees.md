@@ -106,7 +106,7 @@ characterization of when two-sided guarantees are impossible below linear space.
 - **[Foundational]** G. Cormode, S. Muthukrishnan. *An Improved Data Stream Summary: the Count-Min Sketch.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001) — [PDF](https://dimacs.rutgers.edu/~graham/pubs/papers/cm-full.pdf)
 - **[Foundational]** M. Abo Khamis, H. Ngo, D. Suciu. *What Do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog Have to Do with One Another?* PODS 2017. — [arXiv](https://arxiv.org/abs/1612.02503) — [DOI](https://doi.org/10.1145/3034786.3056105)
 - **[SOTA]** W. Cai, M. Balazinska, D. Suciu. *Pessimistic Cardinality Estimation.* SIGMOD 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
-- **[SOTA]** K. Deeds, B. Sagi, D. Suciu, et al. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2211.09864) — [DOI](https://doi.org/10.1145/3588907)
+- **[SOTA]** K. Deeds, D. Suciu, M. Balazinska. *SafeBound: A Practical System for Generating Cardinality Bounds.* SIGMOD 2023. — [arXiv](https://arxiv.org/abs/2211.09864) — [DOI](https://doi.org/10.1145/3588907)
 - **[Survey]** X. Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743) — [DOI](https://doi.org/10.14778/3461535.3461552)
 
 ## 10. Worked Example

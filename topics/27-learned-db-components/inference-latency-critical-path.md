@@ -1,6 +1,7 @@
 # Inference Latency Inside the Critical Path
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/inference-latency-critical-path` · **Status:** open
+> **Verification note:** The PGM-index paper proves a segment count of at most $n/(2\varepsilon)$, i.e. $O(n/\varepsilon)$; the $O(n/\varepsilon^2)$ figure used below should be checked against the intended PLA model.
 
 ## 1. Problem Statement
 

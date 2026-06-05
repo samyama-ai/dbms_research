@@ -55,7 +55,7 @@ Active directions: **workload-aware / instance-optimal** DP mechanisms (extendin
 - **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
 - **[SOTA]** Li, C., Hay, M., Rastogi, V., Miklau, G., McGregor, A. *Optimizing Linear Counting Queries under Differential Privacy.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104)
 - **[SOTA]** Hardt, M., Rothblum, G.N. *A Multiplicative Weights Mechanism for Privacy-Preserving Data Analysis.* FOCS, 2010. — [DOI](https://doi.org/10.1109/FOCS.2010.85)
-- **[Survey]** Adam, N.R., Wortmann, J.C. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989. — [DOI](https://doi.org/10.1145/76894.76895)
+- **[Survey]** Adam, N.R., Worthmann, J.C. *Security-Control Methods for Statistical Databases: A Comparative Study.* ACM Computing Surveys, 1989. — [DOI](https://doi.org/10.1145/76894.76895)
 - **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)
 
 ## 10. Worked Example

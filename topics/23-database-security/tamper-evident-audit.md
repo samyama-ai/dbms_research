@@ -55,7 +55,7 @@ Active directions: **verifiable ledger databases** (research around QLDB/SQL Led
 - **[Foundational]** Crosby, S.A., Wallach, D.S. *Efficient Data Structures for Tamper-Evident Logging.* USENIX Security, 2009. — [USENIX](https://www.usenix.org/conference/usenixsecurity09/technical-sessions/presentation/efficient-data-structures-tamper-evident)
 - **[Foundational]** Bellare, M., Yee, B. *Forward-Security in Private-Key Cryptography.* CT-RSA, 2003. — [DOI](https://doi.org/10.1007/3-540-36563-X_1)
 - **[SOTA]** Laurie, B., Langley, A., Kasper, E. *Certificate Transparency.* RFC 6962, IETF, 2013. — [RFC](https://www.rfc-editor.org/rfc/rfc6962)
-- **[SOTA]** Yang, Y., Wu, L., et al. *LedgerDB: A Centralized Ledger Database for Universal Audit and Verification.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415540)
+- **[SOTA]** Yang, X., Zhang, Y., Wang, S., et al. *LedgerDB: A Centralized Ledger Database for Universal Audit and Verification.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415540)
 - **[Survey]** Ma, D., Tsudik, G. *A New Approach to Secure Logging.* ACM TOS, 2009. — [DOI](https://doi.org/10.1145/1502777.1502779)
 
 ## 10. Worked Example

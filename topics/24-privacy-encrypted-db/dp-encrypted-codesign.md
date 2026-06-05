@@ -19,7 +19,7 @@ for all measurable $S$. This composes over a stream of $t$ queries by advanced c
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** Chen, Lacharité, Minaud, Paterson (*Differentially Private Access Patterns*, S&P 2020) give a framework making access patterns DP via a perturbation layer over an encrypted store, with formal $(\varepsilon,\delta)$ guarantees and overhead analysis. Patel, Persiano, Yeo, Yung (CCS 2019) give **volume-hiding** encrypted multimaps with DP-style padding.
+- **Theory-SOTA:** Mazloom & Gordon (*Secure Computation with Differentially Private Access Patterns*, CCS 2018) give a framework making access patterns DP via a perturbation layer over an encrypted/secure-computation store, with formal $(\varepsilon,\delta)$ guarantees and overhead analysis. Patel, Persiano, Yeo, Yung (CCS 2019) give **volume-hiding** encrypted multimaps with DP-style padding.
 - **Systems-SOTA:** **Shrinkwrap** (Bater et al., VLDB 2019) applies DP to intermediate-result *cardinalities* in oblivious query processing, padding result sizes to a DP-noised bound rather than worst case. **SEAL** (Demertzis et al., USENIX Security 2020) tunably trades leakage for efficiency via adjustable padding and ORAM locality.
 
 ## 4. Upper Bound
@@ -28,7 +28,7 @@ Shrinkwrap-style DP padding reduces oblivious-operator output from the worst-cas
 
 ## 5. Lower Bound
 
-Strict (zero-leakage) ORAM has a **$\Omega(\log n)$ per-access bandwidth lower bound** (Larsen–Nielsen, CRYPTO 2018) in the cell-probe model — this is the cost DP-leakage co-design aims to beat by relaxing to $\varepsilon>0$. For the privacy side, any scheme returning all true matches must leak volume up to its additive noise, and one-sided DP noise has an information-theoretic floor on the dummy count needed for a target $\varepsilon$ (the geometric mechanism is optimal among one-sided integer mechanisms, Ghosh–Roughgarden–Sundararajan). Reconstruction-attack lower bounds (KKNO, Eurocrypt 2016) show that with $\varepsilon$ too large, $O(N\log N)$ uniform queries suffice to fully reconstruct.
+Strict (zero-leakage) ORAM has a **$\Omega(\log n)$ per-access bandwidth lower bound** (Larsen–Nielsen, CRYPTO 2018) in the cell-probe model — this is the cost DP-leakage co-design aims to beat by relaxing to $\varepsilon>0$. For the privacy side, any scheme returning all true matches must leak volume up to its additive noise, and one-sided DP noise has an information-theoretic floor on the dummy count needed for a target $\varepsilon$ (the geometric mechanism is optimal among one-sided integer mechanisms, Ghosh–Roughgarden–Sundararajan). Reconstruction-attack lower bounds (KKNO, CCS 2016) show that with $\varepsilon$ too large, $O(N\log N)$ uniform queries suffice to fully reconstruct.
 
 ## 6. The Gap
 
@@ -51,7 +51,7 @@ The gap is **genuinely open** and multi-dimensional. (1) The $\Omega(\log n)$ OR
 
 - **[Foundational]** Kellaris, Kollios, Nissim, O'Neill. *Generic Attacks on Secure Outsourced Databases.* CCS, 2016. — [DOI](https://doi.org/10.1145/2976749.2978386) · [DBLP](https://dblp.org/rec/conf/ccs/KellarisKNO16.html)
 - **[Foundational]** Larsen, Nielsen. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18) · [DBLP](https://dblp.org/rec/conf/crypto/LarsenN18.html) · [ePrint](https://eprint.iacr.org/2018/423)
-- **[SOTA]** Chen, Lacharité, Minaud, Paterson. *Differentially Private Access Patterns in Secure Computation / Encrypted Search.* IEEE S&P, 2020. — [Secure Computation with Differentially Private Access Patterns, CCS 2018: DOI](https://doi.org/10.1145/3243734.3243851) · [ePrint](https://eprint.iacr.org/2017/1016)
+- **[SOTA]** Mazloom, Gordon. *Secure Computation with Differentially Private Access Patterns.* CCS, 2018. — [DOI](https://doi.org/10.1145/3243734.3243851) · [ePrint](https://eprint.iacr.org/2017/1016)
 - **[SOTA]** Bater, He, Ehrich, Machanavajjhala, Rogers. *Shrinkwrap: Efficient SQL Query Processing in Differentially Private Data Federations.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3291264.3291274) · [PDF](http://www.vldb.org/pvldb/vol12/p307-bater.pdf) · [arXiv](https://arxiv.org/abs/1810.01816)
 - **[SOTA]** Patel, Persiano, Yeo, Yung. *Mitigating Leakage in Secure Cloud-Hosted Data Structures: Volume-Hiding for Multi-Maps via Hashing.* CCS, 2019. — [DOI](https://doi.org/10.1145/3319535.3354213) · [DBLP](https://dblp.org/rec/conf/ccs/PatelPYY19.html) · [ePrint](https://eprint.iacr.org/2019/1292)
 - **[SOTA]** Demertzis, Papadopoulos, Papamanthou, Shintre. *SEAL: Attack Mitigation for Encrypted Databases via Adjustable Leakage.* USENIX Security, 2020. — [USENIX](https://www.usenix.org/conference/usenixsecurity20/presentation/demertzis) · [ePrint](https://eprint.iacr.org/2019/811)

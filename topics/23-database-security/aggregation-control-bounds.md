@@ -22,7 +22,7 @@ Model the database as a secret vector $x \in \{0,1\}^n$. A query is a subset $q 
 
 - **Linear algebra / trackers (Denning–Schlörer).** With unrestricted query selection, two overlapping aggregates yield $a_{q} - a_{q\setminus\{i\}} = x_i$ — a tracker isolates one record. Query-set-overlap controls limit $|q|$ and overlap to block this.
 - **Dinur–Nissim reconstruction theorem (2003).** If a curator answers $m = O(n)$ random subset-sum queries each with noise $E = o(\sqrt{n})$, an adversary using **linear programming** reconstructs $x$ up to $o(n)$ errors. Hence to resist reconstruction one **must** add noise $\Omega(\sqrt{n})$ — the foundational lower bound that launched differential privacy.
-- **Fingerprinting codes (Bun–Ullman–Steinke; Dwork et al.).** Lower bounds on the number of statistical queries answerable with per-query error $\alpha$ before privacy collapses: roughly $\tilde O(n^2/\,?)$-type tradeoffs; tight $\Theta$ results for adaptive workloads.
+- **Fingerprinting codes (Bun–Ullman–Vadhan; Dwork et al.).** Lower bounds on the number of statistical queries answerable with per-query error $\alpha$ before privacy collapses: roughly $\tilde O(n^2/\,?)$-type tradeoffs; tight $\Theta$ results for adaptive workloads.
 - **Differential privacy** quantifies the safe budget: answering $m$ counting queries to error $\alpha$ requires privacy loss scaling like $\sqrt{m}\log(1/\delta)/(\alpha n)$ (advanced composition / matrix mechanism).
 
 ## 3. State of the Art (SOTA)
@@ -30,7 +30,7 @@ Model the database as a secret vector $x \in \{0,1\}^n$. A query is a subset $q 
 - **Dinur–Nissim (PODS 2003):** the reconstruction lower bound; $\Omega(\sqrt n)$ noise is necessary against $O(n)$ queries — essentially tight for random workloads.
 - **Dwork–McSherry–Nissim–Smith (TCC 2006):** differential privacy and the Laplace/Gaussian mechanisms, giving matching upper bounds on safe query budgets.
 - **Hardt–Rothblum private multiplicative weights** and the **matrix mechanism (Li–Miklau)**: near-optimal answering of large linear-query workloads, characterizing how many correlated aggregates can be released.
-- **Bun–Ullman–Steinke fingerprinting lower bounds (STOC 2014+):** tight $\Theta(\cdot)$ bounds on adaptive statistical-query budgets.
+- **Bun–Ullman–Vadhan fingerprinting lower bounds (STOC 2014+):** tight $\Theta(\cdot)$ bounds on adaptive statistical-query budgets.
 - Systems-SOTA: query auditors and DP engines (Google/Apple DP, **OpenDP**, **PINQ/Flex**, US Census **TopDown**) implement budget accounting motivated by these bounds.
 
 ## 4. Upper Bound
@@ -42,7 +42,7 @@ Model the database as a secret vector $x \in \{0,1\}^n$. A query is a subset $q 
 ## 5. Lower Bound
 
 - **Dinur–Nissim:** $\Omega(\sqrt n)$ per-query noise is *necessary*; with $o(\sqrt n)$ noise, $O(n)$ queries enable near-full reconstruction (information-theoretic + LP attack).
-- **Fingerprinting-code lower bounds (Bun–Ullman–Steinke):** no mechanism can answer more than $\tilde O(n^2)$ adaptively-chosen statistical queries (with constant accuracy) without privacy failure — tight against the SQ upper bound.
+- **Fingerprinting-code lower bounds (Bun–Ullman–Vadhan):** no mechanism can answer more than $\tilde O(n^2)$ adaptively-chosen statistical queries (with constant accuracy) without privacy failure — tight against the SQ upper bound.
 - **Tracker existence (Denning):** in unrestricted statistical databases a tracker almost always exists, so query-set-size control alone cannot guarantee safety beyond small budgets.
 
 ## 6. The Gap

@@ -17,7 +17,7 @@ Why it matters: a single severe under-estimate can flip a plan to a catastrophic
 
 ## 2. Mathematical Foundations
 
-The target is selectivity $s(q)\in[0,1]$ or cardinality $c(q)=s(q)\cdot n$. Standard error metric is **q-error**: $\mathrm{qerr}(q)=\max\!\big(\hat c(q)/c(q),\, c(q)/\hat c(q)\big)\ge 1$, which is the multiplicative metric that controls plan-cost bounds (Moerkotte–Neumann–Steinbrunn, VLDB 2009: bounding q-error bounds plan suboptimality).
+The target is selectivity $s(q)\in[0,1]$ or cardinality $c(q)=s(q)\cdot n$. Standard error metric is **q-error**: $\mathrm{qerr}(q)=\max\!\big(\hat c(q)/c(q),\, c(q)/\hat c(q)\big)\ge 1$, which is the multiplicative metric that controls plan-cost bounds (Moerkotte–Neumann–Steidl, VLDB 2009: bounding q-error bounds plan suboptimality).
 
 Drift is a distribution shift: training draws $(q,c)\sim P_{train}$, deployment draws from $Q\ne P_{train}$. Classic learning theory bounds generalization *within* a distribution via VC-dimension / Rademacher complexity $\hat R_m(\mathcal F)$, giving $|R(\hat f)-\hat R(\hat f)|\le 2\hat R_m(\mathcal F)+O(\sqrt{\log(1/\delta)/m})$. Under shift these break; the relevant tools are **domain-adaptation bounds** (Ben-David et al.): $\epsilon_T(h)\le \epsilon_S(h)+\tfrac12 d_{\mathcal H\Delta\mathcal H}(P_S,P_T)+\lambda$, where $d_{\mathcal H\Delta\mathcal H}$ is a divergence between train/test marginals. The data-side analogue uses changes in the joint $\Pr[A_1,\dots,A_k]$ that an autoregressive density model (e.g. a deep model of $\prod_j \Pr[A_j\mid A_{<j}]$) has learned.
 
@@ -65,7 +65,7 @@ The gap is **genuinely open and largely empirical**: we lack (a) a metric on que
 - **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
 - **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2021. — [arXiv](https://arxiv.org/abs/1905.04278)
 - **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
-- **[Survey/SOTA]** Wang, Qu, Li, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+- **[Survey/SOTA]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
 - **[Foundational]** Ben-David, Blitzer, Crammer, Kulesza, Pereira, Vaughan. *A Theory of Learning from Different Domains.* Machine Learning, 2010. — [DOI](https://doi.org/10.1007/s10994-009-5152-4)
 
 ## 10. Worked Example

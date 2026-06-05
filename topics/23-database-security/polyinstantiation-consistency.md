@@ -60,7 +60,7 @@ MLS/polyinstantiation is a comparatively dormant classical area, revived in nich
 ## 9. Key References
 
 - **[Foundational]** Jajodia, S., Sandhu, R. *Toward a Multilevel Secure Relational Data Model.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115796)
-- **[Foundational]** Denning, D., Lunt, T., et al. *The SeaView Security Model.* IEEE S&P, 1987. — [DOI](https://doi.org/10.1109/32.55088)
+- **[Foundational]** Denning, D., Lunt, T., et al. *The SeaView Security Model.* IEEE Trans. Software Engineering, 1990. — [DOI](https://doi.org/10.1109/32.55088)
 - **[Foundational]** Smith, K., Winslett, M. *Entity Modeling in the MLS Relational Model* (belief-based semantics). VLDB, 1992. — [DBLP](https://dblp.org/rec/conf/vldb/SmithW92.html)
 - **[Foundational]** Bell, D., LaPadula, L. *Secure Computer System: Unified Exposition and Multics Interpretation.* MITRE, 1976. — [DBLP search](https://dblp.org/search?q=Secure+Computer+System+Unified+Exposition+Multics)
 - **[Survey]** Atluri, V., Jajodia, S., Bertino, E. *Transaction Processing in Multilevel Secure Databases.* (multilevel concurrency control), 1990s. — [DBLP search](https://dblp.org/search?q=Transaction+Processing+Multilevel+Secure+Databases+Atluri+Jajodia)

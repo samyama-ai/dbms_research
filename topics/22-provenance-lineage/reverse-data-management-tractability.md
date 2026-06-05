@@ -23,7 +23,7 @@ Tractability is governed by whether this program is **totally unimodular / submo
 
 ## 3. State of the Art (SOTA)
 
-- **Meliou, Gatterbauer, Suciu (CIDR 2011)** — *Reverse Data Management*; the vision and framework.
+- **Meliou, Gatterbauer, Suciu (VLDB 2011)** — *Reverse Data Management*; the vision and framework.
 - **Meliou, Suciu (SIGMOD 2012)** — *Tiresias: The Database Oracle for How-To Queries*; systems-SOTA, MILP-based engine.
 - **Kimelfeld, Vondrák, Williams (PODS 2011)** and **Freire et al. (VLDB 2015)** — dichotomies for the deletion/resilience sub-cases (theory-SOTA for special objectives).
 - **Deutch, Ives, Milo, Tan (and others)** — provenance-for-updates and *interactive what-if* lineage tooling.
@@ -54,7 +54,7 @@ Active: extending **resilience/responsibility dichotomies to richer objectives a
 
 ## 9. Key References
 
-- **[Foundational]** Meliou, Gatterbauer, Suciu. *Reverse Data Management.* CIDR / VLDB Vision, 2011. — [DOI](https://doi.org/10.14778/3402755.3402803)
+- **[Foundational]** Meliou, Gatterbauer, Suciu. *Reverse Data Management.* PVLDB (Vision), 2011. — [DOI](https://doi.org/10.14778/3402755.3402803)
 - **[SOTA]** Meliou, Suciu. *Tiresias: The Database Oracle for How-To Queries.* SIGMOD, 2012. — [DBLP](https://dblp.org/rec/conf/sigmod/MeliouS12.html)
 - **[SOTA]** Kimelfeld, Vondrák, Williams. *Maximizing Conjunctive Views in Deletion Propagation.* PODS, 2011 (TODS, 2012). — [DOI](https://doi.org/10.1145/1989284.1989308)
 - **[SOTA]** Freire, Gatterbauer, Immerman, Meliou. *The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1507.00674)

@@ -18,7 +18,7 @@ Composition theorems bound cumulative loss. **Basic composition:** $\varepsilon_
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** PLD/FFT accountants (Koskela–Jälkö–Honkela, AISTATS 2020; Gopi–Lee–Wutschitz "Connect-the-Dots," NeurIPS 2021) give numerically tight composition. Fully-adaptive **filters/odometers** (Whitehouse–Ramdas–Rogers–Wu, NeurIPS 2022) close the constant-factor gap to the non-adaptive optimum.
+- **Theory-SOTA:** PLD/FFT accountants (Koskela–Jälkö–Honkela, AISTATS 2020; Gopi–Lee–Wutschitz, NeurIPS 2021) give numerically tight composition. Fully-adaptive **filters/odometers** (Whitehouse–Ramdas–Rogers–Wu, NeurIPS 2022) close the constant-factor gap to the non-adaptive optimum.
 - **Systems-SOTA:** **PrivateSQL/Tumult Analytics/OpenDP** track per-query spend with zCDP accountants. **Cohere / Sage / privacy budget schedulers** (Luo, Lécuyer et al.) manage budgets across many pipelines as a *resource-allocation* problem; **DPella** and **PINQ/wPINQ** (McSherry) pioneered language-level budget tracking.
 
 ## 4. Upper Bound
@@ -52,7 +52,7 @@ The advanced-composition $\Omega(\sqrt{k}\,\varepsilon)$ growth is **tight** —
 - **[Foundational]** Kairouz, Oh, Viswanath. *The Composition Theorem for Differential Privacy.* ICML, 2015. — [PMLR](https://proceedings.mlr.press/v37/kairouz15.html) — [arXiv](https://arxiv.org/abs/1311.0776)
 - **[Foundational]** Bun, Steinke. *Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds.* TCC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53641-4_24) — [arXiv](https://arxiv.org/abs/1605.02065)
 - **[SOTA]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1605.08294)
-- **[SOTA]** Gopi, Lee, Wutschitz. *Numerical Composition of Differential Privacy (Connect-the-Dots).* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2106.02848)
+- **[SOTA]** Gopi, Lee, Wutschitz. *Numerical Composition of Differential Privacy.* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2106.02848)
 - **[SOTA]** Dong, Roth, Su. *Gaussian Differential Privacy.* J. Royal Statistical Society B, 2022. — [DOI](https://doi.org/10.1111/rssb.12454)
 - **[Survey]** McSherry. *Privacy Integrated Queries (PINQ).* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559850)
 

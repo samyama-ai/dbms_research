@@ -12,7 +12,7 @@ Variants:
 - **Quantitative bound:** upper-bound mutual information / advantage as a function of #queries $q$, domain size $N$, and auxiliary knowledge.
 
 ## 2. Mathematical Foundations
-Leakage is formalized via a **leakage function** $\mathcal{L}(\mathrm{DB},\mathrm{queries})$; security says there is a simulator $\mathcal{S}$ such that the real view $\approx_c \mathcal{S}(\mathcal{L})$ (Curtmola–Garcia–Kamara–Roxana, CCS'06). Attacks lower-bound how much $\mathcal{L}$ leaks.
+Leakage is formalized via a **leakage function** $\mathcal{L}(\mathrm{DB},\mathrm{queries})$; security says there is a simulator $\mathcal{S}$ such that the real view $\approx_c \mathcal{S}(\mathcal{L})$ (Curtmola–Garay–Kamara–Ostrovsky, CCS'06). Attacks lower-bound how much $\mathcal{L}$ leaks.
 
 Range-query reconstruction reduces to combinatorial/geometric recovery: from access-pattern co-occurrence one recovers a **PQ-tree / interval order** of values (Kellaris–Kollios–Nissim–O'Neill, CCS'16) — sample complexity $\Theta(N^2\log N)$ queries, improved to $\Theta(N\log N)$ for dense/uniform variants (Lacharité–Minaud–Paterson, S&P'18; Grubbs et al.). **Volume leakage** alone enables reconstruction (Grubbs–Lacharité–Minaud–Paterson, CCS'18; Kornaropoulos–Papamanthou–Tamassia, "data-recovery via search-pattern", S&P'20). Tools: **VC dimension** / sample complexity for learning the value order, **information theory** ($I(\mathrm{queries};\mathrm{view})$), **statistical distance**, and **differential privacy** as a *defense* metric (Chen–Kamara, etc.). Quantitative information flow (min-entropy leakage, $g$-leakage of Alvim–Chatzikokolakis–Smith) provides an adversary-parameterized measure.
 

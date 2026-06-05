@@ -43,7 +43,7 @@ Active: **practical optimal ORAM** narrowing OptORAMa's constants toward Path/Ri
 
 ## 10. Worked Example
 
-A Path ORAM stores $N = 8$ logical blocks in a binary tree of height $L = \log_2 N = 3$, so 4 leaves, each root-to-leaf path holding $L+1 = 4$ buckets. Suppose the position map says logical block 5 currently maps to **leaf 2** (path $\text{root}\to b_1\to b_2\to \text{leaf}_2$).
+A Path ORAM stores $N = 8$ logical blocks in a binary tree of height $L = \log_2 N = 3$, so 8 leaves, each root-to-leaf path holding $L+1 = 4$ buckets. Suppose the position map says logical block 5 currently maps to **leaf 2** (path $\text{root}\to b_1\to b_2\to \text{leaf}_2$).
 
 **One access (read block 5):**
 1. Look up position: leaf 2. Read **all 4 buckets** along that path into the client stash — this is the $O(\log N)$ bandwidth: 4 buckets moved, not 1.

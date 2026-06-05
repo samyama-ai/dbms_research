@@ -50,7 +50,7 @@ A **volume leakage-abuse attack** in miniature. Suppose the server hosts an encr
 |---|---|
 | `flu` | 12 |
 | `covid` | 47 |
-| `cancer | 5 |
+| `cancer` | 5 |
 | `asthma` | 23 |
 
 The counts are all distinct. The client now issues four encrypted queries $q_1,\dots,q_4$; the access pattern reveals how many encrypted documents each returns: $|q_1|=23,\ |q_2|=5,\ |q_3|=47,\ |q_4|=12$. Because the volume multiset $\{12,47,5,23\}$ is *injective*, the server matches by volume alone: $q_1\!\to\!$`asthma`, $q_2\!\to\!$`cancer`, $q_3\!\to\!$`covid`, $q_4\!\to\!$`flu`. **Full query recovery with zero cryptanalysis** — this is the set-reconstruction problem the LAA literature formalizes.

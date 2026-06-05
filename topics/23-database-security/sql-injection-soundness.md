@@ -29,7 +29,7 @@ Supporting machinery:
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** Parse-tree-validation soundness (Su–Wassermann SQLCHECK, POPL 2006); **positive tainting / PREPARE-statement synthesis** (Halfond–Orso–Manolios, WASE/ISSTA 2006, "AMNESIA" combining static query models + runtime monitoring). String-analysis verification via grammar/automata over-approximation (JSA, Stranger). SMT **string solvers** now decide many real query-construction constraints.
+- **Theory-SOTA:** Parse-tree-validation soundness (Su–Wassermann SQLCHECK, POPL 2006); **positive tainting / PREPARE-statement synthesis** (Halfond–Orso–Manolios, FSE 2006; "AMNESIA" — Halfond–Orso, ASE 2005 — combining static query models + runtime monitoring). String-analysis verification via grammar/automata over-approximation (JSA, Stranger). SMT **string solvers** now decide many real query-construction constraints.
 - **Systems-SOTA:** Universally, **parameterized queries / prepared statements** in mature drivers; **ORMs** (Hibernate, Entity Framework, Django ORM, SQLAlchemy) parameterize by default but expose raw fragments. **Runtime SQLi firewalls** (libinjection used by ModSecurity, GreenSQL-style proxies) tokenize and fingerprint. **Allowlisting** of identifiers for the non-parameterizable surface. Static analyzers (CodeQL, Semgrep, Checkmarx, Fortify) flag tainted-to-sink flows but are *unsound* in practice (miss flows through stored procedures and reflection).
 
 ## 4. Upper Bound
@@ -58,7 +58,7 @@ Active directions: **typed/effect-system SQL embedding** (e.g., type-safe query 
 ## 9. Key References
 
 - **[Foundational]** Su, Z., Wassermann, G. *The Essence of Command Injection Attacks in Web Applications.* POPL, 2006. — [DOI](https://doi.org/10.1145/1111037.1111070)
-- **[Foundational]** Halfond, W.G.J., Orso, A., Manolios, P. *Using Positive Tainting and Syntax-Aware Evaluation to Counter SQL Injection Attacks.* FSE, 2006 (AMNESIA: ISSTA, 2005). — [DOI](https://doi.org/10.1145/1181775.1181797)
+- **[Foundational]** Halfond, W.G.J., Orso, A., Manolios, P. *Using Positive Tainting and Syntax-Aware Evaluation to Counter SQL Injection Attacks.* FSE, 2006 (AMNESIA: Halfond, Orso, ASE, 2005). — [DOI](https://doi.org/10.1145/1181775.1181797)
 - **[SOTA]** Christensen, A.S., Møller, A., Schwartzbach, M.I. *Precise Analysis of String Expressions.* SAS, 2003. — [DOI](https://doi.org/10.1007/3-540-44898-5_1)
 - **[SOTA]** Yu, F., Alkhalaf, M., Bultan, T. *Stranger: An Automata-Based String Analysis Tool for PHP.* TACAS, 2010. — [DOI](https://doi.org/10.1007/978-3-642-12002-2_13)
 - **[Survey]** Halfond, W.G.J., Viegas, J., Orso, A. *A Classification of SQL Injection Attacks and Countermeasures.* ISSSE, 2006. — [DBLP](https://dblp.org/rec/conf/issse3/HalfondVO06.html)

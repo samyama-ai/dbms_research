@@ -19,8 +19,8 @@ For fixed sensitivities, the inner budget-allocation is a convex program (Lagran
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** The **Matrix Mechanism** (Li, Hay, Rastogi, Miklau, Suciu, PODS 2010) optimizes a *strategy* matrix for a linear workload — effectively budget allocation across a fixed query "plan." HDMM (McKenna et al., VLDB 2018) scales this. These optimize *what to measure*, not *how to execute relationally*.
-- **Systems-SOTA:** **PrivateSQL** (VLDB 2019) and **Tumult Analytics** compile DP-SQL but use largely fixed strategies. **CHORUS** (Johnson, Near et al., 2018/2020) rewrites SQL into DP plans. **APEx** (Ge, Mohan, He, et al., SIGMOD 2019) is an accuracy-aware DP query engine that *selects mechanisms* to meet an accuracy bound at minimum privacy cost — the closest to a true DP optimizer.
+- **Theory-SOTA:** The **Matrix Mechanism** (Li, Hay, Rastogi, Miklau, McGregor, PODS 2010) optimizes a *strategy* matrix for a linear workload — effectively budget allocation across a fixed query "plan." HDMM (McKenna et al., VLDB 2018) scales this. These optimize *what to measure*, not *how to execute relationally*.
+- **Systems-SOTA:** **PrivateSQL** (VLDB 2019) and **Tumult Analytics** compile DP-SQL but use largely fixed strategies. **CHORUS** (Johnson, Near et al., 2018/2020) rewrites SQL into DP plans. **APEx** (Ge, He, Ilyas, Machanavajjhala, SIGMOD 2019) is an accuracy-aware DP query engine that *selects mechanisms* to meet an accuracy bound at minimum privacy cost — the closest to a true DP optimizer.
 
 ## 4. Upper Bound
 
@@ -53,7 +53,7 @@ There is **no unified DP cost model** that is both (a) predictive of true output
 - **[Foundational]** Li, Hay, Rastogi, Miklau, McGregor. *Optimizing Linear Counting Queries Under Differential Privacy (Matrix Mechanism).* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807104) · [DBLP](https://dblp.org/rec/conf/pods/LiHRMM10.html)
 - **[Foundational]** Hardt, Talwar. *On the Geometry of Differential Privacy.* STOC, 2010. — [DOI](https://doi.org/10.1145/1806689.1806786) · [DBLP](https://dblp.org/rec/conf/stoc/HardtT10.html) · [arXiv](https://arxiv.org/abs/0907.3754)
 - **[SOTA]** McKenna, Miklau, Hay, Machanavajjhala. *Optimizing Error of High-Dimensional Statistical Queries Under Differential Privacy (HDMM).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3231751.3231769) · [DBLP](https://dblp.org/rec/journals/pvldb/McKennaMHM18.html) · [arXiv](https://arxiv.org/abs/1808.03537)
-- **[SOTA]** Ge, Mohan, He, Machanavajjhala, et al. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300092) · [arXiv](https://arxiv.org/abs/1712.10266)
+- **[SOTA]** Ge, He, Ilyas, Machanavajjhala. *APEx: Accuracy-Aware Differentially Private Data Exploration.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3300092) · [arXiv](https://arxiv.org/abs/1712.10266)
 - **[SOTA]** Johnson, Near, et al. *CHORUS: A Programming Framework for Building Scalable Differential Privacy Mechanisms.* IEEE EuroS&P, 2020. — [DOI](https://doi.org/10.1109/EuroSP48549.2020.00041) · [arXiv](https://arxiv.org/abs/1809.07750)
 
 ## 10. Worked Example

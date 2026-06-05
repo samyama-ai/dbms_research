@@ -21,7 +21,7 @@ The general engine is **truncation + sensitivity analysis**: bound each entity's
 
 ## 3. State of the Art (SOTA)
 
-**Theory-SOTA.** Johnson–Near–Song's **elastic sensitivity** (VLDB 2018, the *FLEX* system) upper-bounds local sensitivity of general SQL joins without running the data, enabling practical DP-SQL. **Residual sensitivity** (Dong–Fang–Yi, ICDE/SIGMOD 2021–2022) tightens this for multi-way joins. Tao–McKenna–Miklau–Hay–Machanavajjhala and the **R2T (Race-to-the-Top)** framework (SIGMOD 2022) give instance-optimal truncation for self-join-free and joined aggregation queries with near-optimal utility.
+**Theory-SOTA.** Johnson–Near–Song's **elastic sensitivity** (VLDB 2018, the *FLEX* system) upper-bounds local sensitivity of general SQL joins without running the data, enabling practical DP-SQL. **Residual sensitivity** (Dong–Yi, SIGMOD 2021) tightens this for multi-way joins. Tao–McKenna–Miklau–Hay–Machanavajjhala and the **R2T (Race-to-the-Top)** framework (SIGMOD 2022) give instance-optimal truncation for self-join-free and joined aggregation queries with near-optimal utility.
 
 **Systems-SOTA.** Google's **DP SQL** / PipelineDP and the **Zetasql DP** operators implement bounded-contribution (per-user row capping) for joins; **Tumult Analytics** and **OpenDP** support truncation-based join DP; PINQ/wPINQ (McSherry; Proserpio–Goldberg–McSherry, VLDB 2014) pioneered DP query operators with weighted sensitivity for joins.
 
@@ -54,7 +54,7 @@ Active threads: **instance-optimal DP for self-joins and cyclic queries** extend
 - **[Foundational]** Dwork, C., McSherry, F., Nissim, K., Smith, A. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC, 2006. — [DOI](https://doi.org/10.1007/11681878_14)
 - **[Foundational]** Nissim, K., Raskhodnikova, S., Smith, A. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250803)
 - **[SOTA]** Johnson, N., Near, J.P., Song, D. *Towards Practical Differential Privacy for SQL Queries.* VLDB, 2018. — [arXiv](https://arxiv.org/abs/1706.09479)
-- **[SOTA]** Dong, W., Fang, J., Yi, K. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813)
+- **[SOTA]** Dong, W., Yi, K. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813)
 - **[SOTA]** Dong, W., Yi, K. *R2T: Instance-Optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517844)
 - **[SOTA]** Proserpio, D., Goldberg, S., McSherry, F. *Calibrating Data to Sensitivity in Private Data Analysis (wPINQ).* VLDB, 2014. — [arXiv](https://arxiv.org/abs/1203.3453)
 - **[Survey]** Dwork, C., Roth, A. *The Algorithmic Foundations of Differential Privacy.* Foundations and Trends in TCS, 2014. — [DOI](https://doi.org/10.1561/0400000042)

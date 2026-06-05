@@ -57,7 +57,7 @@ local costs $c=\begin{bmatrix}1&1&16\\1&1&4\\4&4&1\end{bmatrix}$, giving cumulat
 
 So $\mathrm{DTW}(A,B)=D(3,3)=3$, via warping path $(1,1)\!\to\!(2,2)\!\to\!(3,3)$. With threshold $\tau=2$ this pair is **not** reported.
 
-**Filter-and-refine.** $\mathrm{LB\_Keogh}$ bounds DTW cheaply: build an envelope around $B$ with warping band $w=1$, $U_j=\max_{|k-j|\le1}B_k$, $L_j=\min_{|k-j|\le1}B_k$, giving $U=\langle1,4,4\rangle$, $L=\langle1,1,1\rangle$. Then $\mathrm{LB}=\sum_i (A_i-U_i)^2$ if $A_i>U_i$ else $(A_i-L_i)^2$ if $A_i<L_i$ else $0 = 0+0+0=0 \le \mathrm{DTW}=3$. Since $\mathrm{LB}=0\le\tau$ the pair survives the filter and goes to exact refinement — illustrating the $O(m)$ filter guarding the $O(m^2)$ DP, with no false dismissal. Over $n$ trajectories this still leaves the $\Theta(n^2)$ candidate wall of Section 1.
+**Filter-and-refine.** $\mathrm{LB\_Keogh}$ bounds DTW cheaply: build an envelope around $B$ with warping band $w=1$, $U_j=\max_{|k-j|\le1}B_k$, $L_j=\min_{|k-j|\le1}B_k$, giving $U=\langle1,4,4\rangle$, $L=\langle1,1,1\rangle$. Then $\mathrm{LB}=\sum_i (A_i-U_i)^2$ if $A_i>U_i$ else $(A_i-L_i)^2$ if $A_i<L_i$ else $0 = 1+0+0=1 \le \mathrm{DTW}=3$. Since $\mathrm{LB}=1\le\tau$ the pair survives the filter and goes to exact refinement — illustrating the $O(m)$ filter guarding the $O(m^2)$ DP, with no false dismissal. Over $n$ trajectories this still leaves the $\Theta(n^2)$ candidate wall of Section 1.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

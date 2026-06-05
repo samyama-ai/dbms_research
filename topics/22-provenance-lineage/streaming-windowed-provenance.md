@@ -33,7 +33,7 @@ A formal sliding-window provenance model with tight space lower/upper bounds per
 
 ## 9. Key References
 - **[SOTA]** Boris Glavic, Kyumars Sheykh Esmaili, Peter M. Fischer, Nesime Tatbul. *Ariadne: Managing Fine-Grained Provenance on Data Streams.* DEBS, 2013. — [DOI](https://doi.org/10.1145/2488222.2488256)
-- **[SOTA]** Dimitris Palyvos-Giannas, Vincenzo Gulisano, Marina Papatriantafilou. *GeneaLog: Fine-Grained Data Streaming Provenance in Cyber-Physical Systems.* Parallel Computing, 2018. — [DOI](https://doi.org/10.1145/3274808.3274826)
+- **[SOTA]** Dimitris Palyvos-Giannas, Vincenzo Gulisano, Marina Papatriantafilou. *GeneaLog: Fine-grained Data Streaming Provenance at the Edge.* Middleware, 2018 (extended in Parallel Computing, 2019). — [DOI](https://doi.org/10.1145/3274808.3274826)
 - **[Foundational]** Mayur Datar, Aristides Gionis, Piotr Indyk, Rajeev Motwani. *Maintaining Stream Statistics over Sliding Windows.* SIAM J. Computing, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
 - **[Foundational]** Vladimir Braverman, Rafail Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DBLP search](https://dblp.org/search?q=Smooth+Histograms+for+Sliding+Windows)
 - **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007. — [DBLP](https://dblp.org/rec/conf/pods/GreenKT07.html)

@@ -42,7 +42,7 @@ Open. Theory gives worst-case-optimal-within-model-class (PGM) and a generic dyn
 - Multidimensional and string-key dynamic learned indexes.
 
 ## 9. Key References
-- **[Foundational]** J. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[Foundational]** T. Kraska, et al. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
 - **[SOTA]** J. Ding, et al. *ALEX: An Updatable Adaptive Learned Index.* SIGMOD, 2020. — [arXiv](https://arxiv.org/abs/1905.08898)
 - **[SOTA]** P. Ferragina, G. Vinciguerra. *The PGM-Index: A Fully-Dynamic Compressed Learned Index with Provable Worst-Case Bounds.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389135)
 - **[SOTA]** J. Wu, et al. *Updatable Learned Index with Precise Positions (LIPP).* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2104.05520)

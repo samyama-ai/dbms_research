@@ -53,7 +53,7 @@ Active threads: (1) **resiliency-aware WSP** — enforcing DSoD when users may b
 - **[SOTA]** Crampton, J., Gutin, G., Yeo, A. *On the Parameterized Complexity and Kernelization of the Workflow Satisfiability Problem.* ACM TISSEC, 2013. — [DOI](https://doi.org/10.1145/2487222.2487226)
 - **[SOTA]** Karapetyan, D., Gagarin, A., Gutin, G. *Pattern Backtracking Algorithm for the Workflow Satisfiability Problem with User-Independent Constraints.* J. Heuristics / FAW, 2015. — [arXiv](https://arxiv.org/abs/1412.7834)
 - **[SOTA]** Basin, D., Burri, S.J., Karjoth, G. *Obstruction-Free Authorization Enforcement: Aligning Security and Business Objectives.* Journal of Computer Security, 2014. — [DOI](https://doi.org/10.3233/JCS-140500)
-- **[Survey]** Crampton, J., Gutin, G., Watrigant, R. *Resiliency and the Workflow Satisfiability Problem.* (surveying FPT results), 2010s. — [arXiv](https://arxiv.org/abs/1706.07205)
+- **[Survey]** Crampton, J., Gutin, G., Karapetyan, D., Watrigant, R. *The Bi-Objective Workflow Satisfiability Problem and Workflow Resiliency.* Journal of Computer Security, 2017. — [arXiv](https://arxiv.org/abs/1512.07019)
 
 ## 10. Worked Example
 

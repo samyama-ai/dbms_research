@@ -42,7 +42,7 @@ Active work on enumeration complexity of GPML by **Martens, Niewerth, Trautner, 
 - **[Foundational]** Bagan, Bonifati, Groz. *A Trichotomy for Regular Simple Path Queries on Graphs.* PODS 2013 / ACM TODS 2020. — [arXiv](https://arxiv.org/abs/1212.6857) · [DBLP](https://dblp.org/rec/conf/pods/BaganBG13.html)
 - **[SOTA]** Martens, Niewerth, Popp, Rojas, Vansummeren, Vrgoč. *Representing Paths in Graph Database Pattern Matching.* PVLDB 16(7), 2023. — [DOI](https://doi.org/10.14778/3587136.3587151)
 - **[Foundational]** Eppstein. *Finding the k Shortest Paths.* SIAM J. Comput., 1998. — [DOI](https://doi.org/10.1137/S0097539795290477)
-- **[Survey]** Francis et al. *GQL and SQL/PGQ: Theoretical Models and Semantics.* SIGMOD/PODS 2023. — [DBLP search](https://dblp.org/search?q=A+Researcher%27s+Digest+of+GQL)
+- **[Survey]** Francis, Gheerbrant, Guagliardo, Libkin, Marsault, Martens, Murlak, Peterfreund, Rogova, Vrgoč. *A Researcher's Digest of GQL.* ICDT 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2023.1)
 
 ## 10. Worked Example
 

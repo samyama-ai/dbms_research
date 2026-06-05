@@ -8,7 +8,7 @@ For a windowed continuous query under out-of-order, skewed input, three quantiti
 
 - **Latency** $L$ — processing-time delay from when a result *could* be emitted (event-time complete) to when it *is* emitted;
 - **Completeness** $C$ — fraction (or weight) of relevant input reflected in the emitted result, i.e. $1$ minus incompleteness from late/dropped data;
-- **Cost** $R$ — resource usage (state size, CPU, memory, $/hour, energy) needed to sustain the chosen $(L,C)$.
+- **Cost** $R$ — resource usage (state size, CPU, memory, \$/hour, energy) needed to sustain the chosen $(L,C)$.
 
 The problem: **characterize the Pareto frontier $\mathcal{P}\subseteq \{(L,C,R)\}$ of achievable triples for a given query class and input model, and design policies that operate on or near $\mathcal{P}$ with knobs (watermark lag, trigger policy, allowed lateness, state TTL, parallelism, shedding).** Variants: a fixed-budget optimization (max $C$ s.t. $L\le L_0, R\le R_0$); the *shape* of the frontier (is it convex? where are the knees?); and an online/adaptive variant (track a moving frontier under workload drift). Marked **empirically-open**: the qualitative trade-off is folklore, but a *quantitative, query-aware, provable* frontier is not established.
 

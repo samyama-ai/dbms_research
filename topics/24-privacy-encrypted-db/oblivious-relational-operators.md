@@ -20,7 +20,7 @@ Join cost is governed by the **AGM bound** $|Q|\le \prod_e |R_e|^{x_e}$ for a fr
 
 ## 3. State of the Art (SOTA)
 - **Systems-SOTA:** *ObliDB* (Eskandarian–Zaharia, VLDB'19/PVLDB) — oblivious query operators in SGX. *Opaque* (Zheng et al., NSDI'17) — oblivious Spark SQL operators with bitonic-sort-based joins. *Oblix*, *ZeroTrace* for oblivious index/ORAM primitives. *SODA*/*Hermetic* and *Snoopy* (SOSP'21, oblivious storage scaling).
-- **Theory-SOTA:** oblivious sort-merge and hash joins matching plaintext up to $O(\log n)$–$O(\log^2 n)$ factors; *Krastnikov–Kerschbaum–Stachowiak* (PVLDB'20) oblivious binary/band joins in $O((n+Z)\log(n+Z))$ without ORAM. Linear oblivious compaction (Asharov et al., "Bucket Oblivious Sort", SOSA'20).
+- **Theory-SOTA:** oblivious sort-merge and hash joins matching plaintext up to $O(\log n)$–$O(\log^2 n)$ factors; *Krastnikov–Kerschbaum–Stebila* (PVLDB'20) oblivious binary/band joins in $O((n+Z)\log(n+Z))$ without ORAM. Linear oblivious compaction (Asharov et al., "Bucket Oblivious Sort", SOSA'20).
 
 ## 4. Upper Bound
 For sort-based equi-join and group-by: $O((n+Z)\log(n+Z))$ oblivious work using $O(n\log n)$ oblivious sort + linear oblivious expansion/aggregation, in the **oblivious RAM / sorting-network model** (Krastnikov et al. 2020). General operators via ORAM incur an additional $O(\log n)$–$O(\log^2 n)$ factor. With a sorting network the bound is $O((n+Z)\log^2(n+Z))$ (bitonic), the common systems choice for vectorizability. Worst-case-optimal oblivious multiway joins pad to the AGM bound $\mathrm{AGM}(Q)$, giving $O(\mathrm{AGM}(Q)\cdot \mathrm{polylog})$.

@@ -1,7 +1,7 @@
 # Verified Reference Monitors for DBMS
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/verified-reference-monitor` · **Status:** partially-solved
-> **Verification note:** The canonical Cedar OOPSLA 2024 paper is titled "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization" with a large AWS author list, not a single "Cuoq et al." attribution.
+> **Verification note:** The canonical Cedar OOPSLA 2024 paper (DOI 10.1145/3649835) is "Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization" by Cutler et al. (AWS); §9 corrected.
 
 ## 1. Problem Statement
 
@@ -67,7 +67,7 @@ What's proven: small verified monitors (seL4) and verified policy engines (Cedar
 - **[Foundational]** Goguen, J., Meseguer, J. *Security Policies and Security Models* (noninterference). IEEE S&P, 1982. — [DOI](https://doi.org/10.1109/SP.1982.10014)
 - **[SOTA]** Klein, G., et al. *seL4: Formal Verification of an OS Kernel.* SOSP, 2009. — [DOI](https://doi.org/10.1145/1629575.1629596)
 - **[SOTA]** Parker, J., Vazou, N., Hicks, M. *LWeb: Information Flow Security for Multi-Tier Web Applications.* POPL, 2019. — [DOI](https://doi.org/10.1145/3290388)
-- **[SOTA]** Cuoq et al. / AWS. *Cedar: A Verified Authorization Policy Language.* (OOPSLA, 2024). — [DOI](https://doi.org/10.1145/3649835)
+- **[SOTA]** Cutler, J., et al. (AWS). *Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization.* OOPSLA, 2024. — [DOI](https://doi.org/10.1145/3649835)
 - **[Survey]** Sabelfeld, A., Myers, A. *Language-Based Information-Flow Security.* IEEE JSAC, 2003. — [DOI](https://doi.org/10.1109/JSAC.2002.806121)
 
 ## 10. Worked Example

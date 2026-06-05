@@ -55,7 +55,7 @@ Active: **explainability for missing answers in data pipelines and ML**, and **p
 ## 9. Key References
 
 - **[Foundational]** Chapman, Jagadish. *Why Not?* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559901)
-- **[Foundational]** Huang, Chen, Doan, Naughton. *On the Provenance of Non-Answers to Queries over Extracted Data (Artemis).* VLDB, 2008. — [DBLP search](https://dblp.org/search?q=On+the+Provenance+of+Non-Answers+to+Queries+over+Extracted+Data)
+- **[Foundational]** Huang, Chen, Doan, Naughton. *On the Provenance of Non-Answers to Queries over Extracted Data (Artemis).* PVLDB, 2008. — [DBLP](https://dblp.org/rec/journals/pvldb/HuangCDN08.html)
 - **[SOTA]** Tran, Chan. *How to ConQueR Why-Not Questions.* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807172)
 - **[SOTA]** ten Cate, Civili, Sherkhonov, Tan. *High-Level Why-Not Explanations using Ontologies.* PODS/ICDT, 2015. — [arXiv](https://arxiv.org/abs/1412.2332)
 - **[Survey]** Herschel, Diestelkämper, Ben Lahmar. *A Survey on Provenance: What for? What form? What from?* VLDB Journal, 2017. — [DBLP](https://dblp.org/rec/journals/vldb/HerschelDL17.html)

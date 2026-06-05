@@ -68,7 +68,7 @@ We have good *workloads* (JOB, STATS-CEB) but no *metric* that is both cheap and
 - **[Foundational]** Leis, Gubichev, Mirchev, Boncz, Kemper, Neumann. *How Good Are Query Optimizers, Really? (Join Order Benchmark).* VLDB, 2015. — [DOI](https://doi.org/10.14778/2850583.2850594), [DBLP](https://dblp.org/rec/journals/pvldb/LeisGMBK015.html)
 - **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [DOI](https://doi.org/10.14778/1687627.1687738), [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
 - **[SOTA]** Negi, Marcus, Kipf, Mao, Tatbul, Kraska, Alizadeh. *Flow-Loss: Learning Cardinality Estimates that Matter.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476259), [arXiv](https://arxiv.org/abs/2101.04964)
-- **[Survey/SOTA]** Han, Wu, Wang, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3503585.3503586), [arXiv](https://arxiv.org/abs/2109.05877)
+- **[Survey/SOTA]** Han, Wu, Wu, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3503585.3503586), [arXiv](https://arxiv.org/abs/2109.05877)
 - **[Survey/SOTA]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [DOI](https://doi.org/10.14778/3461535.3461552), [DBLP](https://dblp.org/rec/journals/pvldb/WangQWWZ21.html)
 - **[SOTA]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021. — [GitHub](https://github.com/learnedsystems/CEB)
 

@@ -66,7 +66,7 @@ Wide and **genuinely open**. We have certified *one-sided* envelopes (often very
 - **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008. — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html)
 - **[Foundational]** Moerkotte, Neumann, Steidl. *Preventing Bad Plans by Bounding the Impact of Cardinality Estimation Errors.* VLDB, 2009. — [DBLP](https://dblp.org/rec/journals/pvldb/MoerkotteNS09.html)
 - **[SOTA]** Cai, Balazinska, Suciu. *Pessimistic Cardinality Estimation: Tighter Upper Bounds for Intermediate Join Cardinalities.* SIGMOD, 2019. — [DOI](https://doi.org/10.1145/3299869.3319894)
-- **[SOTA]** Wu, Cong, et al. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD, 2023. — [arXiv](https://arxiv.org/abs/2212.05526)
+- **[SOTA]** Wu, Negi, Alizadeh, Kraska, Madden. *FactorJoin: A New Cardinality Estimation Framework for Join Queries.* SIGMOD/PACMMOD, 2023. — [arXiv](https://arxiv.org/abs/2212.05526) · [DOI](https://doi.org/10.1145/3588721)
 - **[Foundational]** Tibshirani, Foygel Barber, Candès, Ramdas. *Conformal Prediction Under Covariate Shift.* NeurIPS, 2019. — [arXiv](https://arxiv.org/abs/1904.06019)
 - **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
 

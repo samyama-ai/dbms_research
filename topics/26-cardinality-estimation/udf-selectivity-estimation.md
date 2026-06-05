@@ -61,7 +61,7 @@ A table $R$ with $|R|=1{,}000{,}000$ rows and a black-box predicate `WHERE is_sp
 
 Draw $n=400$ rows, evaluate the classifier, and find 32 flagged: $\hat s = 32/400 = 0.08$. Hoeffding bounds the error: for confidence $1-\delta = 0.95$, the additive half-width is $\varepsilon = \sqrt{\tfrac{1}{2n}\ln\tfrac{2}{\delta}} = \sqrt{\tfrac{\ln 40}{800}} \approx \sqrt{0.00461} \approx 0.068$. So $s \in [0.08 \pm 0.068]$ — wide because $n$ is small. To tighten to $\varepsilon=0.01$ we need $n \ge \tfrac{1}{2\varepsilon^2}\ln\tfrac2\delta = \tfrac{\ln 40}{2(0.01)^2} \approx 18{,}444$ samples — *independent* of $|R|$.
 
-Expensive-predicate ordering: suppose a second cheap predicate $p_2$ has $s_2=0.5$, cost $c_2=1$, while `is_spam` has $s_1=0.08$, cost $c_1=20$. Hellerstein–Stonebraker rank $=(1-s)/c$: $p_1 \to 0.92/20 = 0.046$, $p_2 \to 0.5/1 = 0.5$. Higher rank first, so evaluate the cheap, more-selective $p_2$ before the costly classifier — pruning $\sim$half the rows before paying for `is_spam`.
+Expensive-predicate ordering: suppose a second cheap predicate $p_2$ has $s_2=0.5$, cost $c_2=1$, while `is_spam` has $s_1=0.08$, cost $c_1=20$. Hellerstein–Stonebraker rank $=(1-s)/c$: $p_1 \to 0.92/20 = 0.046$, $p_2 \to 0.5/1 = 0.5$. Higher rank first, so evaluate the cheap $p_2$ before the costly classifier — pruning $\sim$half the rows before paying for `is_spam`.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

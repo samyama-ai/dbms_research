@@ -58,7 +58,7 @@ The problem is **partially solved**: correcting *seen* queries and reconciling f
 
 - **[Foundational]** Stillger, Lohman, Markl, Kandil. *LEO – DB2's LEarning Optimizer.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/StillgerLMK01.html)
 - **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
-- **[SOTA]** Markl, Haas, Kutsch, Megiddo, Srivastava, Tran. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005. — [VLDB Journal version (DOI)](https://doi.org/10.1007/s00778-006-0030-1)
+- **[SOTA]** Markl, Megiddo, Kutsch, Tran, Haas, Srivastava. *Consistently Estimating the Selectivity of Conjuncts of Predicates (max-entropy).* VLDB, 2005. — [VLDB Journal version (DOI)](https://doi.org/10.1007/s00778-006-0030-1)
 - **[SOTA]** Srivastava, Haas, Markl, Kutsch, Tran. *ISOMER: Consistent Histogram Construction Using Query Feedback.* ICDE, 2006. — [DBLP](https://dblp.org/rec/conf/icde/SrivastavaHMKT06.html)
 - **[SOTA]** Kipf, Kipf, Radke, Leis, Boncz, Kemper. *Learned Cardinalities: Estimating Correlated Joins with Deep Learning (MSCN).* CIDR, 2019. — [arXiv](https://arxiv.org/abs/1809.00677)
 - **[Survey]** Chaudhuri, Narasayya. *Self-Tuning Database Systems: A Decade of Progress.* VLDB, 2007. — [DBLP](https://dblp.org/rec/conf/vldb/ChaudhuriN07.html)

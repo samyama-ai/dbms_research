@@ -16,7 +16,7 @@ $$ \text{del}(t)\ \text{side-effect-free} \iff \exists\, S \subseteq \text{supp}
 
 ## 3. State of the Art (SOTA)
 - **Theory:** Bancilhon–Spyratos constant complements (1981) remain the semantic reference. Cosmadakis–Papadimitriou characterized updatability complexity for select-project-join views. Keller's five conditions enumerate side-effect-free translation strategies for SPJ views.
-- **Systems / languages:** *relational lenses* (Bohannon–Pierce–Schmitt, POPL 2006; and Horn–Cheney's verified lenses) give a compositional, provably round-tripping account of updatable views. **Putback-based bidirectional transformation** (Hu, Ko) treats the update direction as primary. Provenance engines **ProvSQL** (Senellart et al., VLDB 2018) and **Perm/GProM** (Glavic, Arab et al.) compute the semiring annotations that drive translation. SQL Server / PostgreSQL support `INSTEAD OF` triggers as a manual escape hatch, conceding the automatic-translation problem.
+- **Systems / languages:** *relational lenses* (Bohannon–Pierce–Vaughan, PODS 2006; and Horn–Cheney's verified lenses) give a compositional, provably round-tripping account of updatable views. **Putback-based bidirectional transformation** (Hu, Ko) treats the update direction as primary. Provenance engines **ProvSQL** (Senellart et al., VLDB 2018) and **Perm/GProM** (Glavic, Arab et al.) compute the semiring annotations that drive translation. SQL Server / PostgreSQL support `INSTEAD OF` triggers as a manual escape hatch, conceding the automatic-translation problem.
 
 ## 4. Upper Bound
 For **SPJU** views over $\mathbb{N}[X]$, checking and producing a side-effect-free deletion reduces to minimal hitting set over the provenance monomials: NP-hard in general but **polynomial when each view tuple's provenance is a single monomial** (e.g. SPJ without union/self-join, or key-preserving joins), giving an $O(|p_t|)$ translation. Lens languages guarantee **PTIME, total, well-behaved** round-tripping by construction (type system rejects non-updatable compositions). Enumeration of all minimal deletions is solvable with polynomial delay via hitting-set enumeration when provenance width is bounded.
@@ -39,7 +39,7 @@ Characterize updatability via a provenance-width parameter; FPT/W[1] dichotomy. 
 - **[Foundational]** François Bancilhon, Nicolas Spyratos. *Update Semantics of Relational Views.* ACM TODS, 1981. — [DOI](https://doi.org/10.1145/319628.319634)
 - **[Foundational]** Stavros Cosmadakis, Christos Papadimitriou. *Updates of Relational Views.* JACM, 1984. — [DOI](https://doi.org/10.1145/1634.1887)
 - **[Foundational]** Todd Green, Grigoris Karvounarakis, Val Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
-- **[SOTA]** Aaron Bohannon, Benjamin Pierce, Jeffrey Vaughan (Schmitt). *Relational Lenses: A Language for Updatable Views.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142399)
+- **[SOTA]** Aaron Bohannon, Benjamin C. Pierce, Jeffrey A. Vaughan. *Relational Lenses: A Language for Updatable Views.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142399)
 - **[SOTA]** Pierre Senellart, et al. *ProvSQL: Provenance and Probability Management in PostgreSQL.* PVLDB, 2018. — [DOI](https://doi.org/10.14778/3229863.3236253) · [DBLP](https://dblp.org/rec/journals/pvldb/SenellartJMR18.html)
 - **[Survey]** James Cheney, Laura Chiticariu, Wang-Chiew Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
 

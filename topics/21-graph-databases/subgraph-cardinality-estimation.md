@@ -18,7 +18,7 @@ Random-walk and color-coding estimators rely on mixing time and on the $k$-tree-
 
 ## 3. State of the Art (SOTA)
 
-- **Sampling/theory-SOTA:** WanderJoin (Li–Wu–Yu, SIGMOD 2016) random-walk join sampling with unbiased estimates; *Alley* (Kim et al., SIGMOD 2021) combining sampling + synopsis; GenericJoin-style online sampling.
+- **Sampling/theory-SOTA:** WanderJoin (Li–Wu–Yi, SIGMOD 2016) random-walk join sampling with unbiased estimates; *Alley* (Kim et al., SIGMOD 2021) combining sampling + synopsis; GenericJoin-style online sampling.
 - **Summary/synopsis:** *Characteristic Sets* (Neumann–Moerkotte, ICDE 2011) for star/SPARQL queries; *SumRDF*, *Color/correlated sketches*.
 - **Learned:** *NeuroCard*, *LSS / Learned Subgraph Sketch*, *G-CARE* benchmark (Park et al., SIGMOD 2020) showing *all* methods have huge errors on cyclic/correlated patterns; *NeurSC*, *LearnSC* GNN-based estimators (2022–2023).
 - **Bound-based:** degree-aware polymatroid bounds (MOLP/PANDA lineage) for guaranteed *upper* bounds rather than point estimates.

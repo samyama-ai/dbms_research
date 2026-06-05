@@ -54,7 +54,7 @@ The gap is **genuinely open**. We have (a) clean convex-program allocators for t
 - **[Foundational]** Rogers, Roth, Ullman, Vadhan. *Privacy Odometers and Filters: Pay-as-you-Go Composition.* NeurIPS, 2016. — [arXiv](https://arxiv.org/abs/1605.08294)
 - **[SOTA]** Lécuyer, Spahn, Vodrahalli, Geambasu, Hsu. *Privacy Accounting and Quality Control in the Sage Differentially Private ML Platform / PrivateKube.* SOSP, 2019. — [DOI](https://doi.org/10.1145/3341301.3359639) — [arXiv](https://arxiv.org/abs/1909.01502)
 - **[SOTA]** Pujol, McKenna, Kuppam, Hay, Machanavajjhala, Miklau. *Fair Decision Making Using Privacy-Protected Data.* ACM FAT\*, 2020. — [DOI](https://doi.org/10.1145/3351095.3372872) — [arXiv](https://arxiv.org/abs/1905.12744)
-- **[Foundational]** Eisenberg, Gale. *Consensus of Subjective Probabilities: The Pari-Mutuel Method (Nash welfare / market equilibrium).* Annals of Mathematical Statistics, 1959. — [DOI](https://doi.org/10.1214/aoms/1177706098)
+- **[Foundational]** Eisenberg, Gale. *Consensus of Subjective Probabilities: The Pari-Mutuel Method (Nash welfare / market equilibrium).* Annals of Mathematical Statistics, 1959. — [DOI](https://doi.org/10.1214/aoms/1177706369)
 
 ## 10. Worked Example
 
