@@ -44,7 +44,7 @@ Active: **HPI (Papenbrock, Schmidl)** on scalable OD discovery (DISTOD) and unif
 - **[Foundational]** S. Song, L. Chen. *Differential Dependencies: Reasoning and Discovery.* ACM TODS, 2011. — [DOI](https://doi.org/10.1145/2000824.2000826)
 - **[Foundational]** N. Koudas, A. Saha, D. Srivastava, S. Venkatasubramanian. *Metric Functional Dependencies.* ICDE, 2009. — [DOI](https://doi.org/10.1109/ICDE.2009.219)
 - **[SOTA]** S. Schmidl, T. Papenbrock. *Efficient Distributed Discovery of Bidirectional Order Dependencies (DISTOD).* VLDB Journal, 2022. — [DOI](https://doi.org/10.1007/s00778-021-00683-4)
-- **[Foundational]** S. Ginsburg, R. Hull. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983. — [DOI](https://doi.org/10.1016/0304-3975(83)90091-X)
+- **[Foundational]** S. Ginsburg, R. Hull. *Order Dependency in the Relational Model.* Theoretical Computer Science, 1983. — [DOI](https://doi.org/10.1016/0304-3975(83)90084-1)
 - **[Survey]** Z. Abedjan, L. Golab, F. Naumann, T. Papenbrock. *Data Profiling.* Morgan & Claypool, 2018. — [DOI](https://doi.org/10.2200/S00878ED1V01Y201810DTM052)
 
 ## 10. Worked Example

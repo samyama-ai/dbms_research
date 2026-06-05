@@ -46,10 +46,10 @@ The gap is between today's **data-shape-only, rule-based** checkers (sound for s
 ## 9. Key References
 - **[Foundational]** Chandra, A., Merlin, P. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
 - **[Foundational]** Hosoya, H., Pierce, B. *XDuce: A Statically Typed XML Processing Language (regular expression types / tree-automata subtyping).* ACM TOIT, 2003. — [DOI](https://doi.org/10.1145/767193.767195)
-- **[SOTA]** Chu, S., Weitz, K., Cheung, A., Suciu, D. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
+- **[SOTA]** Chu, S., Wang, C., Weitz, K., Cheung, A. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
 - **[SOTA]** Pezoa, F., Reutter, J., Suarez, F., Ugarte, M., Vrgoč, D. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029)
 - **[Survey]** Confluent. *Schema Registry: Schema Evolution and Compatibility* (documentation), 2017–. — [docs](https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html)
-- **[Foundational]** Martens, W., Neven, F., Schwentick, T. *Complexity of Decision Problems for XML Schemas and Inclusion.* ACM TODS, 2006. — [DBLP search](https://dblp.org/search?q=Martens+Neven+Schwentick+XML+schema+complexity) *(unverified)*
+- **[Foundational]** Martens, W., Neven, F., Schwentick, T., Bex, G.J. *Expressiveness and Complexity of XML Schema.* ACM TODS, 2006. — [DOI](https://doi.org/10.1145/1166074.1166076)
 
 ## 10. Worked Example
 

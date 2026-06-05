@@ -73,7 +73,7 @@ The tension is captured information-theoretically: hard-window + deletions must 
 - **[Foundational]** Cormode, Muthukrishnan. *An Improved Data Stream Summary: The Count-Min Sketch and its Applications.* J. Algorithms, 2005. — [DOI](https://doi.org/10.1016/j.jalgor.2003.12.001)
 - **[Foundational]** Charikar, Chen, Farach-Colton. *Finding Frequent Items in Data Streams.* ICALP / TCS, 2002. — [DOI](https://doi.org/10.1007/3-540-45465-9_59)
 - **[SOTA]** Karnin, Lang, Liberty. *Optimal Quantile Approximation in Streams.* FOCS, 2016. — [DOI](https://doi.org/10.1109/FOCS.2016.17) — [arXiv](https://arxiv.org/abs/1603.05346)
-- **[SOTA]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* PODS, 2012. — [DOI](https://doi.org/10.1145/2500128)
+- **[SOTA]** Agarwal, Cormode, Huang, Phillips, Wei, Yi. *Mergeable Summaries.* ACM TODS, 2013. — [DOI](https://doi.org/10.1145/2500128)
 - **[Foundational]** Cormode, Korn, Tirthapura. *Time-Decaying Aggregates in Out-of-Order Streams.* PODS, 2008. — [DBLP](https://dblp.org/rec/conf/pods/CormodeKT08.html)
 - **[SOTA]** Ben-Eliezer, Jayaram, Woodruff, Yogev. *A Framework for Adversarially Robust Streaming Algorithms.* PODS, 2020. — [arXiv](https://arxiv.org/abs/2003.14265)
 - **[Foundational]** Jowhari, Sağlam, Tardos. *Tight Bounds for $L_p$ Samplers, Finding Duplicates, and Streaming Algorithms.* PODS, 2011. — [DOI](https://doi.org/10.1145/1989284.1989289) — [arXiv](https://arxiv.org/abs/1012.4889)

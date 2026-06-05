@@ -43,7 +43,7 @@ Active directions: (1) **LLM-assisted ground-truth curation** — using models t
 - **[SOTA]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
 - **[SOTA]** Arocena, P., Glavic, B., Mecca, G., Miller, R.J., Papotti, P., Santoro, D. *Messing Up with BART: Error Generation for Evaluating Data-Cleaning Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2850578.2850579)
 - **[Foundational]** Transaction Processing Performance Council. *TPC-H / TPC-DS Benchmark Specifications.* TPC, 1999–. — [TPC](https://www.tpc.org/tpch/)
-- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms.* JACM, 2005. — [DOI](https://doi.org/10.1145/1067298.1067302)
+- **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
 - **[SOTA]** Hulsebos, M., et al. *GitTables: A Large-Scale Corpus of Relational Tables.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3588710)
 - **[Survey]** Abedjan, Z., Golab, L., Naumann, F. *Profiling Relational Data: A Survey.* VLDB Journal, 2015. — [DOI](https://doi.org/10.1007/s00778-015-0389-y)
 

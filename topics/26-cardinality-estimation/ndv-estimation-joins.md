@@ -63,7 +63,7 @@ For a *single column* in streaming, the gap is **closed** ($\Theta(\varepsilon^{
 - **[SOTA]** Kane, Nelson, Woodruff. *An Optimal Algorithm for the Distinct Elements Problem.* PODS, 2010. — [DOI](https://doi.org/10.1145/1807085.1807094)
 - **[SOTA]** Flajolet, Fusy, Gandouet, Meunier. *HyperLogLog: the Analysis of a Near-Optimal Cardinality Estimation Algorithm.* AofA, 2007. — [HAL](https://hal.science/hal-00406166)
 - **[SOTA]** Gibbons. *Distinct Sampling for Highly-Accurate Answers to Distinct Values Queries and Event Reports.* VLDB, 2001. — [DBLP](https://dblp.org/rec/conf/vldb/Gibbons01.html)
-- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2012. — [DOI](https://doi.org/10.1561/1900000004)
+- **[Survey]** Cormode, Garofalakis, Haas, Jermaine. *Synopses for Massive Data: Samples, Histograms, Wavelets, Sketches.* Foundations and Trends in Databases, 2011. — [DOI](https://doi.org/10.1561/1900000004)
 
 ## 10. Worked Example
 

@@ -88,7 +88,7 @@ Build the conflict (serialization) graph $\mathrm{SG}(H)$, one vertex per transa
 - $T_3$ reads $y{=}1$ from $T_2$ ⇒ $\mathsf{wr}$ edge $T_2 \to T_3$.
 - $T_3$ writes $x{=}2$; $T_1$ also writes $x$, and $T_2$ read $T_1$'s version, so $T_3$'s write must order *after* $T_2$'s read ⇒ anti-dependency $\mathsf{rw}$ edge $T_2 \to T_3$ (already present) and version order $T_1 \to T_3$ on $x$.
 
-The graph $T_1 \to T_2 \to T_3$ (plus $T_1 \to T_3$) is **acyclic**, so by the conflict-serializability theorem $H$ is serializable, witnessed by the topological order $T_1, T_2, T_3$. Cost: with read-from observed, edges are read off directly and acyclicity is $O(|O| + n^2) = O(7 + 9)$ here — the *easy* regime Elle exploits. Had $T_3$ instead read $x{=}1$ (stale), we'd get $T_3 \to T_1$, closing a cycle $T_1 \to \dots \to T_3 \to T_1$, and the checker would report non-serializability with that cycle as the witness.
+The graph $T_1 \to T_2 \to T_3$ (plus $T_1 \to T_3$) is **acyclic**, so by the conflict-serializability theorem $H$ is serializable, witnessed by the topological order $T_1, T_2, T_3$. Cost: with read-from observed, edges are read off directly and acyclicity is $O(|O| + n^2) = O(5 + 9)$ here (5 listed operations, $n^2 = 9$) — the *easy* regime Elle exploits. Had $T_3$ instead read $x{=}1$ (stale), we'd get $T_3 \to T_1$, closing a cycle $T_1 \to \dots \to T_3 \to T_1$, and the checker would report non-serializability with that cycle as the witness.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

@@ -33,7 +33,7 @@ Certified-error compact joint models; automatic column-group/correlation discove
 - **[Foundational]** Bruno, Chaudhuri, Gravano. *STHoles: A Multidimensional Workload-Aware Histogram.* SIGMOD, 2001. — [DOI](https://doi.org/10.1145/375663.375686)
 - **[SOTA]** Yang et al. *Deep Unsupervised Cardinality Estimation (Naru).* VLDB, 2019; *NeuroCard.* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1905.04278)
 - **[SOTA]** Hilprecht et al. *DeepDB: Learn from Data, not from Queries!* VLDB, 2020. — [arXiv](https://arxiv.org/abs/1909.00607)
-- **[SOTA]** Wu, Cong. *BayesCard: A Unified Bayesian Framework for Cardinality Estimation.* 2020/VLDB. — [arXiv](https://arxiv.org/abs/2012.14743)
+- **[SOTA]** Wu, Shaikhha, Zhu, Zeng, Han, Zhou. *BayesCard: Revitilizing Bayesian Frameworks for Cardinality Estimation.* 2020/2021. — [arXiv](https://arxiv.org/abs/2012.14743)
 - **[Survey]** Wang et al. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
 
 ## 10. Worked Example

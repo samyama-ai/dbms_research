@@ -1,6 +1,7 @@
 # Error Propagation Through Query Plans
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/error-propagation-plans` · **Status:** open
+> **Verification note:** In the §10 table the "$q_i$" column reports the *incremental* per-operator error (4 at each node), not the node's cumulative true/estimate ratio; computing $q_i$ from each row via the §2 definition gives 4, 16, 64, whose top value 64 is the root q-error $\prod_i q_i$.
 
 ## 1. Problem Statement
 A query plan is a tree of operators; the optimizer estimates each operator's output cardinality, but these estimates feed *into* the estimates above them. Small per-operator errors can **compound multiplicatively** up the tree, and the cost model amplifies them into catastrophic plan choices. The problem: **characterize and bound how per-operator cardinality-estimation errors propagate through a plan tree**, and design estimators/optimizers whose end-to-end error (or resulting plan sub-optimality) is controlled. Variants: **forward error analysis** (bound output error given input errors), **plan-robustness** (choose plans insensitive to estimation error), and the **decision variant** (does estimation error change the optimal plan?). The seminal empirical finding (Leis et al.) is that errors grow exponentially with the number of joins under independence assumptions.

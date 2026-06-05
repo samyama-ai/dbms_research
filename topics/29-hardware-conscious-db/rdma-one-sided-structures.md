@@ -19,7 +19,7 @@ Formally one models the fabric as a shared-memory system where remote operations
 
 ## 3. State of the Art (SOTA)
 
-- **Systems-SOTA.** *FaRM* (Dragojević et al., NSDI 2014) pioneered one-sided RDMA reads with version-based consistency and lock-free reads. *Pilaf* (Mitchell, Geng, Li, ATC 2013) introduced self-verifying hash tables (CRC) so clients detect torn one-sided reads. *FaSST* (Kalia, Kaminsky, Andersen, OSDI 2016) argued two-sided/datagram RPC often beats one-sided for complex ops. *Cell* and *eRPC* explore the trade-off. Recent one-sided B-trees: *Sherman* (Wang et al., SIGMOD 2022) — a write-optimized disaggregated B-tree using on-chip RNIC locks + versioning; *FUSEE*, *RACE hashing* (Zuo et al., OSDI 2021) — a fully one-sided, lock-free disaggregated hash index.
+- **Systems-SOTA.** *FaRM* (Dragojević et al., NSDI 2014) pioneered one-sided RDMA reads with version-based consistency and lock-free reads. *Pilaf* (Mitchell, Geng, Li, ATC 2013) introduced self-verifying hash tables (CRC) so clients detect torn one-sided reads. *FaSST* (Kalia, Kaminsky, Andersen, OSDI 2016) argued two-sided/datagram RPC often beats one-sided for complex ops. *Cell* and *eRPC* explore the trade-off. Recent one-sided B-trees: *Sherman* (Wang et al., SIGMOD 2022) — a write-optimized disaggregated B-tree using on-chip RNIC locks + versioning; *FUSEE*, *RACE hashing* (Zuo et al., USENIX ATC 2021) — a fully one-sided, lock-free disaggregated hash index.
 - **Theory-SOTA.** General linearizable/lock-free constructions exist for shared memory with CAS, but few results specifically model non-atomic remote multi-word reads with only 8-byte atomics; this is largely a *systems* literature.
 
 ## 4. Upper Bound
@@ -52,7 +52,7 @@ Practice has working one-sided lock-free hash indexes and write-optimized B-tree
 - **[Foundational]** Herlihy, Wing. *Linearizability: A Correctness Condition for Concurrent Objects.* TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
 - **[Foundational]** Dragojević, Narayanan, Castro, Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevi%C4%87)
 - **[SOTA]** Mitchell, Geng, Li. *Using One-Sided RDMA Reads to Build a Fast, CPU-Efficient Key-Value Store (Pilaf).* USENIX ATC, 2013. — [USENIX](https://www.usenix.org/conference/atc13/technical-sessions/presentation/mitchell)
-- **[SOTA]** Zuo, Wang, et al. *One-sided RDMA-Conscious Extendible Hashing for Disaggregated Memory (RACE).* USENIX ATC, 2021. — [USENIX](https://www.usenix.org/conference/atc21/presentation/zuo)
+- **[SOTA]** Zuo, Sun, Yang, Zhang, Hua. *One-sided RDMA-Conscious Extendible Hashing for Disaggregated Memory (RACE).* USENIX ATC, 2021. — [USENIX](https://www.usenix.org/conference/atc21/presentation/zuo)
 - **[SOTA]** Wang, Qian, et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
 - **[SOTA]** Kalia, Kaminsky, Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/kalia)
 

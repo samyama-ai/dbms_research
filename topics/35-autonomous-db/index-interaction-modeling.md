@@ -14,7 +14,7 @@ Formal questions:
 
 ## 2. Mathematical Foundations
 Define **degree-of-interaction** for a query $q$ over structures $a,b$ (Schnaitter–Polyzotis–Getoor):
-$$ \mathrm{doi}_q(a,b) = \frac{\big| (c_{\{a\}} - c_{\{a,b\}}) - (c_{\{b\}} - c_{\{a,b,\dots\}}) \big|}{c_q} ,$$
+$$ \mathrm{doi}_q(a,b) = \frac{\big| (c_{\emptyset} - c_{\{a\}}) - (c_{\{b\}} - c_{\{a,b\}}) \big|}{c_q} ,$$
 generalized via the **discrete second derivative** $\Delta_b \Delta_a \mathrm{ben}(S)$. Submodularity $\equiv$ all such cross-derivatives $\le 0$; supermodular synergy means some are $> 0$.
 
 Representations:

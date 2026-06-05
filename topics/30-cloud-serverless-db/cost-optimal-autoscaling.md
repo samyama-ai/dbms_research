@@ -48,7 +48,7 @@ Active: learning-augmented online algorithms (Wierman/Caltech, Lee/USC), RL-base
 - **[Foundational]** Lin, Wierman, Andrew, Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM ToN, 2013. — [DOI](https://doi.org/10.1109/TNET.2012.2226216)
 - **[Foundational]** Bansal, Gupta, et al. *A 2-competitive algorithm for online convex optimization with switching costs.* APPROX, 2015. — [DOI](https://doi.org/10.4230/LIPIcs.APPROX-RANDOM.2015.96)
 - **[SOTA]** Sellke. *Chasing Convex Bodies Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1905.11968)
-- **[SOTA]** Christianson, Shen, Wierman. *Optimal Robustness-Consistency Trade-offs for Learning-Augmented Online Algorithms.* AISTATS, 2023. — [arXiv](https://arxiv.org/abs/2010.11443)
+- **[SOTA]** Christianson, Shen, Wierman. *Optimal Robustness-Consistency Trade-offs for Learning-Augmented Metrical Task Systems.* AISTATS, 2023. — [PMLR](https://proceedings.mlr.press/v206/christianson23a.html)
 - **[Survey]** Lorido-Botran, Miguel-Alonso, Lozano. *A Review of Auto-scaling Techniques for Elastic Applications in Cloud Environments.* J. Grid Computing, 2014. — [DOI](https://doi.org/10.1007/s10723-014-9314-7)
 
 ## 10. Worked Example

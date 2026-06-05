@@ -66,7 +66,7 @@ The gap is between (a) pragmatic differential testing that finds many real bugs 
 - **[SOTA]** J. Jung, H. Hu, J. Arulraj, T. Kim, W. Kang. *APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3357377.3357382)
 - **[SOTA]** M. Rigger, Z. Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger) · [arXiv](https://arxiv.org/abs/2001.04174)
 - **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
-- **[Survey]** R. B. Evans, A. Savoia. *Differential Testing: A New Approach to Change Detection.* ESEC/FSE, 2007. — [DOI](https://doi.org/10.1145/1295014.1295038)
+- **[Survey]** R. B. Evans, A. Savoia. *Differential Testing: A New Approach to Change Detection.* ESEC/FSE, 2007. — [DOI](https://doi.org/10.1145/1287624.1287707)
 
 ## 10. Worked Example
 

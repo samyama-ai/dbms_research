@@ -59,7 +59,7 @@ The gap is genuinely open. We have (a) a trivial worst-case bound (incompressibl
 ## 9. Key References
 
 - **[Foundational]** T. Pelkonen et al. *Gorilla: A Fast, Scalable, In-Memory Time Series Database.* VLDB, 2015. — [DBLP](https://dblp.org/rec/journals/pvldb/PelkonenFCHMTV15.html)
-- **[SOTA]** P. Liakos, K. Papakonstantinou, Y. Kotidis. *Chimp: Efficient Lossless Floating Point Compression for Time Series Databases.* VLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551852)
+- **[SOTA]** P. Liakos, K. Papakonstantinopoulou, Y. Kotidis. *Chimp: Efficient Lossless Floating Point Compression for Time Series Databases.* VLDB, 2022. — [DOI](https://doi.org/10.14778/3551793.3551852)
 - **[SOTA]** R. Li, Z. Li, et al. *Elf: Erasing-Based Lossless Floating-Point Compression.* SIGMOD/VLDB, 2023. — [DOI](https://doi.org/10.14778/3587136.3587149)
 - **[SOTA]** A. Afroozeh, L. Kuffo, P. Boncz. *ALP: Adaptive Lossless Floating-Point Compression.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3626717)
 - **[Foundational]** T. Cover, J. Thomas. *Elements of Information Theory.* Wiley, 2006. — [DBLP search](https://dblp.org/search?q=Cover%20Thomas%20Elements%20of%20Information%20Theory)

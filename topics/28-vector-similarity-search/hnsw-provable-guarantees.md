@@ -1,6 +1,7 @@
 # Provable guarantees for HNSW graph search
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/hnsw-provable-guarantees` · **Status:** open
+> **Verification note:** In §2, $1/\ln M$ is HNSW's level-normalization constant $m_L$ (so $\Pr[\text{level}=\ell]\propto e^{-\ell/m_L}$); the geometric ratio is $p=e^{-1/m_L}$, not $p=1/\ln M$ itself.
 
 ## 1. Problem Statement
 Hierarchical Navigable Small World (HNSW) graphs are the workhorse index for approximate nearest neighbor (ANN) search in production vector databases. Greedy best-first search over the multi-layer proximity graph is observed to return high-recall results in roughly logarithmic time, yet this behavior is almost entirely empirical. The problem: **establish worst-case (or distribution-parametric) guarantees** for greedy/beam search on HNSW that bound (a) the probability of returning the true $k$ nearest neighbors (recall) and (b) the number of distance evaluations (query time), as functions of dataset size $n$, dimension $d$, intrinsic dimension, and the construction parameters $M$ (degree) and $\mathit{ef}$ (beam width).

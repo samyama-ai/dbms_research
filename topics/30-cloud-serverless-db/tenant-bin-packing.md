@@ -7,7 +7,7 @@ A DBaaS provider hosts many tenants, each a database with a resource footprint (
 
 Variants:
 - **Decision:** can $n$ tenants fit on $m$ machines respecting all constraints?
-- **Optimization:** minimize machines (or $/carbon) used.
+- **Optimization:** minimize machines (or \$/carbon) used.
 - **Online/dynamic:** tenants arrive/leave and resize; minimize machines *and* live-migration churn.
 - **Stochastic/robust:** demands are random; pack so per-node overflow probability $\le \epsilon$.
 

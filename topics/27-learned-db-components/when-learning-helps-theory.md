@@ -1,6 +1,7 @@
 # Theory of When Learning Helps
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/when-learning-helps-theory` · **Status:** open
+> **Verification note:** The PGM-index has $O(s)=O(n/\varepsilon)$ words of space in the worst case (segments $s\le n/2\varepsilon$); the $O(n/\varepsilon^2)$ figure is the high-probability bound, so "$O(n/\varepsilon^2)$ — equivalently $O(s)$" conflates the two regimes.
 
 ## 1. Problem Statement
 

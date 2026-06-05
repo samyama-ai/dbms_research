@@ -65,11 +65,11 @@ A collection of $N = 5$ order documents; query `AVG($.items[*].price)`. The path
 | $d_4$ | $\{40,40,40,40\}$ (bulk) |
 | $d_5$ | $\{25\}$ |
 
-True flattened multiset has $9$ values summing to $300$, so true $\mathrm{AVG} = 300/9 \approx 33.3$.
+True flattened multiset has $9$ values summing to $260$, so true $\mathrm{AVG} = 260/9 \approx 28.9$.
 
 **Naive document-uniform sampling** (pick 2 of 5 docs, average their per-doc means) is biased: if we draw $\{d_1, d_3\}$ we estimate $\tfrac{10+15}{2}=12.5$, far off, because it ignores that $d_4$ contributes 4 values. This is the variable-arity variance blow-up of section 1.
 
-**Horvitz–Thompson fix:** sample documents with probability $\pi_d \propto m_d$ (its array length). Total mass $= 9$. Draw with $\pi_d = m_d/9$; the unbiased estimator of the *sum* is $\hat S = \sum_{d \in \text{sample}} \frac{1}{\pi_d}\sum_{v \in p(d)} v$. For a single draw of $d_4$ ($\pi=4/9$): $\hat S = \tfrac{9}{4}\cdot 160 = 360$, and dividing by the separately HT-estimated count recovers $\approx 33.3$ in expectation. Hoeffding then sizes the sample: for additive error $\varepsilon$ over price range $[10,40]$, $n = O\!\big(\tfrac{(40-10)^2}{\varepsilon^2}\log\tfrac1\delta\big)$ documents.
+**Horvitz–Thompson fix:** sample documents with probability $\pi_d \propto m_d$ (its array length). Total mass $= 9$. Draw with $\pi_d = m_d/9$; the unbiased estimator of the *sum* is $\hat S = \sum_{d \in \text{sample}} \frac{1}{\pi_d}\sum_{v \in p(d)} v$. For a single draw of $d_4$ ($\pi=4/9$): $\hat S = \tfrac{9}{4}\cdot 160 = 360$, and dividing by the separately HT-estimated count recovers $\approx 28.9$ in expectation. Hoeffding then sizes the sample: for additive error $\varepsilon$ over price range $[10,40]$, $n = O\!\big(\tfrac{(40-10)^2}{\varepsilon^2}\log\tfrac1\delta\big)$ documents.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

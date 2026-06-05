@@ -41,7 +41,7 @@ Tight makespan lower bounds under duplex bandwidth and compute–transfer overla
 
 Join $R \bowtie S$ on a GPU with HBM $M = 4$ MB, build side $S$, and transfer block $B$. Let $|R| = 100$ MB, $|S| = 10$ MB, output $\mathrm{OUT} = 20$ MB, all in units where $B$ normalizes counts to bytes/$B$.
 
-**Case 1 — $S$ fits ($|S| = 10$ MB $> M$):** here $S$ does *not* fit, so a single-pass broadcast is impossible. We use **grace-hash**: partition both sides into $\lceil |S|/M \rceil = \lceil 10/4 \rceil = 3$ partitions so each build partition $\le M$. One partitioning pass streams $|R|+|S| = 110$ MB host→device→host, then the probe pass streams 110 MB again plus emits $\mathrm{OUT}=20$ MB. Total link traffic $\approx (110 + 110 + 20)/B = 240/B$ MB.
+**Case 1 — $S$ does not fit ($|S| = 10$ MB $> M = 4$ MB):** since $S$ exceeds device memory, a single-pass broadcast is impossible. We use **grace-hash**: partition both sides into $\lceil |S|/M \rceil = \lceil 10/4 \rceil = 3$ partitions so each build partition $\le M$. One partitioning pass streams $|R|+|S| = 110$ MB host→device→host, then the probe pass streams 110 MB again plus emits $\mathrm{OUT}=20$ MB. Total link traffic $\approx (110 + 110 + 20)/B = 240/B$ MB.
 
 **Contrast — naive re-probe** (re-stream $R$ once per $S$-chunk that overflowed): $3 \times 100 = 300$ MB of $R$ alone, far worse.
 

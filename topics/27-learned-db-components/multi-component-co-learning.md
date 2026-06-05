@@ -42,7 +42,7 @@ Directions: (a) performative-prediction-based analyses of the CE↔optimizer loo
 - **[SOTA]** Z. Yang, W.-L. Chiang, S. Luan, G. Mittal, M. Luo, I. Stoica. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
 - **[SOTA]** J. Wang, I. Trummer, D. Basu. *UDO: Universal Database Optimization using Reinforcement Learning.* PVLDB, 2021. — [arXiv](https://arxiv.org/abs/2104.01744)
 - **[Foundational]** T. Kraska et al. *SageDB: A Learned Database System.* CIDR, 2019. — [DBLP](https://dblp.org/rec/conf/cidr/KraskaABCKLMMN19.html)
-- **[Survey]** R. Marcus et al. *Neo: A Learned Query Optimizer.* PVLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
+- **[SOTA]** R. Marcus et al. *Neo: A Learned Query Optimizer.* PVLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
 
 ## 10. Worked Example
 

@@ -1,6 +1,7 @@
 # Property-Based Testing of Transaction APIs
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/property-based-transaction-testing` · **Status:** partially-solved
+> **Verification note:** In §2 the "two consecutive rw edges (dangerous structure)" condition is the criterion for an SI execution to be *non*-serializable, not a definition of SI itself (SI = snapshot reads + first-committer-wins); read it as the SI-serializability characterization of Fekete et al.
 
 ## 1. Problem Statement
 

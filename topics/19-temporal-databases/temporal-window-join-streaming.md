@@ -28,7 +28,7 @@ $\Theta(\lambda (W+\delta))$ tuples by Little's law for arrival rate $\lambda$.
 Lower bounds draw on **communication complexity** (two-party set-disjointness / index gives
 $\Omega(n)$ for exact overlap detection across a partition), **streaming lower bounds** for
 sliding-window statistics (Datar–Gionis–Indyk–Motwani exponential-histogram framework gives the
-$O(\tfrac{1}{\epsilon}\log^2 N)$ upper and matching $\Omega(\tfrac{1}{\epsilon}\log N)$ lower
+$O(\tfrac{1}{\epsilon}\log^2 N)$ upper and matching $\Omega(\tfrac{1}{\epsilon}\log^2 N)$ lower
 bounds for window sums/counts), and **competitive analysis** for online buffering (adversarial
 arrival order $\approx$ online eviction). The exact interval-join output can be $\Theta(n^2)$
 (quadratic), so any small-space exact algorithm is impossible when output is dense.
@@ -58,7 +58,7 @@ inherently bounded below by the result size and the live-state size.
 worst case — by a **communication-complexity** reduction (set-disjointness / index across the
 watermark boundary), retiring a tuple early risks missing a late-arriving overlap, so the lower
 bound matches the buffer. For *approximate* window counts, DGIM-style lower bounds give
-$\Omega(\tfrac{1}{\epsilon}\log N)$ space. **Competitive:** against an adversarial arrival order,
+$\Omega(\tfrac{1}{\epsilon}\log^2 N)$ space. **Competitive:** against an adversarial arrival order,
 any deterministic online buffering/eviction policy is $\ge$ the window's tuple count competitive
 on state (adversary forces worst-case lateness), an $\Omega(\text{cache-size})$-style barrier
 from online paging. Dense outputs force $\Omega(n^2)$ work, ruling out subquadratic exact joins
@@ -94,7 +94,7 @@ reductions for the overlap predicate.
 ## 9. Key References
 - **[Foundational]** M. Datar, A. Gionis, P. Indyk, R. Motwani. *Maintaining Stream Statistics
   over Sliding Windows.* SIAM J. Computing / SODA, 2002. — [DOI](https://doi.org/10.1137/S0097539701398363)
-- **[Foundational]** J. Li, D. Maier, K. Tufte, V. Papadimos, P. Tucker. *Out-of-Order Processing:
+- **[Foundational]** J. Li, K. Tufte, V. Shkapenyuk, V. Papadimos, T. Johnson, D. Maier. *Out-of-Order Processing:
   A New Architecture for High-Performance Stream Systems.* PVLDB, 2008. — [DOI](https://doi.org/10.14778/1453856.1453890)
 - **[Foundational]** T. Akidau et al. *The Dataflow Model.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2824032.2824076)
 - **[SOTA]** V. Braverman, R. Ostrovsky. *Smooth Histograms for Sliding Windows.* FOCS, 2007. — [DOI](https://doi.org/10.1109/FOCS.2007.55)

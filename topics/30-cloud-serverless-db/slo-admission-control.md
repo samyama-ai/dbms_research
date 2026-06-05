@@ -1,6 +1,7 @@
 # SLO-aware admission control under bursts
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/slo-admission-control` · **Status:** empirically-open
+> **Verification note:** The "$\approx 3.3$"-competitive figure in §10 should be read as an order-of-magnitude $O(\log R)$ bound (the standard online-knapsack ratio is $\ln R + 1$, $\approx 3.3$ for $R=10$); the constant is model-dependent, not exact.
 
 ## 1. Problem Statement
 A multi-tenant cloud query service provisions a fixed (or slowly elastic) pool of compute. When aggregate demand transiently exceeds capacity, the system must decide, *online and per query*, whether to **admit, queue, defer, or shed** work so that per-tenant **tail-latency SLOs** (e.g., p99 < 200 ms) are protected for the queries it does admit, while maximizing goodput / revenue and honoring fairness across tenants.

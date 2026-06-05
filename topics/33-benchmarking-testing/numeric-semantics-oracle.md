@@ -53,7 +53,7 @@ Open. The exact-decimal fragment is solved (recompute in rationals); the float f
 - **[Foundational]** Higham. *Accuracy and Stability of Numerical Algorithms (2nd ed.).* SIAM, 2002. (Summation error bounds; $\gamma_n$ analysis.) — [DOI](https://doi.org/10.1137/1.9780898718027)
 - **[Foundational]** Kahan. *Further Remarks on Reducing Truncation Errors (compensated summation).* CACM, 1965. — [DOI](https://doi.org/10.1145/363707.363723)
 - **[SOTA]** Solovyev, Jacobsen, Rakamarić, Gopalakrishnan. *Rigorous Estimation of Floating-Point Round-off Errors with Symbolic Taylor Expansions (FPTaylor).* FM 2015 / TOPLAS. — [DOI](https://doi.org/10.1145/3230733)
-- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis / NoREC.* OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger)
+- **[SOTA]** Rigger, Su. *Testing Database Engines via Pivoted Query Synthesis (PQS).* OSDI 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/rigger)
 - **[SOTA]** Darulova, Izycheva, et al. *Daisy: Framework for Analysis and Optimization of Numerical Programs.* TACAS 2018. — [DOI](https://doi.org/10.1007/978-3-319-89960-2_15)
 - **[Foundational]** Daumas, Melquiond. *Gappa: Certifying Floating-Point Computations.* ACM TOMS, 2010. — [DOI](https://doi.org/10.1145/1644001.1644003)
 

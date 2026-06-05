@@ -41,7 +41,7 @@ Threads: (a) **many-objective** MOBO with cheap-to-evaluate surrogates and prefe
 ## 9. Key References
 - **[Foundational]** C. H. Papadimitriou, M. Yannakakis. *On the Approximability of Trade-offs and Optimal Access of Web Sources.* FOCS, 2000. — [DOI](https://doi.org/10.1109/SFCS.2000.892068)
 - **[Foundational]** M. Zuluaga, A. Krause, G. Sergent, M. Püschel. *Active Learning for Multi-Objective Optimization (PAL).* ICML, 2013. — [PMLR](https://proceedings.mlr.press/v28/zuluaga13.html)
-- **[SOTA]** S. Daulton, M. Balandat, E. Bakshy. *Differentiable Expected Hypervolume Improvement for Parallel Multi-Objective Bayesian Optimization (qNEHVI).* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2105.08195)
+- **[SOTA]** S. Daulton, M. Balandat, E. Bakshy. *Parallel Bayesian Optimization of Multiple Noisy Objectives with Expected Hypervolume Improvement (qNEHVI).* NeurIPS, 2021. — [arXiv](https://arxiv.org/abs/2105.08195)
 - **[SOTA]** X. Zhang et al. *ResTune: Resource Oriented Tuning Boosted by Meta-Learning for Cloud Databases.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457291)
 - **[Foundational]** J. Knowles. *ParEGO: A Hybrid Algorithm with On-line Landscape Approximation for Expensive Multiobjective Optimization Problems.* IEEE Trans. Evolutionary Computation, 2006. — [DOI](https://doi.org/10.1109/TEVC.2005.851274)
 

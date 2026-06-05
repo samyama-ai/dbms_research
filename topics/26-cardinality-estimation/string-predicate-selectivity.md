@@ -80,7 +80,7 @@ Tokenize each string into overlapping bigrams and count how many strings contain
 
 For the single-bigram pattern `%at%`, the estimate is just $\Pr[\texttt{at}]=1.0$, i.e. $\hat s=1.0$ — and indeed all 4 strings match, so this is exact.
 
-Now `LIKE '%ata%'` (pattern bigrams `at`,`ta`). $\Pr[\texttt{at}]=1.0$; `ta` appears in `data`,`database`,`metadata` → $\Pr[\texttt{ta}]=3/4$. Independence gives $\hat s \approx 1.0 \times 0.75 = 0.75 \Rightarrow 3$ rows. True matches of substring `ata`: `data`, `database`, `metadata` = 3 — here independence happens to be right. But for `%tat%` (bigrams `ta`,`at`), independence predicts $0.75\times1.0=0.75$, yet only `metadata` actually contains `tat` (1/4): independence **overestimates** $3\times$ because the bigrams overlap and are correlated — the core failure mode that q-gram independence cannot bound in the worst case.
+Now `LIKE '%ata%'` (pattern bigrams `at`,`ta`). $\Pr[\texttt{at}]=1.0$; `ta` appears in `data`,`database`,`metadata` → $\Pr[\texttt{ta}]=3/4$. Independence gives $\hat s \approx 1.0 \times 0.75 = 0.75 \Rightarrow 3$ rows. True matches of substring `ata`: `data`, `database`, `metadata` = 3 — here independence happens to be right. But for `%tat%` (bigrams `ta`,`at`), independence predicts $0.75\times1.0=0.75 \Rightarrow 3$ rows, yet **no** string actually contains the substring `tat` (0/4): independence **overestimates** badly (3 predicted rows vs. 0 true) because the bigrams overlap and the order constraint `t-a-t` is lost — the core failure mode that q-gram independence cannot bound in the worst case.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

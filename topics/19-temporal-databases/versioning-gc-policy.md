@@ -86,11 +86,11 @@ focus, with proposals for **per-tuple visibility deltas** and **decoupled retent
 - Benchmarks measuring storage-time cost, read-amplification, and SLA-miss rate jointly.
 
 ## 9. Key References
-- **[Foundational]** D. Lomet et al. *Immortal DB / Transaction-Time Support Inside a Database
-  Engine.* ICDE, 2005–2006. — [DBLP](https://dblp.org/rec/conf/icde/LometBMS06.html)
+- **[Foundational]** D. Lomet et al. *Transaction Time Support Inside a Database Engine* (Immortal DB
+  project). ICDE, 2006. — [DBLP](https://dblp.org/rec/conf/icde/LometBMS06.html)
 - **[SOTA]** J. Böttcher, V. Leis, T. Neumann, A. Kemper. *Scalable Garbage Collection for
   In-Memory MVCC Systems.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364328)
-- **[Foundational]** P. Bernstein, N. Goodman. *Concurrency Control and Recovery in Database
+- **[Foundational]** P. Bernstein, V. Hadzilacos, N. Goodman. *Concurrency Control and Recovery in Database
   Systems* (MVCC foundations). Addison-Wesley, 1987. — [DBLP](https://dblp.org/rec/books/aw/BernsteinHG87.html)
 - **[Foundational]** A. Karlin, M. Manasse, L. Rudolph, D. Sleator. *Competitive Snoopy
   Caching / Ski-Rental.* Algorithmica, 1988. — [DOI](https://doi.org/10.1007/BF01762111)

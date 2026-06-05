@@ -1,6 +1,7 @@
 # Multidimensional Learned Indexes
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/multidimensional-learned-indexes` · **Status:** empirically-open
+> **Verification note:** the specific Morton codes and "4 disjoint runs" in §10 do not match a standard bit-interleaved Z-order (which yields codes {6,7,12,13,14,15} = 2 runs for this rectangle); the qualitative fragmentation point still holds but the exact numbers should be recomputed.
 
 ## 1. Problem Statement
 One-dimensional learned indexes exploit a clean monotone CDF; in $d > 1$ dimensions there is no canonical total order, so the problem is harder. The goal: **a learned multidimensional index that beats R-trees, k-d-trees, and space-filling-curve (Z-order/Hilbert) layouts for range and k-NN queries — with *provable* block-skipping / I/O bounds**, not merely empirical wins on benchmark workloads.

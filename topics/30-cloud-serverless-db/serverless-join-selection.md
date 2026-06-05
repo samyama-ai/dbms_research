@@ -13,7 +13,7 @@ Variants:
 
 ## 2. Mathematical Foundations
 
-Output size is governed by the **AGM bound**: for a join query (hypergraph $H$ with fractional edge cover $\mathbf{x}$), $|{\bowtie}| \le \prod_R |R|^{x_R}$, tight in the worst case, and achieved by **worst-case-optimal join** algorithms (NPRR / LeapFrog-TrieJoin, Ngo–Ré–Rudra). This bounds intermediate-result size — the quantity that drives materialization $ and shuffle volume.
+Output size is governed by the **AGM bound**: for a join query (hypergraph $H$ with fractional edge cover $\mathbf{x}$), $|{\bowtie}| \le \prod_R |R|^{x_R}$, tight in the worst case, and achieved by **worst-case-optimal join** algorithms (NPRR / LeapFrog-TrieJoin, Ngo–Ré–Rudra). This bounds intermediate-result size — the quantity that drives materialization \$ and shuffle volume.
 
 Cost of a shuffle (partitioned) join across $K$ workers in the **Massively Parallel Computation (MPC)** model: with $p$ workers and load $L$ per worker, a single round needs $L = \tilde O(|\text{IN}|/p)$ for skew-free data; **Koutris–Suciu** parallel-join theory gives round/load lower bounds and the optimal load for conjunctive queries (the "HyperCube"/shares algorithm) as a function of the AGM exponent. The dollar model adds:
 $$ \$ \approx \underbrace{K\cdot t\cdot p_{\text{cpu}}}_{\text{compute}} + \underbrace{V_{\text{shuffle}}\cdot p_{\text{net}}}_{\text{network}} + \underbrace{V_{\text{mat}}\cdot(p_{\text{req}}+p_{\text{byte}})}_{\text{materialize}}, $$
@@ -54,7 +54,7 @@ Directions: serverless-shuffle cost reduction (object-store vs. ephemeral-VM exc
 - **[Foundational]** P. Beame, P. Koutris, D. Suciu. *Communication Steps for Parallel Query Processing.* JACM, 2017 (PODS 2013). — [DOI](https://doi.org/10.1145/3125644), [arXiv](https://arxiv.org/abs/1306.5972)
 - **[SOTA]** M. Perron et al. *Starling: A Scalable Query Engine on Cloud Functions.* ACM SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3380609)
 - **[SOTA]** I. Müller, R. Marroquín, G. Alonso. *Lambada: Interactive Data Analytics on Cold Data Using Serverless Cloud Infrastructure.* ACM SIGMOD, 2020. — [DOI](https://doi.org/10.1145/3318464.3389758), [arXiv](https://arxiv.org/abs/1912.00937)
-- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Query Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
+- **[Survey]** P. Koutris, S. Salihoglu, D. Suciu. *Algorithmic Aspects of Parallel Data Processing.* Foundations and Trends in Databases, 2018. — [DOI](https://doi.org/10.1561/1900000055)
 
 ## 10. Worked Example
 
@@ -62,9 +62,9 @@ Join $R(a,b)\bowtie S(b,c)$ on Lambda, $|R|=|S|=10^9$ rows, broadcast not viable
 
 | $K$ | time $t=4000/K$ | compute $\$=K\,t\,p_{\text{cpu}}$ | network $\$=V\,p_{\text{net}}$ |
 |----|----|----|----|
-| 100 | 40 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
-| 400 | 10 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
-| 1000 | 4 s | $400000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+| 100 | 40 s | $4000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+| 400 | 10 s | $4000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
+| 1000 | 4 s | $4000\,p_{\text{cpu}}$ | $200\,p_{\text{net}}$ |
 
 Key point: compute dollars $K\cdot t\cdot p_{\text{cpu}} = c|\text{IN}|\,p_{\text{cpu}}$ are **invariant in $K$** (more workers, less time each), and network/materialize dollars are fixed by $V$. So under this idealized model raising $K$ buys latency for free — until per-worker load drops below a function's fixed startup/IO overhead or skew (a heavy hitter on key $b$) makes one worker's load $\gg |\text{IN}|/K$, at which point the $\Omega(|\text{IN}|/K^{1/\tau})$ MPC floor and straggler cost dominate and the free-latency regime ends.
 

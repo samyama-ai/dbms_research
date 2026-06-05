@@ -37,7 +37,7 @@ Groups at **Edinburgh (Libkin, Vrgoč), DCC Chile (Reutter, Vrgoč), TU Berlin /
 
 ## 9. Key References
 - **[Foundational]** Abiteboul, Hull, Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
-- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries.* KR 2000. — [paper](https://www.inf.unibz.it/~calvanese/papers-html/KR-2000.html)
+- **[Foundational]** Calvanese, De Giacomo, Lenzerini, Vardi. *Containment of Conjunctive Regular Path Queries with Inverse.* KR 2000. — [paper](https://www.inf.unibz.it/~calvanese/papers-html/KR-2000.html)
 - **[SOTA]** Francis et al. *A Researcher's Digest of GQL.* ICDT 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2023.1)
 - **[SOTA]** Deutsch et al. *Graph Pattern Matching in GQL and SQL/PGQ.* SIGMOD 2022. — [ACM](https://doi.org/10.1145/3514221.3526057)
 - **[Survey]** Angles et al. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017. — [arXiv](https://arxiv.org/abs/1610.06264)

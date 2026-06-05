@@ -10,7 +10,7 @@ Space-filling curves (SFCs) — Hilbert, Z-order/Morton, Gray-code — linearize
 ## 2. Mathematical Foundations
 Two measures formalize "locality":
 - **Clustering** $C(Q)$: number of contiguous segments of the SFC covering region $Q$. For a $2^k\times 2^k$ grid and query rectangles, one studies $\mathbb{E}[C]$ and $\max C$.
-- **Locality / dilation:** for cells $u,v$ at curve positions $d(u),v$, bound ratios like $\dfrac{\|u-v\|_p^{\,p}}{|d(u)-d(v)|}$ (Gotsman–Lindenbaum). A curve has good $\ell_2$ locality if $|d(u)-d(v)| \ge c\,\|u-v\|_2^2$.
+- **Locality / dilation:** for cells $u,v$ at curve positions $d(u),d(v)$, bound ratios like $\dfrac{\|u-v\|_p^{\,p}}{|d(u)-d(v)|}$ (Gotsman–Lindenbaum). A curve has good $\ell_2$ locality if $|d(u)-d(v)| \ge c\,\|u-v\|_2^2$.
 
 Key results: **Moon, Jagadish, Faloutsos, Saltz (2001)** proved that for the Hilbert curve, the average number of clusters for a query of surface area $S$ and perimeter $\partial Q$ satisfies asymptotically
 $$\mathbb{E}[C] \approx \frac{\partial Q}{2d} + o(\partial Q),$$

@@ -1,6 +1,7 @@
 # Semantic load shedding with answer guarantees
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/semantic-load-shedding-guarantees` · **Status:** open
+> **Verification note:** In the §10 join example the "rescaling by $1/p^2$ (two dropped sides)" applies only if *both* $R$ and $S$ are shed; the preceding sentence drops 90% of $R$ alone, for which the HT rescale factor is $1/p$. The qualitative variance-inflation conclusion is unaffected.
 
 ## 1. Problem Statement
 

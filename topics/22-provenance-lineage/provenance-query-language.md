@@ -57,7 +57,7 @@ This is **genuinely open**: the two halves (annotation-semiring algebra and grap
 - **[Foundational]** G. Karvounarakis, Z. G. Ives, V. Tannen. *Querying Data Provenance (ProQL).* SIGMOD, 2010. — [DOI](https://doi.org/10.1145/1807167.1807269)
 - **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
 - **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. (FO=RA, FO+LFP=PTIME, RPQ/CRPQ.) — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
-- **[SOTA]** S. Lee, B. Glavic et al. *Pug: Provenance and Why-Not Provenance over Datalog.* VLDB Journal / PVLDB, 2019. — [DOI](https://doi.org/10.1007/s00778-018-0518-5), [arXiv](https://arxiv.org/abs/1808.05752)
+- **[SOTA]** S. Lee, B. Ludäscher, B. Glavic. *PUG: A Framework and Practical Implementation for Why and Why-Not Provenance.* VLDB Journal, 2019. — [DOI](https://doi.org/10.1007/s00778-018-0518-5), [arXiv](https://arxiv.org/abs/1808.05752)
 - **[Survey]** P. Barceló. *Querying Graph Databases (RPQ/CRPQ expressiveness and complexity).* PODS, 2013. — [DOI](https://doi.org/10.1145/2463664.2465216)
 - **[Foundational]** L. G. Valiant. *The Complexity of Enumeration and Reliability Problems.* SIAM J. Computing, 1979. (#P-hardness.) — [DOI](https://doi.org/10.1137/0208032)
 

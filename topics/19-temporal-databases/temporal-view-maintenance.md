@@ -35,7 +35,7 @@ For **SPJ and coalesced bitemporal views** the gap is essentially closed: lifted
 
 - Differential-dataflow / **Materialize** and **Feldera (DBSP)** pushing recursive incremental computation with explicit time semantics; DBSP's circuit calculus (Budiu et al.) is being applied to interval/temporal operators *(frontier — verify)*.
 - Alignment-based temporal IVM integrated into research forks of PostgreSQL and Spark (Dignös–Böhlen–Gamper group, U. Bozen-Bolzano) *(frontier — verify)*.
-- Fine-grained complexity of *temporal* IVM (extending Berkholz–Keppmann–Schweikardt to interval predicates) as an active PODS/ICDT thread *(frontier — verify)*.
+- Fine-grained complexity of *temporal* IVM (extending Berkholz–Keppeler–Schweikardt to interval predicates) as an active PODS/ICDT thread *(frontier — verify)*.
 
 ## 8. Future Work
 

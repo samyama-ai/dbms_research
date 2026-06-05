@@ -21,7 +21,7 @@ Naively wrapping a B-tree of height $h = O(\log_B N)$ in ORAM costs $O(h \cdot \
 ## 3. State of the Art (SOTA)
 
 - **Theory-SOTA:** Oblivious data structures (Wang, Nayak, Liu, Shi et al., CCS 2014) give $O(\log^2 N)$ per operation for maps/trees by exploiting bounded "access locality" of pointer-based structures. **OPRAM** and **OptORAMa** (Asharov et al., EUROCRYPT 2020) achieve asymptotically optimal $O(\log N)$ ORAM, improving the underlying primitive but not removing the per-node multiplier for range traversal.
-- **Systems-SOTA:** **Oblix** (Mishra et al., S&P 2018) builds an oblivious sorted multimap (doubly-oblivious index) atop Intel SGX with ORAM; **ObliDB** (Eskandarian–Zaharia, VLDB 2020) gives oblivious relational operators including range scans inside enclaves. **Snoopy** (SOSP 2021) scales oblivious key-value storage. These rely on trusted hardware to cut constants, not to beat the asymptotic bound.
+- **Systems-SOTA:** **Oblix** (Mishra et al., S&P 2018) builds an oblivious sorted multimap (doubly-oblivious index) atop Intel SGX with ORAM; **ObliDB** (Eskandarian–Zaharia, PVLDB 2019) gives oblivious relational operators including range scans inside enclaves. **Snoopy** (SOSP 2021) scales oblivious key-value storage. These rely on trusted hardware to cut constants, not to beat the asymptotic bound.
 
 ## 4. Upper Bound
 
@@ -53,7 +53,7 @@ Active directions: **locality-preserving oblivious structures** that batch the $
 - **[SOTA]** Wang, X.S., Nayak, K., Liu, C., Shi, E., et al. *Oblivious Data Structures.* CCS, 2014. — [DOI](https://doi.org/10.1145/2660267.2660314)
 - **[SOTA]** Larsen, K.G., Nielsen, J.B. *Yes, There is an Oblivious RAM Lower Bound!* CRYPTO, 2018. — [DOI](https://doi.org/10.1007/978-3-319-96881-0_18)
 - **[SOTA]** Asharov, G., Komargodski, I., Lin, W.-K., Nayak, K., Peserico, E., Shi, E. *OptORAMa: Optimal Oblivious RAM.* EUROCRYPT, 2020. — [DOI](https://doi.org/10.1007/978-3-030-45724-2_14)
-- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3364324.3364331)
+- **[SOTA]** Eskandarian, S., Zaharia, M. *ObliDB: Oblivious Query Processing for Secure Databases.* PVLDB, 2019. — [DOI](https://doi.org/10.14778/3364324.3364331)
 
 ## 10. Worked Example
 

@@ -1,6 +1,7 @@
 # Keys, normalization and dependencies for graphs
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/graph-dependencies-normalization` · **Status:** open
+> **Verification note:** Per Fan–Wu–Xu (SIGMOD 2016), GFD *validation* (combined) is coNP-complete; the NP-hardness cited in §4/§5 refers to the dual violation-detection direction (subgraph matching).
 
 ## 1. Problem Statement
 Define **functional/entity dependencies and normal forms for property graphs** that guide good design — minimizing redundancy and anomalies — *without presupposing a fixed schema*, then characterize their implication and a normalization procedure.

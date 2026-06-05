@@ -49,7 +49,7 @@ There is no agreed objective, so the problem is **genuinely open**: tractable, g
 ## 9. Key References
 - **[Foundational]** E. M. Gold. *Language Identification in the Limit.* Information and Control, 1967. — [DOI](https://doi.org/10.1016/S0019-9958(67)91165-5)
 - **[Foundational]** S. Nestorov, S. Abiteboul, R. Motwani. *Extracting Schema from Semistructured Data.* SIGMOD, 1998. — [DOI](https://doi.org/10.1145/276304.276331)
-- **[SOTA]** G. J. Bex, F. Neven, T. Schwentick, K. Tuyls. *Inference of Concise DTDs from XML Data.* VLDB, 2006. — [DOI](https://doi.org/10.5555/1182635.1164139), [PDF](https://www.vldb.org/conf/2006/p115-bex.pdf)
+- **[SOTA]** G. J. Bex, F. Neven, T. Schwentick, K. Tuyls. *Inference of Concise DTDs from XML Data.* VLDB, 2006. — [PDF](https://www.vldb.org/conf/2006/p115-bex.pdf), [DBLP](https://dblp.org/rec/conf/vldb/BexNST06.html)
 - **[Foundational]** L. Pitt, M. K. Warmuth. *The Minimum Consistent DFA Problem Cannot be Approximated within any Polynomial.* JACM, 1993. — [DOI](https://doi.org/10.1145/138027.138042)
 - **[Survey]** M. A. Baazizi, D. Colazzo, G. Ghelli, C. Sartiani. *Schema Inference for Massive JSON Datasets.* EDBT, 2017. — [DOI](https://doi.org/10.5441/002/edbt.2017.21)
 

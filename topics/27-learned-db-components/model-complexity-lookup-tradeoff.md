@@ -1,6 +1,7 @@
 # Optimal Model Complexity vs. Lookup Cost
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/model-complexity-lookup-tradeoff` · **Status:** partially-solved
+> **Verification note:** In §10 with continuous $\varepsilon(s)=n/s$ both derivative terms are negative, so $C(s)$ is monotone-decreasing with no interior $dC/ds=0$ root; the $\varepsilon^\*\approx 8$ optimum arises from the discrete one-cache-line scan floor plus the space budget, as the surrounding prose explains.
 
 ## 1. Problem Statement
 A learned index splits total lookup cost into two terms: **model evaluation** (traverse/evaluate the model hierarchy) plus **last-mile search** (correct the prediction within error $\pm\varepsilon$). A larger, more segmented model shrinks $\varepsilon$ (cheaper last mile) but costs more to evaluate and store. The problem: **for a given key set and machine cost model, choose model size, number of segments, and hierarchy shape to minimize total expected lookup cost** under a space budget.
@@ -18,7 +19,7 @@ with constants $\alpha,\beta,\gamma$ from the memory hierarchy. Minimizing $C$ i
 
 ## 3. State of the Art (SOTA)
 - **Theory:** PGM-index (Ferragina–Vinciguerra, VLDB 2020) — provably minimum segments per level via optimal PLA, recursively optimal in the PLA model. FITing-tree (Galakatos et al., SIGMOD 2019) — error-bounded segmentation with an explicit space/time knob.
-- **Systems/empirical:** RMI (Kraska et al., 2018) with **CDFShop** (Marcus et al., DEEM 2020) auto-tunes RMI architecture (stage count, model types, branching) by search. SOSD provides the benchmark for measuring the realized tradeoff. Cost-model-driven auto-configuration is the systems frontier.
+- **Systems/empirical:** RMI (Kraska et al., 2018) with **CDFShop** (Marcus et al., SIGMOD demo 2020) auto-tunes RMI architecture (stage count, model types, branching) by search. SOSD provides the benchmark for measuring the realized tradeoff. Cost-model-driven auto-configuration is the systems frontier.
 
 ## 4. Upper Bound
 Optimal $s$-segment PLA in $O(n)$ time (streaming convex hull); given $\varepsilon(s)$, the convex objective $C(s)$ is minimized in $O(\log s)$ or $O(s)$ by scan — so the *single-level* optimum is computable exactly and cheaply. PGM achieves the recursive optimum within the PLA class. CDFShop finds strong RMI configs but offers no optimality proof for the joint (architecture + hardware) problem.

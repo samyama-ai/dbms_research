@@ -19,7 +19,7 @@ JSON path containment is the analog of **XPath containment**, which sits on:
 The decisive boundary results: tree-pattern containment with `{/, //, [], *}` is **coNP-complete** (Miklau–Suciu, *JACM* 2004); satisfiability of XPath fragments ranges from PTIME to undecidable depending on arithmetic, negation, and data-value (joins via key equality) features (Benedikt–Fan–Geerts).
 
 ## 3. State of the Art (SOTA)
-- **Theory-SOTA:** the XPath static-analysis program (Miklau–Suciu; Neven–Schwentick; Benedikt–Fan–Geerts; Schwentick's survey) gives a near-complete map for XPath; JSON path inherits these but the *arrays + index arithmetic + JSON's filter-comparison* combination has only partial transfer. Recent SQL/JSON-path semantics (Bourhis–Reutter–Suciu–Vrgoč) supply the formal substrate, but containment is not fully classified.
+- **Theory-SOTA:** the XPath static-analysis program (Miklau–Suciu; Neven–Schwentick; Benedikt–Fan–Geerts; Schwentick's survey) gives a near-complete map for XPath; JSON path inherits these but the *arrays + index arithmetic + JSON's filter-comparison* combination has only partial transfer. Recent SQL/JSON-path semantics (Bourhis–Reutter–Suárez–Vrgoč) supply the formal substrate, but containment is not fully classified.
 - **Systems-SOTA:** no production engine decides JSON-path containment; optimizers use only conservative syntactic rewrite rules. There is essentially **no** complete containment checker shipped.
 
 ## 4. Upper Bound
@@ -48,7 +48,7 @@ The decisive boundary results: tree-pattern containment with `{/, //, [], *}` is
 ## 9. Key References
 - **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/602382.602385)
 - **[Foundational]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346333)
-- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
+- **[SOTA]** P. Bourhis, J. Reutter, F. Suárez, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
 - **[Survey]** T. Schwentick. *XPath Query Containment.* SIGMOD Record, 2004. — [DOI](https://doi.org/10.1145/974121.974140)
 - **[Foundational]** M. Bojańczyk, C. David, A. Muscholl, T. Schwentick, L. Segoufin. *Two-Variable Logic on Data Trees and XML Reasoning.* PODS/JACM, 2009. — [DOI](https://doi.org/10.1145/1516512.1516515)
 

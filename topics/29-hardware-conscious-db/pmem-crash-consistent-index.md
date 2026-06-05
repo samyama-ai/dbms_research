@@ -52,9 +52,9 @@ For *unsorted* / hash and for *single-key* updates, theory and practice nearly m
 
 - **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712) — [DBLP](https://dblp.org/rec/conf/isca/PelleyCW14.html)
 - **[Foundational]** Izraelevitz, Mendes, Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23) — [DBLP](https://dblp.org/rec/conf/wdag/IzraelevitzMS16.html)
-- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
+- **[SOTA]** Hwang, Kim, Won, Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
 - **[SOTA]** Arulraj, Levandoski, Minhas, Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3164135.3164147) — [DBLP](https://dblp.org/rec/journals/pvldb/ArulrajLML18.html)
-- **[SOTA]** Lu, Hua, Xie, et al. *Dash: Scalable Hashing on Persistent Memory.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389134) — [arXiv](https://arxiv.org/abs/2003.07302)
+- **[SOTA]** Lu, Hao, Wang, Lo. *Dash: Scalable Hashing on Persistent Memory.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3389133.3389134) — [arXiv](https://arxiv.org/abs/2003.07302)
 - **[Foundational]** Oukid, Lasperas, Nica, Willhalm, Lehner. *FPTree: A Hybrid SCM-DRAM Persistent and Concurrent B-Tree.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915251) — [DBLP](https://dblp.org/rec/conf/sigmod/OukidLNWL16.html)
 
 ## 10. Worked Example

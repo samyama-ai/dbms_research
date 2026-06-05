@@ -44,7 +44,7 @@ Theory gives clean competitive ratios for $1$-D smoothed provisioning, but real 
 ## 9. Key References
 - **[Foundational]** M. Lin, A. Wierman, L. Andrew, E. Thereska. *Dynamic Right-Sizing for Power-Proportional Data Centers.* IEEE/ACM Transactions on Networking, 2013. — [DOI](https://doi.org/10.1109/TNET.2012.2226216)
 - **[SOTA]** L. Ma, D. Van Aken, A. Hefny, G. Mezerhane, A. Pavlo, et al. *Query-based Workload Forecasting for Self-Driving Database Management Systems.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3196908)
-- **[SOTA]** M. Sellke. *Chasing Nested Convex Bodies Nearly Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1811.00999)
+- **[SOTA]** S. Bubeck, B. Klartag, Y. T. Lee, Y. Li, M. Sellke. *Chasing Nested Convex Bodies Nearly Optimally.* SODA, 2020. — [arXiv](https://arxiv.org/abs/1811.00999)
 - **[SOTA]** D. Salinas, V. Flunkert, J. Gasthaus. *DeepAR: Probabilistic Forecasting with Autoregressive Recurrent Networks.* International Journal of Forecasting, 2020. — [DOI](https://doi.org/10.1016/j.ijforecast.2019.07.001)
 - **[Survey]** T. Lykouris, S. Vassilvitskii. *Competitive Caching with Machine Learned Advice.* JACM, 2021. — [DOI](https://doi.org/10.1145/3447579)
 

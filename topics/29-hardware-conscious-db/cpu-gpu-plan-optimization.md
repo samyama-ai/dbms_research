@@ -32,7 +32,7 @@ Approximation algorithms for placement under realistic communication models; int
 - **[Foundational]** P. G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
 - **[Foundational]** J. K. Lenstra, D. B. Shmoys, É. Tardos. *Approximation Algorithms for Scheduling Unrelated Parallel Machines.* Math. Programming, 1990. — [DOI](https://doi.org/10.1007/BF01585745)
 - **[SOTA]** P. Chrysogelos, M. Karpathiotakis, R. Appuswamy, A. Ailamaki. *HetExchange: Encapsulating Heterogeneous CPU-GPU Parallelism in JIT Compiled Engines.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3303753.3303760)
-- **[SOTA]** D. Justo, A. Floratou et al. *The Tensor Data Platform / TQP: Querying with Tensor Computation Runtimes.* VLDB/CIDR, 2022–2023. — [arXiv](https://arxiv.org/abs/2203.01877)
+- **[SOTA]** D. He, S. Nakandala, M. Interlandi et al. *Query Processing on Tensor Computation Runtimes (TQP).* VLDB, 2022. — [arXiv](https://arxiv.org/abs/2203.01877) · [DOI](https://doi.org/10.14778/3551793.3551833)
 - **[Survey]** S. Breß, H. Funke, J. Teubner. *Robust Query Processing in Co-Processor-accelerated Databases.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882936)
 
 ## 10. Worked Example

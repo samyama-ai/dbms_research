@@ -47,7 +47,7 @@ $$C_{\text{ref}}=\begin{pmatrix}1&0.9&0.1&0.1\\0.9&1&0.1&0.1\\0.1&0.1&1&0.0\\0.1
 
 Series 1 and 2 are a tightly-coupled pair ($\rho_{12}=0.9$); the rest are near-independent. In the next window every series stays inside its usual range (so per-series detectors fire nothing), but the new estimate gives $\rho_{12}=0.2$ and $\rho_{34}=0.85$. No mean shifted — only the *structure* flipped.
 
-Naive all-pairs monitoring costs $\binom{4}{2}=6$ correlations; at $m=10^6$ that is $5\times10^{11}$ pairs, infeasible. Instead project each series with a JL sketch into $d=O(\epsilon^{-2}\log m)$ dimensions. With $\epsilon=0.1,\,m=10^6$, $d\approx 100\,\epsilon^{-2}\ln m \approx 100\cdot 14 = 1400$ — sketch state is $O(md)$, sublinear in $\binom{m}{2}$ — and inner products of the sketches recover each $\rho_{ij}$ to $\pm0.1$. The Frobenius change statistic $\|C_{\text{new}}-C_{\text{ref}}\|_F=\sqrt{(0.9-0.2)^2+(0.85-0.0)^2}\cdot\sqrt2\approx 1.57$ far exceeds the JL noise floor, so the structural anomaly is flagged while individual series look normal.
+Naive all-pairs monitoring costs $\binom{4}{2}=6$ correlations; at $m=10^6$ that is $5\times10^{11}$ pairs, infeasible. Instead project each series with a JL sketch into $d=O(\epsilon^{-2}\log m)$ dimensions. With $\epsilon=0.1,\,m=10^6$, $d\approx \epsilon^{-2}\ln m \approx 100\cdot 14 = 1400$ — sketch state is $O(md)$, sublinear in $\binom{m}{2}$ — and inner products of the sketches recover each $\rho_{ij}$ to $\pm0.1$. The Frobenius change statistic $\|C_{\text{new}}-C_{\text{ref}}\|_F=\sqrt{(0.9-0.2)^2+(0.85-0.0)^2}\cdot\sqrt2\approx 1.57$ far exceeds the JL noise floor, so the structural anomaly is flagged while individual series look normal.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

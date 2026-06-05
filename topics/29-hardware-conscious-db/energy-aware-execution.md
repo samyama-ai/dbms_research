@@ -58,7 +58,7 @@ Energy $E = (P_{\mathrm{dyn}} + P_{\mathrm{leak}})\cdot T$:
 
 The GPU is both faster *and* lower-energy here — **race-to-idle** wins, consistent with the 2010 result.
 
-Now add **DVFS** on the CPU: halving frequency makes $T_{\mathrm{cpu}} = 20$ s and (since dynamic $E \propto f$) dynamic energy $\approx 60\times10 \times \tfrac{1}{2}\cdot 2 = 600$... but recompute carefully: dynamic energy $= P_{\mathrm{dyn}}\cdot T$, with $P_{\mathrm{dyn}}\propto f^2$ at $f/2$ giving $15$ W over $20$ s $= 300$ J, plus leakage $20\times20 = 400$ J $\Rightarrow 700$ J. Leakage now dominates and total energy *rose* vs full-speed CPU's $800$? No: $700 < 800$, so slowing helps slightly — but it is still worse than the GPU's $340$ J. The lesson: on heterogeneous hardware, offload beats DVFS tuning, and the leakage term $P_{\mathrm{leak}}\cdot T$ caps how far slowing down can pay.
+Now add **DVFS** on the CPU: halving frequency makes $T_{\mathrm{cpu}} = 20$ s. Compute the dynamic energy as $P_{\mathrm{dyn}}\cdot T$, with $P_{\mathrm{dyn}}\propto f^2$ so at $f/2$ the dynamic power drops to $60/4 = 15$ W; over $20$ s that is $300$ J (equivalently, since dynamic energy $\propto f$, $600\times\tfrac{1}{2} = 300$ J). Add leakage $20\times20 = 400$ J $\Rightarrow 700$ J total. Leakage now dominates, but $700 < 800$, so slowing helps slightly — it is still worse than the GPU's $340$ J. The lesson: on heterogeneous hardware, offload beats DVFS tuning, and the leakage term $P_{\mathrm{leak}}\cdot T$ caps how far slowing down can pay.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

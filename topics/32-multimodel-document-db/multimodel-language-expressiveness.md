@@ -44,7 +44,7 @@ A peer-reviewed denotational semantics for AQL and the MongoDB pipeline; a unifi
 - **[SOTA]** Francis, Green, Guagliardo, Libkin, Lindaaker, Marsault, Plantikow, Rydberg, Selmer, Taylor. *Cypher: An Evolving Query Language for Property Graphs.* SIGMOD, 2018. — [DOI](https://doi.org/10.1145/3183713.3190657)
 - **[SOTA]** Francis, Gheerbrant, Guagliardo, Libkin, Marsault, Martens, Murlak, Peterfreund, Rogova, Vrgoč. *A Researcher's Digest of GQL.* ICDT, 2023. — [DOI](https://doi.org/10.4230/LIPIcs.ICDT.2023.1)
 - **[Foundational]** Buneman, Naqvi, Tannen, Wong. *Principles of Programming with Complex Objects and Collection Types (NRC).* Theoretical Computer Science, 1995. — [DOI](https://doi.org/10.1016/0304-3975(95)00024-Q)
-- **[Survey]** Holubová, Svoboda, Lu. *Multi-Model Databases: A Survey.* (ACM Computing Surveys / DEXA tutorials), 2019. — [DOI](https://doi.org/10.1145/3323214)
+- **[Survey]** Lu, Holubová. *Multi-model Databases: A New Journey to Handle the Variety of Data.* ACM Computing Surveys, 2019. — [DOI](https://doi.org/10.1145/3323214)
 
 ## 10. Worked Example
 

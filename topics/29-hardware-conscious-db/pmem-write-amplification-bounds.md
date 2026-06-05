@@ -1,7 +1,7 @@
 # Persistent-memory write-amplification bounds
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/pmem-write-amplification-bounds` · **Status:** open
-> **Verification note:** Two reference author tokens were corrected — the RUM Conjecture's last author is Callaghan (not Dittrich), and Level Hashing's third author is Wu (not Sun); the cited "Aurora, Crotty" PMEM survey could not be matched to a real publication and is flagged unverified.
+> **Verification note:** Two reference author tokens were corrected — the RUM Conjecture's last author is Callaghan (not Dittrich), and Level Hashing's third author is Wu (not Sun); the fabricated "Aurora, Crotty" PMEM survey was replaced with the real Baldassin–Barreto–Castro–Romano CSUR 2021 survey.
 
 ## 1. Problem Statement
 
@@ -59,10 +59,10 @@ The gap is wide and **genuinely open**: upper bounds come from clever representa
 
 - **[Foundational]** Athanassoulis, Kester, Maas, Stoica, Idreos, Ailamaki, Callaghan. *Designing Access Methods: The RUM Conjecture.* EDBT, 2016. — [DOI](https://doi.org/10.5441/002/edbt.2016.42) — [DBLP](https://dblp.org/rec/conf/edbt/AthanassoulisKM16.html)
 - **[Foundational]** Pelley, Chen, Wenisch. *Memory Persistency.* ISCA, 2014. — [DOI](https://doi.org/10.1145/2678373.2665712) — [DBLP](https://dblp.org/rec/conf/isca/PelleyCW14.html)
-- **[SOTA]** Hwang, Kim, Won, Kim. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
+- **[SOTA]** Hwang, Kim, Won, Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang) — [DBLP](https://dblp.org/rec/conf/fast/HwangKWN18.html)
 - **[SOTA]** Zuo, Hua, Wu. *Write-Optimized and High-Performance Hashing Index Scheme for Persistent Memory (Level Hashing).* OSDI, 2018. — [USENIX](https://www.usenix.org/conference/osdi18/presentation/zuo) — [DBLP](https://dblp.org/rec/conf/osdi/ZuoHW18.html)
 - **[Foundational]** Brodal, Fagerberg. *Lower Bounds for External Memory Dictionaries.* SODA, 2003. — [DBLP](https://dblp.org/rec/conf/soda/BrodalF03.html)
-- **[Survey]** Aurora, Crotty, et al. (and predecessors). *Persistent Memory: a survey of programming and indexing techniques.* (PMEM index/WA surveys), 2020-2021. *(unverified)*
+- **[Survey]** Baldassin, Barreto, Castro, Romano. *Persistent Memory: A Survey of Programming Support and Implementations.* ACM Computing Surveys, 2021. — [DOI](https://doi.org/10.1145/3465402)
 
 ## 10. Worked Example
 

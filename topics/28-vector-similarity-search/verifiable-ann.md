@@ -45,10 +45,10 @@ The completeness requirement inherits ANN's **curse of dimensionality**: any *ce
 ## 9. Key References
 
 - **[Foundational]** Tamassia, R. *Authenticated Data Structures.* ESA, 2003. — [DOI](https://doi.org/10.1007/978-3-540-39658-1_2)
-- **[Foundational]** Yang, Y., Papadias, D., Papadopoulos, S., Kalnis, P. *Authenticated Join Processing / Spatial Queries in Outsourced Databases.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559848)
+- **[Foundational]** Yang, Y., Papadias, D., Papadopoulos, S., Kalnis, P. *Authenticated Join Processing in Outsourced Databases.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559849)
 - **[SOTA]** Liu, T., Xie, X., Zhang, Y. *zkCNN: Zero Knowledge Proofs for Convolutional Neural Network Predictions.* CCS, 2021. — [DOI](https://doi.org/10.1145/3460120.3485379)
 - **[Lower bound]** Rubinstein, A. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904)
-- **[Survey]** Setty, S., et al. *Survey/Foundations of Succinct Arguments (SNARKs/STARKs).* (e.g. Spartan, CCS 2020; and STARK transparency work). — [Spartan eprint](https://eprint.iacr.org/2019/550)
+- **[Survey]** Setty, S., et al. *Survey/Foundations of Succinct Arguments (SNARKs/STARKs).* (e.g. Spartan, CRYPTO 2020; and STARK transparency work). — [Spartan eprint](https://eprint.iacr.org/2019/550)
 
 ## 10. Worked Example
 

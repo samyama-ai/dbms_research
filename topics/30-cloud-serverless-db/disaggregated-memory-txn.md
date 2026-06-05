@@ -52,7 +52,7 @@ Active: protocols *native* to compute/memory separation that tolerate compute-no
 - **[SOTA]** A. Dragojević, D. Narayanan, M. Castro, O. Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [DBLP](https://dblp.org/rec/conf/nsdi/DragojevicNCH14.html)
 - **[SOTA]** A. Kalia, M. Kaminsky, D. Andersen. *FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagram RPCs.* OSDI, 2016. — [DBLP](https://dblp.org/rec/conf/osdi/KaliaKA16.html)
 - **[SOTA]** Q. Wang et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517824) · [arXiv](https://arxiv.org/abs/2112.07320)
-- **[SOTA]** M. Zhang et al. *FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory.* FAST, 2022. — [DBLP](https://dblp.org/rec/conf/fast/ZhangHZL22.html)
+- **[SOTA]** M. Zhang et al. *FORD: Fast One-sided RDMA-based Distributed Transactions for Disaggregated Persistent Memory.* FAST, 2022. — [USENIX](https://www.usenix.org/conference/fast22/presentation/zhang-ming)
 - **[Survey]** M. K. Aguilera et al. *Designing Far Memory Data Structures: Think Outside the Box.* HotOS, 2019. — [DOI](https://doi.org/10.1145/3317550.3321433)
 
 ## 10. Worked Example

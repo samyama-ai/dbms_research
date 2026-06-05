@@ -13,7 +13,7 @@ Status is *partially-solved*: classical predecessor lower bounds transfer cleanl
 
 ## 2. Mathematical Foundations
 Let keys come from a universe $[U]$, stored in $m$ cells of $w$ bits. The **cell-probe model** (Yao) charges only memory probes; it subsumes comparison and word-RAM models, so any cell-probe lower bound binds learned indexes too. The **predecessor problem** has the tight Pătrașcu–Thorup tradeoff: with space $n \cdot 2^a$, query time is
-$$\Theta\!\left(\min\left\{ \tfrac{\log_a w}{\,}, \; \log_w n, \; \tfrac{\log\frac{w}{a}}{\log\frac{a}{\log n}\cdot \log\frac{w}{a}} \right\}\right),$$
+$$\Theta\!\left(\min\left\{ \log_a w, \; \log_w n, \; \tfrac{\log\frac{w}{a}}{\log\frac{a}{\log n}\cdot \log\frac{w}{a}} \right\}\right),$$
 optimal up to the regimes they identify. A learned index is just a *static data structure for predecessor*, so this lower bound applies. The slack a learned index exploits is the **last-mile error** $\varepsilon = \max_x |F(x) - \mathrm{rank}(x)|$: search cost is $O(\log \varepsilon)$, and $\varepsilon$ depends on the **PLA/segment complexity** of the CDF. Information-theoretically, distinguishing $n$ ranks needs $\Omega(\log n)$ bits of resolution; for an adversarial CDF no constant-segment model achieves small $\varepsilon$, forcing $\varepsilon = \Theta(n)$.
 
 ## 3. State of the Art (SOTA)

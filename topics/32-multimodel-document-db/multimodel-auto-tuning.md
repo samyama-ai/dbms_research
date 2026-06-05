@@ -47,7 +47,7 @@ The *single-model, static* problem is theoretically **near-closed** (greedy matc
 - **[Foundational]** A. Gupta, I. S. Mumick. *Selection of Views to Materialize Under a Maintenance Cost Constraint.* ICDT, 1999. — [DOI](https://doi.org/10.1007/3-540-49257-7_28)
 - **[Foundational]** G. L. Nemhauser, L. A. Wolsey, M. L. Fisher. *An Analysis of Approximations for Maximizing Submodular Set Functions.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
 - **[Foundational]** A. Borodin, N. Linial, M. Saks. *An Optimal On-Line Algorithm for Metrical Task Systems.* JACM, 1992. — [DOI](https://doi.org/10.1145/146585.146588)
-- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems (Peloton/NoisePage).* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLLMMMPQ17.html)
+- **[SOTA]** A. Pavlo et al. *Self-Driving Database Management Systems (Peloton/NoisePage).* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/PavloAALLMMMPQS17.html)
 - **[SOTA]** D. Van Aken, A. Pavlo, G. J. Gordon, B. Zhang. *Automatic Database Management System Tuning Through Large-scale Machine Learning (OtterTune).* SIGMOD, 2017. — [DOI](https://doi.org/10.1145/3035918.3064029)
 - **[Foundational]** K. Schnaitter, S. Abiteboul, T. Milo, N. Polyzotis. *On-Line Index Selection for Shifting Workloads (COLT/index interaction line).* ICDE workshops, 2007. — [DBLP](https://dblp.org/rec/conf/icde/SchnaitterAMP07.html)
 

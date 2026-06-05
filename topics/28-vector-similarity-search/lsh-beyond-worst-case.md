@@ -43,7 +43,7 @@ Directions: (i) intrinsic-dimension-parameterized ANN, formalizing why real embe
 - **[Foundational]** P. Indyk, R. Motwani. *Approximate Nearest Neighbors: Towards Removing the Curse of Dimensionality.* STOC, 1998. — [DOI](https://doi.org/10.1145/276698.276876) · [DBLP](https://dblp.org/rec/conf/stoc/IndykM98.html)
 - **[SOTA]** A. Andoni, I. Razenshteyn. *Optimal Data-Dependent Hashing for Approximate Near Neighbors.* STOC, 2015. — [arXiv](https://arxiv.org/abs/1501.01062)
 - **[SOTA]** A. Andoni, P. Indyk, T. Laarhoven, I. Razenshteyn, L. Schmidt. *Practical and Optimal LSH for Angular Distance.* NeurIPS, 2015. — [arXiv](https://arxiv.org/abs/1509.02897)
-- **[Foundational]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing.* ITCS, 2014. — [arXiv](https://arxiv.org/abs/0912.0250) · [DOI (TOCT)](https://doi.org/10.1145/2578221)
+- **[Foundational]** R. O'Donnell, Y. Wu, Y. Zhou. *Optimal Lower Bounds for Locality-Sensitive Hashing (except when q is tiny).* ICS 2011 / ACM TOCT, 2014. — [arXiv](https://arxiv.org/abs/0912.0250) · [DOI (TOCT)](https://doi.org/10.1145/2578221)
 - **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857) · [DBLP](https://dblp.org/rec/conf/icml/BeygelzimerKL06.html)
 - **[Survey]** T. Roughgarden (ed.). *Beyond the Worst-Case Analysis of Algorithms.* Cambridge University Press, 2021. — [DOI](https://doi.org/10.1017/9781108637435)
 

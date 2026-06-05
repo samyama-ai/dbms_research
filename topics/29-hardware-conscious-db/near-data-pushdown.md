@@ -18,7 +18,7 @@ i.e., the saved interface traffic $(1-\sigma_o)N/\beta_{io}$ must exceed the dev
 
 ## 3. State of the Art (SOTA)
 
-- **Systems:** **Amazon S3 Select / Redshift Spectrum** and **PolarDB** push selection/projection into storage. **YourSQL** and **Biscuit** (Samsung, ISCA 2016) and **Summarizer** (ASPLOS 2018) pioneered in-SSD filtering. **Newport / Eideticom NoLoad** and SNIA's Computational Storage standard (NVMe TP4091 / CS) define a programmable substrate. **PushdownDB** (Yu et al., VLDB 2020) systematically studies which operators to push to S3.
+- **Systems:** **Amazon S3 Select / Redshift Spectrum** and **PolarDB** push selection/projection into storage. **YourSQL** and **Biscuit** (Samsung, ISCA 2016) and **Summarizer** (MICRO 2017) pioneered in-SSD filtering. **Newport / Eideticom NoLoad** and SNIA's Computational Storage standard (NVMe TP4091 / CS) define a programmable substrate. **PushdownDB** (Yu et al., VLDB 2020) systematically studies which operators to push to S3.
 - **Research engines:** **Polaris / Caribou** (ETH), **INSIDER** (UCSD, ATC 2019), and **Solros**-style splits. Cost-based pushdown advisors exist but rely on coarse heuristics; the *which-operators* decision under tight device limits is the empirically open core.
 
 ## 4. Upper Bound

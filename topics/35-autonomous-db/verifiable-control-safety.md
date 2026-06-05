@@ -43,7 +43,7 @@ Threads: (a) **runtime shielding / safe filters** wrapping learned tuners — ve
 - Compositional verification across the tuning, scheduling, and recovery loops (no harmful interaction).
 
 ## 9. Key References
-- **[Foundational]** A. D. Ames, X. Xu, J. W. Grizzle, P. Tabuada. *Control Barrier Functions: Theory and Applications.* European Control Conference, 2019. — [PDF](https://coogan.ece.gatech.edu/papers/amesecc19.html)
+- **[Foundational]** A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, P. Tabuada. *Control Barrier Functions: Theory and Applications.* European Control Conference, 2019. — [PDF](https://coogan.ece.gatech.edu/papers/amesecc19.html)
 - **[SOTA]** M. Alshiekh, R. Bloem, R. Ehlers, B. Könighofer, S. Niekum, U. Topcu. *Safe Reinforcement Learning via Shielding.* AAAI, 2018. — [arXiv](https://arxiv.org/abs/1708.08611)
 - **[SOTA]** G. Katz, C. Barrett, D. Dill, K. Julian, M. Kochenderfer. *Reluplex: An Efficient SMT Solver for Verifying Deep Neural Networks.* CAV, 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
 - **[Foundational]** R. Alur et al. *The Algorithmic Analysis of Hybrid Systems.* Theoretical Computer Science, 1995. — [PDF](https://www.cis.upenn.edu/~alur/TCS95.pdf)

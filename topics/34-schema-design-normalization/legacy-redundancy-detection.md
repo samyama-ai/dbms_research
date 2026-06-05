@@ -1,6 +1,7 @@
 # Redundancy and Anomaly Detection in Legacy Schemas
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/legacy-redundancy-detection` · **Status:** partially-solved
+> **Verification note:** In §3 the "(Bleifuß, Kruse, Naumann, 2017)" citation attaches to Hydra; DCFinder is a distinct tool (Pena, de Almeida, Naumann, 2019–2020), not that 2017 paper.
 
 ## 1. Problem Statement
 Given a large legacy schema (often hundreds of wide, under-normalized tables) together with its data instance, **detect normalization violations and update anomalies** — i.e., locate where the design departs from BCNF/3NF/4NF and where redundancy causes insertion/update/deletion anomalies — using schema *and* data jointly, since declared constraints are typically missing or stale.
@@ -45,9 +46,9 @@ Active directions: (1) **incremental/streaming** FD and DC discovery under updat
 - **[Foundational]** Codd, E.F. *Further Normalization of the Data Base Relational Model.* IBM Research / Courant Computer Science Symposia, 1972. — [DBLP search](https://dblp.org/search?q=Codd+Further+Normalization+Data+Base+Relational+Model)
 - **[Foundational]** Arenas, M., Libkin, L. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* PODS 2003 / JACM, 2005. — [DOI](https://doi.org/10.1145/1059513.1059519)
 - **[Foundational]** Lucchesi, C.L., Osborn, S.L. *Candidate Keys for Relations.* JCSS, 1978. — [DOI](https://doi.org/10.1016/0022-0000(78)90009-0)
-- **[SOTA]** Papenbrock, F., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
+- **[SOTA]** Papenbrock, T., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
 - **[SOTA]** Bleifuß, T., Kruse, S., Naumann, F. *Efficient Denial Constraint Discovery with Hydra.* PVLDB, 2017. — [DOI](https://doi.org/10.14778/3157794.3157800)
-- **[Survey]** Papenbrock, F., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
+- **[Survey]** Papenbrock, T., et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)
 
 ## 10. Worked Example
 

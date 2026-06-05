@@ -1,6 +1,7 @@
 # Sliding-window distinct counting space bounds
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/sliding-window-distinct-count` · **Status:** partially-solved
+> **Verification note:** In the §10 worked example the window framing is inconsistent — with $N=4$ the last-4 window is positions 3–6 = $[a,c,a,b]$ (not the 3-element multiset $[c,a,b]$ shown, which corresponds to $N=3$); the distinct count $D=3$ and the timestamp-retention logic are nonetheless correct.
 
 ## 1. Problem Statement
 

@@ -66,7 +66,7 @@ Active directions: learned recall/cost predictors that avoid full rebuilds by ex
 
 Monotonicity lets us bracket: $40$ fails ($0.93{<}0.95$), $80$ passes; probe the midpoint $60$, which passes ($0.952$); so the answer is $\mathit{efSearch}\in(40,60]$ — pick $60$, halving work vs. the safe default $80$.
 
-**Sampling guard:** with $m{=}1000$, a Hoeffding bound gives recall-estimate half-width $\sqrt{\ln(2/\delta)/(2m)} \approx \sqrt{3.0/2000}\approx 0.039$ at $\delta{=}0.05$. The measured $0.952$ is only $0.002$ above target — within the confidence band — so a prudent tuner bumps to $\mathit{efSearch}{=}80$ for margin. The whole calibration cost $\log_2(320/10)\approx 5$ probes, no index rebuild.
+**Sampling guard:** with $m{=}1000$, a Hoeffding bound gives recall-estimate half-width $\sqrt{\ln(2/\delta)/(2m)} \approx \sqrt{3.69/2000}\approx 0.043$ at $\delta{=}0.05$. The measured $0.952$ is only $0.002$ above target — within the confidence band — so a prudent tuner bumps to $\mathit{efSearch}{=}80$ for margin. The whole calibration cost $\log_2(320/10)\approx 5$ probes, no index rebuild.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

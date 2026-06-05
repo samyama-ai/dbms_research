@@ -20,7 +20,7 @@ A JSON value is a tree (with object and array nodes) or, semantically, a finite 
 Formally, for the navigational core, membership reduces to model-checking a positive-existential formula $\varphi_p(x)$ over the document structure, giving data complexity in $\mathrm{AC}^0/\mathrm{LOGSPACE}$ and combined complexity in PTIME; with negation/full filters and value arithmetic the relevant class rises (PTIME-complete, and PSPACE-flavored only if backreferencing regex functions are admitted).
 
 ## 3. State of the Art (SOTA)
-- **Theory-SOTA:** The recent formalization line on RFC 9535 (and earlier SQL/JSON path semantics by Bourhis–Reutter–Suciu–Vrgoč) gives a clean autom-theoretic semantics and tight bounds for the navigational + filter fragment: data complexity in non-uniform $\mathrm{AC}^0$ / $\mathrm{LOGSPACE}$, combined complexity PTIME, with PTIME-completeness for fragments with sufficiently rich filters.
+- **Theory-SOTA:** The recent formalization line on RFC 9535 (and earlier SQL/JSON path semantics by Bourhis–Reutter–Suárez–Vrgoč) gives a clean autom-theoretic semantics and tight bounds for the navigational + filter fragment: data complexity in non-uniform $\mathrm{AC}^0$ / $\mathrm{LOGSPACE}$, combined complexity PTIME, with PTIME-completeness for fragments with sufficiently rich filters.
 - **Systems-SOTA:** PostgreSQL (`jsonb_path_query`), Oracle, SQL Server, MySQL, and MongoDB's `$jsonSchema`/aggregation paths all implement single-pass or automaton-based evaluators that are effectively linear in $|J|$ per path for the common (non-recursive, non-regex) case.
 
 ## 4. Upper Bound
@@ -47,8 +47,8 @@ The navigational core is essentially **closed** (matches XPath bounds). The genu
 ## 9. Key References
 - **[Foundational]** G. Gottlob, C. Koch, R. Pichler. *Efficient Algorithms for Processing XPath Queries.* ACM TODS / JACM, 2005. — [DOI](https://doi.org/10.1145/1071610.1071614)
 - **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [DBLP](https://dblp.org/rec/books/aw/AbiteboulHV95.html)
-- **[SOTA]** P. Bourhis, J. Reutter, F. Suciu, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
-- **[SOTA]** S. Gorman, G. Normington, et al. (IETF). *RFC 9535: JSONPath: Query Expressions for JSON.* IETF, 2024. — [DOI](https://doi.org/10.17487/RFC9535)
+- **[SOTA]** P. Bourhis, J. Reutter, F. Suárez, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
+- **[SOTA]** S. Gössner (Ed.), G. Normington (Ed.), C. Bormann (Ed.). *RFC 9535: JSONPath: Query Expressions for JSON.* IETF, 2024. — [DOI](https://doi.org/10.17487/RFC9535)
 - **[Survey]** P. Bourhis, J. Reutter, D. Vrgoč. *Querying JSON with the SQL/JSON path language and beyond.* (survey-style treatments in ICDT/PODS proceedings), 2020. — [DBLP search](https://dblp.org/search?q=Querying%20JSON%20SQL%2FJSON%20path%20language%20Vrgoc)
 
 ## 10. Worked Example

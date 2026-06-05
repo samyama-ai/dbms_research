@@ -19,7 +19,7 @@ The core difficulty is **version-order recovery**: clients observe read-from (wr
 
 ## 3. State of the Art (SOTA)
 - **Systems-SOTA:** **Elle** (Alvaro–Kingsbury, VLDB 2020), the checker behind **Jepsen**, recovers dependency edges from list-append/register histories and detects anomalies up to serializability with *witnesses* (human-readable cycles); it has found isolation violations in many commercial databases.
-- **Cobra** (Tan, Jung, Lustig, et al., OSDI 2020) verifies **serializability** of black-box key-value histories at scale using a SMT/SAT encoding accelerated with domain-specific pruning and GPU.
+- **Cobra** (Tan, Zhao, Mu, Walfish, OSDI 2020) verifies **serializability** of black-box key-value histories at scale using a SMT/SAT encoding accelerated with domain-specific pruning and GPU.
 - **PolySI / Viper / IsoVista** (recent SIGMOD/VLDB 2023–2024) check **snapshot isolation** and other levels with SMT/graph methods and provide counterexample visualization. **dbcop** (Biswas–Enea, OOPSLA 2019) checks several isolation levels with complexity results for bounded parameters.
 - **Theory-SOTA:** Biswas–Enea (OOPSLA 2019) give **polynomial-time** algorithms for checking many isolation levels when the number of sessions/values is bounded, plus NP-hardness without those bounds.
 - Mature, deployed, witness-producing checkers exist — hence **partially-solved**; complete + scalable checking across *all* levels on *unrestricted* histories remains open.
@@ -48,7 +48,7 @@ Directions: (1) unified checkers spanning the whole isolation lattice with count
 - **[SOTA]** Alvaro, Kingsbury. *Elle: Inferring Isolation Anomalies from Experimental Observations.* PVLDB, 2020. — [arXiv](https://arxiv.org/abs/2003.10554) — [DOI](https://doi.org/10.14778/3430915.3430918)
 - **[SOTA]** Tan, Zhao, Mu, Walfish. *Cobra: Making Transactional Key-Value Stores Verifiably Serializable.* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/tan) — [DBLP](https://dblp.org/rec/conf/osdi/TanZMW20)
 - **[SOTA]** Biswas, Enea. *On the Complexity of Checking Transactional Consistency.* OOPSLA, 2019. — [arXiv](https://arxiv.org/abs/1908.04509) — [DOI](https://doi.org/10.1145/3360591)
-- **[SOTA]** Huang, Liu, et al. *PolySI: Checking Snapshot Isolation Efficiently.* PVLDB, 2023. — [arXiv](https://arxiv.org/abs/2301.07313) — [DOI](https://doi.org/10.14778/3583140.3583145)
+- **[SOTA]** Huang, Liu, et al. *Efficient Black-Box Checking of Snapshot Isolation in Databases (PolySI).* PVLDB, 2023. — [arXiv](https://arxiv.org/abs/2301.07313) — [DOI](https://doi.org/10.14778/3583140.3583145)
 
 ## 10. Worked Example
 

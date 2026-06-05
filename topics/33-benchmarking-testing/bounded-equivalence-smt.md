@@ -31,7 +31,7 @@ The SMT approach encodes bounded equivalence: introduce symbolic tuples (boolean
 ## 3. State of the Art (SOTA)
 
 **Systems-SOTA.**
-- **Cosette** (Chu, Wang, Cheung, Suciu; CIDR 2017) — decides SQL equivalence by *either* an SMT-backed counterexample search (disprove) *or* a Coq/Rosette proof (prove); pioneered the dual oracle.
+- **Cosette** (Chu, Wang, Weitz, Cheung; CIDR 2017) — decides SQL equivalence by *either* an SMT-backed counterexample search (disprove) *or* a Coq/Rosette proof (prove); pioneered the dual oracle.
 - **HoTTSQL / U-semiring** (Chu et al., SIGMOD 2017) and **UDP** — algebraic decision procedures for bag-semantics SQL equivalence via unbounded semirings.
 - **SQLSolver** (Ding et al., 2023/2024) — extends provable equivalence to many real-world rewrite rules using an integer-/U-semiring encoding, outperforming Cosette on rewrite-rule benchmarks.
 - **EQUITAS / WeTune** — verify and *discover* rewrite rules; WeTune (SIGMOD 2022) synthesizes new optimizer rewrites and verifies them with an SMT-based bounded checker.
@@ -73,8 +73,8 @@ For **CQs**, theory is closed (NP-complete, decidable). The genuinely **open** r
 
 - **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
 - **[Foundational]** T. J. Green, G. Karvounarakis, V. Tannen. *Provenance Semirings.* PODS, 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
-- **[SOTA]** S. Chu, C. Wang, K. Cheung, D. Suciu. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
-- **[SOTA]** S. Chu, B. Murphy, J. Roesch, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236200)
+- **[SOTA]** S. Chu, C. Wang, K. Weitz, A. Cheung. *Cosette: An Automated Prover for SQL.* CIDR, 2017. — [DBLP](https://dblp.org/rec/conf/cidr/ChuWWC17.html)
+- **[SOTA]** S. Chu, A. Cheung, D. Suciu. *Axiomatic Foundations and Algorithms for Deciding Semantic Equivalences of SQL Queries (U-semiring).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3236187.3236200)
 - **[SOTA]** Z. Wang et al. *WeTune: Automatic Discovery and Verification of Query Rewrite Rules.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3526125)
 - **[Survey]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995 (CQ equivalence, decidability boundaries). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
 

@@ -24,7 +24,7 @@ No single tight bound — the field reports **empirical Pareto frontiers** rathe
 
 ## 5. Lower Bound
 - **Leakage composition:** there is no general theorem bounding composed leakage by the sum of component leakages; **reconstruction attacks** (KKNO'16, Grubbs et al. "Pump up the Volume," CCS'18) show access-pattern + volume leakage suffices for full column reconstruction — a *lower bound on harm* from naïve composition.
-- **Side channels:** controlled-channel/page-fault attacks (Xu–Cui–Peinado, S&P'15) and microarchitectural attacks (Foreshadow, S&P'18) show non-oblivious enclave execution leaks data-dependent control flow — so any placement using a non-oblivious in-enclave operator has *unbounded* worst-case leakage.
+- **Side channels:** controlled-channel/page-fault attacks (Xu–Cui–Peinado, S&P'15) and microarchitectural attacks (Foreshadow, USENIX Security'18) show non-oblivious enclave execution leaks data-dependent control flow — so any placement using a non-oblivious in-enclave operator has *unbounded* worst-case leakage.
 - **Hardness:** optimal leakage-bounded placement generalizes constrained knapsack/QAP → NP-hard; with non-additive leakage it is not even known to be in NP without an oracle for composed-leakage evaluation.
 
 ## 6. The Gap

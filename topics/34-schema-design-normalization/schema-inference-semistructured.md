@@ -50,7 +50,7 @@ The gap is between **practically-effective heuristics** (union/fusion + greedy M
 - **[SOTA]** Baazizi, M.-A., Colazzo, D., Ghelli, G., Sartiani, C. *Counting Types for Massive JSON Datasets / Schema Inference for Massive JSON Datasets.* EDBT, 2017. — [PDF](https://openproceedings.org/2017/conf/edbt/paper-62.pdf), [DBLP](https://dblp.org/rec/conf/edbt/BaaziziLCGS17.html)
 - **[SOTA]** Papenbrock, T., Naumann, F. *A Hybrid Approach to Functional Dependency Discovery (HyFD).* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2915203)
 - **[Foundational]** Rissanen, J. *Modeling by Shortest Data Description (MDL).* Automatica, 1978. — [DOI](https://doi.org/10.1016/0005-1098(78)90005-5)
-- **[Survey]** Abiteboul, S., Buneman, P., Suciu, D. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000. — [DBLP](https://dblp.org/rec/books/mk/AbiteboulBS2000.html)
+- **[Survey]** Abiteboul, S., Buneman, P., Suciu, D. *Data on the Web: From Relations to Semistructured Data and XML.* Morgan Kaufmann, 2000. — [DBLP](https://dblp.org/rec/books/mk/BunemanSA99.html)
 
 ## 10. Worked Example
 

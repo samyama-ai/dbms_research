@@ -43,7 +43,7 @@ Formal JSON Schema semantics (Pezoa, Bourhis, Reutter, Vrgoč, Suciu) underpins 
 - **[Foundational]** M. Arenas, L. Libkin. *A Normal Form for XML Documents.* ACM TODS, 2004. — [DOI](https://doi.org/10.1145/974750.974757)
 - **[Foundational]** W. Fan, J. Siméon. *Integrity Constraints for XML.* JCSS / PODS, 2000–2003. — [DOI](https://doi.org/10.1145/335168.335172)
 - **[Foundational]** J. C. Mitchell. *The Implication Problem for Functional and Inclusion Dependencies.* Information and Control, 1983. — [DOI](https://doi.org/10.1016/S0019-9958(83)80002-3)
-- **[SOTA]** F. Pezoa, J. Reutter, F. Suciu, D. Vrgoč, et al. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029) · [DBLP](https://dblp.org/rec/conf/www/PezoaRSUV16.html)
+- **[SOTA]** F. Pezoa, J. Reutter, F. Suárez, M. Ugarte, D. Vrgoč. *Foundations of JSON Schema.* WWW, 2016. — [DOI](https://doi.org/10.1145/2872427.2883029) · [DBLP](https://dblp.org/rec/conf/www/PezoaRSUV16.html)
 - **[Survey]** W. Fan. *XML Constraints: Specification, Analysis, and Applications.* (survey/tutorial), DEXA/various, 2005. — [DOI](https://doi.org/10.1109/DEXA.2005.204)
 
 ## 10. Worked Example

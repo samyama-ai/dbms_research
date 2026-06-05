@@ -16,7 +16,7 @@ The probability of a Boolean query equals the probability of its **lineage** (pr
 
 The landmark result is the **Dichotomy Theorem** (Dalvi–Suciu): every Boolean UCQ without self-joins (and, in the full theorem, every UCQ) is either computable in PTIME by a *safe plan* using six rules (independent-join, independent-project, inclusion–exclusion, etc.) — equivalently the lineage admits an efficient **OBDD/d-DNNF / read-once-ish** compilation — **or** it is #P-hard, with *no intermediate* complexity (assuming $\mathsf{P}\neq\mathsf{\\#P}$). Algebraically, hardness is tied to whether the query's lineage is **liftable** (computable by lifted inference / extensional evaluation) vs. requiring grounded WMC.
 
-$$\Pr[q] = \mathrm{WMC}(\Phi_q), \qquad q \text{ safe} \iff \Phi_q \text{ liftable (PTIME)} \;\lor\; q \text{ is } \\#P\text{-hard.}$$
+$$\Pr[q] = \mathrm{WMC}(\Phi_q), \qquad \underbrace{q \text{ safe} \iff \Phi_q \text{ liftable (PTIME)}}_{\text{dichotomy: otherwise } q \text{ is } \\#P\text{-hard}}.$$
 
 Foundations also draw on **knowledge compilation** (OBDD, FBDD, d-DNNF, SDD), **semiring provenance** (Green–Karvounarakis–Tannen), and **dichotomy methods** from constraint counting (#CSP dichotomies, Bulatov; Cai–Chen).
 

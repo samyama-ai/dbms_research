@@ -42,7 +42,7 @@ Directions: local intrinsic dimensionality estimators and their link to ANN diff
 
 ## 9. Key References
 - **[Foundational]** K. Beyer, J. Goldstein, R. Ramakrishnan, U. Shaft. *When Is "Nearest Neighbor" Meaningful?* ICDT, 1999. — [DBLP](https://dblp.org/rec/conf/icdt/BeyerGRS99.html)
-- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004. — [DOI](https://doi.org/10.5555/982792.982913)
+- **[Foundational]** R. Krauthgamer, J. R. Lee. *Navigating Nets: Simple Algorithms for Proximity Search.* SODA, 2004. — [ACM DL](https://dl.acm.org/doi/10.5555/982792.982913)
 - **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857) · [PDF](https://hunch.net/~jl/projects/cover_tree/cover_tree.html)
 - **[SOTA]** A. Rubinstein. *Hardness of Approximate Nearest Neighbor Search.* STOC, 2018. — [arXiv](https://arxiv.org/abs/1803.00904) · [DOI](https://doi.org/10.1145/3188745.3188916)
 - **[Foundational]** A. Andoni, P. Indyk, M. Pătraşcu. *On the Optimality of the Dimensionality Reduction Method.* FOCS, 2006. — [PDF](https://www.mit.edu/~andoni/papers/eps2n.pdf) · [DBLP search](https://dblp.org/search?q=On+the+Optimality+of+the+Dimensionality+Reduction+Method)

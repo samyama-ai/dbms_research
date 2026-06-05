@@ -43,7 +43,7 @@ Active directions: learned query embeddings for clustering/compression that resp
 - Streaming/online compression with bounded memory and provable coverage.
 
 ## 9. Key References
-- **[Foundational]** Chaudhuri, S., Gupta, A. K., Narasayya, V. *Compressing SQL Workloads.* SIGMOD, 2002. — [DBLP](https://dblp.org/db/conf/sigmod/sigmod2002.html)
+- **[Foundational]** Chaudhuri, S., Gupta, A. K., Narasayya, V. *Compressing SQL Workloads.* SIGMOD, 2002. — [PDF](https://15799.courses.cs.cmu.edu/spring2022/papers/12-workload2/chaudhuri-sigmod2002.pdf)
 - **[Foundational]** Nemhauser, G., Wolsey, L., Fisher, M. *An Analysis of Approximations for Maximizing Submodular Set Functions—I.* Mathematical Programming, 1978. — [DOI](https://doi.org/10.1007/BF01588971)
 - **[SOTA]** Feldman, D., Langberg, M. *A Unified Framework for Approximating and Clustering Data (sensitivity coresets).* STOC, 2011. — [arXiv](https://arxiv.org/abs/1106.1379)
 - **[SOTA]** Kossmann, J., Halfpap, S., Jankrift, M., Schlosser, R. *Magic mirror in my hand... An Experimental Evaluation of Index Selection Algorithms.* PVLDB, 2020. — [PDF](https://www.vldb.org/pvldb/vol13/p2382-kossmann.pdf)

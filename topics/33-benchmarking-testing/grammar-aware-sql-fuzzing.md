@@ -57,7 +57,7 @@ The gap is between (a) heuristic, coverage-guided generators that empirically re
 ## 9. Key References
 
 - **[Foundational]** A. Seltenreich. *SQLsmith: A Random SQL Query Generator.* Open-source project, 2016. — [GitHub](https://github.com/anse1/sqlsmith)
-- **[SOTA]** R. Zhong, Y. Chen, H. Hu, H. Zhang, W. Lee, T. Kim. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* ACM CCS, 2020. — [arXiv](https://arxiv.org/abs/2006.02398) — [DOI](https://doi.org/10.1145/3372297.3417260)
+- **[SOTA]** R. Zhong, Y. Chen, H. Hu, H. Zhang, W. Lee, D. Wu. *SQUIRREL: Testing Database Management Systems with Language Validity and Coverage Feedback.* ACM CCS, 2020. — [arXiv](https://arxiv.org/abs/2006.02398) — [DOI](https://doi.org/10.1145/3372297.3417260)
 - **[SOTA]** Y. Liang, S. Liu, H. Hu. *Detecting Logical Bugs of DBMS with Coverage-based Guidance (SQLRight).* USENIX Security, 2022. — [USENIX](https://www.usenix.org/conference/usenixsecurity22/presentation/liang)
 - **[SOTA]** M. Rigger, Z. Su. *Finding Bugs in Database Systems via Query Partitioning.* OOPSLA, 2020. — [DOI](https://doi.org/10.1145/3428279)
 - **[Foundational]** U. Feige. *A Threshold of ln n for Approximating Set Cover.* JACM, 1998. — [DOI](https://doi.org/10.1145/285055.285059)

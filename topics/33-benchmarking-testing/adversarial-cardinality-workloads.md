@@ -54,7 +54,7 @@ Open and wide. We have effective *local* attacks and hard-workload generators, b
 - **[SOTA]** Ding, Chaudhuri, et al. *DSB: A Decision Support Benchmark for Workload-Driven and Traditional Database Systems.* VLDB 2021. — [DOI](https://doi.org/10.14778/3484224.3484234)
 - **[SOTA]** Rigger, Su. *Finding Bugs in Database Systems via Query Synthesis (SQLancer / NoREC / TLP).* OSDI & ESEC/FSE 2020. — [arXiv](https://arxiv.org/abs/2001.04174)
 - **[Foundational]** Katz, Barrett, Dill, Julian, Kochenderfer. *Reluplex: Verifying Deep Neural Networks (robustness NP-hardness).* CAV 2017. — [arXiv](https://arxiv.org/abs/1702.01135)
-- **[Survey]** Wang, Yang, et al. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
+- **[Survey]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB 2021. — [arXiv](https://arxiv.org/abs/2012.06743)
 
 ## 10. Worked Example
 

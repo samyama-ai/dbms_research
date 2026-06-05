@@ -67,7 +67,7 @@ The gap is wide and structural, not merely constant-factor. We have tight bounds
 - **[Foundational]** Green, Karvounarakis, Tannen. *Provenance Semirings.* PODS 2007. — [DOI](https://doi.org/10.1145/1265530.1265535)
 - **[Foundational]** Dwork, McSherry, Nissim, Smith. *Calibrating Noise to Sensitivity in Private Data Analysis.* TCC 2006. — [DOI](https://doi.org/10.1007/11681878_14)
 - **[Foundational]** Dinur, Nissim. *Revealing Information While Preserving Privacy.* PODS 2003. — [DOI](https://doi.org/10.1145/773153.773173)
-- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries.* VLDB 2018 (elastic sensitivity). — [DOI](https://doi.org/10.14778/3187009.3177733), [arXiv](https://arxiv.org/abs/1706.09479)
+- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries.* VLDB 2018 (elastic sensitivity). — [DOI](https://doi.org/10.1145/3187009.3177733), [arXiv](https://arxiv.org/abs/1706.09479)
 - **[SOTA]** Kotsogiannis et al. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB 2019. — [DOI](https://doi.org/10.14778/3342263.3342274)
 - **[Survey]** Bun, Ullman, Vadhan. *Fingerprinting Codes and the Price of Approximate Differential Privacy.* SIAM J. Comput., 2018. — [DOI](https://doi.org/10.1137/15M1033587), [arXiv](https://arxiv.org/abs/1311.3158)
 
