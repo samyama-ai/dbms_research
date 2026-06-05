@@ -1,4 +1,4 @@
-# Labeled-constrained and approximate shortest paths
+# Label-constrained and approximate shortest paths
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/constrained-shortest-paths` · **Status:** partially-solved
 
@@ -34,7 +34,7 @@ LCR is a *monotone* special case (label *sets*, no order): the answer is monoton
 - **Approximate distance:** the stretch-2 / $\Omega(n^2)$-space barrier (Pătraşcu–Roditty) carries over.
 
 ## 6. The Gap
-For **trail/walk (homomorphism) semantics** — the GQL default for reachability — the problem is tractable and largely solved in theory, with strong practical indexes (P2H+) for moderate $|\Sigma|$. For **simple-path / counting** semantics it is NP-/#P-hard, so the gap is between hardness and useful restricted-class or approximate algorithms. Genuinely open: index structures that are *simultaneously* sublinear in space, robust to large alphabets, and fully dynamic — current methods pay $2^{|\Sigma|}$ in the worst case. Closing it needs alphabet-parameterized lower bounds matched by adaptive indexes.
+For **walk / arbitrary-path (homomorphism) semantics** — the GQL default for reachability — the problem is tractable and largely solved in theory, with strong practical indexes (P2H+) for moderate $|\Sigma|$. For **simple-path / counting** semantics it is NP-/#P-hard, so the gap is between hardness and useful restricted-class or approximate algorithms. Genuinely open: index structures that are *simultaneously* sublinear in space, robust to large alphabets, and fully dynamic — current methods pay $2^{|\Sigma|}$ in the worst case. Closing it needs alphabet-parameterized lower bounds matched by adaptive indexes.
 
 ## 7. Current Research (as of June 2026)
 - Scalable dynamic LCR/LCSP labeling on billion-edge graphs *(frontier — verify)*.
@@ -55,7 +55,7 @@ For **trail/walk (homomorphism) semantics** — the GQL default for reachability
 - **[SOTA]** Peng, Y., Zhang, Y., Lin, X., Qin, L., Zhang, W. *Answering Billion-Scale Label-Constrained Reachability Queries within Microsecond.* VLDB 2020. — [DOI](https://doi.org/10.14778/3380750.3380753)
 - **[SOTA]** Bagan, G., Bonifati, A., Groz, B. *A Trichotomy for Regular Simple Path Queries on Graphs.* PODS 2013 / JCSS. — [arXiv](https://arxiv.org/abs/1212.6857)
 - **[Survey]** Angles, R., Arenas, M., Barceló, P., Hogan, A., Reutter, J., Vrgoč, D. *Foundations of Modern Query Languages for Graph Databases.* ACM Computing Surveys, 2017. — [arXiv](https://arxiv.org/abs/1610.06264)
-- **[SOTA]** Vrgoč, D. et al. *MillenniumDB: An Open-Source Graph Database System.* 2023. — [arXiv](https://arxiv.org/abs/2111.01540)
+- **[SOTA]** Vrgoč, D. et al. *MillenniumDB: A Persistent, Open-Source, Graph Database.* 2021. — [arXiv](https://arxiv.org/abs/2111.01540)
 
 ## 10. Worked Example
 

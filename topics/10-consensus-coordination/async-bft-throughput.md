@@ -56,7 +56,7 @@ There is no asymptotic complexity gap — DAG-BFT is provably near-optimal in me
 - **[SOTA]** I. Keidar, E. Kokoris-Kogias, O. Naor, A. Spiegelman. *All You Need is DAG (DAG-Rider).* PODC, 2021. — [arXiv](https://arxiv.org/abs/2102.08325)
 - **[SOTA]** G. Danezis, L. Kokoris-Kogias, A. Sonnino, A. Spiegelman. *Narwhal and Tusk: A DAG-based Mempool and Efficient BFT Consensus.* EuroSys, 2022. — [arXiv](https://arxiv.org/abs/2105.11827)
 - **[SOTA]** A. Spiegelman, N. Giridharan, A. Sonnino, L. Kokoris-Kogias. *Bullshark: DAG BFT Protocols Made Practical.* ACM CCS, 2022. — [arXiv](https://arxiv.org/abs/2201.05677)
-- **[SOTA]** K. Babel, A. Chursin, G. Danezis, A. Sonnino, et al. *Mysticeti: Reaching the Latency Limits with Uncertified DAGs.* 2024 (preprint). — [arXiv](https://arxiv.org/abs/2310.14821)
+- **[SOTA]** K. Babel, A. Chursin, G. Danezis, A. Sonnino, et al. *Mysticeti: Reaching the Limits of Latency with Uncertified DAGs.* 2024 (preprint). — [arXiv](https://arxiv.org/abs/2310.14821)
 
 ## 10. Worked Example
 

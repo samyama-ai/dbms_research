@@ -26,7 +26,7 @@ distributed, and dynamic.
 | [Graph partitioning for query locality](./graph-partitioning-locality.md) | empirically-open | Partitioning property graphs to minimize cross-partition traversal for unknown, evolving navigational workloads. |
 | [Native graph storage vs. relational backing](./native-vs-relational-storage.md) | empirically-open | Whether index-free-adjacency native storage genuinely beats a tuned relational/columnar layout for graph workloads. |
 | [Adjacency and reachability index tradeoffs](./reachability-index-tradeoffs.md) | partially-solved | Index structures answering reachability/distance with sublinear space and query time on billion-edge dynamic graphs. |
-| [Labeled-constrained and approximate shortest paths](./constrained-shortest-paths.md) | partially-solved | Indexing for label/predicate-constrained distance and path queries with provable accuracy/space tradeoffs. |
+| [Label-constrained and approximate shortest paths](./constrained-shortest-paths.md) | partially-solved | Indexing for label/predicate-constrained distance and path queries with provable accuracy/space tradeoffs. |
 | [Property-graph schema and constraint theory](./property-graph-schema-theory.md) | open | A principled schema, key, and integrity-constraint theory for property graphs with validation and inference. |
 | [Keys, normalization and dependencies for graphs](./graph-dependencies-normalization.md) | open | Defining graph functional/entity dependencies and normal forms that guide design without a fixed schema. |
 | [Multiway join plans mixing paths and patterns](./hybrid-path-pattern-plans.md) | open | A cost-based optimizer that interleaves WCOJ pattern matching, path navigation, and binary joins optimally. |

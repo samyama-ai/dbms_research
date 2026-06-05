@@ -17,9 +17,9 @@ Status **partially-solved**: the theory (commutativity-based locking, abstract d
 
 Two operations $o_1, o_2$ (with arguments and return values) **commute** in state $s$ iff executing $o_1; o_2$ and $o_2; o_1$ from $s$ yield the same final state and the same return values:
 $$
-\forall s:\ \big(s \xrightarrow{o_1} \xrightarrow{o_2} s',\ r\big) \;\Leftrightarrow\; \big(s \xrightarrow{o_2} \xrightarrow{o_1} s'',\ r'\big),\ \ s'=s'' \wedge r=r'.
+\forall s:\quad \Big(s \xrightarrow{o_1} \xrightarrow{o_2} (s',\ r)\ \ \wedge\ \ s \xrightarrow{o_2} \xrightarrow{o_1} (s'',\ r')\Big)\ \implies\ \big(s'=s'' \ \wedge\ r=r'\big).
 $$
-**Conflict-serializability generalizes**: in the *commutativity (abstract) model*, the conflict relation is replaced by *non-commutativity*; a history is serializable iff its **conflict graph over non-commuting operation pairs** is acyclic (Weihl 1988; Korth 1983 — semantically-based locking). This strictly enlarges the set of admissible interleavings versus read/write conflicts.
+**Conflict-serializability generalizes**: in the *commutativity (abstract) model*, the conflict relation is replaced by *non-commutativity*; acyclicity of a history's **conflict graph over non-commuting operation pairs** is *sufficient* for (conflict-)serializability (Weihl 1988; Korth 1983 — semantically-based locking). This strictly enlarges the set of admissible interleavings versus read/write conflicts.
 
 **State-dependent (conditional) commutativity** — e.g., `pop` on a non-empty stack commutes with `push` but not when the stack is at a boundary — is captured by *commutativity conditions* over state. The **scalable commutativity rule** (Clements et al., SOSP 2013) formalizes a deep consequence: *whenever interface operations commute, they have a conflict-free (linearly scalable) implementation*, tying commutativity to multicore scalability. CRDTs (Shapiro et al. 2011) realize commutativity for replicated state via join-semilattice merge ($\sqcup$ commutative, associative, idempotent), guaranteeing strong eventual consistency.
 

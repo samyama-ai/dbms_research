@@ -22,7 +22,7 @@ Given the *true* probe selectivity $\sigma$ and cardinalities, the net-benefit o
 
 ## 5. Lower Bound
 
-Approximate membership requires $\Omega(n\log(1/f))$ bits (Carter–Wegman lower bound; Pagh–Pagh–Rao show $1.44\log_2(1/f)$ is essentially optimal for the standard model) — so no filter is more compact than this for given $f$, capping achievable overhead reduction. Learned filters only beat it by *assuming structure* (and their worst-case is bounded below by the same bound on the "backup" filter). **Online** decisions face an information-theoretic barrier: distinguishing a high-selectivity from a low-selectivity probe can require seeing $\Omega(1/\Delta^2)$ tuples (Chernoff/sampling lower bound), so any adaptive scheme must pay some exploration cost — *strict* no-regret build decisions are impossible. These are information-theoretic / space lower bounds, not NP-hardness.
+Approximate membership requires at least $n\log_2(1/f)$ bits (Carter–Floyd–Gill–Markowsky–Wegman, STOC 1978) — the information-theoretic optimum; a *standard* Bloom filter pays a $1.44\times$ overhead ($\approx 1.44\log_2(1/f)$ bits/key), and Pagh–Pagh–Rao *remove* that overhead, achieving close to the $\log_2(1/f)$ optimum — so no filter is more compact than $n\log_2(1/f)$ for given $f$, capping achievable overhead reduction. Learned filters only beat it by *assuming structure* (and their worst-case is bounded below by the same bound on the "backup" filter). **Online** decisions face an information-theoretic barrier: distinguishing a high-selectivity from a low-selectivity probe can require seeing $\Omega(1/\Delta^2)$ tuples (Chernoff/sampling lower bound), so any adaptive scheme must pay some exploration cost — *strict* no-regret build decisions are impossible. These are information-theoretic / space lower bounds, not NP-hardness.
 
 ## 6. The Gap
 
@@ -43,6 +43,7 @@ Offline (known $\sigma$) sizing and placement is **closed**. The **empirically-o
 ## 9. Key References
 
 - **[Foundational]** Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors.* CACM, 1970. — [DOI](https://doi.org/10.1145/362686.362692)
+- **[Foundational]** Carter, Floyd, Gill, Markowsky, Wegman. *Exact and Approximate Membership Testers.* STOC 1978. *(the $n\log_2(1/f)$ space lower bound)* — [DOI](https://doi.org/10.1145/800133.804332)
 - **[Foundational]** Pagh, Pagh, Rao. *An Optimal Bloom Filter Replacement.* SODA 2005. — [DBLP](https://dblp.org/rec/conf/soda/PaghPR05.html)
 - **[SOTA]** Kraska, Beutel, Chi, Dean, Polyzotis. *The Case for Learned Index Structures (learned Bloom filters).* SIGMOD 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
 - **[SOTA]** Mitzenmacher. *A Model for Learned Bloom Filters and Optimizing by Sandwiching.* NeurIPS 2018. — [NeurIPS](https://papers.nips.cc/paper_files/paper/2018/hash/0f49c89d1e7298bb9930789c8ed59d48-Abstract.html)
@@ -54,7 +55,7 @@ Offline (known $\sigma$) sizing and placement is **closed**. The **empirically-o
 
 Join `orders ⋈ customers` on `cust_id`. Build side `customers` has $n=10^5$ keys; probe side `orders` has $N_p=10^7$ rows. Suppose only $\sigma=2\%$ of orders match a built filter, so the filter could prune $0.98\cdot N_p = 9.8{\times}10^6$ rows. Take $c_{\text{down}}=5$ ns saved per pruned row, $c_{\text{probe}}=1$ ns, and build cost $c_{\text{build}}(n)\approx n\cdot 5\,\text{ns}=0.5$ ms.
 
-Size the filter at $m/n=10$ bits/key (1.2 MB). Optimal hashes $k^\star=\tfrac{m}{n}\ln 2\approx 7$, giving $f\approx 0.6185^{10}\approx 0.0082$.
+Size the filter at $m/n=10$ bits/key ($m=10^6$ bits $\approx 125$ KB). Optimal hashes $k^\star=\tfrac{m}{n}\ln 2\approx 7$, giving $f\approx 0.6185^{10}\approx 0.0082$.
 
 - Savings: $9.8{\times}10^6 \times 5\,\text{ns} = 49$ ms.
 - Costs: build $0.5$ ms $+$ probe $10^7\times 1\,\text{ns}=10$ ms $+$ false-positive waste $f\cdot N_p\cdot c_{\text{down}} = 0.0082\times10^7\times5\,\text{ns}\approx 0.41$ ms.

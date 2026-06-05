@@ -24,7 +24,7 @@ For a join query, output multiplicity is governed by **degrees**: the change fro
 
 ## 3. State of the Art (SOTA)
 
-- **Theory-SOTA:** *Residual sensitivity* (Dong, Fang, Yi, ICDE/PODS 2021–2023) gives the tightest known polynomially-computable smooth upper bound on local sensitivity for full acyclic and self-join-free conjunctive queries, dominating elastic sensitivity. For self-joins, Dong–Yi extend with worst-case-optimal-join-style accounting.
+- **Theory-SOTA:** *Residual sensitivity* (Dong, Yi, SIGMOD 2021) gives the tightest known polynomially-computable smooth upper bound on local sensitivity for full acyclic and self-join-free conjunctive queries, dominating elastic sensitivity. For self-joins, Dong–Yi extend with worst-case-optimal-join-style accounting.
 - **Systems-SOTA:** **Flex/elastic sensitivity** (Uber, VLDB 2018) shipped DP for general SQL; **PrivateSQL** (Kotsogiannis et al., VLDB 2019) handles multi-relation schemas with a privacy "view"; **R2T** (Dong, Yi et al., SIGMOD 2022) uses Lipschitz extensions + LP relaxation for near-instance-optimal join aggregation.
 
 ## 4. Upper Bound
@@ -56,7 +56,7 @@ For **self-join-free acyclic** queries the gap is essentially **closed** (consta
 
 - **[Foundational]** Nissim, Raskhodnikova, Smith. *Smooth Sensitivity and Sampling in Private Data Analysis.* STOC, 2007. — [DOI](https://doi.org/10.1145/1250790.1250803) · [DBLP](https://dblp.org/rec/conf/stoc/NissimRS07.html)
 - **[Foundational]** Atserias, Grohe, Marx. *Size Bounds and Query Plans for Relational Joins.* FOCS, 2008 (AGM bound). — [DBLP](https://dblp.org/rec/conf/focs/AtseriasGM08.html) · [arXiv](https://arxiv.org/abs/1711.03860)
-- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* VLDB, 2018. — [DOI](https://doi.org/10.14778/3177732.3177733) · [arXiv](https://arxiv.org/abs/1706.09479)
+- **[SOTA]** Johnson, Near, Song. *Towards Practical Differential Privacy for SQL Queries (Elastic Sensitivity / Flex).* VLDB, 2018. — [DOI](https://doi.org/10.1145/3187009.3177733) · [arXiv](https://arxiv.org/abs/1706.09479)
 - **[SOTA]** Dong, Yi. *Residual Sensitivity for Differentially Private Multi-Way Joins.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452813) · [PDF](https://www.cse.ust.hk/~yike/ResidualSensitivity-full.pdf)
 - **[SOTA]** Dong, Yi, et al. *R2T: Instance-optimal Truncation for Differentially Private Query Evaluation with Foreign Keys.* SIGMOD, 2022. — [DOI](https://doi.org/10.1145/3514221.3517844) · [PDF](https://juanru-fang.github.io/R2T.pdf)
 - **[Survey]** Kotsogiannis et al. *PrivateSQL: A Differentially Private SQL Query Engine.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342274) · [PDF](https://cs.uwaterloo.ca/~xihe/PrivateSQL-VLDB2019.pdf)

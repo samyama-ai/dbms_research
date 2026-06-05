@@ -53,8 +53,8 @@ The gap is between hand-tuned, per-workload calibrated models (good in practice)
 ## 9. Key References
 
 - **[Foundational]** Patricia G. Selinger et al. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099)
-- **[SOTA]** Qianxi Zhang et al. *VBASE: Unifying Online Vector Similarity Search and Relational Queries via Relaxed Monotonicity.* OSDI, 2023. — [USENIX](https://www.usenix.org/conference/osdi23/presentation/zhang-qianxi) — [DBLP](https://dblp.org/rec/conf/osdi/ZhangXCSLLSCQLBLLZW23.html)
-- **[SOTA]** Chunxiao Wei et al. *AnalyticDB-V: A Hybrid Analytical Engine Towards Query Fusion for Structured and Unstructured Data.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415541)
+- **[SOTA]** Qianxi Zhang et al. *VBASE: Unifying Online Vector Similarity Search and Relational Queries via Relaxed Monotonicity.* OSDI, 2023. — [USENIX](https://www.usenix.org/conference/osdi23/presentation/zhang-qianxi)
+- **[SOTA]** Chuangxian Wei et al. *AnalyticDB-V: A Hybrid Analytical Engine Towards Query Fusion for Structured and Unstructured Data.* VLDB, 2020. — [DOI](https://doi.org/10.14778/3415478.3415541)
 - **[SOTA]** Liana Patel et al. *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data.* SIGMOD, 2024. — [arXiv](https://arxiv.org/abs/2403.04871) — [DBLP](https://dblp.org/rec/journals/corr/abs-2403-04871.html)
 - **[Foundational]** Michael E. Houle. *Local Intrinsic Dimensionality I: An Extreme-Value-Theoretic Foundation for Similarity Applications.* SISAP, 2017. — [DOI](https://doi.org/10.1007/978-3-319-68474-1_5)
 - **[Foundational]** Yannis E. Ioannidis, Stavros Christodoulakis. *On the Propagation of Errors in the Size of Join Results.* SIGMOD, 1991. — [DOI](https://doi.org/10.1145/115790.115835)

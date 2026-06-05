@@ -18,14 +18,14 @@ Variants:
 
 Under bag semantics, a CQ $Q$ on database $D$ assigns to each output tuple $\bar t$ the number of homomorphisms from $Q$'s body to $D$ that project to $\bar t$. This count is a **polynomial with nonnegative integer coefficients** in the relation multiplicities — it is the *Hilbert/counting* image of $Q$.
 
-**Bag equivalence theorem (Chaudhuri–Vardi 1993):** $Q_1 \equiv_{\mathrm{bag}} Q_2$ iff their bodies are **isomorphic** (identical up to renaming of existential variables) after removing redundant duplicates — there is *no* minimization across non-isomorphic forms. Thus bag equivalence is **GI-complete-ish / decidable** and strictly finer than set equivalence (where homomorphic equivalence / minimization applies).
+**Bag equivalence theorem (Chaudhuri–Vardi 1993):** $Q_1 \equiv_{\mathrm{bag}} Q_2$ iff their bodies are **isomorphic** (identical up to renaming of existential variables) after removing redundant duplicates — there is *no* minimization across non-isomorphic forms. Thus bag equivalence is **decidable**, with complexity comparable to **graph isomorphism**, and strictly finer than set equivalence (where homomorphic equivalence / minimization applies).
 
 Bag *containment* corresponds to comparing two such counting polynomials for domination over all nonnegative integer assignments — a problem with the flavor of **Hilbert's Tenth Problem** and Positivstellensatz-style reasoning, which is exactly why decidability is elusive.
 
 ## 3. State of the Art (SOTA)
 
 - **Chaudhuri–Vardi (PODS 1993)** introduced the problem, proved bag equivalence = isomorphism, and showed bag containment is at least as hard as a notoriously open number-theoretic question; they conjectured undecidability.
-- **Ioannidis–Ramakrishnan** and **Jayram–Kolaitis–Vee (PODS 2006)** proved **bag containment of CQs with inequalities ($\neq$) is undecidable**, isolating where undecidability provably begins.
+- **Jayram–Kolaitis–Vee (PODS 2006)** proved **bag containment of CQs with inequalities ($\neq$) is undecidable**, isolating where undecidability provably begins; **Ioannidis–Ramakrishnan (1995)** is the earlier study of containment beyond pure set semantics.
 - **Kopparty–Rossman**, **Khamis–Kolaitis–Ngo–Suciu** and others connected bag containment to **information theory and tensor/Hölder inequalities**, giving sufficient conditions and approximations.
 - For restricted classes (single self-join-free CQs, "projection-free" CQs), bag containment is decidable and polynomial. Systems (query optimizers in PostgreSQL, Spark SQL, Calcite) rely on *sound but incomplete* bag-equivalence rules for rewrites.
 
@@ -70,8 +70,8 @@ This is a rare **decidability gap that has stayed open for 30+ years**. Bag *equ
 
 Let database $D$ have one binary relation $E$ (a graph). Compare two CQs:
 
-- $Q_1(\,)\;{:}\!-\;E(x,y)$ — "list each edge's head" with body of one atom.
-- $Q_2(\,)\;{:}\!-\;E(x,y),E(x,z)$ — head $x$ joined with two outgoing edges.
+- $Q_1(x)\;{:}\!-\;E(x,y)$ — project the source $x$ of each edge, body of one atom.
+- $Q_2(x)\;{:}\!-\;E(x,y),E(x,z)$ — source $x$ with two (possibly equal) outgoing edges.
 
 For each value $a$, the bag multiplicity of $a$ as an answer is: $Q_1$ gives $\deg^{+}(a)$ (out-degree), while $Q_2$ gives $\deg^{+}(a)^2$ (pairs $(y,z)$). On the tiny graph $E=\{(a,b),(a,c)\}$: $Q_1$ outputs $a$ with multiplicity $2$; $Q_2$ outputs $a$ with multiplicity $4$.
 
