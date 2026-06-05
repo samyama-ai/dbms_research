@@ -15,7 +15,7 @@ Status **partially solved**: the *exact* dichotomy for unions of conjunctive que
 
 ## 2. Mathematical Foundations
 
-Provenance is the lineage formula $\phi$; $\Pr[\phi] = \sum_{\text{worlds } W \models \phi}\prod_{t\in W}p_t\prod_{t\notin W}(1-p_t)$ — **weighted model counting**, a $\#P$ problem (Valiant). Tractability is governed by **knowledge compilation**: $\Pr[\phi]$ is computable in time linear in the size of an **OBDD/FBDD/d-DNNF** for $\phi$; safe queries are exactly those whose lineage compiles to polynomial-size such circuits.
+Provenance is the lineage formula $\phi$; $\Pr[\phi] = \sum_{\text{worlds } W \models \phi}\prod_{t\in W}p_t\prod_{t\notin W}(1-p_t)$ — **weighted model counting**, a $\\#P$ problem (Valiant). Tractability is governed by **knowledge compilation**: $\Pr[\phi]$ is computable in time linear in the size of an **OBDD/FBDD/d-DNNF** for $\phi$; safe queries are exactly those whose lineage compiles to polynomial-size such circuits.
 
 The central result is the **dichotomy theorem** (Dalvi–Suciu): for every UCQ $Q$, computing $\Pr[Q]$ is **either in PTIME or #P-hard**, with a *syntactic* criterion (the query is "safe" iff a safe plan / `inclusion–exclusion`-based factorization exists). The PTIME algorithm uses **inclusion–exclusion + independence/disjointness** to factor $\Pr[Q]$; hardness is by reduction from **counting (e.g., #PP2DNF / permanent)**.
 

@@ -27,7 +27,7 @@ Core machinery:
 - **Fuxman & Miller (ICDE 2005, "ConQuer")**: FO-rewritable fragment $C_{forest}$, first practical CQA system.
 - **Wijsen (TODS 2012)**: attack-graph characterization of FO-rewritability for sjf-CQ under primary keys.
 - **Koutris & Wijsen (PODS 2015; TODS 2017)**: the **trichotomy** (FO / $\mathsf{L}$ / $\mathsf{coNP}$) for sjf-CQ + primary keys — the deepest classification to date.
-- **Koutris, Wijsen et al.**: extensions to **foreign keys**, **multiple keys**, and **set semantics**; counting (**#CERTAINTY**) dichotomy ($\mathsf{FP}$ vs. $\#\mathsf{P}$-complete).
+- **Koutris, Wijsen et al.**: extensions to **foreign keys**, **multiple keys**, and **set semantics**; counting (**#CERTAINTY**) dichotomy ($\mathsf{FP}$ vs. $\\#\mathsf{P}$-complete).
 - **Systems:** CAvSAT (Dixit & Kolaitis, 2019) reduces CQA to SAT/MaxSAT, handling arbitrary CQs and DCs via solver back-ends.
 
 ## 4. Upper Bound
@@ -39,7 +39,7 @@ Core machinery:
 ## 5. Lower Bound
 
 - $\mathsf{coNP}$-completeness holds for explicit small queries (e.g., the classic $\exists x\,y\,(R(x,y)\wedge S(y,x))$-style join with cyclic attacks); reductions from **monotone-3SAT / 2-coloring**.
-- $\#\mathsf{P}$-hardness for the counting variant on the corresponding hard CQ class.
+- $\\#\mathsf{P}$-hardness for the counting variant on the corresponding hard CQ class.
 - For queries *with self-joins* or constraints beyond primary keys, **no full dichotomy is known**, and isolated $\mathsf{coNP}$-hard / undecidable-classification cases exist.
 
 ## 6. The Gap

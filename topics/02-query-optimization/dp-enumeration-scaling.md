@@ -15,8 +15,8 @@ Cost-based optimizers find an optimal join order by **dynamic programming over c
 ## 2. Mathematical Foundations
 
 A query graph is $G=(V,E)$, $|V|=n$. A **connected subgraph (csg)** is $S\subseteq V$ inducing a connected subgraph; a **csg-cmp-pair** is $(S_1,S_2)$ with both connected, disjoint, and joined by an edge. The seminal result (Moerkotte & Neumann, VLDB 2006) is that DPccp performs exactly
-$$\#\text{ccp}(G)=\sum_{(S_1,S_2)} 1$$
-join evaluations, and this count is **graph-shape dependent**: for a **chain** it is $\Theta(n^3)$, for a **cycle** $\Theta(n^3)$, for a **star** $\Theta(n\,2^n)$, for a **clique** $\Theta(3^n)$. Thus there is no single complexity — the right measure is $\#\text{ccp}(G)$ itself. The DP recurrence
+$$\\#\text{ccp}(G)=\sum_{(S_1,S_2)} 1$$
+join evaluations, and this count is **graph-shape dependent**: for a **chain** it is $\Theta(n^3)$, for a **cycle** $\Theta(n^3)$, for a **star** $\Theta(n\,2^n)$, for a **clique** $\Theta(3^n)$. Thus there is no single complexity — the right measure is $\\#\text{ccp}(G)$ itself. The DP recurrence
 $$\mathrm{best}[S]=\min_{(S_1,S_2):\,S_1\cup S_2=S}\mathrm{cost}\big(\mathrm{best}[S_1]\bowtie\mathrm{best}[S_2]\big)$$
 requires the cost function to satisfy the optimality principle (no cross-plan interaction) — violated by features like sort-order/interesting-orders, which expand the state with physical properties.
 
@@ -27,15 +27,15 @@ requires the cost function to satisfy the optimality principle (no cross-plan in
 
 ## 4. Upper Bound
 
-In the RAM model, DPccp/DPhyp run in $O(\#\text{ccp}(G))$ join-pair evaluations plus enumeration overhead, with space $O(2^n)$ for the memo (one entry per relevant subset). For dense/clique graphs this is $\Theta(3^n)$ time and $\Theta(2^n)$ space — the cost of the recurrence summed over all subset splits $\sum_S 2^{|S|}=3^n$. For sparse graph families (chains, trees, bounded treewidth), $\#\text{ccp}$ is polynomial, so DP is polynomial. Memory is the binding constraint in practice; $2^n$ memo entries become prohibitive around $n\approx 20$–$25$.
+In the RAM model, DPccp/DPhyp run in $O(\\#\text{ccp}(G))$ join-pair evaluations plus enumeration overhead, with space $O(2^n)$ for the memo (one entry per relevant subset). For dense/clique graphs this is $\Theta(3^n)$ time and $\Theta(2^n)$ space — the cost of the recurrence summed over all subset splits $\sum_S 2^{|S|}=3^n$. For sparse graph families (chains, trees, bounded treewidth), $\\#\text{ccp}$ is polynomial, so DP is polynomial. Memory is the binding constraint in practice; $2^n$ memo entries become prohibitive around $n\approx 20$–$25$.
 
 ## 5. Lower Bound
 
-Any DP that explores all bushy plans must evaluate every csg-cmp-pair, so $\#\text{ccp}(G)$ is an **unconditional lower bound for the bushy-DP model**; DPccp is therefore optimal *within that model*. Beyond DP, optimal join ordering for general graphs with cross products is **NP-hard** (Ibaraki–Kameda 1984 for tree queries with a specific cost class; Cluet–Moerkotte 1995 for cross products), so no polynomial exact algorithm exists in the general case unless P=NP. Under SETH, no $2^{o(n)}$ exact algorithm is expected for the clique case. Cardinality-based cost functions make even left-deep optimal ordering NP-hard.
+Any DP that explores all bushy plans must evaluate every csg-cmp-pair, so $\\#\text{ccp}(G)$ is an **unconditional lower bound for the bushy-DP model**; DPccp is therefore optimal *within that model*. Beyond DP, optimal join ordering for general graphs with cross products is **NP-hard** (Ibaraki–Kameda 1984 for tree queries with a specific cost class; Cluet–Moerkotte 1995 for cross products), so no polynomial exact algorithm exists in the general case unless P=NP. Under SETH, no $2^{o(n)}$ exact algorithm is expected for the clique case. Cardinality-based cost functions make even left-deep optimal ordering NP-hard.
 
 ## 6. The Gap
 
-For the bushy-DP model the bounds are **matched** — DPccp/DPhyp hit the $\#\text{ccp}$ lower bound exactly; this part is *closed*. The genuinely open part is **whether a smaller exact algorithm exists for structured-but-dense graphs**: e.g., is there an exact join-ordering algorithm running in $c^n$ with $c<3$ for cliques, or parameterized algorithms in $f(\text{treewidth})\cdot\mathrm{poly}(n)$ that beat naive DP across all shapes? The space side is also open: can optimality be preserved with $\mathrm{poly}(n)\cdot 2^{o(n)}$ memory? Practical scaling to "dozens of relations" currently relies on heuristics that *abandon* optimality, so the gap is between provable optimality and the $n$ achievable in interactive time.
+For the bushy-DP model the bounds are **matched** — DPccp/DPhyp hit the $\\#\text{ccp}$ lower bound exactly; this part is *closed*. The genuinely open part is **whether a smaller exact algorithm exists for structured-but-dense graphs**: e.g., is there an exact join-ordering algorithm running in $c^n$ with $c<3$ for cliques, or parameterized algorithms in $f(\text{treewidth})\cdot\mathrm{poly}(n)$ that beat naive DP across all shapes? The space side is also open: can optimality be preserved with $\mathrm{poly}(n)\cdot 2^{o(n)}$ memory? Practical scaling to "dozens of relations" currently relies on heuristics that *abandon* optimality, so the gap is between provable optimality and the $n$ achievable in interactive time.
 
 ## 7. Current Research (as of June 2026)
 

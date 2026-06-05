@@ -5,11 +5,11 @@
 ## 1. Problem Statement
 
 Real SQL queries operate under **multiset (bag) semantics**: a tuple may appear multiple times, with multiplicity equal to the number of distinct valuations producing it. Given two conjunctive queries $Q_1, Q_2$, **bag equivalence** asks whether they return the *same multiset* on every database:
-$$Q_1 \equiv_{\mathrm{bag}} Q_2 \quad\Longleftrightarrow\quad \forall D:\; \#Q_1(D)(\bar{t}) = \#Q_2(D)(\bar{t}) \;\text{ for all } \bar{t}.$$
+$$Q_1 \equiv_{\mathrm{bag}} Q_2 \quad\Longleftrightarrow\quad \forall D:\; \\#Q_1(D)(\bar{t}) = \\#Q_2(D)(\bar{t}) \;\text{ for all } \bar{t}.$$
 
 Variants:
 - **Bag equivalence** (the focus): is the count function identical everywhere?
-- **Bag containment:** $\#Q_1(D)(\bar t) \le \#Q_2(D)(\bar t)$ for all $D, \bar t$.
+- **Bag containment:** $\\#Q_1(D)(\bar t) \le \\#Q_2(D)(\bar t)$ for all $D, \bar t$.
 - **Bag-set semantics** (duplicates only from the outer projection / `SELECT DISTINCT`-free bodies but set base tables).
 
 **Bag equivalence is decidable** (it reduces to query isomorphism). The **open** problem — one of the oldest in database theory (Chaudhuri–Vardi 1993) — is the **decidability of bag containment**, on which optimal bag-equivalence reasoning and many SQL rewrites depend.

@@ -19,7 +19,7 @@ Model each stage as a (possibly stochastic) map $s_i : \mathcal{D} \to \mathcal{
 
 Foundations it rests on:
 - **Provenance semirings** (Green–Karvounarakis–Tannen, PODS 2007): annotate tuples with elements of a commutative semiring $K$; relational operators map to $+$ (union/projection) and $\times$ (join). Choosing $K$ as a *probability* or *error* semiring lets uncertainty propagate compositionally — the algebraic backbone for forward propagation.
-- **Probabilistic databases:** output is a distribution; lineage formulas give $\Pr[t \in \text{output}]$, but exact evaluation is $\#\mathsf{P}$-hard (Dalvi–Suciu dichotomy).
+- **Probabilistic databases:** output is a distribution; lineage formulas give $\Pr[t \in \text{output}]$, but exact evaluation is $\\#\mathsf{P}$-hard (Dalvi–Suciu dichotomy).
 - **Error propagation calculus:** first-order (delta-method) propagation $\mathrm{Var}(f) \approx \nabla f^\top \Sigma \nabla f$ for numeric stages; fails under strong nonlinearity → Monte-Carlo / measure transport.
 - **Information theory:** data-processing inequality $I(X;s_i(Y)) \le I(X;Y)$ bounds how much *signal* survives, giving a lower envelope on recoverable quality.
 
@@ -39,7 +39,7 @@ There is **no end-to-end propagation theory**; SOTA is fragmented:
 
 ## 5. Lower Bound
 
-- Exact forward propagation through joins is **$\#\mathsf{P}$-hard** (inherits the probabilistic-database dichotomy; unsafe queries).
+- Exact forward propagation through joins is **$\\#\mathsf{P}$-hard** (inherits the probabilistic-database dichotomy; unsafe queries).
 - The data-processing inequality is an **information-theoretic impossibility**: no stage can increase recoverable mutual information, so quality lost at stage $i$ cannot be regained downstream without external evidence.
 - Optimal stage-configuration selection under a quality constraint is **NP-hard** (knapsack/Set-Cover-style reductions over discrete cleaner choices).
 - Exact error attribution (responsibility) for an output defect is **$\mathsf{NP}$-hard** in general (related to causal-responsibility / $\mathsf{coNP}$ results of Meliou et al.).

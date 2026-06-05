@@ -59,7 +59,7 @@ Variants:
 **A thrashing / switching-cost attack.** A reactive tuner builds index $I$ whenever the recent query mix favors it and drops $I$ otherwise. Building costs $c_{\text{build}}=50$, dropping costs $c_{\text{drop}}=10$; one full oscillation cycle costs $c_{\text{build}}+c_{\text{drop}}=60$.
 
 A malicious tenant issues queries in an alternating pattern: a burst that makes $I$ look profitable, then a burst that makes it look useless, repeating. With budget $B$ queries and $q$ queries needed to flip the tuner's decision, the adversary forces
-$$\#\text{cycles} = \left\lfloor \frac{B}{2q} \right\rfloor, \qquad \text{victim cost} = 60 \cdot \left\lfloor \frac{B}{2q}\right\rfloor.$$
+$$\\#\text{cycles} = \left\lfloor \frac{B}{2q} \right\rfloor, \qquad \text{victim cost} = 60 \cdot \left\lfloor \frac{B}{2q}\right\rfloor.$$
 
 For $B=2000$, $q=50$: $\lfloor 2000/100\rfloor = 20$ cycles $\Rightarrow$ **1200 units** of pure reconfiguration cost, while the workload never actually benefits from $I$ — an $\Omega(B)$ algorithmic-complexity DoS (§5).
 

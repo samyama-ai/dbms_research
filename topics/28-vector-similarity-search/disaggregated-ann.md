@@ -14,7 +14,7 @@ The central difficulty: graph traversal is inherently *pointer-chasing* with dat
 
 ## 2. Mathematical Foundations
 
-Model the remote tier in the **external-memory (I/O) model** of Aggarwal–Vitter with block size $B$ and an additional per-I/O latency penalty $L$ (a "latency-augmented EM model"). Query cost $= \alpha \cdot (\#I/Os) \cdot L + \beta \cdot (\text{bytes read})$. A greedy graph walk visits $h = O(\log n)$ nodes; naively each node is one dependent I/O, so latency $\approx h \cdot L$ — dominated by $L$, not bandwidth.
+Model the remote tier in the **external-memory (I/O) model** of Aggarwal–Vitter with block size $B$ and an additional per-I/O latency penalty $L$ (a "latency-augmented EM model"). Query cost $= \alpha \cdot (\\#I/Os) \cdot L + \beta \cdot (\text{bytes read})$. A greedy graph walk visits $h = O(\log n)$ nodes; naively each node is one dependent I/O, so latency $\approx h \cdot L$ — dominated by $L$, not bandwidth.
 
 Two levers reduce $h\cdot L$:
 

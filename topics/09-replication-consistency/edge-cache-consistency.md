@@ -27,11 +27,11 @@ Hit rate vs. consistency is a constrained optimization: maximize $\Pr[\text{serv
 
 ## 4. Upper Bound
 
-Session guarantees are enforceable with **$O(\text{write-set})$** metadata per session and zero extra round trips on a hit (miss to a higher tier on a guard failure); causal cuts cost $O(\text{deps})$ metadata, compressible to a vector of size $O(\#\text{datacenters})$ via dependency-vector summarization. Bounded-$t$ staleness needs only loosely synchronized clocks and $O(1)$ per entry. These hold in the **asynchronous message-passing model with sticky-or-token-following sessions**.
+Session guarantees are enforceable with **$O(\text{write-set})$** metadata per session and zero extra round trips on a hit (miss to a higher tier on a guard failure); causal cuts cost $O(\text{deps})$ metadata, compressible to a vector of size $O(\\#\text{datacenters})$ via dependency-vector summarization. Bounded-$t$ staleness needs only loosely synchronized clocks and $O(1)$ per entry. These hold in the **asynchronous message-passing model with sticky-or-token-following sessions**.
 
 ## 5. Lower Bound
 
-Genuine partial replication implies an $\Omega(\#\text{relevant DCs})$ causal-metadata floor (catalog problem "causal-consistency-metadata-lower-bounds"). For latency: any guarantee stronger than eventual that must survive an edge–origin partition runs into **CAP** — during a partition an edge tier must either serve possibly-violating data or miss/stall. **PACELC** Else-Latency: even without partition, enforcing causal/bounded reads forces extra misses (origin RTs), a quantifiable latency tax. No tight lower bound exists relating hit-rate loss to the consistency level — this is the empirical gap.
+Genuine partial replication implies an $\Omega(\\#\text{relevant DCs})$ causal-metadata floor (catalog problem "causal-consistency-metadata-lower-bounds"). For latency: any guarantee stronger than eventual that must survive an edge–origin partition runs into **CAP** — during a partition an edge tier must either serve possibly-violating data or miss/stall. **PACELC** Else-Latency: even without partition, enforcing causal/bounded reads forces extra misses (origin RTs), a quantifiable latency tax. No tight lower bound exists relating hit-rate loss to the consistency level — this is the empirical gap.
 
 ## 6. The Gap
 

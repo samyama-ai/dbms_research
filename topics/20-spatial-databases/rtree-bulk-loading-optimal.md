@@ -6,7 +6,7 @@
 **Bulk-loading** builds an R-tree from a known static dataset in one pass rather than by repeated insertion. Every practical bulk-loader (STR, Hilbert-sort, TGS, OMT) optimizes a *proxy*: total MBR area, perimeter (margin), or overlap. The deeper question is whether one can build a packing that **provably minimizes the expected number of node accesses for a given query workload distribution** $\mathcal{Q}$, rather than a hand-chosen geometric surrogate.
 
 **Optimization problem:** Given $N$ rectangles, page capacity $B$, and a query distribution $\mathcal{Q}$ (e.g., uniform window queries, or an empirical workload), partition the objects into a hierarchy of $B$-capacity nodes minimizing
-$$\mathbb{E}_{q\sim\mathcal{Q}}[\,\#\{\text{nodes whose MBR intersects } q\}\,].$$
+$$\mathbb{E}_{q\sim\mathcal{Q}}[\,\\#\{\text{nodes whose MBR intersects } q\}\,].$$
 Decision variant: is the optimum $\le t$? Counting/cost variant: compute the expected access cost of a given packing. The challenge is that the objective is *global and combinatorial*, not separable like the area proxy.
 
 ## 2. Mathematical Foundations

@@ -27,7 +27,7 @@ Key impossibility background: with $n$ replicas, **Byzantine reliable broadcast 
 
 ## 4. Upper Bound
 
-With a Merkle-DAG and per-author signatures, integrity and equivocation-detection cost **$O(1)$ signature + $O(\#\text{deps})$ hashes** per op; convergence among honest replicas needs **no extra round trips** (anti-entropy unchanged, just verify-before-merge). Bounded-value objects (counters, sets resistant to inflation) need quorum certificates of size $O(f)$ and $n\ge 3f+1$. Bounds hold in the **asynchronous authenticated message model with collision-resistant hashes and digital signatures**.
+With a Merkle-DAG and per-author signatures, integrity and equivocation-detection cost **$O(1)$ signature + $O(\\#\text{deps})$ hashes** per op; convergence among honest replicas needs **no extra round trips** (anti-entropy unchanged, just verify-before-merge). Bounded-value objects (counters, sets resistant to inflation) need quorum certificates of size $O(f)$ and $n\ge 3f+1$. Bounds hold in the **asynchronous authenticated message model with collision-resistant hashes and digital signatures**.
 
 ## 5. Lower Bound
 

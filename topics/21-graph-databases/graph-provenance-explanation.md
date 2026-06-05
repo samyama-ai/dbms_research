@@ -18,7 +18,7 @@ Provenance is formalized via **commutative semirings** (Green–Karvounarakis–
 
 For navigational queries, provenance must extend to **transitive closure / Kleene star**, requiring $\omega$-continuous or *closed* semirings so that $a^* = \sum_{i\ge 0} a^i$ is well-defined; path provenance is then the star of a transition matrix over $K$ (a generalized algebraic-path / Floyd–Warshall computation).
 
-Key hardness levers: counting simple paths is $\#P$-complete; finding a minimum-weight witness reduces to weighted set-cover (hence $\Theta(\log n)$-inapproximable unless $\mathrm{P}=\mathrm{NP}$). Minimal-explanation enumeration ties to the theory of *minimal hypergraph transversals* (output-polynomial via quasi-polynomial Fredman–Khachiyan).
+Key hardness levers: counting simple paths is $\\#P$-complete; finding a minimum-weight witness reduces to weighted set-cover (hence $\Theta(\log n)$-inapproximable unless $\mathrm{P}=\mathrm{NP}$). Minimal-explanation enumeration ties to the theory of *minimal hypergraph transversals* (output-polynomial via quasi-polynomial Fredman–Khachiyan).
 
 ## 3. State of the Art (SOTA)
 - **Theory-SOTA:** semiring provenance for Datalog/recursion (Green et al.; Deutch–Milo–Roy–Tannen *circuits for Datalog provenance*, ICDT 2014) gives provenance circuits of polynomial size for fixed programs, and absorptive/semimodule semirings for RPQs.
@@ -29,19 +29,19 @@ Key hardness levers: counting simple paths is $\#P$-complete; finding a minimum-
 For fixed conjunctive (non-recursive) graph patterns, why/how-provenance is computable in time polynomial in $|G|$ and in the (data-complexity) size of the provenance circuit. For RPQ provenance over an $\omega$-continuous semiring, Ramusat et al. give $O(n^3)$-style algebraic-closure algorithms (semiring Floyd–Warshall) and near-linear approximations for *absorptive* / tropical semirings via Dijkstra-like relaxation. Minimal single witness for an answer: polynomial. Minimum-weight witness: $O(\log n)$-approximation via greedy set cover.
 
 ## 5. Lower Bound
-- Counting derivations/witnesses for RPQs under simple-path semantics is **$\#P$-complete** (reduction from counting simple paths; Mendelzon–Wood, SIAM J. Comput. 1995 for the underlying simple-path RPQ hardness).
+- Counting derivations/witnesses for RPQs under simple-path semantics is **$\\#P$-complete** (reduction from counting simple paths; Mendelzon–Wood, SIAM J. Comput. 1995 for the underlying simple-path RPQ hardness).
 - Minimum-weight / minimum-size explanation is **NP-hard** and $(1-o(1))\ln n$-inapproximable (set-cover hardness, Dinur–Steurer 2014).
 - Enumerating all minimal witnesses with polynomial delay is at least as hard as hypergraph dualization, for which no polynomial algorithm is known (only quasi-polynomial total time).
 
 ## 6. The Gap
-For non-recursive patterns the gap is essentially closed (poly upper, matching circuit lower bounds). The genuine open gaps are: (a) **recursive/path provenance with simple-path semantics** — the $\#P$ wall versus practically useful approximations with *guarantees*; (b) **minimal explanations** — closing the dualization gap (poly-delay vs quasi-poly) for graph-shaped witness hypergraphs; (c) a **unified semiring** that simultaneously captures bag-semantics, cost, and security/access annotations for navigational queries without exponential blow-up.
+For non-recursive patterns the gap is essentially closed (poly upper, matching circuit lower bounds). The genuine open gaps are: (a) **recursive/path provenance with simple-path semantics** — the $\\#P$ wall versus practically useful approximations with *guarantees*; (b) **minimal explanations** — closing the dualization gap (poly-delay vs quasi-poly) for graph-shaped witness hypergraphs; (c) a **unified semiring** that simultaneously captures bag-semantics, cost, and security/access annotations for navigational queries without exponential blow-up.
 
 ## 7. Current Research (as of June 2026)
 Active threads: provenance for *property-graph* algebras and GQL/SQL-PGQ (Senellart's group at ENS/IPParis; the ProvSQL line); approximate semiring provenance with sampling-based error bounds for RPQs *(frontier — verify)*; provenance-aware differential dataflow and incremental maintenance (Milo, Deutch at Tel Aviv); connecting provenance to *responsibility/causality* and Shapley-value explanations over databases (Bertossi, Livshits, Kimelfeld) — extending Shapley-value computation to path answers is an open frontier *(frontier — verify)*. GQL standardization (ISO/IEC 39075, 2024) is renewing interest in a standard provenance semantics for the path-pattern algebra *(frontier — verify)*.
 
 ## 8. Future Work
 - Tractable islands: characterize pattern/semiring pairs where minimal-explanation enumeration is output-polynomial.
-- Approximation with formal error guarantees for $\#P$-hard witness counting on huge graphs.
+- Approximation with formal error guarantees for $\\#P$-hard witness counting on huge graphs.
 - Provenance for *negation* and aggregation in graph queries (semimodules, $m$-semirings).
 - Interactive, cost-aware "smallest sufficient explanation" UIs, and why-not via minimum graph edits.
 - Standardizing provenance into GQL/SQL-PGQ semantics.
@@ -62,7 +62,7 @@ Query $Q$: is there a path from $a$ to $d$ of length 2? In the provenance semiri
 $$x_1 x_2 \;+\; x_3 x_4.$$
 Each monomial is a **why-witness** (a minimal edge set sufficing to derive the answer): $\{x_1,x_2\}$ and $\{x_3,x_4\}$.
 
-**Tropical specialization for shortest witness.** Interpret the same expression over the tropical semiring $(\min,+)$ with edge costs $x_1{=}5,x_2{=}1,x_3{=}2,x_4{=}2$. Then $\cdot\mapsto+$ and $+\mapsto\min$, giving $\min(5{+}1,\;2{+}2)=\min(6,4)=4$ — the cheapest explanation is $\{x_3,x_4\}$. Counting witnesses (here 2) becomes $\#P$-complete once paths must be *simple* and the graph is large.
+**Tropical specialization for shortest witness.** Interpret the same expression over the tropical semiring $(\min,+)$ with edge costs $x_1{=}5,x_2{=}1,x_3{=}2,x_4{=}2$. Then $\cdot\mapsto+$ and $+\mapsto\min$, giving $\min(5{+}1,\;2{+}2)=\min(6,4)=4$ — the cheapest explanation is $\{x_3,x_4\}$. Counting witnesses (here 2) becomes $\\#P$-complete once paths must be *simple* and the graph is large.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

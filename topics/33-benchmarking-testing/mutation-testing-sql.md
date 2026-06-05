@@ -4,7 +4,7 @@
 
 ## 1. Problem Statement
 
-Mutation testing injects small faults (**mutants**) into an artifact and measures the fraction a test suite *kills* (detects). For databases the artifact is not only program code but **SQL queries, schemas, and integrity constraints**. The goal: define a set of **mutation operators** that model realistic SQL faults, then compute the **mutation score** $\frac{\#\text{killed}}{\#\text{non-equivalent}}$ as a quality measure for a test suite (or for a fuzzer's workload).
+Mutation testing injects small faults (**mutants**) into an artifact and measures the fraction a test suite *kills* (detects). For databases the artifact is not only program code but **SQL queries, schemas, and integrity constraints**. The goal: define a set of **mutation operators** that model realistic SQL faults, then compute the **mutation score** $\frac{\\#\text{killed}}{\\#\text{non-equivalent}}$ as a quality measure for a test suite (or for a fuzzer's workload).
 
 Core variants:
 - **Operator-design variant:** what mutations are *meaningful* for relational semantics (join types, NULL handling, aggregation, predicate boundaries, constraint relaxation)?

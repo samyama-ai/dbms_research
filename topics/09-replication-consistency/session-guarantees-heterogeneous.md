@@ -21,7 +21,7 @@ The standard implementation device is a **version vector / dependency token** $V
 - **Systems-SOTA:** *COPS* (SOSP 2011) and *Eiger* tracked explicit dependencies; production systems (DynamoDB's session tokens, MongoDB causal-consistency `afterClusterTime`/`operationTime`, Cosmos DB's session consistency level via session tokens) implement RYW/MR by passing logical timestamps the client must echo. CDNs/edge caches mostly *do not* honor these and are the weak link.
 
 ## 4. Upper Bound
-With **sticky sessions** to a single replica, all four guarantees are achievable with **zero extra coordination** and $O(1)$ per-request metadata (the replica's own clock), under high availability (HAT result). With *non-sticky* heterogeneous sessions, RYW+MR are achievable by carrying a dependency token of size $O(\text{#shards touched})$ (a version vector restricted to touched partitions) and blocking a serving replica until its applied frontier dominates the token — latency bounded by replication lag $\Delta$, so worst-case read latency $O(\Delta)$ but no aborts.
+With **sticky sessions** to a single replica, all four guarantees are achievable with **zero extra coordination** and $O(1)$ per-request metadata (the replica's own clock), under high availability (HAT result). With *non-sticky* heterogeneous sessions, RYW+MR are achievable by carrying a dependency token of size $O(\text{\\#shards touched})$ (a version vector restricted to touched partitions) and blocking a serving replica until its applied frontier dominates the token — latency bounded by replication lag $\Delta$, so worst-case read latency $O(\Delta)$ but no aborts.
 
 ## 5. Lower Bound
 Under genuine non-stickiness and full availability, session guarantees clash with the CAP/HAT boundary: *Highly Available Transactions* proves **no highly-available, non-sticky** implementation can provide all session guarantees during partitions — stickiness or unavailability is required (a CAP-style impossibility, not NP-hardness). Metadata lower bound: to enforce RYW across $k$ independently-lagging shards, a session must in the worst case carry $\Omega(k)$ distinct version components — a version vector cannot be compressed below the number of causally-relevant origins without losing precision (a communication/encoding argument).
@@ -54,7 +54,7 @@ A client writes its profile, then reads it back after a geo-failover. Shards: `A
 2. Failover: next read routes to replica $R_2$, which has only applied $\{A:4\}$ on shard $A$ (lag $\Delta$).
 3. RYW requires $R_2$'s applied frontier to dominate the carried token: need $A \ge 5$, but $R_2$ has $A=4$. So $R_2$ **blocks** until it applies update 5, then serves `v2`. No stale read, no abort — latency cost bounded by $\Delta$.
 
-Now suppose the read also touches shard `B`. The token grows to $\{A:5, B:3\}$ — size $O(\#\text{shards touched})$, matching the $\Omega(k)$ metadata lower bound: each independently-lagging origin needs its own component, or RYW can silently break.
+Now suppose the read also touches shard `B`. The token grows to $\{A:5, B:3\}$ — size $O(\\#\text{shards touched})$, matching the $\Omega(k)$ metadata lower bound: each independently-lagging origin needs its own component, or RYW can silently break.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

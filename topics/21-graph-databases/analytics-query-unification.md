@@ -16,7 +16,7 @@ Two unifying algebras are candidates:
 - **Relational algebra + recursion (Datalog / the chase):** pattern queries are conjunctive queries; analytics are recursive Datalog with aggregation (semi-naïve evaluation, stratified/monotonic aggregation, semiring provenance). Convergence of monotone aggregate recursion rests on *pre-fixpoint* lattice theory (Knaster–Tarski) and the $\mathrm{lfp}$ operator.
 - **Linear algebra over semirings (GraphBLAS):** BFS, SSSP, PageRank, components are matrix-vector products $y = A \otimes x$ over a semiring $(\oplus,\otimes)$; pattern matching becomes masked matrix multiplication. The challenge: cyclic *joins* need AGM-optimal evaluation, which plain sparse matmul does **not** achieve, so the algebra must subsume **worst-case-optimal joins** plus fixpoint iteration.
 
-Cost models must reconcile **output-sensitive** join cost ($O(\mathrm{AGM})$) with **iteration-bound** analytics cost ($O(\#\text{iters}\cdot |E|)$).
+Cost models must reconcile **output-sensitive** join cost ($O(\mathrm{AGM})$) with **iteration-bound** analytics cost ($O(\\#\text{iters}\cdot |E|)$).
 
 ## 3. State of the Art (SOTA)
 **Theory-SOTA:** Recursive Datalog with WCOJ subroutines (e.g., **Recstep**, **DCDatalog**, and "FAQ/AggroFAQ" framework of Abo Khamis–Ngo–Rudra) provides a single semantics covering joins, aggregation, and recursion. **GraphBLAS** (Mathematical Foundations: Kepner et al.) gives a closed semiring algebra for both.

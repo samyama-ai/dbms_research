@@ -68,7 +68,7 @@ Low entropy ⇒ data is *nearly* homogeneous, so a rigid schema wastes little.
 
 **Schema-on-read cost.** Store each doc as-is (no NULLs), but every query filtering on `email` must handle docs lacking the field, raising $C_{\text{query}} + C_{\text{defect}}$.
 
-The flexibility metric $\mathrm{Flex}(D,W)$ should reward schema-on-read here (small $H$, few NULLs) only if the *workload* $W$ rarely queries the variant fields. If $H(\text{shape})$ rose toward $\log_2(\#\text{shapes})$, the rigid schema's NULL waste would dominate — exactly the tradeoff a principled benchmark must score.
+The flexibility metric $\mathrm{Flex}(D,W)$ should reward schema-on-read here (small $H$, few NULLs) only if the *workload* $W$ rarely queries the variant fields. If $H(\text{shape})$ rose toward $\log_2(\\#\text{shapes})$, the rigid schema's NULL waste would dominate — exactly the tradeoff a principled benchmark must score.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

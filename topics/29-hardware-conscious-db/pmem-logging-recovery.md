@@ -31,7 +31,7 @@ A major caveat: Intel discontinued Optane PMEM (2022), shifting the practical fr
 
 ## 4. Upper Bound
 
-For a single durable update, **link-and-persist** achieves atomic durable publication with $O(1)$ flushes and one fence per logical update; failure-atomic 8-byte stores are free (hardware-atomic) under x86 persistency. Write-Behind Logging reduces log volume to $O(\#\text{committed tuples})$ rather than $O(\#\text{updates})$, eliminating redo. Montage gives generic durable structures at amortized $O(1)$ persist barriers per operation with recovery time $O(|\text{epoch}|)$. Optimal checkpoint interval (Daly) bounds expected recovery + checkpoint overhead at $\Theta(\sqrt{2 M \delta})$ for MTBF $M$ and checkpoint cost $\delta$.
+For a single durable update, **link-and-persist** achieves atomic durable publication with $O(1)$ flushes and one fence per logical update; failure-atomic 8-byte stores are free (hardware-atomic) under x86 persistency. Write-Behind Logging reduces log volume to $O(\\#\text{committed tuples})$ rather than $O(\\#\text{updates})$, eliminating redo. Montage gives generic durable structures at amortized $O(1)$ persist barriers per operation with recovery time $O(|\text{epoch}|)$. Optimal checkpoint interval (Daly) bounds expected recovery + checkpoint overhead at $\Theta(\sqrt{2 M \delta})$ for MTBF $M$ and checkpoint cost $\delta$.
 
 ## 5. Lower Bound
 

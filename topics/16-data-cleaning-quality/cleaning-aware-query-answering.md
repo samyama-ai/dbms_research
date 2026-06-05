@@ -23,7 +23,7 @@ Key tools:
 - **Conflict hypergraph / repair lattice:** repairs under subset-minimal deletion correspond to maximal independent sets of the conflict (hyper)graph; counting repairs reduces to counting such structures (#P-hard in general).
 - **The chase** generates repairs for tgds/egds; termination and confluence govern decidability.
 - **Dichotomy theory:** For self-join-free conjunctive queries (CQs) under primary-key constraints, Koutris–Wijsen established a **trichotomy** — $\mathsf{certain}(Q)$ is in $\mathsf{FO}$ (first-order rewritable), or $\mathsf{L}$-complete / $\mathsf{P}$-complete, or $\mathsf{coNP}$-complete — fully classified by syntactic attack-graph criteria.
-- **Counting dichotomy:** $\#$CQA under primary keys is either in $\mathsf{FP}$ or $\#\mathsf{P}$-complete (Maslowski–Wijsen).
+- **Counting dichotomy:** $\\#$CQA under primary keys is either in $\mathsf{FP}$ or $\\#\mathsf{P}$-complete (Maslowski–Wijsen).
 
 ## 3. State of the Art (SOTA)
 
@@ -41,7 +41,7 @@ Key tools:
 ## 5. Lower Bound
 
 - $\mathsf{certain}(Q)$ is **$\mathsf{coNP}$-complete** (data complexity) already for some self-join-free CQs under two FDs / primary keys — the hard side of the Koutris–Wijsen trichotomy (reduction from monotone 3-SAT / MIS).
-- Exact $\#$CQA is **$\#\mathsf{P}$-complete** for the hard side of the counting dichotomy.
+- Exact $\\#$CQA is **$\\#\mathsf{P}$-complete** for the hard side of the counting dichotomy.
 - For cardinality-minimal and cost-minimal repairs, even *deciding* whether a repair of cost $\le k$ exists is $\mathsf{NP}$-hard (vertex-cover reduction on the conflict graph).
 - No fine-grained ($\mathsf{SETH}$) separation is known for the FO-rewritable cases; rewritings are already near-linear.
 

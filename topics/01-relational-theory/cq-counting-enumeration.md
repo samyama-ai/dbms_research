@@ -7,7 +7,7 @@
 For a **conjunctive query (CQ)** $Q$ and a database $D$, three computational tasks are distinguished:
 
 - **Evaluation/decision** $Q(D)\neq\emptyset$ and **model checking** of a fixed tuple.
-- **Counting** $\#Q(D) = |Q(D)|$: report the number of answers (without materializing them).
+- **Counting** $\\#Q(D) = |Q(D)|$: report the number of answers (without materializing them).
 - **Enumeration**: output all answers in $Q(D)$, one by one. The quality metric is **delay** — the time between consecutive outputs — and **preprocessing** time. The gold standard is **constant-delay enumeration after linear preprocessing**, written $\mathsf{Enum}(\text{lin}, O(1))$ or membership in the class **CD$\circ$Lin**.
 
 The classification problem: **characterize exactly which (classes of) CQs admit (a) tractable counting and (b) constant/polynomial-delay enumeration**, as a function of the query's structure (acyclicity, treewidth/hypertreewidth, free-connex-ness) — ideally as **dichotomy theorems** (tractable vs. hard), under standard fine-grained hardness assumptions. Variants: Boolean vs. full CQs, self-join-free vs. with self-joins, set vs. bag semantics, exact vs. approximate counting, static vs. **dynamic** (under updates).

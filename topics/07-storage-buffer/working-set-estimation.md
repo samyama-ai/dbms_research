@@ -33,7 +33,7 @@ Variants:
 - **Full MRC online:** SHARDS gives a $(\epsilon)$-accurate MRC in $\tilde O(1)$ space and $O(1)$ amortized time per reference (RAM model, hash-sampling).
 - **Working-set size $|W(\tau)|$ for all $\tau$:** Counter Stacks in $O(\text{polylog }N)$ space per window via HLL.
 - **Single-size distinct count:** $(1\pm\epsilon)$ in $O(\epsilon^{-2}+\log N)$ bits (KNW), optimal.
-- **Sizing decision:** once the MRC is known, the cost-minimizing $c^\*$ is read off in $O(\text{#sizes})$.
+- **Sizing decision:** once the MRC is known, the cost-minimizing $c^\*$ is read off in $O(\text{\\#sizes})$.
 
 ## 5. Lower Bound
 

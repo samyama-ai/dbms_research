@@ -31,7 +31,7 @@ GC scheduling itself (which chains to compact when, to minimize space under a co
 - **Theory-SOTA:** epoch-based reclamation (EBR), quiescent-state and interval-based reclamation (QSBR/IBR) from concurrent-data-structure literature provide the safety framework adapted here.
 
 ## 4. Upper Bound
-- Single-node **precise** MVCC GC runs in amortized $O(1)$ per reclaimed version with the Böttcher-style interval bookkeeping; watermark recomputation is $O(\#\text{active txns})$.
+- Single-node **precise** MVCC GC runs in amortized $O(1)$ per reclaimed version with the Böttcher-style interval bookkeeping; watermark recomputation is $O(\\#\text{active txns})$.
 - In the distributed setting, a **centralized lease-based safe-point** (TiKV/PD model) gives correct GC with $O(1)$ coordination per epoch and retention overhead $O(\text{lease} \times \text{write-rate})$ — i.e., you can always be *safe* by retaining anything newer than the global min snapshot computed each epoch, at the cost of staleness-proportional space.
 - Epoch/grace-period reclamation guarantees reclamation within one bounded grace period after the last reader leaves (assuming partial synchrony).
 

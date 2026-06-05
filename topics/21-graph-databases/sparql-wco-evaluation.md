@@ -29,14 +29,14 @@ Beyond worst case: **fractional hypertree width** $\mathrm{fhw}$ and **submodula
 ## 5. Lower Bound
 - BGP/CQ evaluation (combined complexity) is **NP-hard** (CQ containment / Boolean CQ); $\mathrm{AGM}(Q)$ is a *tight* worst-case output bound, so no comparison-based join can beat $\Omega(\mathrm{AGM}(Q))$ in general.
 - Constant-delay enumeration is impossible for non-free-connex acyclic CQs unless **Boolean matrix multiplication** has truly subcubic combinatorial algorithms (Berkholz–Keppmann–Schweikardt; Bagan et al.) — a fine-grained conditional lower bound.
-- Property-path / RPQ evaluation under **simple-path** semantics is **NP-complete** (Mendelzon–Wood 1995); SPARQL chose *walk* (arbitrary-path) semantics to stay in PTIME, but counting paths is still $\#P$-hard.
+- Property-path / RPQ evaluation under **simple-path** semantics is **NP-complete** (Mendelzon–Wood 1995); SPARQL chose *walk* (arbitrary-path) semantics to stay in PTIME, but counting paths is still $\\#P$-hard.
 - Triangle-type BGPs inherit the $3$SUM/BMM-conditional barriers for listing.
 
 ## 6. The Gap
 For pure BGPs the gap is essentially **closed** (matching AGM upper/lower; $\mathrm{subw}$ optimality known). Genuinely open: (a) a **unified cost model and algorithm** that is simultaneously WCO for joins *and* optimal for property-path closures, rather than a two-phase hack; (b) WCO bounds for the **full SPARQL algebra** with OPTIONAL/negation/aggregation; (c) practical $\mathrm{subw}$-optimal evaluation (PANDA is not yet competitive in systems); (d) cardinality estimation good enough to *choose* WCOJ vs binary plans adaptively on real RDF.
 
 ## 7. Current Research (as of June 2026)
-Kùzu and MillenniumDB are actively integrating WCOJ with path/recursive queries and the new **GQL/SQL-PGQ** path semantics *(frontier — verify)*. The Waterloo (Salihoglu), Oxford (Reutter, Vrgoč, Cuenca Grau), and Washington (Suciu, Abo Khamis at RelationalAI) groups push factorized + information-theoretic (PANDA/$\#$SMW) evaluation toward systems readiness. Work on **bounding intermediate results for RPQs via degree constraints** and on combining WCOJ with learned cardinality estimators is an open frontier *(frontier — verify)*. Standardization (SPARQL 1.2, ISO GQL 2024) is sharpening the target semantics.
+Kùzu and MillenniumDB are actively integrating WCOJ with path/recursive queries and the new **GQL/SQL-PGQ** path semantics *(frontier — verify)*. The Waterloo (Salihoglu), Oxford (Reutter, Vrgoč, Cuenca Grau), and Washington (Suciu, Abo Khamis at RelationalAI) groups push factorized + information-theoretic (PANDA/$\\#$SMW) evaluation toward systems readiness. Work on **bounding intermediate results for RPQs via degree constraints** and on combining WCOJ with learned cardinality estimators is an open frontier *(frontier — verify)*. Standardization (SPARQL 1.2, ISO GQL 2024) is sharpening the target semantics.
 
 ## 8. Future Work
 - A single optimality notion covering joins + Kleene-star path predicates.

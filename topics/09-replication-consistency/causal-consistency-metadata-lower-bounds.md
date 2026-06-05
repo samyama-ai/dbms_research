@@ -16,7 +16,7 @@ The problem: **What is the worst-case number of bits of per-message (and per-sto
 
 Model the execution as a partial order $(\mathcal{O}, \to)$ over operations. A **vector clock** $VC \in \mathbb{N}^N$ captures happens-before exactly and requires $\Theta(N)$ entries in the worst case (Charron-Bost, 1991): no clock of dimension $< N$ characterizes causality among $N$ processes. Full-replication tracking is therefore $\Omega(N \log L)$ bits, where $L$ bounds counter magnitudes.
 
-Under partial replication the relevant lower bound shifts from $N$ (replicas) toward the *number of causal in-edges crossing replica boundaries*. Dependency metadata can be modeled as a **labeling scheme**: a function $f$ assigning labels to versions so deliverability is decidable from labels alone. This connects to **reachability/adjacency labeling** of DAGs, where worst-case labels are $\Theta(n)$ bits for general DAGs and $\Theta(\log^2 n)$ for special classes. Information-theoretically, distinguishing the exponentially many causal histories forces $\Omega(\log(\#\text{histories}))$ bits via a fooling-set argument.
+Under partial replication the relevant lower bound shifts from $N$ (replicas) toward the *number of causal in-edges crossing replica boundaries*. Dependency metadata can be modeled as a **labeling scheme**: a function $f$ assigning labels to versions so deliverability is decidable from labels alone. This connects to **reachability/adjacency labeling** of DAGs, where worst-case labels are $\Theta(n)$ bits for general DAGs and $\Theta(\log^2 n)$ for special classes. Information-theoretically, distinguishing the exponentially many causal histories forces $\Omega(\log(\\#\text{histories}))$ bits via a fooling-set argument.
 
 ## 3. State of the Art (SOTA)
 
@@ -25,7 +25,7 @@ Under partial replication the relevant lower bound shifts from $N$ (replicas) to
 
 ## 4. Upper Bound
 
-Per-update metadata of $O(D)$ where $D$ is the number of *explicit nearest dependencies* (COPS) — unbounded in the worst case but small in practice. Scalar-timestamp schemes (GentleRain) achieve **$O(1)$ metadata** but only by introducing artificial dependencies that delay visibility; one entry per datacenter ($O(\#DC)$) is the standard practical bound for transactional causal+ (Cure). Saturn achieves $O(1)$-sized labels with visibility latency tied to tree depth.
+Per-update metadata of $O(D)$ where $D$ is the number of *explicit nearest dependencies* (COPS) — unbounded in the worst case but small in practice. Scalar-timestamp schemes (GentleRain) achieve **$O(1)$ metadata** but only by introducing artificial dependencies that delay visibility; one entry per datacenter ($O(\\#DC)$) is the standard practical bound for transactional causal+ (Cure). Saturn achieves $O(1)$-sized labels with visibility latency tied to tree depth.
 
 ## 5. Lower Bound
 
@@ -33,7 +33,7 @@ Unconditional: any protocol that *exactly* characterizes causality across $N$ pe
 
 ## 6. The Gap
 
-The gap is between $O(1)$–$O(\#DC)$ practical schemes (small metadata bought with false dependencies / delayed visibility) and the $\Omega(N)$ exactness bound. No tight three-way characterization of (metadata bits) × (false-dependency rate) × (visibility latency) exists. Closing it needs either a labeling-scheme lower bound for partial-replication deliverability or a matching protocol.
+The gap is between $O(1)$–$O(\\#DC)$ practical schemes (small metadata bought with false dependencies / delayed visibility) and the $\Omega(N)$ exactness bound. No tight three-way characterization of (metadata bits) × (false-dependency rate) × (visibility latency) exists. Closing it needs either a labeling-scheme lower bound for partial-replication deliverability or a matching protocol.
 
 ## 7. Current Research (as of June 2026)
 

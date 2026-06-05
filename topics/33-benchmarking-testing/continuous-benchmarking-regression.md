@@ -15,7 +15,7 @@ Variants:
 ## 2. Mathematical Foundations
 
 Model benchmark $i$'s measurement at commit $t$ as $x_{i,t} = \mu_{i,t} + \varepsilon_{i,t}$ with heavy-tailed, possibly heteroscedastic noise $\varepsilon$. A regression is a **change point**: $\mu_{i,t}$ jumps at some $t^*$. Detection is **changepoint analysis**: e.g., **E-Divisive means** (Matteson–James) or **PELT** (Killick et al.) minimizing
-$$\sum_{\text{segments}} \mathcal{C}(\text{segment}) + \beta\,(\#\text{changepoints}),$$
+$$\sum_{\text{segments}} \mathcal{C}(\text{segment}) + \beta\,(\\#\text{changepoints}),$$
 with a penalty $\beta$ trading sensitivity vs. false alarms.
 
 Because thousands of hypotheses are tested, control the **false discovery rate** via Benjamini–Hochberg, or use **e-values / always-valid p-values** (Howard, Ramdas) for *anytime* monitoring of a streaming sequence without inflating type-I error. Robustness to outliers motivates rank-based statistics (Mann–Whitney U) and the **Hodges–Lehmann** shift estimator. The repetition-budget problem is an instance of **best-arm identification / sequential testing**; sample complexity scales as $O(\sigma^2/\Delta^2 \cdot \log(1/\delta))$ to detect an effect size $\Delta$ at confidence $1-\delta$. Dimensionality reduction across correlated benchmarks can exploit low **effective rank** of the metric covariance.

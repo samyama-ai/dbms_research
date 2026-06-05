@@ -23,7 +23,7 @@ External-memory bounds use the **I/O model** ($B$ block, $M$ memory): dynamic ra
 
 ## 4. Upper Bound
 - **External memory, dynamic:** Bkd-tree / logarithmic-method structures give amortized $O(\frac{\log_B n}{B})$ I/Os per update (or $O(\log_B n)$ with logarithmic rebuilding) while preserving query $O((n/B)^{1-1/d}+k/B)$ — i.e., bounded amortized reorganization *with* worst-case query quality.
-- **Practical (in-memory / SSD):** LSM-spatial indexes achieve high sustained ingest with read amplification $O(\#\text{levels})$; bounds on *query-quality drift* are largely empirical, not proven, under arbitrary churn.
+- **Practical (in-memory / SSD):** LSM-spatial indexes achieve high sustained ingest with read amplification $O(\\#\text{levels})$; bounds on *query-quality drift* are largely empirical, not proven, under arbitrary churn.
 
 ## 5. Lower Bound
 - Dynamic range reporting in the I/O / pointer-machine model: any structure with worst-case-optimal query needs $\Omega(\log_B n)$-type update cost (logarithmic-method tradeoff); the **update–query tradeoff** is governed by cell-probe lower bounds (Pătrașcu–Demaine) for dynamic 1-D, extended to higher-D range structures.
@@ -59,7 +59,7 @@ Take an LSM-spatial index (logarithmic / Bentley–Saxe method) with size ratio 
 
 **Insert cost.** A point is merged downward once per level boundary it crosses; total merge work over its lifetime touches $O(\log_T N) \approx 10$ levels, so amortized I/O per insert $= O\!\big(\tfrac{\log_T N}{B}\big) = O\!\big(\tfrac{10}{256}\big) \approx 0.04$ I/Os — sub-1, the hallmark of write batching.
 
-**Read cost.** A range query must probe all $\approx 10$ levels (no single MBR hierarchy), giving read amplification $O(\#\text{levels}) = 10\times$ versus a single R\*-tree.
+**Read cost.** A range query must probe all $\approx 10$ levels (no single MBR hierarchy), giving read amplification $O(\\#\text{levels}) = 10\times$ versus a single R\*-tree.
 
 **The RUM trade-off in numbers.** Lowering $T$ to $2$ doubles levels to $\log_2 10^6 = 20$ (worse reads, $2\times$) but halves merge frequency per level; raising $T$ to $10$ cuts levels to $6$ (better reads) but each merge rewrites more data (worse update/write-amplification). No setting wins on read, update, and memory simultaneously — the high-churn workload lives on this frontier.
 

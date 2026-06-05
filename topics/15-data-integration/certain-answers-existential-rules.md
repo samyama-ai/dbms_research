@@ -10,7 +10,7 @@ Equivalently, $\mathsf{cert}(Q, D, \Sigma) = Q(\mathsf{chase}(D, \Sigma))$ restr
 
 The open problem is to obtain **tight data-complexity and combined-complexity boundaries** for the decision problem ("is $\bar{a} \in \mathsf{cert}$?") across the major **decidable** TGD classes — guarded, weakly-acyclic, sticky, frontier-guarded, warded, and their bounded-treewidth-model fragments — where gaps between known upper and lower bounds persist, especially for combined complexity and for the boundaries between fragments.
 
-Variants: (i) **decision** (Boolean CQ certainty); (ii) **counting** (#certain answers, in $\#P$/$\#\cdot$ hierarchies); (iii) **enumeration** (constant/polynomial delay output of certain tuples).
+Variants: (i) **decision** (Boolean CQ certainty); (ii) **counting** (#certain answers, in $\\#P$/$\\#\cdot$ hierarchies); (iii) **enumeration** (constant/polynomial delay output of certain tuples).
 
 ## 2. Mathematical Foundations
 
@@ -31,7 +31,7 @@ For **guarded TGDs**: BCQ answering is **2ExpTime-complete** in combined complex
 
 ## 5. Lower Bound
 
-BCQ answering under **general TGDs is undecidable** (encodes the halting problem via unrestricted chase). Within decidable classes, matching hardness is known in several but not all cases: guarded is 2ExpTime-hard (Calì et al.); PTime-hardness in data complexity follows from Datalog. For **bounded-arity** fragments and for certain combinations (e.g., guarded + sticky, or frontier-guarded restricted treewidth), exact combined-complexity lower bounds remain **open**. Counting certain answers is $\#P$-hard already for simple TGDs.
+BCQ answering under **general TGDs is undecidable** (encodes the halting problem via unrestricted chase). Within decidable classes, matching hardness is known in several but not all cases: guarded is 2ExpTime-hard (Calì et al.); PTime-hardness in data complexity follows from Datalog. For **bounded-arity** fragments and for certain combinations (e.g., guarded + sticky, or frontier-guarded restricted treewidth), exact combined-complexity lower bounds remain **open**. Counting certain answers is $\\#P$-hard already for simple TGDs.
 
 ## 6. The Gap
 

@@ -17,7 +17,7 @@ This is the formal core behind "**operate on compressed data**," a defining perf
 Treat an encoding as a function $E: R \to \{0,1\}^*$ with a decoder $D$, $D(E(R))=R$. An operator $\theta$ is **directly computable under $E$** if there exists $\hat\theta$ with $\hat\theta(E(R)) = E'(\theta(R))$ for some output encoding $E'$, running in time $g(|E(R)|)$.
 
 Key structure:
-- **Order-preserving / RLE:** runs $(v, \ell)$ let SUM/COUNT aggregate over runs in $O(\#\text{runs})$; selection on $v$ filters whole runs.
+- **Order-preserving / RLE:** runs $(v, \ell)$ let SUM/COUNT aggregate over runs in $O(\\#\text{runs})$; selection on $v$ filters whole runs.
 - **Dictionary encoding:** equality/IN predicates and group-by run on **codes** (integers), deferring dictionary lookup — group-by hashes codes; this connects to **late materialization**.
 - **Frame-of-reference / bit-packing:** SIMD predicate evaluation over packed lanes computes selections without unpacking to native width.
 - Connections to **compressed pattern matching** and the **algorithmics of compressed text** (computing on SLPs / grammar-compressed strings); aggregation over RLE is the database analogue of computing on run-length-compressed sequences.
@@ -31,7 +31,7 @@ This places the problem in the broader theory of **computation over compressed o
 
 ## 4. Upper Bound
 
-- RLE: SUM/COUNT/MIN/MAX/group-by in $O(r)$ where $r=\#$runs $\le n$.
+- RLE: SUM/COUNT/MIN/MAX/group-by in $O(r)$ where $r=\\#$runs $\le n$.
 - Dictionary: equality selection, projection, and group-by in $O(z)$ on codes; hash-join on coded keys in $O(z)$ expected when dictionaries are shared/aligned.
 - Bit-packed/FOR: range and equality selection via SIMD in $O(z/W)$ word operations.
 - For grammar-compressed sequences, aggregation and range queries with $\tilde O(z)$ overhead via balanced SLPs.

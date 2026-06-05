@@ -12,7 +12,7 @@ The problem: **sustain high committed-transaction throughput in a deterministic 
 
 A batch is a set of transactions with read/write sets over keys $K$. Build the **conflict graph** $G$: vertices are transactions, edges join transactions sharing a written key. Deterministic execution must respect a fixed serial order $\prec$ consistent across replicas; two conflicting transactions on the same key must execute in $\prec$-order. The achievable parallelism is governed by the **longest conflict chain** through hot keys: if a hot key $x$ is written by $m$ transactions, those form a path of length $m$, giving a makespan lower bound
 
-$$\text{makespan} \ge \max_{x \in K} (\text{#writers of } x) \quad (\text{the per-key critical path}).$$
+$$\text{makespan} \ge \max_{x \in K} (\text{\\#writers of } x) \quad (\text{the per-key critical path}).$$
 
 Under a Zipfian distribution with skew $\theta$, the expected number of transactions hitting the single hottest key in a batch of size $n$ grows like $n / H_{N,\theta}$ (with $H_{N,\theta}$ the generalized harmonic number), so the hot-key critical path — and hence the serial bottleneck — grows linearly in $n$ as $\theta \to 1$. This is a deterministic analogue of Amdahl's law where the serial fraction is the hot-key chain.
 
@@ -59,7 +59,7 @@ A batch of $n = 8$ transactions runs on a 4-core deterministic engine. Each tran
 - Writers of $x$: $T_1, T_2, T_3, T_4, T_5, T_6$ — must run in $\prec$-order, forming a chain of length 6.
 - Writers of $y$: $T_7, T_8$ — independent, run anywhere.
 
-Per-key critical path bound: $\text{makespan} \ge \max_x(\#\text{writers}) = 6$. With per-transaction hot-section time $\tau = 1$ ms, makespan $\ge 6$ ms regardless of cores — adding cores past 1 cannot help the $x$-chain. The 4 cores sit mostly idle: effective parallelism is $8/6 \approx 1.33$, not 4.
+Per-key critical path bound: $\text{makespan} \ge \max_x(\\#\text{writers}) = 6$. With per-transaction hot-section time $\tau = 1$ ms, makespan $\ge 6$ ms regardless of cores — adding cores past 1 cannot help the $x$-chain. The 4 cores sit mostly idle: effective parallelism is $8/6 \approx 1.33$, not 4.
 
 **Amdahl analogy.** Serial fraction $f = 6/8 = 0.75$; speedup $\le 1/(f + (1-f)/4) = 1/(0.75 + 0.0625) = 1.23\times$. Under Zipfian $\theta \to 1$ the hottest-key count grows like $n/H_{N,\theta}$, so the chain — and the bottleneck — scales linearly with $n$. Commutative updates (if writes to $x$ were $+1$ counters) could collapse the chain to $O(\log n)$ or $O(1)$, breaking the barrier.
 

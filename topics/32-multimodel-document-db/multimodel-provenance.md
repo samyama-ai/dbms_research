@@ -24,7 +24,7 @@ Variants:
 - **Recursion / graph atoms:** Datalog and transitive closure need provenance over $\omega$-continuous semirings / formal power series and least-fixpoint semantics (Green et al.; provenance for Datalog), giving possibly infinite polynomials that must be represented as systems of equations (provenance *circuits*).
 - **Aggregation:** semirings are insufficient; **provenance semimodules** / $K$-relations with aggregation (Amsterdamer–Deutch–Tannen, PODS 2011) handle SUM/COUNT over annotated data.
 - **Nesting/unnest:** requires provenance for the **nested relational calculus**; provenance must commute with `nest`/`unnest`, an area only partially formalized.
-- **Provenance circuits / semiring of polynomials:** compact DAG representation; size and evaluation relate to arithmetic-circuit complexity and to probabilistic-database $\#$P-hardness.
+- **Provenance circuits / semiring of polynomials:** compact DAG representation; size and evaluation relate to arithmetic-circuit complexity and to probabilistic-database $\\#$P-hardness.
 
 ## 3. State of the Art (SOTA)
 

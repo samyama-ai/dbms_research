@@ -66,7 +66,7 @@ A Bao-style optimizer chooses among three hint-sets for a join query; a gradient
 
 $$f(\emptyset)=1.0,\; f(\{1\})=1.0,\; f(\{2\})=2.0,\; f(\{3\})=1.5,\; f(\{1,2,3\})=2.2.$$
 
-Feature 2 (selectivity) alone lifts the prediction from $1.0\to 2.0$. Its Shapley contribution, averaging marginal gains over orderings, dominates: $\phi_2 \approx +1.0$, versus $\phi_1\approx 0$, $\phi_3\approx +0.2$. The explanation: "the model predicted nested-loop was cheap *because* it read selectivity as low ($x_2$)." A DBA checks the true selectivity, finds the estimate was 100× off, and pins the regression to a cardinality-estimation error — not a planning bug. Exact $\phi$ over all $2^3=8$ subsets is cheap here, but grows as $\#$P-hard with feature count, motivating KernelSHAP sampling.
+Feature 2 (selectivity) alone lifts the prediction from $1.0\to 2.0$. Its Shapley contribution, averaging marginal gains over orderings, dominates: $\phi_2 \approx +1.0$, versus $\phi_1\approx 0$, $\phi_3\approx +0.2$. The explanation: "the model predicted nested-loop was cheap *because* it read selectivity as low ($x_2$)." A DBA checks the true selectivity, finds the estimate was 100× off, and pins the regression to a cardinality-estimation error — not a planning bug. Exact $\phi$ over all $2^3=8$ subsets is cheap here, but grows as $\\#$P-hard with feature count, motivating KernelSHAP sampling.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

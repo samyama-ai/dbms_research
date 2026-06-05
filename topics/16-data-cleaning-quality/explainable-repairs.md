@@ -20,7 +20,7 @@ Explanations rest on several formal substrates:
 - **Data provenance:** why-, how-, and where-provenance (Buneman; Green–Karvounarakis–Tannen **provenance semirings**) trace a repair to the source tuples and rule firings that produced it. The how-provenance polynomial *is* a faithful explanation of derivation.
 - **Minimal hitting sets / MUSes:** the set of violated constraints justifying that a cell must change corresponds to a **minimal unsatisfiable subset**; minimum explanations are minimum hitting sets — NP-hard.
 - **Counterfactuals & responsibility:** causality à la Halpern–Pearl; the **responsibility** of a fact $f$ for outcome $o$ is $1/(1+|\Gamma|)$ for the smallest contingency set $\Gamma$. Computing responsibility is intractable in general.
-- **Feature attribution:** for the statistical component, **Shapley values** (SHAP) attribute the error score to features; exact Shapley is $\#$P-hard but has DB-specific tractable cases.
+- **Feature attribution:** for the statistical component, **Shapley values** (SHAP) attribute the error score to features; exact Shapley is $\\#$P-hard but has DB-specific tractable cases.
 - **MDL / Occam:** prefer the explanation minimizing description length, formalizing "simplest faithful reason."
 
 Quality is a trade-off between **fidelity** (does the explanation actually entail the repair?) and **interpretability** (size/complexity).
@@ -41,7 +41,7 @@ For rule-driven repairs, how-provenance gives an *exact* explanation computable 
 
 - **Minimum-size explanations are NP-hard** (minimum hitting set / minimum MUS) and **$(1-o(1))\ln n$-inapproximable** under $\mathsf P\ne\mathsf{NP}$.
 - **Responsibility/causality** computation is NP-hard (and complete for higher classes in general queries; Halpern–Pearl actual-cause checking is $\mathrm D^P$/$\Sigma_2^p$-hard depending on formulation).
-- **Exact Shapley-value attribution is $\#$P-hard** in general (Deng–Papadimitriou), inherited by feature-attribution explanations.
+- **Exact Shapley-value attribution is $\\#$P-hard** in general (Deng–Papadimitriou), inherited by feature-attribution explanations.
 - **Information-theoretic:** there is an irreducible fidelity–interpretability trade-off — any explanation strictly smaller than the true minimal cause must lose fidelity; no free lunch.
 
 ## 6. The Gap

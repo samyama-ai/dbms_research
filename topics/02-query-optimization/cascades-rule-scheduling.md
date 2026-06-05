@@ -23,7 +23,7 @@ The search is exploration of an **AND/OR memo graph**; optimization is a sequenc
 
 ## 4. Upper Bound
 
-With sound branch-and-bound and admissible lower bounds, the optimizer is guaranteed to return the **global optimum over the reachable space** at termination; worst-case work is the full memo closure, i.e. $O(\#\text{ground expressions})$, which is exponential for dense graphs (RAM model). Pruning can reduce realized work by orders of magnitude but gives **no worst-case asymptotic improvement** (adversarial flat-cost inputs defeat the bound — same phenomenon as in *search-strategy-coverage*). For the anytime variant, no non-trivial competitive ratio is proven for general rule sets; only the trivial "optimum at fixpoint" guarantee holds.
+With sound branch-and-bound and admissible lower bounds, the optimizer is guaranteed to return the **global optimum over the reachable space** at termination; worst-case work is the full memo closure, i.e. $O(\\#\text{ground expressions})$, which is exponential for dense graphs (RAM model). Pruning can reduce realized work by orders of magnitude but gives **no worst-case asymptotic improvement** (adversarial flat-cost inputs defeat the bound — same phenomenon as in *search-strategy-coverage*). For the anytime variant, no non-trivial competitive ratio is proven for general rule sets; only the trivial "optimum at fixpoint" guarantee holds.
 
 ## 5. Lower Bound
 

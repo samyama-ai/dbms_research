@@ -30,7 +30,7 @@ Under the PWD assumption, **exact replay is achievable with logging proportional
 
 ## 5. Lower Bound
 
-If external reads are part of the oracle and the external store is not itself replayable/versioned, **no logging scheme can guarantee exact replay**: an information-theoretic argument shows you must persist every distinct observed response, so log size is $\Omega(\#\text{external interactions})$ — you cannot do better than recording the answers. More fundamentally, achieving a *consistent* recovered cut across operators that interact with an asynchronous, possibly-faulty external world inherits **FLP impossibility** (Fischer–Lynch–Paterson 1985): no fully asynchronous protocol guarantees agreement on the replay boundary with one faulty participant. CAP/PACELC tensions apply when the external store is partitioned.
+If external reads are part of the oracle and the external store is not itself replayable/versioned, **no logging scheme can guarantee exact replay**: an information-theoretic argument shows you must persist every distinct observed response, so log size is $\Omega(\\#\text{external interactions})$ — you cannot do better than recording the answers. More fundamentally, achieving a *consistent* recovered cut across operators that interact with an asynchronous, possibly-faulty external world inherits **FLP impossibility** (Fischer–Lynch–Paterson 1985): no fully asynchronous protocol guarantees agreement on the replay boundary with one faulty participant. CAP/PACELC tensions apply when the external store is partitioned.
 
 ## 6. The Gap
 
@@ -70,7 +70,7 @@ A single operator samples each input tuple with probability $0.5$ using a seeded
 - *No logging (assume determinism):* replay re-seeds from wall-clock, draws e.g. $0.62, 0.05, \dots$ → keeps $\{t_2\}$. Sink already has $t_1$; now we re-emit $t_2$ — a **divergent, duplicated** output. Exactly-once broken.
 - *PWD logging:* we logged only the seed $\sigma=42$ (one boundary event), not the data. Replaying $\delta$ on $(I, \sigma{=}42)$ from $s_0$ regenerates draws $0.31, 0.88, 0.10$ → keeps exactly $\{t_1, t_3\}$, matching the committed prefix. Extra log volume $= O(1)$ per epoch, independent of the data rate.
 
-**Cost accounting.** Internal RNG nondeterminism: $O(1)$ log (the seed) suffices — matches the information-theoretic optimum. Contrast an *external lookup* `f(t) = RPC(t)`: the responses are not regenerable, so by the §5 lower bound the log must store $\Omega(\#\text{RPCs})$ distinct answers — here, one recorded response per tuple, i.e. log size grows with the data rate. This is exactly the open internal-vs-external gap.
+**Cost accounting.** Internal RNG nondeterminism: $O(1)$ log (the seed) suffices — matches the information-theoretic optimum. Contrast an *external lookup* `f(t) = RPC(t)`: the responses are not regenerable, so by the §5 lower bound the log must store $\Omega(\\#\text{RPCs})$ distinct answers — here, one recorded response per tuple, i.e. log size grows with the data rate. This is exactly the open internal-vs-external gap.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

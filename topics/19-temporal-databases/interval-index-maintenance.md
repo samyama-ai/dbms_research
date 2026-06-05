@@ -58,7 +58,7 @@ Consider a transaction-time table with one long-lived row and a torrent of short
 
 Stabbing query "what is live at $t=3.5$?" should return $\{F, T_3\}$.
 
-Cost in a naive MVBT with **copy-on-version-split**: every page split that occurs while $F$ is open must copy $F$ into the new page. With $6$ insertions triggering, say, $3$ splits, $F$ is replicated $3$ times — its storage is $O(\#\text{splits})$, not $O(1)$. Over $n$ insertions this can reach $\Theta(n)$ copies of one interval, breaking the amortized $O(\log_B n)$ space-charging argument.
+Cost in a naive MVBT with **copy-on-version-split**: every page split that occurs while $F$ is open must copy $F$ into the new page. With $6$ insertions triggering, say, $3$ splits, $F$ is replicated $3$ times — its storage is $O(\\#\text{splits})$, not $O(1)$. Over $n$ insertions this can reach $\Theta(n)$ copies of one interval, breaking the amortized $O(\log_B n)$ space-charging argument.
 
 The **fat/thin separation** fix: route $F$ to a tiny overflow list of size $\ell=1$; the main index holds only the $T_i$ with clean $O(n/B)$ space and $O(\log_B n + k/B)$ queries. The stab at $t=3.5$ pays the main-index cost plus an additive scan of the $\ell=1$ overflow, returning $\{T_3\}\cup\{F\}$.
 

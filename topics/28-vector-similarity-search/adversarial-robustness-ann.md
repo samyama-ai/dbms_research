@@ -12,7 +12,7 @@ Variants:
 - **Defense / decision:** does there exist a build+query policy guaranteeing recall $\ge\rho$ and cost $\le B$ against the worst case (or with high probability against an oblivious adversary)?
 
 ## 2. Mathematical Foundations
-Model an ANN index as a (randomized) data structure $\mathcal{D}$ supporting `insert(x)` and `query(q)→S`. Define adversarial recall $\rho_{\mathrm{adv}}=\min_{q}\Pr[\text{true }k\text{-NN}\subseteq S]$ over an adversarially chosen query set, and adversarial cost $C_{\mathrm{adv}}=\max_q \mathbb{E}[\#\text{dist-evals}]$.
+Model an ANN index as a (randomized) data structure $\mathcal{D}$ supporting `insert(x)` and `query(q)→S`. Define adversarial recall $\rho_{\mathrm{adv}}=\min_{q}\Pr[\text{true }k\text{-NN}\subseteq S]$ over an adversarially chosen query set, and adversarial cost $C_{\mathrm{adv}}=\max_q \mathbb{E}[\\#\text{dist-evals}]$.
 
 Key scaffolding:
 - **Adaptive adversaries vs. randomized data structures.** Hardt–Woodruff and the adaptive-data-analysis line show that data structures correct for *oblivious* inputs can be driven to failure by adversaries who adapt to released outputs; sketches/embeddings (Johnson–Lindenstrauss) are not robust to adaptively chosen queries unless re-randomized or made differentially private.

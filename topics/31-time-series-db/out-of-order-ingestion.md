@@ -25,7 +25,7 @@ Compression matters because delta-of-delta and **Gorilla** XOR encoding assume m
 - **Theory-SOTA:** the **Dataflow model** (Akidau et al., VLDB 2015) is the canonical formal treatment of event-time, watermarks, and late-data triggers.
 
 ## 4. Upper Bound
-With a bounded lateness window $\tau$, OOO points are buffered in an in-memory OOO head and flushed/merged at compaction: amortized write amplification $O(1)$ per point and merge cost $O(\log B)$-style for the overlapping blocks only — i.e. you pay disorder, not full re-sort. Continuous-aggregate repair is bounded by an **invalidation log**: only the affected buckets are recomputed, $O(\#\text{dirty buckets})$. Streaming side: allowed-lateness $\tau$ gives bounded state $O(\tau\cdot \text{key-rate})$ with correct retraction emission.
+With a bounded lateness window $\tau$, OOO points are buffered in an in-memory OOO head and flushed/merged at compaction: amortized write amplification $O(1)$ per point and merge cost $O(\log B)$-style for the overlapping blocks only — i.e. you pay disorder, not full re-sort. Continuous-aggregate repair is bounded by an **invalidation log**: only the affected buckets are recomputed, $O(\\#\text{dirty buckets})$. Streaming side: allowed-lateness $\tau$ gives bounded state $O(\tau\cdot \text{key-rate})$ with correct retraction emission.
 
 ## 5. Lower Bound
 **Unbounded** out-of-orderness has no append-optimal solution: absorbing arbitrarily-late data into immutable, time-sorted, maximally-compressed blocks forces block rewrite, so worst-case write amplification is $\Omega(\text{block size})$ per late point — an inherent cost of the layout. From streaming theory, **FLP-style / watermark impossibility**: with no bound on lateness you cannot decide *completeness* of a window (you can never know no later point will arrive), so exact one-shot windowed aggregates are impossible without either a lateness bound or unbounded retraction state. Near-sorting a $K$-disordered stream has an $\Omega(N\log K)$ comparison lower bound, the floor on reorder work.
@@ -62,7 +62,7 @@ The 4th arrival ($t=105$) is **out-of-order**: it precedes the latest stored tim
 
 **With a tolerance window $\tau$:** set $\tau = 30$. Since lateness $= 120-105 = 15 \le \tau$, the point is accepted into a small in-memory OOO head rather than rejected, and merged with the overlapping block only at the next compaction — amortized $O(1)$ per late point.
 
-**Rollup repair:** suppose a 1-minute `avg` rollup already emitted the bucket $[100,120)$ as $(100+110)/2 = 105$ over 2 points. The late $105$ lands in that same bucket, so the invalidation log marks exactly **one** dirty bucket; recomputing it gives $(100+110+105)/3 = 105$ over 3 points. Repair cost is $O(\#\text{dirty buckets}) = O(1)$, not a full re-aggregation.
+**Rollup repair:** suppose a 1-minute `avg` rollup already emitted the bucket $[100,120)$ as $(100+110)/2 = 105$ over 2 points. The late $105$ lands in that same bucket, so the invalidation log marks exactly **one** dirty bucket; recomputing it gives $(100+110+105)/3 = 105$ over 3 points. Repair cost is $O(\\#\text{dirty buckets}) = O(1)$, not a full re-aggregation.
 
 If instead $t=105$ arrived after the window had advanced past $\tau$, completeness is undecidable without unbounded retraction state — the watermark/FLP-style barrier.
 

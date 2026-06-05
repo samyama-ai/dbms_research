@@ -39,7 +39,7 @@ with $D$ the decoder. Order-preserving dictionary encodings give a monotone map
 $\phi:\Sigma\to\mathbb{Z}$, so range predicates and sort commute with $\phi$ — enabling
 sort/merge-join on codes. RLE turns aggregation into a **weighted reduction**: $\sum$ over a
 run of value $v$ with length $\ell$ is $\ell\cdot v$, collapsing $\ell$ tuples to $O(1)$
-work, so RLE aggregation cost is $O(\#\text{runs})$ not $O(n)$ — a provable sublinear win
+work, so RLE aggregation cost is $O(\\#\text{runs})$ not $O(n)$ — a provable sublinear win
 when runs are long. The information-theoretic frame: any operator that produces $k$ bits of
 output must read $\Omega(k)$ bits, but compression lets the *input* side shrink toward $H$,
 so encoded execution can approach $\Theta(H + \text{output})$ work — the **compressed-input

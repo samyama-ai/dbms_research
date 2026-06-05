@@ -25,7 +25,7 @@ This is a methodology/empirical problem, so "upper bound" means *generation effi
 
 ## 5. Lower Bound
 - **Exact** generation hitting *multiple* target statistics simultaneously (e.g., a prescribed joint degree–clustering–community profile) is generally **NP-hard** (graph realization with clustering constraints; many joint-degree-matrix realization variants are hard).
-- Predicting query hardness exactly is as hard as the underlying evaluation/counting problems (e.g., setting an exact target output size for a cyclic pattern is $\#P$-hard, since it requires knowing the count).
+- Predicting query hardness exactly is as hard as the underlying evaluation/counting problems (e.g., setting an exact target output size for a cyclic pattern is $\\#P$-hard, since it requires knowing the count).
 - No information-theoretic barrier per se, but **anti-overfitting** guarantees (a benchmark provably not gameable) face an impossibility flavor: any fixed finite workload can be overfit, so robustness requires randomized/generative families.
 
 ## 6. The Gap

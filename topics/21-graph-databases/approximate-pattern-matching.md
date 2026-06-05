@@ -7,7 +7,7 @@
 Given a massive graph $G=(V,E)$ (billions of edges, often not fitting in memory) and a small connected pattern $H$ (e.g., triangle, 4-clique, $k$-path, labeled motif), estimate the number of (homomorphic or subgraph) **embeddings** $\mathrm{hom}(H,G)$ / $\mathrm{sub}(H,G)$, or an aggregate over them (e.g., $\sum_{\text{matches}} f(\text{attributes})$), to within relative error $\varepsilon$ with confidence $1-\delta$, using as few edge reads / passes / samples as possible.
 
 Variants:
-- **Counting variant:** estimate $\#$ embeddings (the canonical case).
+- **Counting variant:** estimate $\\#$ embeddings (the canonical case).
 - **Aggregate variant:** estimate $\mathrm{SUM/AVG/COUNT-DISTINCT}$ of an attribute function over matches (graph-OLAP).
 - **Existence/decision variant:** does at least one match exist? (subsumed but easier).
 - **Streaming / sublinear variant:** one or few passes, or sublinear-time query access (degree, neighbor, edge-sample oracles).
@@ -32,7 +32,7 @@ Lower-bound machinery: communication complexity (set-disjointness) for streaming
 - Streaming: triangle count in $\tilde{O}(m/\sqrt{t})$ space (one pass, with guarantees) — Pavan–Tangwongsan–Tirthapura–Wu, and McGregor et al.
 
 ## 5. Lower Bound
-- $\#$-counting subgraph homomorphisms is **$\#W[1]$-hard** parameterized by $|H|$ in general, and $\#P$-complete for many fixed $H$ (e.g., counting $k$-paths/cycles).
+- $\\#$-counting subgraph homomorphisms is **$\\#W[1]$-hard** parameterized by $|H|$ in general, and $\\#P$-complete for many fixed $H$ (e.g., counting $k$-paths/cycles).
 - Query/sample complexity lower bounds: $\Omega(m^{3/2}/t)$ for triangle estimation (matching, FOCS 2015); $\Omega(n^2)$-type bounds without a good lower estimate of $t$.
 - Streaming space: $\Omega(m)$ for exact triangle detection (set-disjointness reduction); $k$-clique detection conditioned on the *triangle/clique-detection* fine-grained hypotheses.
 - Hardness of **fixed-parameter tractability** is tied to the *vertex-cover number* of $H$ (Curticapean–Marx; Curticapean–Dell–Marx STOC 2017 "homomorphism basis"): counting $H$ is hard exactly when treewidth/vc grows.

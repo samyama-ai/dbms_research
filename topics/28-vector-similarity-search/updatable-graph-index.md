@@ -22,7 +22,7 @@ Variants: insert-only (append), delete-heavy (tombstoning vs. true removal), and
 ## 4. Upper Bound
 - **Cover trees** support insert/delete in $O(\lambda^{O(1)}\log n)$ time with maintained query bounds $2^{O(\lambda)}\log n$ — a *provable* dynamic upper bound, but for a structure rarely used in practice.
 - **FreshDiskANN:** empirically bounded per-insert and per-delete-consolidation cost (local prune over affected neighborhoods) with recall held near the static index over millions of updates — an experimental, not proven, bound.
-- **LSM/segment designs:** amortize updates to background merges; per-query overhead $O(\#\text{segments})$, bounded by merge policy. Upper bounds here are on system throughput, not recall preservation.
+- **LSM/segment designs:** amortize updates to background merges; per-query overhead $O(\\#\text{segments})$, bounded by merge policy. Upper bounds here are on system throughput, not recall preservation.
 
 ## 5. Lower Bound
 - No ANN-specific churn lower bound is established. Relevant analogues: dynamic data-structure lower bounds (cell-probe, Pătraşcu–Demaine style) give $\Omega(\log n)$ amortized update/query tradeoffs for many dynamic problems; an adversarial delete sequence can force $\Omega(\text{degree})$ repair work per deletion to preserve reachability — an informal structural lower bound.

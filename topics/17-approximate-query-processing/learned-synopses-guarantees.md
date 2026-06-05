@@ -32,7 +32,7 @@ Hybrid construction yields the only honest worst-case bound: with a learned mode
 
 ## 5. Lower Bound
 
-Information-theoretic: any synopsis of size $s$ answering all queries in a class $\mathcal{Q}$ to error $\varepsilon$ must satisfy $s \ge \log_2(\#\text{distinguishable answer profiles})$ — learning cannot beat this counting bound; a model is just a (clever) lossy code. For *adversarial* / out-of-distribution queries, **no** finite training set bounds worst-case error: an adversary perturbs $R$ in a region the model never saw, so any model-only estimator has unbounded worst-case error — an impossibility that forces residual access or distributional assumptions. Under distribution shift, conformal coverage guarantees provably break (exchangeability violated).
+Information-theoretic: any synopsis of size $s$ answering all queries in a class $\mathcal{Q}$ to error $\varepsilon$ must satisfy $s \ge \log_2(\\#\text{distinguishable answer profiles})$ — learning cannot beat this counting bound; a model is just a (clever) lossy code. For *adversarial* / out-of-distribution queries, **no** finite training set bounds worst-case error: an adversary perturbs $R$ in a region the model never saw, so any model-only estimator has unbounded worst-case error — an impossibility that forces residual access or distributional assumptions. Under distribution shift, conformal coverage guarantees provably break (exchangeability violated).
 
 ## 6. The Gap
 

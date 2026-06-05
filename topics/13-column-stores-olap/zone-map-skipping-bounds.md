@@ -15,7 +15,7 @@ The decision version ("does a layout exist achieving amplification $\le \alpha$?
 ## 2. Mathematical Foundations
 
 Let a column be a multiset $X = \{x_1,\dots,x_n\}$ partitioned into $m = \lceil n/B\rceil$ zones $Z_1,\dots,Z_m$. Each zone has interval $I_j = [\min Z_j, \max Z_j]$. A range predicate $[a,b]$ scans $Z_j$ iff $I_j \cap [a,b] \neq \emptyset$. Define **survivability**
-$$ S(a,b) = \#\{ j : I_j \cap [a,b] \neq \emptyset \}, $$
+$$ S(a,b) = \\#\{ j : I_j \cap [a,b] \neq \emptyset \}, $$
 and the *false-survival* (over-scan) count $S(a,b) - S^*(a,b)$ where $S^*$ counts only zones containing a true match. For a *fully sorted* column, intervals are nested/contiguous, so $S^* \le S \le S^* + 2$: at most two boundary zones are wasted, giving optimal one-dimensional skipping. The difficulty is **multi-dimensional**: with $d$ independent range attributes and a single physical order, no order is simultaneously locality-preserving for all $d$ dimensions.
 
 Key tools: the layout problem reduces to a **clustering / space-filling-curve** problem. Z-order (Morton) and Hilbert curves bound the *dilation* of locality; for a $d$-dimensional grid the number of curve segments intersecting an axis-aligned query box of side $s$ scales like $\Theta(s^{d-1})$, which controls surviving-block counts. Information-theoretically, with one ordering the achievable skipping across $d$ uncorrelated dimensions is constrained by a *Kolmogorov–Smirnov*-style spread argument: total "ordering budget" $\log n!$ must be shared across dimensions.

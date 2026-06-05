@@ -22,7 +22,7 @@ Model rules as a **term-rewriting system (TRS)** over relational-algebra express
 
 ## 4. Upper Bound
 
-For **conjunctive queries**, deciding expression equivalence is decidable (CQ containment, NP-complete, Chandra–Merlin 1977), so derivability under a complete CQ rewrite system is decidable and the equivalence class is finite up to renaming; exhaustive memo closure terminates. For the **join-only** fragment, commutativity+associativity reach all $\sim n!\cdot C_{n-1}$ bushy trees, and memoization makes closure run in $O(\#\text{ccp})$-style time (RAM model). Where a complete, terminating, confluent $\mathcal{R}$ is known, the upper bound is "exhaustive memo fixpoint," polynomial in the size of the generated memo.
+For **conjunctive queries**, deciding expression equivalence is decidable (CQ containment, NP-complete, Chandra–Merlin 1977), so derivability under a complete CQ rewrite system is decidable and the equivalence class is finite up to renaming; exhaustive memo closure terminates. For the **join-only** fragment, commutativity+associativity reach all $\sim n!\cdot C_{n-1}$ bushy trees, and memoization makes closure run in $O(\\#\text{ccp})$-style time (RAM model). Where a complete, terminating, confluent $\mathcal{R}$ is known, the upper bound is "exhaustive memo fixpoint," polynomial in the size of the generated memo.
 
 ## 5. Lower Bound
 

@@ -43,7 +43,7 @@ The strongest scaling results bound metadata **independent of clients and keys**
 
 ## 6. The Gap
 
-**Partially solved:** the metadata-size goal is *achievable* (GentleRain $O(1)$, Cure $O(\#DC)$), so the headline is met. The remaining **open** gap is the **precision–latency–metadata three-way frontier**: minimizing **false dependencies** (and hence visibility latency / staleness) for a *given* metadata budget, especially under skewed/partial replication and client mobility (a client moving between DCs breaks coarse tracking). No tight characterization of the optimal staleness for fixed metadata $m < n$ exists. Closing it needs a quantitative theory of "how much causality precision per bit of metadata," and protocols robust to client migration without per-client state.
+**Partially solved:** the metadata-size goal is *achievable* (GentleRain $O(1)$, Cure $O(\\#DC)$), so the headline is met. The remaining **open** gap is the **precision–latency–metadata three-way frontier**: minimizing **false dependencies** (and hence visibility latency / staleness) for a *given* metadata budget, especially under skewed/partial replication and client mobility (a client moving between DCs breaks coarse tracking). No tight characterization of the optimal staleness for fixed metadata $m < n$ exists. Closing it needs a quantitative theory of "how much causality precision per bit of metadata," and protocols robust to client migration without per-client state.
 
 ## 7. Current Research (as of June 2026)
 

@@ -22,7 +22,7 @@ For $(r,c)$-approximate ball reporting in $\ell_2$: query time $\tilde O(d\,n^{\
 
 ## 5. Lower Bound
 
-For exact range reporting in high dimension, the **curse of dimensionality** bites: any structure with $\mathrm{poly}(n,d)$ space requires near-linear query time for exact NN/range under SETH-style and dimensionality reductions (Rubinstein, STOC 2018, for $(1+\varepsilon)$-ANN). For the **counting** variant, conditional hardness from **Hopcroft's problem / Online Matrix-Vector** and from $\#$-hardness of high-dimensional ball-counting precludes exact $\tilde O(n^{2-\delta})$ batch counting. Cell-probe lower bounds for approximate near-neighbor (Panigrahy–Talwar–Wieder; Andoni–Indyk–Patrascu) lower-bound space-query tradeoffs and transfer to the ball-emptiness variant.
+For exact range reporting in high dimension, the **curse of dimensionality** bites: any structure with $\mathrm{poly}(n,d)$ space requires near-linear query time for exact NN/range under SETH-style and dimensionality reductions (Rubinstein, STOC 2018, for $(1+\varepsilon)$-ANN). For the **counting** variant, conditional hardness from **Hopcroft's problem / Online Matrix-Vector** and from $\\#$-hardness of high-dimensional ball-counting precludes exact $\tilde O(n^{2-\delta})$ batch counting. Cell-probe lower bounds for approximate near-neighbor (Panigrahy–Talwar–Wieder; Andoni–Indyk–Patrascu) lower-bound space-query tradeoffs and transfer to the ball-emptiness variant.
 
 ## 6. The Gap
 

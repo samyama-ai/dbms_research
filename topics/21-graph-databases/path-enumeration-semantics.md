@@ -52,7 +52,7 @@ Take the classic Mendelzon–Wood hardness instance for $R = (aa)^*$ — paths w
 
 **Simple-path semantics:** now overlay the gadgets so that choosing $p_i$ vs $q_i$ encodes a boolean assignment, and add a shared "forbidden" vertex visited iff a clause is unsatisfied. Asking "is there a *simple* path from $x_1$ to $x_{n+1}$ matching $(aa)^*$?" becomes equivalent to satisfying the encoded formula — the NP-completeness reduction. With $n = 3$ gadgets there are $2^3 = 8$ candidate paths; deciding whether any is simple and even-length requires exploring this exponential branching.
 
-**Counting:** even when existence is easy (walks), $\#\{\text{simple paths}\}$ here is $2^n$, and counting simple paths matching $R$ is #P-complete (Valiant). This concretely shows why GQL/SQL-PGQ default to **walk/trail/shortest** modes: they sidestep exactly this $2^n$ simple-path blow-up.
+**Counting:** even when existence is easy (walks), $\\#\{\text{simple paths}\}$ here is $2^n$, and counting simple paths matching $R$ is #P-complete (Valiant). This concretely shows why GQL/SQL-PGQ default to **walk/trail/shortest** modes: they sidestep exactly this $2^n$ simple-path blow-up.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md).*

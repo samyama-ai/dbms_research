@@ -27,7 +27,7 @@ For **approximate** holistic aggregates, the space floor comes from streaming/co
 ## 3. State of the Art (SOTA)
 
 - **Theory-SOTA:** Pătraşcu–Demaine dynamic partial-sums bounds; Yao / Alon–Schieber inverse-Ackermann range-semigroup; KLL optimal quantile sketches; succinct range-aggregate structures (wavelet trees for range-quantile in $O(\log \sigma)$).
-- **Systems-SOTA:** **multi-resolution rollups** (Druid, Timescale continuous aggregates, M3/Mimir/VictoriaMetrics recording rules) answer long ranges from coarse buckets in $O(\#\text{buckets})$; Gorilla/columnar blocks scan compressed runs with block-skipping (min/max zone maps, page indexes in Parquet). **DataSketches** mergeable sketches for approximate range aggregates over segments.
+- **Systems-SOTA:** **multi-resolution rollups** (Druid, Timescale continuous aggregates, M3/Mimir/VictoriaMetrics recording rules) answer long ranges from coarse buckets in $O(\\#\text{buckets})$; Gorilla/columnar blocks scan compressed runs with block-skipping (min/max zone maps, page indexes in Parquet). **DataSketches** mergeable sketches for approximate range aggregates over segments.
 - **Approximate query processing** (BlinkDB-style sampling) as the practical escape from exact lower bounds.
 
 ## 4. Upper Bound

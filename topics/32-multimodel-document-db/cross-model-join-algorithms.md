@@ -15,7 +15,7 @@ Example: "users (relational) whose `address.city` (document) matches a city node
 Variants:
 - **Optimization:** compute the join result with minimum total time/IO.
 - **Worst-case-optimal (WCO) decision/enumeration:** match the AGM/fractional-cover bound for the CQ when some atoms are *graph-recursive* or *array-multivalued* (not classical finite relations).
-- **Counting:** $\#$-answers, which is #P-hard in general for CQs with projection.
+- **Counting:** $\\#$-answers, which is #P-hard in general for CQs with projection.
 
 The novelty over classical join theory: graph atoms encode *transitive closure* (infinite-arity-like), document atoms encode *array unnesting* (one id → many tuples), and relational atoms are standard — and an optimal plan must interleave all three.
 
@@ -43,7 +43,7 @@ For the *finite, non-recursive* fragment (graph atoms pre-materialized to edge r
 ## 5. Lower Bound
 
 - **Conditional (fine-grained):** Boolean conjunctive triangle-style queries are as hard as detecting triangles; under the 3SUM / APSP / combinatorial-BMM hypotheses, no truly subquadratic algorithm exists for the corresponding 2-path/triangle cross-model joins (Williams; Abboud–Williams).
-- **Counting:** $\#$CQ with projection is **#P-hard** (folklore from #P-completeness of $\#$-clique); even approximate counting of cross-model join answers is hard for self-join-free graph patterns under standard assumptions.
+- **Counting:** $\\#$CQ with projection is **#P-hard** (folklore from #P-completeness of $\\#$-clique); even approximate counting of cross-model join answers is hard for self-join-free graph patterns under standard assumptions.
 - **AGM tightness:** the AGM bound is tight (Atserias–Grohe–Marx), so any join algorithm reading the whole output must take $\Omega(\mathrm{AGM}(Q))$ — establishing optimality of WCO for the finite fragment but leaving the *recursive/lazy-graph* case open.
 
 ## 6. The Gap

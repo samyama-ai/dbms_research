@@ -6,7 +6,7 @@
 In disaggregated architectures, compute and storage scale independently: shuffle intermediate data is written to and read from a remote object/blob store (S3, GCS, EBS-style) rather than colocated local disks. This decouples elasticity (add/remove workers freely, tolerate stragglers and spot reclamation) from the all-to-all exchange, but pays a price in latency, request overhead, and per-byte storage/egress cost. The problem: **design a shuffle layer over disaggregated/object storage** that (a) lets the number of map and reduce workers change *between or during* a shuffle, (b) minimizes the dominant cost — number of object-store requests and bytes — under the store's per-request and per-byte pricing, and (c) preserves fault tolerance without re-running upstream stages.
 
 Variants:
-- **Optimization:** minimize total cost $= \alpha \cdot (\text{\#requests}) + \beta \cdot (\text{bytes}) + \gamma \cdot (\text{latency})$ subject to a parallelism schedule.
+- **Optimization:** minimize total cost $= \alpha \cdot (\text{\\#requests}) + \beta \cdot (\text{bytes}) + \gamma \cdot (\text{latency})$ subject to a parallelism schedule.
 - **Decision:** can a shuffle of $N$ bytes between $m$ mappers and $r$ reducers be realized with $\le Q$ object-store operations?
 - **Elastic/online:** worker count is revealed online (autoscaling, spot churn); choose write/read granularity adaptively.
 
@@ -14,7 +14,7 @@ It is "empirically-open": several production systems demonstrate large wins, but
 
 ## 2. Mathematical Foundations
 A shuffle is an $m \times r$ all-to-all data movement. With local-disk shuffle, each of $m$ mappers writes $r$ partitions, so $m\cdot r$ logical segments. On object storage the **per-request cost** dominates because reads/writes are billed and latency-bound per object, giving a granularity tradeoff:
-$$ \text{\#ops} \;=\; \Theta(m \cdot r) \ \ \text{(fine-grained)} \quad\text{vs}\quad \Theta(m + r) \ \ \text{(coarse, via a merge/intermediary)} . $$
+$$ \text{\\#ops} \;=\; \Theta(m \cdot r) \ \ \text{(fine-grained)} \quad\text{vs}\quad \Theta(m + r) \ \ \text{(coarse, via a merge/intermediary)} . $$
 A merge step (push-based aggregation, à la Magnet/Cosco) trades extra bytes for fewer requests, an instance of an **I/O / external-memory tradeoff**: with block size $B$ and store-op cost, the shuffle resembles a transposition in the **external-memory (DAM) model** where transposing an $m\times r$ matrix costs $\Theta\!\big(\frac{mr}{B}\log_{M/B}\frac{mr}{B}\big)$ I/Os in the worst case. Elasticity adds a **scheduling** dimension: the partition function must be **decoupled from physical worker count** (e.g., hash to a large logical key space, then range-assign logical partitions to whatever workers exist), so reassignment costs $O(1)$ metadata rather than re-reading data. Fault tolerance reduces to durability of the intermediate objects: once written, a reducer failure costs only a re-read, not upstream recomputation (lineage truncation).
 
 ## 3. State of the Art (SOTA)
@@ -22,7 +22,7 @@ A merge step (push-based aggregation, à la Magnet/Cosco) trades extra bytes for
 - **Theory-SOTA:** External-memory/cache-oblivious transposition and sorting bounds (Aggarwal–Vitter; Frigo et al.) bound the I/O of the exchange; MPC load bounds (Beame–Koutris–Suciu) bound communication. Neither directly models object-store per-request pricing plus elasticity.
 
 ## 4. Upper Bound
-Coarse-grained merged shuffle achieves $\tilde O(m + r)$ object-store operations (plus $O(N/B)$ byte transfers) by funneling each mapper's output through a merge service that emits per-reducer streams — at the cost of extra intermediate bytes; this holds in a **request-counting external-memory model**. Sorting/transposition over the store costs $O\!\big(\frac{N}{B}\log_{M/B}\frac{N}{B}\big)$ I/Os (Aggarwal–Vitter optimal external sort). With a decoupled logical partition space, elastic rescaling between map and reduce phases is achievable at $O(\text{\#logical partitions})$ metadata cost, independent of $N$.
+Coarse-grained merged shuffle achieves $\tilde O(m + r)$ object-store operations (plus $O(N/B)$ byte transfers) by funneling each mapper's output through a merge service that emits per-reducer streams — at the cost of extra intermediate bytes; this holds in a **request-counting external-memory model**. Sorting/transposition over the store costs $O\!\big(\frac{N}{B}\log_{M/B}\frac{N}{B}\big)$ I/Os (Aggarwal–Vitter optimal external sort). With a decoupled logical partition space, elastic rescaling between map and reduce phases is achievable at $O(\text{\\#logical partitions})$ metadata cost, independent of $N$.
 
 ## 5. Lower Bound
 In the **external-memory (DAM) model**, permuting/transposing $N$ elements requires $\Omega\!\big(\min(N, \frac{N}{B}\log_{M/B}\frac{N}{B})\big)$ I/Os (Aggarwal–Vitter permutation lower bound), so no shuffle can avoid the sorting-complexity floor in the worst case. Any all-to-all exchange must move $\Omega(N)$ bytes (information-theoretic), and distinguishing whether $m\cdot r$ distinct nonempty cells exist forces $\Omega(m+r)$ object operations even in the best granularity. In the **online elastic** setting, adversarial worker-count changes force a competitive-ratio penalty: a deterministic scheduler that commits to a write granularity can be forced into $\Omega(\log(\text{scale range}))$ extra request cost. No tight bound combining per-request pricing, bytes, and elasticity is known.
@@ -51,9 +51,9 @@ Remote/disaggregated shuffle services are an active systems area: Apache Celebor
 
 Take $m = 1000$ mappers and $r = 1000$ reducers shuffling $N = 1\text{ TB}$ through S3. Suppose pricing is $\alpha = \$0.0004$ per 1000 PUT/GET requests and $\beta$ for bytes (egress free within-region).
 
-**Fine-grained** (each mapper writes one object per reducer): $\#\text{ops} = m\cdot r = 10^6$ writes $+ 10^6$ reads $= 2\times10^6$ ops. Cost $\approx 2000 \times \$0.0004 = \$0.80$, and each object is only $1\text{ TB}/10^6 = 1\text{ MB}$ — small, latency-bound objects.
+**Fine-grained** (each mapper writes one object per reducer): $\\#\text{ops} = m\cdot r = 10^6$ writes $+ 10^6$ reads $= 2\times10^6$ ops. Cost $\approx 2000 \times \$0.0004 = \$0.80$, and each object is only $1\text{ TB}/10^6 = 1\text{ MB}$ — small, latency-bound objects.
 
-**Coarse merged** (push to one merge service per reducer, à la Magnet): $\#\text{ops} = \Theta(m + r) = 2000$ ops, a $1000\times$ request reduction, at the cost of one extra pass over the bytes ($N$ written twice).
+**Coarse merged** (push to one merge service per reducer, à la Magnet): $\\#\text{ops} = \Theta(m + r) = 2000$ ops, a $1000\times$ request reduction, at the cost of one extra pass over the bytes ($N$ written twice).
 
 So the request term collapses from $\Theta(mr)=10^6$ to $\Theta(m+r)=2\times10^3$. If instead we scaled reducers from $1000$ to $1500$ mid-shuffle, a decoupled logical key space (say $2^{16}$ logical partitions) makes the reassignment $O(2^{16})$ metadata updates — independent of $N$ — rather than re-reading the 1 TB.
 

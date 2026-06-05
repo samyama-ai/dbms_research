@@ -64,9 +64,9 @@ Count triangles via the trace formula on a tiny graph. Let $G=K_4$ minus one edg
 
 $$A=\begin{pmatrix}0&1&1&1\\1&0&1&1\\1&1&0&0\\1&1&0&0\end{pmatrix}.$$
 
-The number of (labeled, ordered) closed 3-walks is $\mathrm{tr}(A^3)$, and each triangle is counted $3!=6$ times, so $\#\triangle = \mathrm{tr}(A^3)/6$.
+The number of (labeled, ordered) closed 3-walks is $\mathrm{tr}(A^3)$, and each triangle is counted $3!=6$ times, so $\\#\triangle = \mathrm{tr}(A^3)/6$.
 
-Compute $\mathrm{tr}(A^3)=\sum_i (A^3)_{ii}$. By hand, $(A^2)_{ii}=\deg(i)$, giving diagonal $(3,3,2,2)$. The diagonal of $A^3$ equals twice the number of triangles through each vertex: vertex 1 is in triangles $\{1,2,3\},\{1,2,4\}$ (degree-2 in the triangle-incidence sense), similarly vertex 2; vertices 3 and 4 are each in one triangle. So $(A^3)_{ii}=(4,4,2,2)$, $\mathrm{tr}(A^3)=12$, and $\#\triangle = 12/6 = 2$ — namely $\{1,2,3\}$ and $\{1,2,4\}$. Correct.
+Compute $\mathrm{tr}(A^3)=\sum_i (A^3)_{ii}$. By hand, $(A^2)_{ii}=\deg(i)$, giving diagonal $(3,3,2,2)$. The diagonal of $A^3$ equals twice the number of triangles through each vertex: vertex 1 is in triangles $\{1,2,3\},\{1,2,4\}$ (degree-2 in the triangle-incidence sense), similarly vertex 2; vertices 3 and 4 are each in one triangle. So $(A^3)_{ii}=(4,4,2,2)$, $\mathrm{tr}(A^3)=12$, and $\\#\triangle = 12/6 = 2$ — namely $\{1,2,3\}$ and $\{1,2,4\}$. Correct.
 
 Complexity check: this costs one matrix product, $O(n^\omega)$ with fast multiplication, illustrating the $\mathrm{tr}(A^3)/6$ route that beats the naive $\binom{n}{3}$ enumeration for triangle counting.
 

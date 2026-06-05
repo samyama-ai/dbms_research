@@ -25,7 +25,7 @@ Safe GC requires **causal stability**: an event $e$ is stable once every replica
 
 ## 4. Upper Bound
 
-For counters and registers, metadata is $O(N)$ (one entry per replica), reclaimable to $O(1)$ live value once stable. For OR-Sets, the optimized OR-Set (Bieniusa et al.) reduces per-element version data to a single dot, giving $O(n + N)$ resident metadata with tombstone-free removal. Sequence CRDTs achieve $O(n \log n)$ identifier bits for $n$ live elements with logarithmic densification; Yjs-style block coalescing is $O(\text{#blocks})$. With a stability detector ($O(N)$), tombstones become reclaimable in amortized $O(1)$ per stabilized op.
+For counters and registers, metadata is $O(N)$ (one entry per replica), reclaimable to $O(1)$ live value once stable. For OR-Sets, the optimized OR-Set (Bieniusa et al.) reduces per-element version data to a single dot, giving $O(n + N)$ resident metadata with tombstone-free removal. Sequence CRDTs achieve $O(n \log n)$ identifier bits for $n$ live elements with logarithmic densification; Yjs-style block coalescing is $O(\text{\\#blocks})$. With a stability detector ($O(N)$), tombstones become reclaimable in amortized $O(1)$ per stabilized op.
 
 ## 5. Lower Bound
 

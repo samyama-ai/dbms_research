@@ -8,7 +8,7 @@ OLAP queries build large in-memory state — **hash tables for joins and aggrega
 Variants:
 - **Hash join under memory bound:** Grace/hybrid partitioning, recursive repartitioning on skew.
 - **Hash aggregation under memory bound:** partition-and-spill vs. pre-aggregation; high-cardinality group-by.
-- **Optimization:** minimize external-memory I/O ($O(\frac{N}{B}\cdot\#\text{passes})$); **online/competitive** variant when $M$ varies adversarially.
+- **Optimization:** minimize external-memory I/O ($O(\frac{N}{B}\cdot\\#\text{passes})$); **online/competitive** variant when $M$ varies adversarially.
 - **Counting/decision:** can the query complete within budget $M$ at all (memory admission control)?
 
 ## 2. Mathematical Foundations

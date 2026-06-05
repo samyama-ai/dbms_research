@@ -16,7 +16,7 @@ A structure $\mathfrak{A}$ has **Gaifman graph** $G(\mathfrak{A})$ with vertices
 
 **EF games.** The $k$-round Ehrenfeucht–Fraïssé game characterizes $\equiv_k$ (agreement on quantifier rank $\le k$): Duplicator wins iff $\mathfrak{A}\equiv_k\mathfrak{B}$. To show $\varphi\notin\mathrm{FO}$, exhibit families $\mathfrak{A}_k,\mathfrak{B}_k$ with $\mathfrak{A}_k\models\varphi$, $\mathfrak{B}_k\not\models\varphi$, yet $\mathfrak{A}_k\equiv_k\mathfrak{B}_k$.
 
-Locality fails over **ordered** structures, so capturing complexity classes (Immerman–Vardi: FO+LFP = PTIME on ordered structures) and counting (Immerman–Lander) require different separations (Hella's $k$-pebble counting games, the $\#$-game hierarchy).
+Locality fails over **ordered** structures, so capturing complexity classes (Immerman–Vardi: FO+LFP = PTIME on ordered structures) and counting (Immerman–Lander) require different separations (Hella's $k$-pebble counting games, the $\\#$-game hierarchy).
 
 ## 3. State of the Art (SOTA)
 Locality theory is mature for plain FO: Gaifman (1982), Hanf (1965), and the bounded-radius bounds are textbook (Libkin, *Elements of Finite Model Theory*, 2004). Modern SOTA pushes locality into **enumeration and algorithms**: Grohe–Schweikardt and Kazana–Segoufin use Gaifman locality to get linear-preprocessing constant-delay enumeration of FO queries over bounded-degree / bounded-expansion / nowhere-dense classes. The Frick–Grohe and Dvořák–Král'–Thomas results give the meta-theorems; Grohe–Kreutzer–Siebertz (FOCS 2014, J. ACM 2017) settled FO model checking in almost-linear FPT time on nowhere-dense classes (and it is the structural limit).

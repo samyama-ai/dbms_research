@@ -31,7 +31,7 @@ Out-of-order ingest formalizes via **event-time vs. processing-time** and **wate
 
 ## 4. Upper Bound
 
-- **Distributive/algebraic rollups:** $O(1)$ amortized maintenance per in-order event; $O(\#\text{affected cells})$ for an out-of-order event hitting already-built buckets.
+- **Distributive/algebraic rollups:** $O(1)$ amortized maintenance per in-order event; $O(\\#\text{affected cells})$ for an out-of-order event hitting already-built buckets.
 - **Sliding-window associative aggregates:** $O(1)$ amortized per insert/evict (DABA/FlatFAT), worst-case $O(1)$ (DABA Lite / SlickDeque) in the RAM model.
 - **Holistic (approximate):** $\epsilon$-quantiles in $O(\frac{1}{\epsilon}\log(\epsilon n))$ space (Greenwald–Khanna); distinct in $O(\epsilon^{-2})$ (HLL-class); mergeable across buckets.
 - **General IVM (DBSP):** maintenance cost proportional to the size of the change, not the database.
