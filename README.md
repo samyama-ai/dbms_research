@@ -42,6 +42,28 @@ It is meant as a **map of where the hard questions are** — for graduate studen
 - Looking for a thesis topic? Filter for 🔴 `open` problems and read the **The Gap** section — it states exactly what would close the problem.
 - Want the math fast? Each page's **§2 Mathematical Foundations** and **§10 Worked Example** are self-contained.
 
+## Query it as a knowledge graph
+
+The catalog is also a graph: problems cite shared papers, rest on shared concepts, and
+are worked on by the same researchers. We publish it as a portable snapshot you can load
+into [Samyama-Graph](https://github.com/samyama-ai/samyama-graph) (open-source,
+Apache-2.0) and query with OpenCypher in ~2 minutes:
+
+```bash
+# with samyama running on :8080
+curl -L -o dbms-research.sgsnap \
+  https://github.com/samyama-ai/samyama-graph/releases/download/kg-snapshots-v7/dbms-research.sgsnap
+curl -F file=@dbms-research.sgsnap http://localhost:8080/api/snapshot/import
+```
+
+```cypher
+MATCH (per:Person)-[:ACTIVE_ON]->(p:Problem)
+WHERE per.name = "Dan Suciu" RETURN p.title
+```
+
+→ **[`USING_WITH_SAMYAMA_GRAPH.md`](./USING_WITH_SAMYAMA_GRAPH.md)** for the full walkthrough,
+the schema (18,881 nodes / 39,142 edges), and a dozen ready-to-run queries.
+
 ## Topics
 
 | # | Topic | Problems |
