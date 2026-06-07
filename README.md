@@ -62,7 +62,7 @@ WHERE per.name = "Dan Suciu" RETURN p.title
 ```
 
 → **[`USING_WITH_SAMYAMA_GRAPH.md`](./USING_WITH_SAMYAMA_GRAPH.md)** for the full walkthrough,
-the schema (18,774 nodes / 38,620 edges; researchers resolved to DBLP profiles), and a
+the schema (18,751 nodes / 38,539 edges; researchers resolved to DBLP profiles), and a
 dozen ready-to-run queries.
 
 ## Topics

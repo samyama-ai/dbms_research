@@ -11,9 +11,9 @@ Apache-2.0 graph-vector database) and query with OpenCypher in a couple of minut
 account, no cloud, one binary.
 
 ```
-1,053 Problems · 35 Topics · 2,954 Papers · 3,962 Researchers · 3,825 future directions
-18,774 nodes · 38,620 edges · 12.7 MB snapshot
-Researchers are resolved against DBLP: 1,823 carry a dblp_pid / profile-page link + affiliation.
+1,053 Problems · 35 Topics · 2,954 Papers · 3,939 Researchers · 3,825 future directions
+18,751 nodes · 38,539 edges · 12.7 MB snapshot
+Researchers are resolved against DBLP: 1,966 carry a dblp_pid / profile-page link + affiliation.
 ```
 
 > The snapshot is generated from the Markdown in this repo by an extraction pipeline.
