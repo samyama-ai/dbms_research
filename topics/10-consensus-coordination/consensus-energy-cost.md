@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/consensus-energy-cost
+title: "Consensus Energy/Cost Optimality"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consensus Energy/Cost Optimality
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/consensus-energy-cost` · **Status:** empirically-open

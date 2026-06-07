@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/mapping-evolution-schema-change
+title: "Mapping Evolution Under Schema Change"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mapping Evolution Under Schema Change
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/mapping-evolution-schema-change` · **Status:** partially-solved

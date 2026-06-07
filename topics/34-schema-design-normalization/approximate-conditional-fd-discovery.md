@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/approximate-conditional-fd-discovery
+title: "Robust Approximate and Conditional FD Discovery"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Robust Approximate and Conditional FD Discovery
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/approximate-conditional-fd-discovery` · **Status:** partially-solved

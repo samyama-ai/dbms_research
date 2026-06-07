@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/valid-confidence-intervals
+title: "Confidence Intervals for Complex Queries"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Confidence Intervals for Complex Queries
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/valid-confidence-intervals` · **Status:** open

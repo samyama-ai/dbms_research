@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/set-similarity-join-communication
+title: "Communication Complexity of Set Joins"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Communication Complexity of Set Joins
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/set-similarity-join-communication` · **Status:** open

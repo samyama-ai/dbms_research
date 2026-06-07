@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/graph-query-language-design
+title: "Expressiveness and Design of Graph Query Languages"
+topic: 25-query-languages-expressiveness
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressiveness and Design of Graph Query Languages
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/graph-query-language-design` · **Status:** open

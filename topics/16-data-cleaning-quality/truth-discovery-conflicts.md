@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/truth-discovery-conflicts
+title: "Truth Discovery From Conflicting Sources"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Truth Discovery From Conflicting Sources
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/truth-discovery-conflicts` · **Status:** partially-solved

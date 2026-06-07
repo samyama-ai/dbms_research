@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/relational-json-hybrid-design
+title: "Optimal Normalize-vs-JSON Hybrid Layout"
+topic: 34-schema-design-normalization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Normalize-vs-JSON Hybrid Layout
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/relational-json-hybrid-design` · **Status:** empirically-open

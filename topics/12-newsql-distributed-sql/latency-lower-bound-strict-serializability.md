@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/latency-lower-bound-strict-serializability
+title: "Optimal latency for distributed strict serializability"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal latency for distributed strict serializability
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/latency-lower-bound-strict-serializability` · **Status:** open

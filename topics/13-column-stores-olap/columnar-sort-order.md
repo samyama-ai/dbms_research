@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/columnar-sort-order
+title: "Optimal Sort Order for Columnar Storage"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Sort Order for Columnar Storage
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/columnar-sort-order` · **Status:** open

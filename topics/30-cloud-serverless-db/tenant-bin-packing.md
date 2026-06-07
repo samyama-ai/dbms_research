@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/tenant-bin-packing
+title: "Bin-packing tenants to minimize machines"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bin-packing tenants to minimize machines
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/tenant-bin-packing` · **Status:** open

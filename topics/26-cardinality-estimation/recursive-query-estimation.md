@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/recursive-query-estimation
+title: "Cardinality Estimation for Recursive / Graph Queries"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality Estimation for Recursive / Graph Queries
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/recursive-query-estimation` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/range-conflict-serializability
+title: "Range-Conflict Serializability Theory"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range-Conflict Serializability Theory
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/range-conflict-serializability` · **Status:** open

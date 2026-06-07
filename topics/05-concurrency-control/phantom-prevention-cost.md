@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/phantom-prevention-cost
+title: "Phantom Prevention Without Predicate Locks"
+topic: 05-concurrency-control
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Phantom Prevention Without Predicate Locks
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/phantom-prevention-cost` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/online-model-drift
+title: "Online model maintenance under concept drift"
+topic: 31-time-series-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Online model maintenance under concept drift
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/online-model-drift` · **Status:** empirically-open

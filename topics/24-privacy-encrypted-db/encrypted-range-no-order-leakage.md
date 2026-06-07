@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/encrypted-range-no-order-leakage
+title: "Encrypted Range Queries Without Order Leakage"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Encrypted Range Queries Without Order Leakage
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/encrypted-range-no-order-leakage` · **Status:** partially-solved

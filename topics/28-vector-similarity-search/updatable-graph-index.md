@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/updatable-graph-index
+title: "Updatable graph indexes under churn"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Updatable graph indexes under churn
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/updatable-graph-index` · **Status:** empirically-open

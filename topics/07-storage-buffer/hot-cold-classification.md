@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/hot-cold-classification
+title: "Hot/Cold Classification with Bounded Misclassification"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hot/Cold Classification with Bounded Misclassification
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/hot-cold-classification` · **Status:** open

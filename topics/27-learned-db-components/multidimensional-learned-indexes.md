@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/multidimensional-learned-indexes
+title: "Multidimensional Learned Indexes"
+topic: 27-learned-db-components
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multidimensional Learned Indexes
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/multidimensional-learned-indexes` · **Status:** empirically-open

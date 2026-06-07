@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/logical-physiological-logging
+title: "Logical vs physiological logging tradeoff"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Logical vs physiological logging tradeoff
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/logical-physiological-logging` · **Status:** open

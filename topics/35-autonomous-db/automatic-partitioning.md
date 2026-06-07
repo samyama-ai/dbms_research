@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/automatic-partitioning
+title: "Automatic Partitioning & Co-Partitioning"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Automatic Partitioning & Co-Partitioning
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/automatic-partitioning` · **Status:** open

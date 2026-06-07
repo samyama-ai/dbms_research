@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/serverless-checkpointing
+title: "Stateful serverless query checkpointing"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Stateful serverless query checkpointing
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/serverless-checkpointing` · **Status:** empirically-open

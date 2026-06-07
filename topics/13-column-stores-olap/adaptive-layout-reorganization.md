@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/adaptive-layout-reorganization
+title: "Adaptive Column Layout Reorganization"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive Column Layout Reorganization
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/adaptive-layout-reorganization` · **Status:** open

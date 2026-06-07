@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/versioned-storage-tradeoff
+title: "Versioned Storage Space-Time Tradeoff"
+topic: 19-temporal-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Versioned Storage Space-Time Tradeoff
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/versioned-storage-tradeoff` · **Status:** partially-solved

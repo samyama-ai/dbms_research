@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/tag-inverted-index-design
+title: "Inverted-index design for tag matching"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Inverted-index design for tag matching
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/tag-inverted-index-design` · **Status:** partially-solved

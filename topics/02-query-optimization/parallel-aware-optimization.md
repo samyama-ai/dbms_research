@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/parallel-aware-optimization
+title: "Optimizing across the memory hierarchy and parallelism"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimizing across the memory hierarchy and parallelism
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/parallel-aware-optimization` · **Status:** open

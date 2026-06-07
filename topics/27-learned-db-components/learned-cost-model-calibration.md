@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-cost-model-calibration
+title: "Learned Plan Cost Model Calibration"
+topic: 27-learned-db-components
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Plan Cost Model Calibration
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-cost-model-calibration` · **Status:** partially-solved

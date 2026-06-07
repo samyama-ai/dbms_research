@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/predictive-elasticity-bounds
+title: "Predictive vs. reactive elasticity bounds"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Predictive vs. reactive elasticity bounds
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/predictive-elasticity-bounds` · **Status:** open

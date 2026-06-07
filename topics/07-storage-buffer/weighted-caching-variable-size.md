@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/weighted-caching-variable-size
+title: "Tight Competitive Ratio for Weighted Caching with Variable Page Sizes"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tight Competitive Ratio for Weighted Caching with Variable Page Sizes
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/weighted-caching-variable-size` · **Status:** partially-solved

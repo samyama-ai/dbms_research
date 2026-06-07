@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/nonblocking-atomic-commit-partitions
+title: "Atomic commit without blocking under partitions"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Atomic commit without blocking under partitions
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/nonblocking-atomic-commit-partitions` · **Status:** partially-solved

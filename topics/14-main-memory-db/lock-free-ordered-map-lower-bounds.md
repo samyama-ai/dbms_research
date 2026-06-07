@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/lock-free-ordered-map-lower-bounds
+title: "Lower Bounds for Lock-Free Ordered Maps"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower Bounds for Lock-Free Ordered Maps
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/lock-free-ordered-map-lower-bounds` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/privacy-budget-accounting-workloads
+title: "End-to-End Privacy Budget Accounting for Workloads"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-End Privacy Budget Accounting for Workloads
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/privacy-budget-accounting-workloads` · **Status:** partially-solved

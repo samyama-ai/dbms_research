@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/hybrid-bft-cft
+title: "Hybrid BFT-CFT Protocols"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid BFT-CFT Protocols
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/hybrid-bft-cft` · **Status:** open

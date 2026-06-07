@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/external-memory-spilling-joins
+title: "Optimal external-memory and spilling joins"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal external-memory and spilling joins
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/external-memory-spilling-joins` · **Status:** partially-solved

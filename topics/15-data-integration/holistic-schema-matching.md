@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/holistic-schema-matching
+title: "Holistic Many-to-Many Schema Matching"
+topic: 15-data-integration
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Holistic Many-to-Many Schema Matching
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/holistic-schema-matching` · **Status:** empirically-open

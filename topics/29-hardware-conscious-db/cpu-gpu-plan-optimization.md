@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/cpu-gpu-plan-optimization
+title: "Heterogeneous CPU-GPU query plan optimization"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Heterogeneous CPU-GPU query plan optimization
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/cpu-gpu-plan-optimization` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/semantic-load-shedding-guarantees
+title: "Semantic load shedding with answer guarantees"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Semantic load shedding with answer guarantees
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/semantic-load-shedding-guarantees` · **Status:** open

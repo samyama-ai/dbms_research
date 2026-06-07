@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/cross-shard-index-joins
+title: "Cross-Shard Secondary Index Joins"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-Shard Secondary Index Joins
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/cross-shard-index-joins` · **Status:** open

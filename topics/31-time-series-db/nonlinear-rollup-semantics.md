@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/nonlinear-rollup-semantics
+title: "Semantically correct non-linear rollups"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Semantically correct non-linear rollups
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/nonlinear-rollup-semantics` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/temporal-aggregation-complexity
+title: "Temporal Aggregation Complexity"
+topic: 19-temporal-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal Aggregation Complexity
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-aggregation-complexity` · **Status:** partially-solved

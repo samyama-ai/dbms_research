@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/graph-path-query-provenance
+title: "How-Provenance for Graph/Path Queries"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # How-Provenance for Graph/Path Queries
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/graph-path-query-provenance` · **Status:** open

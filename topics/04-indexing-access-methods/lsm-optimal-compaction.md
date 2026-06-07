@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/lsm-optimal-compaction
+title: "Optimal LSM-tree compaction policy"
+topic: 04-indexing-access-methods
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal LSM-tree compaction policy
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/lsm-optimal-compaction` · **Status:** partially-solved

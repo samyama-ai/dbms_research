@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/epoch-based-durability
+title: "Epoch-based durability commit"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Epoch-based durability commit
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/epoch-based-durability` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/adversarial-robustness
+title: "Adversarial Robustness of Self-Driving DBs"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adversarial Robustness of Self-Driving DBs
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/adversarial-robustness` · **Status:** open

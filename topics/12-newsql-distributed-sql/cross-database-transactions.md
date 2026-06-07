@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/cross-database-transactions
+title: "Composable cross-database distributed transactions"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Composable cross-database distributed transactions
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/cross-database-transactions` · **Status:** open

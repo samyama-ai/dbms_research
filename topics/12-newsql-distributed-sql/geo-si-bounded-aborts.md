@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/geo-si-bounded-aborts
+title: "Geo-replicated SI with bounded abort rate"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Geo-replicated SI with bounded abort rate
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/geo-si-bounded-aborts` · **Status:** open

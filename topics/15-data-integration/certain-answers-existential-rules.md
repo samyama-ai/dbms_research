@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/certain-answers-existential-rules
+title: "Certain Answers Under Existential Rules"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Certain Answers Under Existential Rules
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/certain-answers-existential-rules` · **Status:** open

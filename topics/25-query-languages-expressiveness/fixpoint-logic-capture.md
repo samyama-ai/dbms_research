@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/fixpoint-logic-capture
+title: "Choice of Fixpoint Operator for Capturing Classes"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Choice of Fixpoint Operator for Capturing Classes
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/fixpoint-logic-capture` · **Status:** partially-solved

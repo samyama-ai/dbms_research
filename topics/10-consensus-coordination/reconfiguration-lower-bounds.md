@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/reconfiguration-lower-bounds
+title: "Lower Bounds for Reconfiguration"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower Bounds for Reconfiguration
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/reconfiguration-lower-bounds` · **Status:** open

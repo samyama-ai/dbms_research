@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/adaptive-encoding-selection
+title: "Adaptive encoding selection per block"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive encoding selection per block
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/adaptive-encoding-selection` · **Status:** partially-solved

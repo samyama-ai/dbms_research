@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/wco-grouped-aggregation
+title: "Worst-case-optimal grouped aggregation"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal grouped aggregation
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/wco-grouped-aggregation` · **Status:** open

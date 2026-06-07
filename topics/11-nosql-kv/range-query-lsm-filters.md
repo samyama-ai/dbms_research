@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/range-query-lsm-filters
+title: "Range Query Filters for LSM"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range Query Filters for LSM
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/range-query-lsm-filters` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/horizontal-partitioning-design
+title: "Automated Horizontal Partitioning and Sharding Design"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Automated Horizontal Partitioning and Sharding Design
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/horizontal-partitioning-design` · **Status:** open

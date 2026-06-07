@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/verified-reconfiguration
+title: "Formal Verification of Live Reconfiguration"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Formal Verification of Live Reconfiguration
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/verified-reconfiguration` · **Status:** partially-solved

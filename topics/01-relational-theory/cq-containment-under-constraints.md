@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/cq-containment-under-constraints
+title: "Conjunctive Query Containment Under Constraints"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Conjunctive Query Containment Under Constraints
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/cq-containment-under-constraints` · **Status:** partially-solved

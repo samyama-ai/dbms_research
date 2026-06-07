@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/cache-oblivious-btree
+title: "Cache-oblivious dynamic B-tree optimality"
+topic: 04-indexing-access-methods
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache-oblivious dynamic B-tree optimality
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/cache-oblivious-btree` · **Status:** solved-but-impractical

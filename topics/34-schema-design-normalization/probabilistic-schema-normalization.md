@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/probabilistic-schema-normalization
+title: "Normalization Under Probabilistic and Uncertain Data"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Normalization Under Probabilistic and Uncertain Data
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/probabilistic-schema-normalization` · **Status:** open

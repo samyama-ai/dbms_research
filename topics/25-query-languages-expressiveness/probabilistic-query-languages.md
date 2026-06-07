@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/probabilistic-query-languages
+title: "Query Language Power Over Probabilistic Databases"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query Language Power Over Probabilistic Databases
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/probabilistic-query-languages` · **Status:** partially-solved

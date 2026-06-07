@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/cleaning-aware-query-answering
+title: "Cleaning-Aware Query Answering"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cleaning-Aware Query Answering
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/cleaning-aware-query-answering` · **Status:** partially-solved

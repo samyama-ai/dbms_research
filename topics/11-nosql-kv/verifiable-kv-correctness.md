@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/verifiable-kv-correctness
+title: "Verifiable KV Store Correctness"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifiable KV Store Correctness
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/verifiable-kv-correctness` · **Status:** partially-solved

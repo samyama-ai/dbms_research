@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/approximate-spatial-aqp
+title: "Approximate spatial query with error bounds"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate spatial query with error bounds
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/approximate-spatial-aqp` · **Status:** partially-solved

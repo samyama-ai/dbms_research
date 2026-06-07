@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/enumeration-without-oracle
+title: "Plan enumeration without cardinality oracle"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Plan enumeration without cardinality oracle
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/enumeration-without-oracle` · **Status:** open

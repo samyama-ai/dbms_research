@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/co-partitioning-join-graphs
+title: "Co-Partitioning for Join Graphs"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Co-Partitioning for Join Graphs
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/co-partitioning-join-graphs` · **Status:** open

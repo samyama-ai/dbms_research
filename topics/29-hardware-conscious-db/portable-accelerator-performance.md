@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/portable-accelerator-performance
+title: "Portable performance across accelerator generations"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Portable performance across accelerator generations
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/portable-accelerator-performance` · **Status:** open

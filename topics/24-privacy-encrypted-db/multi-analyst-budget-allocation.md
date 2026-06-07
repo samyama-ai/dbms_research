@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/multi-analyst-budget-allocation
+title: "Multi-Analyst Fair Budget Allocation"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Analyst Fair Budget Allocation
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/multi-analyst-budget-allocation` · **Status:** open

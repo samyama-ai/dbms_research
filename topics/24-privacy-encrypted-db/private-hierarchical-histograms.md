@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/private-hierarchical-histograms
+title: "Truthful Private Histograms over Hierarchies"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Truthful Private Histograms over Hierarchies
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/private-hierarchical-histograms` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/gql-expressiveness
+title: "Expressiveness and gaps in GQL/SQL-PGQ"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressiveness and gaps in GQL/SQL-PGQ
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/gql-expressiveness` · **Status:** open

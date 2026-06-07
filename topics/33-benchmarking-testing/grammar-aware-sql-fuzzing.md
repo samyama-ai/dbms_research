@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/grammar-aware-sql-fuzzing
+title: "Grammar-Aware SQL Fuzzing Coverage"
+topic: 33-benchmarking-testing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Grammar-Aware SQL Fuzzing Coverage
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/grammar-aware-sql-fuzzing` · **Status:** empirically-open

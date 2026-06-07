@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/predicate-pushdown-bias
+title: "Bias Correction for Predicate Pushdown"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bias Correction for Predicate Pushdown
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/predicate-pushdown-bias` · **Status:** open

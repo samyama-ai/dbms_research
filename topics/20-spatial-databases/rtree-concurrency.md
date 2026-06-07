@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/rtree-concurrency
+title: "Concurrent R-tree with optimal contention"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Concurrent R-tree with optimal contention
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/rtree-concurrency` · **Status:** partially-solved

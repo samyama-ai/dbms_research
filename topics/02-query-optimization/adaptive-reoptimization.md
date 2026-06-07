@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/adaptive-reoptimization
+title: "Adaptive mid-query re-optimization"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive mid-query re-optimization
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/adaptive-reoptimization` · **Status:** empirically-open

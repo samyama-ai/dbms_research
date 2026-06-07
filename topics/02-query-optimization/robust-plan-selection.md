@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/robust-plan-selection
+title: "Robust plans minimizing worst-case suboptimality"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Robust plans minimizing worst-case suboptimality
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/robust-plan-selection` · **Status:** open

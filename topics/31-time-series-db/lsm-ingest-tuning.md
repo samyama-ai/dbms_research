@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/lsm-ingest-tuning
+title: "High-ingest LSM tuning for time-series"
+topic: 31-time-series-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # High-ingest LSM tuning for time-series
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/lsm-ingest-tuning` · **Status:** empirically-open

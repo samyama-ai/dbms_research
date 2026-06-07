@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/glav-query-answering-complexity
+title: "GLAV Query Answering Complexity Census"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GLAV Query Answering Complexity Census
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/glav-query-answering-complexity` · **Status:** partially-solved

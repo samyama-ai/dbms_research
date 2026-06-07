@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/anomaly-detection-fdr-control
+title: "In-DB anomaly detection with false-alarm guarantees"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # In-DB anomaly detection with false-alarm guarantees
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/anomaly-detection-fdr-control` · **Status:** open

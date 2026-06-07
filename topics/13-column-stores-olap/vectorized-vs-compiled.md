@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/vectorized-vs-compiled
+title: "Vectorized vs. Compiled Execution Frontier"
+topic: 13-column-stores-olap
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Vectorized vs. Compiled Execution Frontier
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/vectorized-vs-compiled` · **Status:** empirically-open

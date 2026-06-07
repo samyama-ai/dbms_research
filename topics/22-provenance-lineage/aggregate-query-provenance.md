@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/aggregate-query-provenance
+title: "Aggregate-Query Provenance Semantics"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Aggregate-Query Provenance Semantics
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/aggregate-query-provenance` · **Status:** partially-solved

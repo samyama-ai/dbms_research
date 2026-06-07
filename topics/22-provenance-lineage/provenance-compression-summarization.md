@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/provenance-compression-summarization
+title: "Provenance Compression and Summarization"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance Compression and Summarization
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-compression-summarization` · **Status:** partially-solved

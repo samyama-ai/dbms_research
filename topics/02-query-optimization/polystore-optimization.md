@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/polystore-optimization
+title: "Cross-engine and polystore query optimization"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-engine and polystore query optimization
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/polystore-optimization` · **Status:** open

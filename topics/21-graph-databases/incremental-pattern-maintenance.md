@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/incremental-pattern-maintenance
+title: "Incremental maintenance of graph pattern views"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Incremental maintenance of graph pattern views
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/incremental-pattern-maintenance` · **Status:** open

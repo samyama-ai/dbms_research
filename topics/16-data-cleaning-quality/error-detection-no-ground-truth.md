@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/error-detection-no-ground-truth
+title: "Error Detection Without Ground Truth"
+topic: 16-data-cleaning-quality
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Error Detection Without Ground Truth
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/error-detection-no-ground-truth` · **Status:** empirically-open

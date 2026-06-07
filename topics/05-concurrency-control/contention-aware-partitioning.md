@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/contention-aware-partitioning
+title: "Contention-Aware Data Partitioning"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Contention-Aware Data Partitioning
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/contention-aware-partitioning` · **Status:** open

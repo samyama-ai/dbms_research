@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/sql-test-oracle-problem
+title: "The Test Oracle Problem for SQL"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # The Test Oracle Problem for SQL
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/sql-test-oracle-problem` · **Status:** open

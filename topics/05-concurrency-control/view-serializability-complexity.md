@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/view-serializability-complexity
+title: "Optimal Schedule Recognition Complexity"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Schedule Recognition Complexity
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/view-serializability-complexity` · **Status:** open

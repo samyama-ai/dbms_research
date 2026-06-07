@@ -1,3 +1,15 @@
+---
+id: 23-database-security/policy-conflict-detection
+title: "Policy Conflict Detection at Scale"
+topic: 23-database-security
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Policy Conflict Detection at Scale
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/policy-conflict-detection` · **Status:** partially-solved

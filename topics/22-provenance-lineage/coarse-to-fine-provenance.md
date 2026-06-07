@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/coarse-to-fine-provenance
+title: "Coarse-to-Fine Provenance Refinement"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Coarse-to-Fine Provenance Refinement
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/coarse-to-fine-provenance` · **Status:** open

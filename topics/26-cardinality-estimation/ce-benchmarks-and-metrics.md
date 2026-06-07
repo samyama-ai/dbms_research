@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/ce-benchmarks-and-metrics
+title: "Cardinality Estimation Benchmarks & Metrics"
+topic: 26-cardinality-estimation
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality Estimation Benchmarks & Metrics
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/ce-benchmarks-and-metrics` · **Status:** empirically-open

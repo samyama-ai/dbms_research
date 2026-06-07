@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-sketches-deletions
+title: "Streaming sketches under deletions and expiry"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Streaming sketches under deletions and expiry
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-sketches-deletions` · **Status:** open

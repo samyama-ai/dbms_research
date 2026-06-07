@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/private-spatial-query
+title: "Privacy-preserving spatial queries"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Privacy-preserving spatial queries
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/private-spatial-query` · **Status:** partially-solved

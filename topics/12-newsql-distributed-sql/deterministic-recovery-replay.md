@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/deterministic-recovery-replay
+title: "Deterministic recovery and replay determinism"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Deterministic recovery and replay determinism
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/deterministic-recovery-replay` · **Status:** partially-solved

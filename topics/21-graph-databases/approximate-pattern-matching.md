@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/approximate-pattern-matching
+title: "Approximate and sampled pattern matching"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate and sampled pattern matching
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/approximate-pattern-matching` · **Status:** open

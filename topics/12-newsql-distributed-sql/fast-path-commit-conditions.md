@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/fast-path-commit-conditions
+title: "Failure-free fast-path commit conditions"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Failure-free fast-path commit conditions
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/fast-path-commit-conditions` · **Status:** partially-solved

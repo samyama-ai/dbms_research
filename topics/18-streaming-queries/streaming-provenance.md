@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-provenance
+title: "Provenance and explanations for streaming results"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance and explanations for streaming results
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-provenance` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/vertical-partitioning-optimality
+title: "Cost-Optimal Vertical Partitioning"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-Optimal Vertical Partitioning
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/vertical-partitioning-optimality` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/raster-vector-unified
+title: "In-database raster-vector unification"
+topic: 20-spatial-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # In-database raster-vector unification
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/raster-vector-unified` · **Status:** open

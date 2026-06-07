@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/olap-storage-tiering
+title: "Workload-Aware Storage Tiering for OLAP"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Workload-Aware Storage Tiering for OLAP
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/olap-storage-tiering` · **Status:** open

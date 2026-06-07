@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/set-intersection-cardinality
+title: "Set-Intersection Cardinality Estimation"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Set-Intersection Cardinality Estimation
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/set-intersection-cardinality` · **Status:** partially-solved

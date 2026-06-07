@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/gpu-buffer-pool
+title: "GPU/Heterogeneous-Memory Buffer Pools"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU/Heterogeneous-Memory Buffer Pools
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/gpu-buffer-pool` · **Status:** open

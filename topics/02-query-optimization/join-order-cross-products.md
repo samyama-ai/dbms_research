@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/join-order-cross-products
+title: "Optimal join ordering under cross products"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal join ordering under cross products
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/join-order-cross-products` · **Status:** open

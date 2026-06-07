@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/compression-limits-pages
+title: "Information-Theoretic Limits of Page Compression"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Information-Theoretic Limits of Page Compression
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/compression-limits-pages` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/prefetching-bounds
+title: "Provably Good Prefetching from Access Sequences"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provably Good Prefetching from Access Sequences
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/prefetching-bounds` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/bug-query-minimization
+title: "Bug-Inducing Query Minimization"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bug-Inducing Query Minimization
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/bug-query-minimization` · **Status:** partially-solved

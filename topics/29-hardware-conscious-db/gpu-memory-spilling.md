@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/gpu-memory-spilling
+title: "GPU memory management for spilling queries"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU memory management for spilling queries
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/gpu-memory-spilling` · **Status:** empirically-open

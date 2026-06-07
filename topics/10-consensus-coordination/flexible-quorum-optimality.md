@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/flexible-quorum-optimality
+title: "Optimal Flexible Quorum Systems"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Flexible Quorum Systems
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/flexible-quorum-optimality` · **Status:** partially-solved

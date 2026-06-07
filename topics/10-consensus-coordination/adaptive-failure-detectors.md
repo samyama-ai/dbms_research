@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/adaptive-failure-detectors
+title: "Adaptive Failure Detector Accuracy"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive Failure Detector Accuracy
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/adaptive-failure-detectors` · **Status:** empirically-open

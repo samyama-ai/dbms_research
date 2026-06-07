@@ -1,3 +1,15 @@
+---
+id: 23-database-security/aggregation-control-bounds
+title: "Aggregation Control Lower Bounds"
+topic: 23-database-security
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Aggregation Control Lower Bounds
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/aggregation-control-bounds` · **Status:** open

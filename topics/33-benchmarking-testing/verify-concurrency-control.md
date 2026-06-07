@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/verify-concurrency-control
+title: "Formal Verification of Concurrency Control"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Formal Verification of Concurrency Control
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/verify-concurrency-control` · **Status:** partially-solved

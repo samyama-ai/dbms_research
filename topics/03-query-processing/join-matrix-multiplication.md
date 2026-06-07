@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/join-matrix-multiplication
+title: "Faster-than-AGM joins via fast matrix multiplication"
+topic: 03-query-processing
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Faster-than-AGM joins via fast matrix multiplication
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/join-matrix-multiplication` · **Status:** solved-but-impractical

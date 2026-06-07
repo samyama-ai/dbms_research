@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/exactly-once-side-effects
+title: "End-to-end exactly-once with external side effects"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-end exactly-once with external side effects
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/exactly-once-side-effects` · **Status:** open

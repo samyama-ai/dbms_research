@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/time-chunking-policy
+title: "Optimal time-partitioning (chunking) policy"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal time-partitioning (chunking) policy
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/time-chunking-policy` · **Status:** open

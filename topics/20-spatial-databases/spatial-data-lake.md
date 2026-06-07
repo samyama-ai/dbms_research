@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/spatial-data-lake
+title: "Spatial data lakes and serverless query"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spatial data lakes and serverless query
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/spatial-data-lake` · **Status:** empirically-open

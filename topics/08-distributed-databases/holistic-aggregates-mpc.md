@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/holistic-aggregates-mpc
+title: "Holistic Aggregates in MPC"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Holistic Aggregates in MPC
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/holistic-aggregates-mpc` · **Status:** open

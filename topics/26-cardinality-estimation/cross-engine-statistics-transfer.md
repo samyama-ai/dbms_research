@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/cross-engine-statistics-transfer
+title: "Cross-Engine Transfer of Statistics"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-Engine Transfer of Statistics
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/cross-engine-statistics-transfer` · **Status:** open

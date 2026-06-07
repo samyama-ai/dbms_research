@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/writeback-scheduling
+title: "Write-Back Scheduling to Minimize Stall and Wear"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Write-Back Scheduling to Minimize Stall and Wear
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/writeback-scheduling` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/online-reconfiguration-concurrency
+title: "Concurrency Control for Online Reconfiguration"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Concurrency Control for Online Reconfiguration
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/online-reconfiguration-concurrency` · **Status:** open

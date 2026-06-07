@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/accelerator-cost-estimation
+title: "Accelerator-aware cardinality and cost estimation"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Accelerator-aware cardinality and cost estimation
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/accelerator-cost-estimation` · **Status:** open

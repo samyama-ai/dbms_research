@@ -1,3 +1,15 @@
+---
+id: 23-database-security/oram-bandwidth-lower-bounds
+title: "ORAM Bandwidth Lower Bounds"
+topic: 23-database-security
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # ORAM Bandwidth Lower Bounds
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/oram-bandwidth-lower-bounds` · **Status:** partially-solved

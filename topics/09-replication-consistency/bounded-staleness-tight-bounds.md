@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/bounded-staleness-tight-bounds
+title: "Bounded-staleness reads with tight bounds"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bounded-staleness reads with tight bounds
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/bounded-staleness-tight-bounds` · **Status:** partially-solved

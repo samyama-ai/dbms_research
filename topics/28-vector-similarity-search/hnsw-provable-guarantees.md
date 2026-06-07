@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/hnsw-provable-guarantees
+title: "Provable guarantees for HNSW graph search"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provable guarantees for HNSW graph search
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/hnsw-provable-guarantees` · **Status:** open

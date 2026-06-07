@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/distributed-topk-communication
+title: "Communication-Optimal Top-k Across Nodes"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Communication-Optimal Top-k Across Nodes
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/distributed-topk-communication` · **Status:** partially-solved

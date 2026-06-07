@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/weak-consistency-anomaly-quantification
+title: "Quantifying observable anomalies under weak consistency"
+topic: 09-replication-consistency
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Quantifying observable anomalies under weak consistency
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/weak-consistency-anomaly-quantification` · **Status:** empirically-open

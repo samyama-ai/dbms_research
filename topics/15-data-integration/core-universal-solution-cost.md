@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/core-universal-solution-cost
+title: "Optimal Core Computation for Data Exchange"
+topic: 15-data-integration
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Core Computation for Data Exchange
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/core-universal-solution-cost` · **Status:** solved-but-impractical

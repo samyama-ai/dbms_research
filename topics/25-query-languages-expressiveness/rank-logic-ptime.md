@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/rank-logic-ptime
+title: "Rank Logic and Capturing PTIME via Linear Algebra"
+topic: 25-query-languages-expressiveness
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Rank Logic and Capturing PTIME via Linear Algebra
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/rank-logic-ptime` · **Status:** open

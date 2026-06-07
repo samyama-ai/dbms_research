@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/quantization-recall-theory
+title: "Quantization error vs. recall theory"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Quantization error vs. recall theory
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/quantization-recall-theory` · **Status:** open

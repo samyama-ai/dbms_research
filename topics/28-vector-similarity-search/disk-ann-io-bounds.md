@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/disk-ann-io-bounds
+title: "Disk-resident ANN I/O lower bounds"
+topic: 28-vector-similarity-search
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disk-resident ANN I/O lower bounds
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/disk-ann-io-bounds` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 23-database-security/sql-injection-soundness
+title: "SQL Injection Soundness Guarantees"
+topic: 23-database-security
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # SQL Injection Soundness Guarantees
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/sql-injection-soundness` · **Status:** partially-solved

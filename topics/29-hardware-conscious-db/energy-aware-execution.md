@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/energy-aware-execution
+title: "Energy-efficient query execution models"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Energy-efficient query execution models
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/energy-aware-execution` · **Status:** open

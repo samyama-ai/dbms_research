@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/when-learning-helps-theory
+title: "Theory of When Learning Helps"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Theory of When Learning Helps
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/when-learning-helps-theory` · **Status:** open

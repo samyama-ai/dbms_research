@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/instance-optimal-local-sensitivity
+title: "Instance-Optimal Local Sensitivity Release"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Instance-Optimal Local Sensitivity Release
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/instance-optimal-local-sensitivity` · **Status:** open

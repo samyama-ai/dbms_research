@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/holistic-distinct-aggregates
+title: "Holistic and distinct aggregate evaluation"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Holistic and distinct aggregate evaluation
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/holistic-distinct-aggregates` · **Status:** partially-solved

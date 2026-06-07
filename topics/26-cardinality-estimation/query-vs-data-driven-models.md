@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/query-vs-data-driven-models
+title: "Query-Driven vs Data-Driven Estimator Synthesis"
+topic: 26-cardinality-estimation
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query-Driven vs Data-Driven Estimator Synthesis
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/query-vs-data-driven-models` · **Status:** empirically-open

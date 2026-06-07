@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/adaptive-replication-factor
+title: "Self-tuning replication factor and quorum sizing"
+topic: 09-replication-consistency
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Self-tuning replication factor and quorum sizing
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/adaptive-replication-factor` · **Status:** empirically-open

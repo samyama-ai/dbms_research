@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/secondary-index-selection
+title: "Secondary Index Selection for KV"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Secondary Index Selection for KV
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/secondary-index-selection` · **Status:** open

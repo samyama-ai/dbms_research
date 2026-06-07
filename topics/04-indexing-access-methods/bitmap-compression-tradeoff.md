@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/bitmap-compression-tradeoff
+title: "Bitmap index compression vs. query speed"
+topic: 04-indexing-access-methods
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bitmap index compression vs. query speed
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/bitmap-compression-tradeoff` · **Status:** partially-solved

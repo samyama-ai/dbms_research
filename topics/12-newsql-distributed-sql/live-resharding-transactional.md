@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/live-resharding-transactional
+title: "Dynamic resharding of live transactional data"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Dynamic resharding of live transactional data
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/live-resharding-transactional` · **Status:** partially-solved

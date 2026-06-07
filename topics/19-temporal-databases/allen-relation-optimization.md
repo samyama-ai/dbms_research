@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/allen-relation-optimization
+title: "Allen-Relation Query Optimization"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Allen-Relation Query Optimization
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/allen-relation-optimization` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/runtime-adaptive-reoptimization
+title: "Robust runtime adaptivity (eddies redux)"
+topic: 03-query-processing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Robust runtime adaptivity (eddies redux)
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/runtime-adaptive-reoptimization` · **Status:** empirically-open

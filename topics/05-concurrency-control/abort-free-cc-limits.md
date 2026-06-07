@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/abort-free-cc-limits
+title: "Abort-Free Concurrency Control Limits"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Abort-Free Concurrency Control Limits
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/abort-free-cc-limits` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/group-commit-lock-release
+title: "Group commit vs early lock release"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Group commit vs early lock release
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/group-commit-lock-release` · **Status:** open

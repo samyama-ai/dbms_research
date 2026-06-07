@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/windowing-semantics-algebra
+title: "A semantics-complete algebra for windowing"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # A semantics-complete algebra for windowing
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/windowing-semantics-algebra` · **Status:** open

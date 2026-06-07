@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/byzantine-message-complexity
+title: "Byzantine Consensus Message Complexity"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Byzantine Consensus Message Complexity
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/byzantine-message-complexity` · **Status:** open

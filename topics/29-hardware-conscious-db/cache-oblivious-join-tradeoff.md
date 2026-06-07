@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/cache-oblivious-join-tradeoff
+title: "Cache-oblivious vs cache-conscious join tradeoff"
+topic: 29-hardware-conscious-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache-oblivious vs cache-conscious join tradeoff
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/cache-oblivious-join-tradeoff` · **Status:** partially-solved

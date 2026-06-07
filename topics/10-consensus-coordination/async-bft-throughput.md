@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/async-bft-throughput
+title: "Asynchronous BFT Throughput Limits"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Asynchronous BFT Throughput Limits
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/async-bft-throughput` · **Status:** empirically-open

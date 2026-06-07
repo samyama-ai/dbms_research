@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/network-aware-join-ordering
+title: "Distributed Join Order with Network Cost"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed Join Order with Network Cost
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/network-aware-join-ordering` · **Status:** open

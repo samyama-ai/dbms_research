@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/instance-optimal-indexing
+title: "Instance-Optimal Indexing Formalization"
+topic: 27-learned-db-components
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Instance-Optimal Indexing Formalization
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/instance-optimal-indexing` · **Status:** partially-solved

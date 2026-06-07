@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/scalable-multicore-logging
+title: "Scalable multicore log manager"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Scalable multicore log manager
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/scalable-multicore-logging` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/multidim-range-selectivity
+title: "Range-Predicate Selectivity in High Dimensions"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range-Predicate Selectivity in High Dimensions
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/multidim-range-selectivity` · **Status:** open

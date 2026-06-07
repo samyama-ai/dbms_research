@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/gpu-spatial-index
+title: "GPU-accelerated spatial indexing"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU-accelerated spatial indexing
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/gpu-spatial-index` · **Status:** empirically-open

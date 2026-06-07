@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/gpu-olap-operators
+title: "GPU-Accelerated OLAP Operators"
+topic: 13-column-stores-olap
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU-Accelerated OLAP Operators
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/gpu-olap-operators` · **Status:** empirically-open

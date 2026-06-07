@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/datalog-aggregation-lattices
+title: "Datalog with Aggregation and Lattice Semantics"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Datalog with Aggregation and Lattice Semantics
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/datalog-aggregation-lattices` · **Status:** partially-solved

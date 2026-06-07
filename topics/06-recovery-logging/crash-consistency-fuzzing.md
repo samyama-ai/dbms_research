@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/crash-consistency-fuzzing
+title: "Crash-consistency testing/fuzzing"
+topic: 06-recovery-logging
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Crash-consistency testing/fuzzing
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/crash-consistency-fuzzing` · **Status:** empirically-open

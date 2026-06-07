@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/path-enumeration-semantics
+title: "Enumerating paths with bag and trail semantics"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Enumerating paths with bag and trail semantics
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/path-enumeration-semantics` · **Status:** partially-solved

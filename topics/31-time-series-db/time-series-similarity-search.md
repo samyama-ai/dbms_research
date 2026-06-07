@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/time-series-similarity-search
+title: "Approximate similarity search over series"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate similarity search over series
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/time-series-similarity-search` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/lsm-buffer-management
+title: "Buffer Management for Log-Structured / LSM Stores"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Buffer Management for Log-Structured / LSM Stores
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/lsm-buffer-management` · **Status:** open

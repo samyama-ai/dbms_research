@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/latency-completeness-tradeoff
+title: "The latency-completeness-cost trade-off frontier"
+topic: 18-streaming-queries
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # The latency-completeness-cost trade-off frontier
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/latency-completeness-tradeoff` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/dp-with-fk-constraints
+title: "DP Under Foreign-Key Constraints and Schemas"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # DP Under Foreign-Key Constraints and Schemas
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/dp-with-fk-constraints` · **Status:** open

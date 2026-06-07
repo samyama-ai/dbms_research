@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/load-shedding-optimal
+title: "Optimal load shedding under quality objectives"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal load shedding under quality objectives
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/load-shedding-optimal` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/optimal-topk-operators
+title: "Optimal top-k operator algorithms"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal top-k operator algorithms
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/optimal-topk-operators` · **Status:** partially-solved

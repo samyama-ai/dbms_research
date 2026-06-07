@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/numa-aware-scheduling
+title: "NUMA-aware operator scheduling"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # NUMA-aware operator scheduling
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/numa-aware-scheduling` · **Status:** empirically-open

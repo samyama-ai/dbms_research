@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/schema-evolution-no-migration
+title: "Schema evolution without migration"
+topic: 32-multimodel-document-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Schema evolution without migration
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/schema-evolution-no-migration` · **Status:** empirically-open

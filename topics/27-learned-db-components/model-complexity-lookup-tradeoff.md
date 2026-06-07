@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/model-complexity-lookup-tradeoff
+title: "Optimal Model Complexity vs. Lookup Cost"
+topic: 27-learned-db-components
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Model Complexity vs. Lookup Cost
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/model-complexity-lookup-tradeoff` · **Status:** partially-solved

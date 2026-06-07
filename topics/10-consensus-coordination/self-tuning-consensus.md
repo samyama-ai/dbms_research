@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/self-tuning-consensus
+title: "Self-Tuning Consensus Parameters"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Self-Tuning Consensus Parameters
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/self-tuning-consensus` · **Status:** empirically-open

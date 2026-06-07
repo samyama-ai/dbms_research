@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/fd-aware-query-minimization
+title: "FD-Aware Query Minimization"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # FD-Aware Query Minimization
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/fd-aware-query-minimization` · **Status:** partially-solved

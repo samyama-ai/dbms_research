@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/tiered-memory-placement
+title: "Heterogeneous-memory data placement (HBM/DRAM/NVM)"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Heterogeneous-memory data placement (HBM/DRAM/NVM)
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/tiered-memory-placement` · **Status:** empirically-open

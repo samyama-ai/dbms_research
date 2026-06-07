@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/partial-replication-causal-plus
+title: "Genuine partial replication with causal+ consistency"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Genuine partial replication with causal+ consistency
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/partial-replication-causal-plus` · **Status:** open

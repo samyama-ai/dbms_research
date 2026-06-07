@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/skew-resilient-parallel-join
+title: "Skew-resilient parallel join scheduling"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Skew-resilient parallel join scheduling
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/skew-resilient-parallel-join` · **Status:** partially-solved

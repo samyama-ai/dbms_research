@@ -1,3 +1,15 @@
+---
+id: 23-database-security/inference-detection-complexity
+title: "Inference Detection Complexity"
+topic: 23-database-security
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Inference Detection Complexity
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/inference-detection-complexity` · **Status:** open

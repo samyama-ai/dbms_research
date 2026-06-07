@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/adaptive-isolation-selection
+title: "Adaptive isolation level selection"
+topic: 12-newsql-distributed-sql
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive isolation level selection
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/adaptive-isolation-selection` · **Status:** empirically-open

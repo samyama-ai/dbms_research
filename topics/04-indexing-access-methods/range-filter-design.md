@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/range-filter-design
+title: "Range filters with provable guarantees"
+topic: 04-indexing-access-methods
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range filters with provable guarantees
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/range-filter-design` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/datalog-boundedness
+title: "Datalog Boundedness and Predicate Boundedness"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Datalog Boundedness and Predicate Boundedness
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/datalog-boundedness` · **Status:** partially-solved

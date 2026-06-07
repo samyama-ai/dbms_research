@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/log-compression-reclamation
+title: "Log compression and reclamation bounds"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Log compression and reclamation bounds
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/log-compression-reclamation` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/time-weighted-aggregation
+title: "Time-weighted and rate aggregation correctness"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Time-weighted and rate aggregation correctness
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/time-weighted-aggregation` · **Status:** partially-solved

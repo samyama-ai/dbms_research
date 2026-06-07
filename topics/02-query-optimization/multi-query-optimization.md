@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/multi-query-optimization
+title: "Multi-query optimization shared-subexpression search"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-query optimization shared-subexpression search
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/multi-query-optimization` · **Status:** open

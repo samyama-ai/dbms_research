@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/wcoj-practical-engine
+title: "Practical worst-case-optimal join engines"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Practical worst-case-optimal join engines
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/wcoj-practical-engine` · **Status:** partially-solved

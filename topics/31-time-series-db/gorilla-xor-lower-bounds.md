@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/gorilla-xor-lower-bounds
+title: "Lower bounds for XOR float compression"
+topic: 31-time-series-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower bounds for XOR float compression
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/gorilla-xor-lower-bounds` · **Status:** empirically-open

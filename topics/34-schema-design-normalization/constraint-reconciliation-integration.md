@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/constraint-reconciliation-integration
+title: "Cross-Schema Constraint Reconciliation in Integration"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-Schema Constraint Reconciliation in Integration
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/constraint-reconciliation-integration` · **Status:** partially-solved

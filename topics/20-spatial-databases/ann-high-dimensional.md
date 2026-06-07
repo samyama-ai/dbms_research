@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/ann-high-dimensional
+title: "Approximate nearest neighbor in high dimensions"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate nearest neighbor in high dimensions
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/ann-high-dimensional` · **Status:** partially-solved

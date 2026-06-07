@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/typed-page-replacement
+title: "Buffer Replacement for Index vs Heap Pages"
+topic: 07-storage-buffer
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Buffer Replacement for Index vs Heap Pages
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/typed-page-replacement` · **Status:** empirically-open

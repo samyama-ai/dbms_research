@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/counter-reset-handling
+title: "Counter reset and monotonicity handling"
+topic: 31-time-series-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Counter reset and monotonicity handling
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/counter-reset-handling` · **Status:** empirically-open

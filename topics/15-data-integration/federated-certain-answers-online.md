@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/federated-certain-answers-online
+title: "Federated Query Certain Answers Online"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Federated Query Certain Answers Online
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/federated-certain-answers-online` · **Status:** open

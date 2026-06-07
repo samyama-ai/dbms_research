@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/order-optimization
+title: "Order optimization and interesting orders"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Order optimization and interesting orders
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/order-optimization` · **Status:** partially-solved

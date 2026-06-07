@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/query-determinacy-views
+title: "Query Determinacy and Rewriting Using Views"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query Determinacy and Rewriting Using Views
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/query-determinacy-views` · **Status:** open

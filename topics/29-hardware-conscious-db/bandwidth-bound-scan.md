@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/bandwidth-bound-scan
+title: "Memory-bandwidth-bound scan optimization"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Memory-bandwidth-bound scan optimization
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/bandwidth-bound-scan` · **Status:** empirically-open

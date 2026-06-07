@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/streaming-subgraph-matching
+title: "Continuous subgraph matching on streaming graphs"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Continuous subgraph matching on streaming graphs
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/streaming-subgraph-matching` · **Status:** partially-solved

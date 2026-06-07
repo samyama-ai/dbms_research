@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/adaptive-replacement-drift
+title: "Optimal Buffer Replacement Under Workload Drift"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Buffer Replacement Under Workload Drift
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/adaptive-replacement-drift` · **Status:** open

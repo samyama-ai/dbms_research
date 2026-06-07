@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/algebra-equivalence-aggregation
+title: "Relational Algebra Equivalence with Aggregation"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Relational Algebra Equivalence with Aggregation
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/algebra-equivalence-aggregation` · **Status:** open

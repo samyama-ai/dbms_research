@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-band-joins-bounded-state
+title: "Streaming theta/band joins with bounded state"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Streaming theta/band joins with bounded state
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-band-joins-bounded-state` · **Status:** open

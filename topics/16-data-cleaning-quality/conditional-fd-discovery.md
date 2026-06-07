@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/conditional-fd-discovery
+title: "Scalable Conditional FD Discovery"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Scalable Conditional FD Discovery
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/conditional-fd-discovery` · **Status:** partially-solved

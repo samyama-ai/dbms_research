@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/schema-evolution-operators
+title: "Schema Evolution Operator Completeness"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Schema Evolution Operator Completeness
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/schema-evolution-operators` · **Status:** partially-solved

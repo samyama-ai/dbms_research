@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/lazy-vs-eager-capture
+title: "Lazy vs. Eager Provenance Capture"
+topic: 22-provenance-lineage
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lazy vs. Eager Provenance Capture
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/lazy-vs-eager-capture` · **Status:** empirically-open

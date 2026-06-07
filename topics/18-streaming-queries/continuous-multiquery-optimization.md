@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/continuous-multiquery-optimization
+title: "Multi-query optimization for continuous queries"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-query optimization for continuous queries
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/continuous-multiquery-optimization` · **Status:** partially-solved

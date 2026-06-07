@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/provenance-guided-repair
+title: "Provenance-Guided Data Repair"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance-Guided Data Repair
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-guided-repair` · **Status:** open

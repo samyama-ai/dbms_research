@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/approximate-plan-optimization
+title: "Optimizing AQP and bounded-error plans"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimizing AQP and bounded-error plans
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/approximate-plan-optimization` · **Status:** open

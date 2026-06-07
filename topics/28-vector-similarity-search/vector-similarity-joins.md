@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/vector-similarity-joins
+title: "Top-k ANN joins over two vector sets"
+topic: 28-vector-similarity-search
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Top-k ANN joins over two vector sets
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/vector-similarity-joins` · **Status:** partially-solved

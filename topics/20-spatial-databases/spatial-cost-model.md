@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/spatial-cost-model
+title: "Spatial query optimization cost models"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spatial query optimization cost models
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/spatial-cost-model` · **Status:** empirically-open

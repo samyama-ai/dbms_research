@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/verifiable-aqp
+title: "Verifiable and Trustworthy Approximations"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifiable and Trustworthy Approximations
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/verifiable-aqp` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/inverted-index-conjunction
+title: "Inverted-index compression for conjunctions"
+topic: 04-indexing-access-methods
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Inverted-index compression for conjunctions
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/inverted-index-conjunction` · **Status:** empirically-open

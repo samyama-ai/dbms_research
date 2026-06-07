@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/logic-capturing-ptime
+title: "A Logic Capturing PTIME on Unordered Structures"
+topic: 25-query-languages-expressiveness
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # A Logic Capturing PTIME on Unordered Structures
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/logic-capturing-ptime` · **Status:** open

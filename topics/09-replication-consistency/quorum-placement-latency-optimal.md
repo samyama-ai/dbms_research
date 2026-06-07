@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/quorum-placement-latency-optimal
+title: "Latency-optimal quorum placement on real topologies"
+topic: 09-replication-consistency
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Latency-optimal quorum placement on real topologies
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/quorum-placement-latency-optimal` · **Status:** empirically-open

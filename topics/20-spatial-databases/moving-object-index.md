@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/moving-object-index
+title: "Indexing moving objects with predictive queries"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Indexing moving objects with predictive queries
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/moving-object-index` · **Status:** partially-solved

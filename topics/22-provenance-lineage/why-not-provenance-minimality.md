@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/why-not-provenance-minimality
+title: "Why-Not Provenance Minimality"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Why-Not Provenance Minimality
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/why-not-provenance-minimality` · **Status:** open

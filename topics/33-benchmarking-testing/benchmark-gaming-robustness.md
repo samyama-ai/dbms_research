@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/benchmark-gaming-robustness
+title: "Benchmark Gaming and Specification Robustness"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Benchmark Gaming and Specification Robustness
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/benchmark-gaming-robustness` · **Status:** open

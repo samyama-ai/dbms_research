@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/cost-model-runtime-fidelity
+title: "Cost models that predict real runtime"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost models that predict real runtime
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/cost-model-runtime-fidelity` · **Status:** empirically-open

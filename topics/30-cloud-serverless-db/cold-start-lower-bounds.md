@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/cold-start-lower-bounds
+title: "Provable cold-start lower bounds"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provable cold-start lower bounds
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cold-start-lower-bounds` · **Status:** open

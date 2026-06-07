@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/caching-with-predictions
+title: "Caching with Predictions: Robustness vs Consistency"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Caching with Predictions: Robustness vs Consistency
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/caching-with-predictions` · **Status:** partially-solved

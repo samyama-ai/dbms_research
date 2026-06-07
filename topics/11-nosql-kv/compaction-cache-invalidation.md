@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/compaction-cache-invalidation
+title: "Compaction-Triggered Cache Invalidation"
+topic: 11-nosql-kv
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compaction-Triggered Cache Invalidation
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/compaction-cache-invalidation` · **Status:** empirically-open

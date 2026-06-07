@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/columnar-cardinality-estimation
+title: "Cardinality Estimation for Columnar Plans"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality Estimation for Columnar Plans
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/columnar-cardinality-estimation` · **Status:** open

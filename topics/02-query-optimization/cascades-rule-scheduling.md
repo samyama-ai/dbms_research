@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/cascades-rule-scheduling
+title: "Cascades-style rule scheduling and pruning"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cascades-style rule scheduling and pruning
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/cascades-rule-scheduling` · **Status:** empirically-open

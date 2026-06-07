@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/tunable-consistency-sla
+title: "Tunable consistency with provable SLA guarantees"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tunable consistency with provable SLA guarantees
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/tunable-consistency-sla` · **Status:** open

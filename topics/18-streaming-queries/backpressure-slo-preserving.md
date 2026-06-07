@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/backpressure-slo-preserving
+title: "Backpressure that preserves end-to-end SLOs"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Backpressure that preserves end-to-end SLOs
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/backpressure-slo-preserving` · **Status:** open

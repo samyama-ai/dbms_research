@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/spatial-selectivity-estimation
+title: "Spatial selectivity estimation under skew"
+topic: 20-spatial-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spatial selectivity estimation under skew
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/spatial-selectivity-estimation` · **Status:** open

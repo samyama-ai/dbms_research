@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/cube-view-selection
+title: "Optimal Data Cube Materialization"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Data Cube Materialization
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/cube-view-selection` · **Status:** partially-solved

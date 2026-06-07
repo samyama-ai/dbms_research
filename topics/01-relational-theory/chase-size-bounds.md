@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/chase-size-bounds
+title: "Chase Step Complexity and Size Bounds"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Chase Step Complexity and Size Bounds
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/chase-size-bounds` · **Status:** partially-solved

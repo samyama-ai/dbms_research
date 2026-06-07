@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/reachability-index-tradeoffs
+title: "Adjacency and reachability index tradeoffs"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adjacency and reachability index tradeoffs
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/reachability-index-tradeoffs` · **Status:** partially-solved

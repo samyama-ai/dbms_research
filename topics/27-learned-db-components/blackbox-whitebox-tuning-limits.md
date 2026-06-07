@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/blackbox-whitebox-tuning-limits
+title: "Black-Box vs. White-Box Tuning Limits"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Black-Box vs. White-Box Tuning Limits
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/blackbox-whitebox-tuning-limits` · **Status:** open

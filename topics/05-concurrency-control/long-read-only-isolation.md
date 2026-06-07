@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/long-read-only-isolation
+title: "Long-Running Read-Only Transaction Isolation"
+topic: 05-concurrency-control
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Long-Running Read-Only Transaction Isolation
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/long-read-only-isolation` · **Status:** empirically-open

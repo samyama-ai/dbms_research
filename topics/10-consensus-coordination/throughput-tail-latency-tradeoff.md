@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/throughput-tail-latency-tradeoff
+title: "Consensus Throughput vs Tail Latency"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consensus Throughput vs Tail Latency
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/throughput-tail-latency-tradeoff` · **Status:** empirically-open

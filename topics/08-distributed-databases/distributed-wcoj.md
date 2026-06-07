@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/distributed-wcoj
+title: "Worst-Case-Optimal Distributed Joins"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-Case-Optimal Distributed Joins
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/distributed-wcoj` · **Status:** partially-solved

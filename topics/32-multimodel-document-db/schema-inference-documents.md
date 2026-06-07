@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/schema-inference-documents
+title: "Static schema inference from document collections"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Static schema inference from document collections
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/schema-inference-documents` · **Status:** open

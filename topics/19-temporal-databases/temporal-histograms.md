@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/temporal-histograms
+title: "Temporal Multidimensional Histograms"
+topic: 19-temporal-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal Multidimensional Histograms
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-histograms` · **Status:** empirically-open

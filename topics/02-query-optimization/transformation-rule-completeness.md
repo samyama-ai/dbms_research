@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/transformation-rule-completeness
+title: "Transformation-rule completeness and confluence"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Transformation-rule completeness and confluence
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/transformation-rule-completeness` · **Status:** open

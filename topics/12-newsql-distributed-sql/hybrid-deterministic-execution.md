@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/hybrid-deterministic-execution
+title: "Mixed deterministic/nondeterministic execution"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mixed deterministic/nondeterministic execution
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/hybrid-deterministic-execution` · **Status:** open

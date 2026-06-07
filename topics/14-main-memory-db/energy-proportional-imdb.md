@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/energy-proportional-imdb
+title: "Energy-Proportional In-Memory Storage"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Energy-Proportional In-Memory Storage
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/energy-proportional-imdb` · **Status:** open

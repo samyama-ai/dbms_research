@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/certain-answers-inconsistency
+title: "Certain Answers Over Inconsistent Databases"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Certain Answers Over Inconsistent Databases
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/certain-answers-inconsistency` · **Status:** partially-solved

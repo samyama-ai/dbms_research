@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/multi-tier-cost-caching
+title: "Cost-Aware Caching Across DRAM/SSD/Object Tiers"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-Aware Caching Across DRAM/SSD/Object Tiers
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/multi-tier-cost-caching` · **Status:** partially-solved

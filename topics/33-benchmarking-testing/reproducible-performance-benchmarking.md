@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/reproducible-performance-benchmarking
+title: "Reproducible Performance Benchmarking"
+topic: 33-benchmarking-testing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Reproducible Performance Benchmarking
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/reproducible-performance-benchmarking` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/memory-bounded-olap
+title: "Spilling and Memory-Bounded OLAP"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spilling and Memory-Bounded OLAP
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/memory-bounded-olap` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/path-query-minimization
+title: "XML/JSON path query minimization"
+topic: 32-multimodel-document-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # XML/JSON path query minimization
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/path-query-minimization` · **Status:** partially-solved

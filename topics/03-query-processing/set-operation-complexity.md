@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/set-operation-complexity
+title: "Set operations and multiset semantics complexity"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Set operations and multiset semantics complexity
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/set-operation-complexity` · **Status:** partially-solved

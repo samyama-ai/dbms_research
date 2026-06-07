@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/numeric-semantics-oracle
+title: "Oracle for Floating-Point and Decimal Semantics"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Oracle for Floating-Point and Decimal Semantics
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/numeric-semantics-oracle` · **Status:** open

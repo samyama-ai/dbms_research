@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/cost-optimal-autoscaling
+title: "Cost-optimal autoscaling policies"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-optimal autoscaling policies
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cost-optimal-autoscaling` · **Status:** empirically-open

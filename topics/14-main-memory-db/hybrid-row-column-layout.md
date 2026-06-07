@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/hybrid-row-column-layout
+title: "Hybrid Row/Column In-Memory Layout"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid Row/Column In-Memory Layout
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/hybrid-row-column-layout` · **Status:** open

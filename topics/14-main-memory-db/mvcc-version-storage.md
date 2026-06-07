@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/mvcc-version-storage
+title: "In-Memory MVCC Version Storage"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # In-Memory MVCC Version Storage
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/mvcc-version-storage` · **Status:** open

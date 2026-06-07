@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/cardinality-confidence-intervals
+title: "Confidence Intervals for Cardinality Estimates"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Confidence Intervals for Cardinality Estimates
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/cardinality-confidence-intervals` · **Status:** open

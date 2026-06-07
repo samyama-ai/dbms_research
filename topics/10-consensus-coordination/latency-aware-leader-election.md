@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/latency-aware-leader-election
+title: "Heterogeneous-Latency Leader Election"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Heterogeneous-Latency Leader Election
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/latency-aware-leader-election` · **Status:** partially-solved

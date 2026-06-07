@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/adaptive-logging-granularity
+title: "Adaptive logging granularity"
+topic: 06-recovery-logging
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive logging granularity
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/adaptive-logging-granularity` · **Status:** empirically-open

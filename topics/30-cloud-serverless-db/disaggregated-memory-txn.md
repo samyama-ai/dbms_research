@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/disaggregated-memory-txn
+title: "Disaggregated-memory transaction protocols"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disaggregated-memory transaction protocols
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/disaggregated-memory-txn` · **Status:** empirically-open

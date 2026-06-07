@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/incremental-statistics-maintenance
+title: "Statistics Maintenance Under Updates"
+topic: 26-cardinality-estimation
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Statistics Maintenance Under Updates
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/incremental-statistics-maintenance` · **Status:** partially-solved

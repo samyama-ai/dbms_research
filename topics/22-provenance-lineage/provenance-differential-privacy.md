@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/provenance-differential-privacy
+title: "Provenance for Differential Privacy"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance for Differential Privacy
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-differential-privacy` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/range-reporting-lower-bound
+title: "Lower bounds for orthogonal range reporting"
+topic: 20-spatial-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower bounds for orthogonal range reporting
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/range-reporting-lower-bound` · **Status:** open

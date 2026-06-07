@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/datalog-compilation-scale
+title: "Datalog Optimization and Compilation at Scale"
+topic: 25-query-languages-expressiveness
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Datalog Optimization and Compilation at Scale
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/datalog-compilation-scale` · **Status:** empirically-open

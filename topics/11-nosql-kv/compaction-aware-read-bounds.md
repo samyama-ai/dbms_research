@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/compaction-aware-read-bounds
+title: "Compaction-Aware Read Cost Bounds"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compaction-Aware Read Cost Bounds
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/compaction-aware-read-bounds` · **Status:** partially-solved

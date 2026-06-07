@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/fpga-operator-synthesis
+title: "FPGA query operator synthesis from SQL"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # FPGA query operator synthesis from SQL
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/fpga-operator-synthesis` · **Status:** empirically-open

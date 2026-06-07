@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/mpc-query-communication-lower-bounds
+title: "Communication Lower Bounds for MPC Queries"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Communication Lower Bounds for MPC Queries
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/mpc-query-communication-lower-bounds` · **Status:** open

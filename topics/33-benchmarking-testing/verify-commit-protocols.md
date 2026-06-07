@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/verify-commit-protocols
+title: "Verifying Distributed Commit Protocols"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifying Distributed Commit Protocols
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/verify-commit-protocols` · **Status:** partially-solved

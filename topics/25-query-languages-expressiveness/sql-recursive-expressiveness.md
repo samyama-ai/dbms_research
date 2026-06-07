@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/sql-recursive-expressiveness
+title: "Expressive Power and Limits of SQL Recursion"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressive Power and Limits of SQL Recursion
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/sql-recursive-expressiveness` · **Status:** partially-solved

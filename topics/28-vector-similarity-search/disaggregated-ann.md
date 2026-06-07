@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/disaggregated-ann
+title: "ANN over disaggregated storage"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # ANN over disaggregated storage
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/disaggregated-ann` · **Status:** empirically-open

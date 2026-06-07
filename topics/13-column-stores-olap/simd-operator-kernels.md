@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/simd-operator-kernels
+title: "Optimal SIMD Operator Kernels"
+topic: 13-column-stores-olap
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal SIMD Operator Kernels
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/simd-operator-kernels` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/query-recovery-hardness
+title: "Query-Recovery Hardness for Encrypted DBs"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query-Recovery Hardness for Encrypted DBs
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/query-recovery-hardness` · **Status:** open

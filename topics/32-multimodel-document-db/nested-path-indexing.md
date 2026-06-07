@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/nested-path-indexing
+title: "Path indexing for deeply nested documents"
+topic: 32-multimodel-document-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Path indexing for deeply nested documents
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/nested-path-indexing` · **Status:** partially-solved

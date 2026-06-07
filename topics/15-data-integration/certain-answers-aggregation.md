@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/certain-answers-aggregation
+title: "Certain Answers for Aggregate Queries"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Certain Answers for Aggregate Queries
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/certain-answers-aggregation` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/counting-logic-queries
+title: "Querying with Counting and Majority Quantifiers"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Querying with Counting and Majority Quantifiers
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/counting-logic-queries` · **Status:** partially-solved

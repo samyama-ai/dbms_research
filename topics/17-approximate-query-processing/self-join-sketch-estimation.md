@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/self-join-sketch-estimation
+title: "Negative and Self-Join Sketch Estimation"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Negative and Self-Join Sketch Estimation
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/self-join-sketch-estimation` · **Status:** open

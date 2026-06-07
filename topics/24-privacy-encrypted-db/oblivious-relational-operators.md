@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/oblivious-relational-operators
+title: "Oblivious Relational Operators at Scale"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Oblivious Relational Operators at Scale
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/oblivious-relational-operators` · **Status:** open

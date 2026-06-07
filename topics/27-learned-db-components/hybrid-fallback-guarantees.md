@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/hybrid-fallback-guarantees
+title: "Guaranteed Fallback and Hybrid Designs"
+topic: 27-learned-db-components
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Guaranteed Fallback and Hybrid Designs
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/hybrid-fallback-guarantees` · **Status:** partially-solved

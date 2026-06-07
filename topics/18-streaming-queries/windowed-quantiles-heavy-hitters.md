@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/windowed-quantiles-heavy-hitters
+title: "Quantile and heavy-hitter tracking over windows"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Quantile and heavy-hitter tracking over windows
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/windowed-quantiles-heavy-hitters` · **Status:** partially-solved

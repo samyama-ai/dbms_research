@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/determinism-throughput-tradeoff
+title: "Determinism vs. throughput tradeoff"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Determinism vs. throughput tradeoff
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/determinism-throughput-tradeoff` · **Status:** open

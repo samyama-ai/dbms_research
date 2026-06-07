@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/inclusion-dependency-discovery
+title: "Inclusion Dependency and Foreign-Key Discovery"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Inclusion Dependency and Foreign-Key Discovery
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/inclusion-dependency-discovery` · **Status:** partially-solved

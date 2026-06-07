@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/vectorized-vs-compiled
+title: "Vectorized vs compiled execution unification"
+topic: 29-hardware-conscious-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Vectorized vs compiled execution unification
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/vectorized-vs-compiled` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/oblivious-buffer-access
+title: "Encrypted/Oblivious Buffer Access Patterns"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Encrypted/Oblivious Buffer Access Patterns
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/oblivious-buffer-access` · **Status:** open

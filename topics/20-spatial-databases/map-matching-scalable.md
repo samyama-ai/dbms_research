@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/map-matching-scalable
+title: "Map matching at scale with guarantees"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Map matching at scale with guarantees
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/map-matching-scalable` · **Status:** empirically-open

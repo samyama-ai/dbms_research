@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/optimizer-benchmarking
+title: "Reproducible benchmarking of optimizer quality"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Reproducible benchmarking of optimizer quality
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/optimizer-benchmarking` · **Status:** empirically-open

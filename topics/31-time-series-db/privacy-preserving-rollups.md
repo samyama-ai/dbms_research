@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/privacy-preserving-rollups
+title: "Privacy-preserving release of rollups"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Privacy-preserving release of rollups
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/privacy-preserving-rollups` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/human-in-the-loop
+title: "Human-in-the-Loop & Trust Calibration"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Human-in-the-Loop & Trust Calibration
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/human-in-the-loop` · **Status:** open

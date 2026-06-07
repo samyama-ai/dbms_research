@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/skew-resilient-aggregation
+title: "Skew-Resilient Distributed Aggregation"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Skew-Resilient Distributed Aggregation
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/skew-resilient-aggregation` · **Status:** partially-solved

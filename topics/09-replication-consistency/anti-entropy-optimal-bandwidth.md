@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/anti-entropy-optimal-bandwidth
+title: "Optimal anti-entropy reconciliation bandwidth"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal anti-entropy reconciliation bandwidth
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/anti-entropy-optimal-bandwidth` · **Status:** open

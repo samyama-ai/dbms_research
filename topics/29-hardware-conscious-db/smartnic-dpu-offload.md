@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/smartnic-dpu-offload
+title: "Smart-NIC / DPU offload of DB operators"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Smart-NIC / DPU offload of DB operators
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/smartnic-dpu-offload` · **Status:** empirically-open

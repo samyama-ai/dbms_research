@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/crdt-convergence-verification
+title: "Verifying convergence of arbitrary CRDT designs"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifying convergence of arbitrary CRDT designs
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/crdt-convergence-verification` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/range-boundary-learning
+title: "Range-Partition Boundary Learning"
+topic: 11-nosql-kv
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range-Partition Boundary Learning
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/range-boundary-learning` · **Status:** empirically-open

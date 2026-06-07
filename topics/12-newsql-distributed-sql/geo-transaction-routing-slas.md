@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/geo-transaction-routing-slas
+title: "Geo-distributed transaction routing under SLAs"
+topic: 12-newsql-distributed-sql
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Geo-distributed transaction routing under SLAs
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/geo-transaction-routing-slas` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/nvm-flush-ordering
+title: "NVM logging without flush ordering"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # NVM logging without flush ordering
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/nvm-flush-ordering` · **Status:** open

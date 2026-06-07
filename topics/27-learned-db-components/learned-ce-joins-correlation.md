@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-ce-joins-correlation
+title: "Learned CE Under Joins and Correlation"
+topic: 27-learned-db-components
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned CE Under Joins and Correlation
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-ce-joins-correlation` · **Status:** empirically-open

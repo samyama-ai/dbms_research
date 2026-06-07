@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/core-computation-data-exchange
+title: "Core Computation for Data Exchange"
+topic: 01-relational-theory
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Core Computation for Data Exchange
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/core-computation-data-exchange` · **Status:** solved-but-impractical

@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/staleness-availability-latency-bounds
+title: "Lower bounds on staleness-availability-latency tradeoffs"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower bounds on staleness-availability-latency tradeoffs
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/staleness-availability-latency-bounds` · **Status:** open

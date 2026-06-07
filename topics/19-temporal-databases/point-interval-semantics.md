@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/point-interval-semantics
+title: "Point-vs-Interval Semantics Reconciliation"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Point-vs-Interval Semantics Reconciliation
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/point-interval-semantics` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/multimodel-query-optimization
+title: "Multi-model query optimization across models"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-model query optimization across models
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/multimodel-query-optimization` · **Status:** open

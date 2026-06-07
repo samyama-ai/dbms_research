@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/denial-constraint-discovery
+title: "Denial-Constraint Discovery at Scale"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Denial-Constraint Discovery at Scale
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/denial-constraint-discovery` · **Status:** partially-solved

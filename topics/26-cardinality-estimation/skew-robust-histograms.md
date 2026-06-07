@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/skew-robust-histograms
+title: "Skew- and Outlier-Robust Histograms"
+topic: 26-cardinality-estimation
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Skew- and Outlier-Robust Histograms
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/skew-robust-histograms` · **Status:** partially-solved

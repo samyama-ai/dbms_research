@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/hybrid-path-pattern-plans
+title: "Multiway join plans mixing paths and patterns"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multiway join plans mixing paths and patterns
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/hybrid-path-pattern-plans` · **Status:** open

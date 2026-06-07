@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/distributed-wcoj
+title: "Distributed worst-case-optimal graph joins"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed worst-case-optimal graph joins
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/distributed-wcoj` · **Status:** open

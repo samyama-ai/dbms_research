@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/spatial-partitioning-skew
+title: "Spatial data partitioning for skew"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spatial data partitioning for skew
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/spatial-partitioning-skew` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/consistency-verification-complexity
+title: "Complexity of verifying consistency from histories"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Complexity of verifying consistency from histories
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/consistency-verification-complexity` · **Status:** partially-solved

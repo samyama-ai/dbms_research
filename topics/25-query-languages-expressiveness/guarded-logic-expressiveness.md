@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/guarded-logic-expressiveness
+title: "Two-Variable and Guarded Logic Query Power"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Two-Variable and Guarded Logic Query Power
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/guarded-logic-expressiveness` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/windowed-similarity-joins
+title: "Approximate sliding-window correlation/similarity joins"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate sliding-window correlation/similarity joins
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/windowed-similarity-joins` · **Status:** open

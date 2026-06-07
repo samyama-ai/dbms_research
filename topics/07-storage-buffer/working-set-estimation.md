@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/working-set-estimation
+title: "Online Working-Set Estimation for Auto-Sizing"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Online Working-Set Estimation for Auto-Sizing
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/working-set-estimation` · **Status:** partially-solved

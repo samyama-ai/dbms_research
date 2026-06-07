@@ -1,3 +1,15 @@
+---
+id: 23-database-security/authorization-aware-optimization
+title: "Authorization-Aware Query Optimization"
+topic: 23-database-security
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Authorization-Aware Query Optimization
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/authorization-aware-optimization` · **Status:** open

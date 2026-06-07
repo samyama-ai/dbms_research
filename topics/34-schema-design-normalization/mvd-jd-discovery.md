@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/mvd-jd-discovery
+title: "Multivalued and Join Dependency Discovery"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multivalued and Join Dependency Discovery
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/mvd-jd-discovery` · **Status:** open

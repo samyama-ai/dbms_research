@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/cardinality-constraints-chase
+title: "Cardinality Constraints in the Chase"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality Constraints in the Chase
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/cardinality-constraints-chase` · **Status:** open

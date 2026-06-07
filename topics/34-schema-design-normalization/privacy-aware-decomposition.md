@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/privacy-aware-decomposition
+title: "Privacy and Access-Aware Schema Decomposition"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Privacy and Access-Aware Schema Decomposition
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/privacy-aware-decomposition` · **Status:** open

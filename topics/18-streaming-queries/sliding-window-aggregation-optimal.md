@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/sliding-window-aggregation-optimal
+title: "Optimal sliding-window aggregation under arbitrary aggregates"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal sliding-window aggregation under arbitrary aggregates
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/sliding-window-aggregation-optimal` · **Status:** partially-solved

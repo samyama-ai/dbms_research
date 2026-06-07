@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/federated-cost-reconciliation
+title: "Federated cost-model reconciliation"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Federated cost-model reconciliation
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/federated-cost-reconciliation` · **Status:** open

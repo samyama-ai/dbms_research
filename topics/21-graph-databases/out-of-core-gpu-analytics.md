@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/out-of-core-gpu-analytics
+title: "Out-of-core and GPU graph analytics scheduling"
+topic: 21-graph-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Out-of-core and GPU graph analytics scheduling
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/out-of-core-gpu-analytics` · **Status:** empirically-open

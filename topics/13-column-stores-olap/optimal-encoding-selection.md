@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/optimal-encoding-selection
+title: "Optimal Lightweight Encoding Selection"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Lightweight Encoding Selection
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/optimal-encoding-selection` · **Status:** open

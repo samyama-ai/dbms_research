@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/distributed-wal-durability
+title: "Distributed WAL with single-copy durability"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed WAL with single-copy durability
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/distributed-wal-durability` · **Status:** open

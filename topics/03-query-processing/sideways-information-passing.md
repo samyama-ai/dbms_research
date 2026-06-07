@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/sideways-information-passing
+title: "Sideways information passing at execution"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Sideways information passing at execution
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/sideways-information-passing` · **Status:** partially-solved

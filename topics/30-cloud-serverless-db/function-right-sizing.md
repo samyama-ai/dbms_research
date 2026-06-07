@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/function-right-sizing
+title: "Right-sizing serverless function memory"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Right-sizing serverless function memory
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/function-right-sizing` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/watermark-window-placement
+title: "Cost-based watermark/window placement in plans"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-based watermark/window placement in plans
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/watermark-window-placement` · **Status:** open

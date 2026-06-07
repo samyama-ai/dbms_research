@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/pipeline-breaker-scheduling
+title: "Pipeline breaker minimization"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Pipeline breaker minimization
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/pipeline-breaker-scheduling` · **Status:** open

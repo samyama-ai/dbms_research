@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/hash-index-skew-rum
+title: "Hashing with optimal RUM under skew"
+topic: 04-indexing-access-methods
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hashing with optimal RUM under skew
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/hash-index-skew-rum` · **Status:** open

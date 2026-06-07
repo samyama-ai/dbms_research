@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/transactional-causal-consistency
+title: "Transactional causal consistency at scale"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Transactional causal consistency at scale
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/transactional-causal-consistency` · **Status:** partially-solved

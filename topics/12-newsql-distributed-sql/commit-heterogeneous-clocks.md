@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/commit-heterogeneous-clocks
+title: "Commit protocol for heterogeneous replica clocks"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Commit protocol for heterogeneous replica clocks
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/commit-heterogeneous-clocks` · **Status:** open

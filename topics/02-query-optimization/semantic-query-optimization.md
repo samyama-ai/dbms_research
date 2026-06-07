@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/semantic-query-optimization
+title: "Optimizing under integrity constraints and semantics"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimizing under integrity constraints and semantics
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/semantic-query-optimization` · **Status:** partially-solved

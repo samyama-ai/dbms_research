@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/lease-safety-clock-drift
+title: "Lease Safety Under Clock Drift"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lease Safety Under Clock Drift
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/lease-safety-clock-drift` · **Status:** partially-solved

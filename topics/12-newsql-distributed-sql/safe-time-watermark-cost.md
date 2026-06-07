@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/safe-time-watermark-cost
+title: "Watermark/safe-time computation cost"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Watermark/safe-time computation cost
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/safe-time-watermark-cost` · **Status:** partially-solved

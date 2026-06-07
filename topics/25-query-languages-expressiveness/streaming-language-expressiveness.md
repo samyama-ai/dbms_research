@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/streaming-language-expressiveness
+title: "Expressiveness of Window and Streaming Query Languages"
+topic: 25-query-languages-expressiveness
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressiveness of Window and Streaming Query Languages
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/streaming-language-expressiveness` · **Status:** open

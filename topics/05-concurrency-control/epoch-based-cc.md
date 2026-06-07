@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/epoch-based-cc
+title: "Epoch-Based Concurrency Control Tradeoffs"
+topic: 05-concurrency-control
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Epoch-Based Concurrency Control Tradeoffs
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/epoch-based-cc` · **Status:** empirically-open

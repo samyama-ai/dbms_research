@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/bounded-staleness-optimization
+title: "Bounded-staleness query optimization"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bounded-staleness query optimization
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/bounded-staleness-optimization` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/theta-join-partitioning
+title: "Distributed Theta-Join Partitioning"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed Theta-Join Partitioning
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/theta-join-partitioning` · **Status:** partially-solved

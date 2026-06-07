@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/multi-attribute-correlation
+title: "Multi-Attribute Correlation Without Independence"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Attribute Correlation Without Independence
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/multi-attribute-correlation` · **Status:** open

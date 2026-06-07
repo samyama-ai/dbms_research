@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/schema-compatibility-verification
+title: "Backward and Forward Schema Compatibility Verification"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Backward and Forward Schema Compatibility Verification
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/schema-compatibility-verification` · **Status:** open

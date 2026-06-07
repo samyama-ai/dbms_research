@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/ann-cost-model
+title: "Cost model for ANN query planning"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost model for ANN query planning
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/ann-cost-model` · **Status:** open

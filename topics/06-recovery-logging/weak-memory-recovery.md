@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/weak-memory-recovery
+title: "Recovery correctness under weak memory"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Recovery correctness under weak memory
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/weak-memory-recovery` · **Status:** open

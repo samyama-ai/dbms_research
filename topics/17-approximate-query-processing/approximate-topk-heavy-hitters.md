@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/approximate-topk-heavy-hitters
+title: "Approximate Top-K and Heavy Hitters"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Approximate Top-K and Heavy Hitters
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/approximate-topk-heavy-hitters` · **Status:** partially-solved

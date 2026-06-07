@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/rpq-evaluation-optimization
+title: "Regular Path Query Evaluation and Optimization"
+topic: 25-query-languages-expressiveness
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Regular Path Query Evaluation and Optimization
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/rpq-evaluation-optimization` · **Status:** empirically-open

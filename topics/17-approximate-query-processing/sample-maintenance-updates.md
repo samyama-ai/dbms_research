@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/sample-maintenance-updates
+title: "Sample Maintenance Under Updates"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Sample Maintenance Under Updates
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/sample-maintenance-updates` · **Status:** partially-solved

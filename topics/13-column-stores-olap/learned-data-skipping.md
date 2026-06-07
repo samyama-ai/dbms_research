@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/learned-data-skipping
+title: "Learned Data Skipping Indexes"
+topic: 13-column-stores-olap
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Data Skipping Indexes
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/learned-data-skipping` · **Status:** empirically-open

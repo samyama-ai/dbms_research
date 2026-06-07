@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/hlc-bounded-drift
+title: "Hybrid logical clocks with bounded drift guarantees"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid logical clocks with bounded drift guarantees
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/hlc-bounded-drift` · **Status:** partially-solved

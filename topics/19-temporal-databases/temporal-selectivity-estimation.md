@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/temporal-selectivity-estimation
+title: "Temporal Selectivity Estimation"
+topic: 19-temporal-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal Selectivity Estimation
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-selectivity-estimation` · **Status:** empirically-open

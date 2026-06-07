@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/tenant-buffer-partitioning
+title: "Tenant-aware buffer-pool partitioning theory"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tenant-aware buffer-pool partitioning theory
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/tenant-buffer-partitioning` · **Status:** partially-solved

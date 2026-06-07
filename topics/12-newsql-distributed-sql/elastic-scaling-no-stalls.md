@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/elastic-scaling-no-stalls
+title: "Elastic scaling without transaction stalls"
+topic: 12-newsql-distributed-sql
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Elastic scaling without transaction stalls
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/elastic-scaling-no-stalls` · **Status:** empirically-open

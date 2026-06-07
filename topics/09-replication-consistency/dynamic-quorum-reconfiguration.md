@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/dynamic-quorum-reconfiguration
+title: "Dynamic quorum reconfiguration without stalls"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Dynamic quorum reconfiguration without stalls
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/dynamic-quorum-reconfiguration` · **Status:** partially-solved

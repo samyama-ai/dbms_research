@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/progressive-entity-resolution
+title: "Progressive Entity Resolution Scheduling"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Progressive Entity Resolution Scheduling
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/progressive-entity-resolution` · **Status:** partially-solved

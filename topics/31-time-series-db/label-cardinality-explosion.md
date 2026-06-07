@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/label-cardinality-explosion
+title: "Cardinality explosion from high-dimensional labels"
+topic: 31-time-series-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality explosion from high-dimensional labels
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/label-cardinality-explosion` · **Status:** empirically-open

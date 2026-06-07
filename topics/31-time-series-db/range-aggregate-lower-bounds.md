@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/range-aggregate-lower-bounds
+title: "Range-aggregate query lower bounds"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range-aggregate query lower bounds
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/range-aggregate-lower-bounds` · **Status:** partially-solved

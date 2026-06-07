@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/scan-resistant-replacement
+title: "Scan-Resistant Replacement with Optimality Bounds"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Scan-Resistant Replacement with Optimality Bounds
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/scan-resistant-replacement` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/log-is-database
+title: "Log-as-the-database durability bounds"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Log-as-the-database durability bounds
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/log-is-database` · **Status:** partially-solved

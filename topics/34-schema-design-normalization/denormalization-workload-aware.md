@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/denormalization-workload-aware
+title: "Denormalization Selection Under Mixed Workloads"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Denormalization Selection Under Mixed Workloads
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/denormalization-workload-aware` · **Status:** open

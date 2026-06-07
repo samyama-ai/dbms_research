@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/pipeline-quality-propagation
+title: "End-to-End Pipeline Quality Propagation"
+topic: 16-data-cleaning-quality
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-End Pipeline Quality Propagation
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/pipeline-quality-propagation` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/lossy-compression-query-guarantees
+title: "Lossy compression with downstream-query guarantees"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lossy compression with downstream-query guarantees
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/lossy-compression-query-guarantees` · **Status:** open

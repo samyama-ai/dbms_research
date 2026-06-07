@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/wcoj-vs-binary-plans
+title: "Worst-case-optimal join order vs. binary plans"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal join order vs. binary plans
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/wcoj-vs-binary-plans` · **Status:** partially-solved

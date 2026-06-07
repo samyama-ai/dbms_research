@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/model-encoding-equivalence
+title: "Semantic equivalence of model encodings"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Semantic equivalence of model encodings
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/model-encoding-equivalence` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/mapping-aware-consistency
+title: "Mapping-Aware Consistency Repair"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mapping-Aware Consistency Repair
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/mapping-aware-consistency` · **Status:** open

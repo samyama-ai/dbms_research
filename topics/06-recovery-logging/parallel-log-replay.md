@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/parallel-log-replay
+title: "Parallel log replay scalability"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Parallel log replay scalability
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/parallel-log-replay` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/differential-testing-heterogeneous
+title: "Differential Testing Across Heterogeneous DBMSs"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Differential Testing Across Heterogeneous DBMSs
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/differential-testing-heterogeneous` · **Status:** partially-solved

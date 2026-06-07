@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/learned-physical-design
+title: "Learned and ML-Driven Physical Schema Design"
+topic: 34-schema-design-normalization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned and ML-Driven Physical Schema Design
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/learned-physical-design` · **Status:** empirically-open

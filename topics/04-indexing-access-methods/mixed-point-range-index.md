@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/mixed-point-range-index
+title: "Optimal index for mixed point/range workloads"
+topic: 04-indexing-access-methods
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal index for mixed point/range workloads
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/mixed-point-range-index` · **Status:** empirically-open

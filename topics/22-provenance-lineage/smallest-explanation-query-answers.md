@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/smallest-explanation-query-answers
+title: "Smallest-Explanation Query Answers"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Smallest-Explanation Query Answers
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/smallest-explanation-query-answers` · **Status:** open

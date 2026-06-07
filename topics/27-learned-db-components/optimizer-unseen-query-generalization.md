@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/optimizer-unseen-query-generalization
+title: "Generalization to Unseen Queries"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Generalization to Unseen Queries
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/optimizer-unseen-query-generalization` · **Status:** open

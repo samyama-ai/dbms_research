@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/minimal-coordination-serializability
+title: "Minimizing coordination for serializability"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Minimizing coordination for serializability
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/minimal-coordination-serializability` · **Status:** partially-solved

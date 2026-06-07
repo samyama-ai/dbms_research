@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/bitemporal-normal-forms
+title: "Bitemporal Normal Forms"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bitemporal Normal Forms
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/bitemporal-normal-forms` · **Status:** open

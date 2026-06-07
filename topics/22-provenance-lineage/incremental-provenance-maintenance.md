@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/incremental-provenance-maintenance
+title: "Incremental Provenance Maintenance"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Incremental Provenance Maintenance
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/incremental-provenance-maintenance` · **Status:** open

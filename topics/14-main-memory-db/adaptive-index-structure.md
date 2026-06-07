@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/adaptive-index-structure
+title: "Cardinality-Aware Index Adaptation"
+topic: 14-main-memory-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality-Aware Index Adaptation
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/adaptive-index-structure` · **Status:** empirically-open

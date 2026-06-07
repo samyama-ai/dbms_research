@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/cache-conscious-tree-bounds
+title: "Cache-conscious tree layout lower bounds"
+topic: 29-hardware-conscious-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache-conscious tree layout lower bounds
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/cache-conscious-tree-bounds` · **Status:** partially-solved

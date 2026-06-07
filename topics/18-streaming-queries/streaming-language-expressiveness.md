@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-language-expressiveness
+title: "Expressiveness of streaming query languages"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressiveness of streaming query languages
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-language-expressiveness` · **Status:** open

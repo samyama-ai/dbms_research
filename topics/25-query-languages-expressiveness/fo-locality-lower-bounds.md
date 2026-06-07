@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/fo-locality-lower-bounds
+title: "Locality and Lower Bounds for FO Queries"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Locality and Lower Bounds for FO Queries
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/fo-locality-lower-bounds` · **Status:** partially-solved

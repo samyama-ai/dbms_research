@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/cross-modal-ann
+title: "Cross-modal and metric-learning ANN"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-modal and metric-learning ANN
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/cross-modal-ann` · **Status:** empirically-open

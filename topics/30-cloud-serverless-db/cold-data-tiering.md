@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/cold-data-tiering
+title: "Cold-data tiering with access-cost guarantees"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cold-data tiering with access-cost guarantees
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cold-data-tiering` · **Status:** partially-solved

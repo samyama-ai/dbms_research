@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/adaptive-isolation-selection
+title: "Adaptive Isolation Level Selection"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive Isolation Level Selection
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/adaptive-isolation-selection` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/adaptive-bloom-filter-tuning
+title: "Workload-Adaptive Bloom Filter Tuning"
+topic: 11-nosql-kv
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Workload-Adaptive Bloom Filter Tuning
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/adaptive-bloom-filter-tuning` · **Status:** empirically-open

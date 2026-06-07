@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/datalog-negation-analysis
+title: "Static Analysis of Datalog with Negation"
+topic: 25-query-languages-expressiveness
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Static Analysis of Datalog with Negation
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/datalog-negation-analysis` · **Status:** open

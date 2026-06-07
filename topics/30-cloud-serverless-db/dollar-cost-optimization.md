@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/dollar-cost-optimization
+title: "Cost-based execution with a dollar objective"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-based execution with a dollar objective
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/dollar-cost-optimization` · **Status:** open

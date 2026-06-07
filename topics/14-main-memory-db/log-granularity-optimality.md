@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/log-granularity-optimality
+title: "Optimal Log Record Granularity"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Log Record Granularity
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/log-granularity-optimality` · **Status:** open

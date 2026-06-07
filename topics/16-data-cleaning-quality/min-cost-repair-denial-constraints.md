@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/min-cost-repair-denial-constraints
+title: "Minimum-Cost Repair Under Denial Constraints"
+topic: 16-data-cleaning-quality
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Minimum-Cost Repair Under Denial Constraints
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/min-cost-repair-denial-constraints` · **Status:** open

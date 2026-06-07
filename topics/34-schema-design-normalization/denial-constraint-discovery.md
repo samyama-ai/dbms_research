@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/denial-constraint-discovery
+title: "Denial-Constraint Discovery and Schema Design"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Denial-Constraint Discovery and Schema Design
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/denial-constraint-discovery` · **Status:** partially-solved

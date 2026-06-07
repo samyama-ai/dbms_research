@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/recursive-datalog-provenance
+title: "Recursive-Datalog Provenance Convergence"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Recursive-Datalog Provenance Convergence
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/recursive-datalog-provenance` · **Status:** partially-solved

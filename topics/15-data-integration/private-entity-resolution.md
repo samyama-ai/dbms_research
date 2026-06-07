@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/private-entity-resolution
+title: "Entity Resolution Under Differential Privacy"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Entity Resolution Under Differential Privacy
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/private-entity-resolution` · **Status:** open

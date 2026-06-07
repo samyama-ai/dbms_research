@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/skew-optimal-mpc-load
+title: "Load Balancing for Skewed Multi-way Joins"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Load Balancing for Skewed Multi-way Joins
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/skew-optimal-mpc-load` · **Status:** partially-solved

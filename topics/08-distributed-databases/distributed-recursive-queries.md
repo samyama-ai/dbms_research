@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/distributed-recursive-queries
+title: "Distributed Recursive Query Evaluation"
+topic: 08-distributed-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed Recursive Query Evaluation
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/distributed-recursive-queries` · **Status:** partially-solved

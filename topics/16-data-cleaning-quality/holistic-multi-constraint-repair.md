@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/holistic-multi-constraint-repair
+title: "Holistic Multi-Constraint Repair"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Holistic Multi-Constraint Repair
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/holistic-multi-constraint-repair` · **Status:** partially-solved

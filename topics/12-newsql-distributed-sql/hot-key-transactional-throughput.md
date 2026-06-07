@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/hot-key-transactional-throughput
+title: "Transactional throughput under skewed hot keys"
+topic: 12-newsql-distributed-sql
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Transactional throughput under skewed hot keys
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/hot-key-transactional-throughput` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/deterministic-db-durability
+title: "Durability for deterministic databases"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Durability for deterministic databases
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/deterministic-db-durability` · **Status:** partially-solved

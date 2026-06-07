@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/hlc-drift-bounds
+title: "Tightening HLC drift bounds"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tightening HLC drift bounds
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/hlc-drift-bounds` · **Status:** partially-solved

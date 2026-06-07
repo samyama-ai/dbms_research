@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/rpq-containment
+title: "RPQ containment and equivalence decidability"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # RPQ containment and equivalence decidability
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/rpq-containment` · **Status:** partially-solved

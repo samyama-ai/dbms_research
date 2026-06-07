@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/join-ordering-complexity
+title: "Optimal join ordering complexity for general query graphs"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal join ordering complexity for general query graphs
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/join-ordering-complexity` · **Status:** open

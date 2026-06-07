@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/tunable-consistency-cost-model
+title: "Tunable Consistency Cost Model"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tunable Consistency Cost Model
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/tunable-consistency-cost-model` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/recursive-fixpoint-execution
+title: "Recursive and fixpoint query execution"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Recursive and fixpoint query execution
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/recursive-fixpoint-execution` · **Status:** open

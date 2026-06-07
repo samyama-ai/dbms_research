@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/in-memory-index-compression
+title: "Compression for In-Memory Indexes"
+topic: 14-main-memory-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compression for In-Memory Indexes
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/in-memory-index-compression` · **Status:** open

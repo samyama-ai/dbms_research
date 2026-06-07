@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/cross-region-consistency
+title: "Cross-region replicated cloud-database consistency"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-region replicated cloud-database consistency
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cross-region-consistency` · **Status:** open

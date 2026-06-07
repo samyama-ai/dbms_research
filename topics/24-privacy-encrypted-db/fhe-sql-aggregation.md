@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/fhe-sql-aggregation
+title: "Homomorphic SQL Aggregation at Practical Cost"
+topic: 24-privacy-encrypted-db
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Homomorphic SQL Aggregation at Practical Cost
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/fhe-sql-aggregation` · **Status:** solved-but-impractical

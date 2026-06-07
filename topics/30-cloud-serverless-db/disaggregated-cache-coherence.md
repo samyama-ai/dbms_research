@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/disaggregated-cache-coherence
+title: "Cache coherence over disaggregated storage"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache coherence over disaggregated storage
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/disaggregated-cache-coherence` · **Status:** empirically-open

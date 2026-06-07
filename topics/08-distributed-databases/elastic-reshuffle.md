@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/elastic-reshuffle
+title: "Elastic Reshuffle Under Autoscaling"
+topic: 08-distributed-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Elastic Reshuffle Under Autoscaling
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/elastic-reshuffle` · **Status:** empirically-open

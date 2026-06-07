@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/adaptive-radix-tree-bounds
+title: "Adaptive Radix Tree Worst-Case Bounds"
+topic: 14-main-memory-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive Radix Tree Worst-Case Bounds
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/adaptive-radix-tree-bounds` · **Status:** partially-solved

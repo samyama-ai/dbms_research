@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/adaptive-page-size
+title: "Self-Tuning Page Size Selection"
+topic: 07-storage-buffer
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Self-Tuning Page Size Selection
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/adaptive-page-size` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/crdt-secondary-indexes
+title: "Convergent secondary indexes over CRDTs"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Convergent secondary indexes over CRDTs
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/crdt-secondary-indexes` · **Status:** open

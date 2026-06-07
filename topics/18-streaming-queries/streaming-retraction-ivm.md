@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-retraction-ivm
+title: "Retraction and incremental view maintenance over streams"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Retraction and incremental view maintenance over streams
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-retraction-ivm` · **Status:** partially-solved

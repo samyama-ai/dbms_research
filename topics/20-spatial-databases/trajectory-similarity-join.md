@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/trajectory-similarity-join
+title: "Trajectory similarity join at scale"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Trajectory similarity join at scale
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/trajectory-similarity-join` · **Status:** empirically-open

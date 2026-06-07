@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/punctuation-inference
+title: "Punctuation inference from data streams"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Punctuation inference from data streams
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/punctuation-inference` · **Status:** partially-solved

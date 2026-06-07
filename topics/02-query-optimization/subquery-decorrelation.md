@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/subquery-decorrelation
+title: "Subquery decorrelation and unnesting completeness"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Subquery decorrelation and unnesting completeness
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/subquery-decorrelation` · **Status:** partially-solved

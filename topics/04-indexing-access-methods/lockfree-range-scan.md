@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/lockfree-range-scan
+title: "Concurrent index with non-blocking range scans"
+topic: 04-indexing-access-methods
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Concurrent index with non-blocking range scans
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/lockfree-range-scan` · **Status:** partially-solved

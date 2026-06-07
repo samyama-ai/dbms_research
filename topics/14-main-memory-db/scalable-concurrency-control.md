@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/scalable-concurrency-control
+title: "Concurrency Control Without Central Bottleneck"
+topic: 14-main-memory-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Concurrency Control Without Central Bottleneck
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/scalable-concurrency-control` · **Status:** partially-solved

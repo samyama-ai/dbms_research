@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-db-benchmarking
+title: "Benchmarks and Reproducibility for Learned DB"
+topic: 27-learned-db-components
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Benchmarks and Reproducibility for Learned DB
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-db-benchmarking` · **Status:** empirically-open

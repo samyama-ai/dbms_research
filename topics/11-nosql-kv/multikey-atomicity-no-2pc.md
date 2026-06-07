@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/multikey-atomicity-no-2pc
+title: "Multi-Key Atomicity Without 2PC"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Key Atomicity Without 2PC
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/multikey-atomicity-no-2pc` · **Status:** partially-solved

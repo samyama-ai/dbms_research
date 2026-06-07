@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/recall-latency-memory-lower-bound
+title: "Recall-latency-memory Pareto lower bound"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Recall-latency-memory Pareto lower bound
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/recall-latency-memory-lower-bound` · **Status:** open

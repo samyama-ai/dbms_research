@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/online-skew-detection
+title: "Skew Detection vs Mitigation Latency"
+topic: 08-distributed-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Skew Detection vs Mitigation Latency
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/online-skew-detection` · **Status:** empirically-open

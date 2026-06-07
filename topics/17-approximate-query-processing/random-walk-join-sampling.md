@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/random-walk-join-sampling
+title: "Wander-Join and Random-Walk Sampling"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Wander-Join and Random-Walk Sampling
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/random-walk-join-sampling` · **Status:** partially-solved

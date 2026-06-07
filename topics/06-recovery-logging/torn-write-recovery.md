@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/torn-write-recovery
+title: "Recovery under partial/torn writes"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Recovery under partial/torn writes
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/torn-write-recovery` · **Status:** partially-solved

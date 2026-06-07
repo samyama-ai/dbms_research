@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/provenance-aware-view-update
+title: "Provenance-Aware View Update"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance-Aware View Update
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-aware-view-update` · **Status:** partially-solved

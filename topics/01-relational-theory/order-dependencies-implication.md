@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/order-dependencies-implication
+title: "Order Dependencies and Their Implication"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Order Dependencies and Their Implication
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/order-dependencies-implication` · **Status:** partially-solved

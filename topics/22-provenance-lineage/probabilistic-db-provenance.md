@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/probabilistic-db-provenance
+title: "Probabilistic-DB Provenance Hardness"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Probabilistic-DB Provenance Hardness
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/probabilistic-db-provenance` · **Status:** partially-solved

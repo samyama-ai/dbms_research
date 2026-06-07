@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/ndv-estimation-joins
+title: "Distinct-Value (NDV) Estimation Across Joins"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distinct-Value (NDV) Estimation Across Joins
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/ndv-estimation-joins` · **Status:** open

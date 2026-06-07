@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/testing-learned-components
+title: "Testing Learned Database Components"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Testing Learned Database Components
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/testing-learned-components` · **Status:** open

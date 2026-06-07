@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/multimodel-auto-tuning
+title: "Auto-tuning storage for mixed workloads"
+topic: 32-multimodel-document-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Auto-tuning storage for mixed workloads
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/multimodel-auto-tuning` · **Status:** empirically-open

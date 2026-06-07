@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/cq-counting-enumeration
+title: "Counting and Enumeration Complexity of CQs"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Counting and Enumeration Complexity of CQs
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/cq-counting-enumeration` · **Status:** partially-solved

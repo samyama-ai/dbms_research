@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-optimizer-convergence
+title: "Learned Query Optimizer Convergence"
+topic: 27-learned-db-components
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Query Optimizer Convergence
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-optimizer-convergence` · **Status:** empirically-open

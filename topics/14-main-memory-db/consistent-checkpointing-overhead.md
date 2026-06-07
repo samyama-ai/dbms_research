@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/consistent-checkpointing-overhead
+title: "Low-Overhead Consistent Checkpointing"
+topic: 14-main-memory-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Low-Overhead Consistent Checkpointing
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/consistent-checkpointing-overhead` · **Status:** partially-solved

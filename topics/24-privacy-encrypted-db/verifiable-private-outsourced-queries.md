@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/verifiable-private-outsourced-queries
+title: "Verifiable Private Outsourced Queries"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifiable Private Outsourced Queries
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/verifiable-private-outsourced-queries` · **Status:** partially-solved

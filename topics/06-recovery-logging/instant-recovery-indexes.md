@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/instant-recovery-indexes
+title: "Instant recovery for indexes"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Instant recovery for indexes
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/instant-recovery-indexes` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/normalization-beyond-4nf-5nf
+title: "Normalization Beyond Fourth/Fifth Normal Form"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Normalization Beyond Fourth/Fifth Normal Form
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/normalization-beyond-4nf-5nf` · **Status:** open

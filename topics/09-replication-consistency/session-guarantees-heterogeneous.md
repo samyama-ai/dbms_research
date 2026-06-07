@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/session-guarantees-heterogeneous
+title: "Read-your-writes across heterogeneous sessions"
+topic: 09-replication-consistency
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Read-your-writes across heterogeneous sessions
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/session-guarantees-heterogeneous` · **Status:** partially-solved

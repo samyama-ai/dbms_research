@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/rtree-worst-case-optimal
+title: "Worst-case-optimal dynamic R-tree"
+topic: 20-spatial-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal dynamic R-tree
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/rtree-worst-case-optimal` · **Status:** open

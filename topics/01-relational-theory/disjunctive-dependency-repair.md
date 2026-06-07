@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/disjunctive-dependency-repair
+title: "Disjunctive and Existential Dependency Repair"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disjunctive and Existential Dependency Repair
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/disjunctive-dependency-repair` · **Status:** open

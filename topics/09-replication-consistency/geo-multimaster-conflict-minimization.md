@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/geo-multimaster-conflict-minimization
+title: "Geo-replicated multi-master conflict minimization"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Geo-replicated multi-master conflict minimization
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/geo-multimaster-conflict-minimization` · **Status:** open

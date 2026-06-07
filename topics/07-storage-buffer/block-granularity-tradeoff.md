@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/block-granularity-tradeoff
+title: "Optimal Block-Granularity for Random vs Sequential I/O"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Block-Granularity for Random vs Sequential I/O
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/block-granularity-tradeoff` · **Status:** open

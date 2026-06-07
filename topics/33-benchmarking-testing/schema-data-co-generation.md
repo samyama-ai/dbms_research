@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/schema-data-co-generation
+title: "Schema-and-Data Co-Generation for Stress Tests"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Schema-and-Data Co-Generation for Stress Tests
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/schema-data-co-generation` · **Status:** open

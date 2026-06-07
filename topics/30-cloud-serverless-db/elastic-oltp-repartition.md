@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/elastic-oltp-repartition
+title: "Elastic transaction processing without downtime"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Elastic transaction processing without downtime
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/elastic-oltp-repartition` · **Status:** empirically-open

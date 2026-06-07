@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/bcnf-dependency-preserving-synthesis
+title: "Tractable Synthesis of Dependency-Preserving BCNF"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tractable Synthesis of Dependency-Preserving BCNF
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/bcnf-dependency-preserving-synthesis` · **Status:** open

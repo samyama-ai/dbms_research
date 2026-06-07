@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/cardinality-estimator-benchmarking
+title: "Cardinality-Estimator Accuracy Benchmarking"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality-Estimator Accuracy Benchmarking
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/cardinality-estimator-benchmarking` · **Status:** partially-solved

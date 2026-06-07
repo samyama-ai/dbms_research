@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/matching-transitivity-clustering
+title: "Transitive Closure in Matching"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Transitive Closure in Matching
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/matching-transitivity-clustering` · **Status:** partially-solved

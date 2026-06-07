@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/cloud-egress-caching
+title: "Cloud Storage Caching with Egress Cost"
+topic: 07-storage-buffer
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cloud Storage Caching with Egress Cost
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/cloud-egress-caching` · **Status:** empirically-open

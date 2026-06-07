@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/lav-rewriting-definability
+title: "Definability and Loss in LAV Rewriting"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Definability and Loss in LAV Rewriting
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/lav-rewriting-definability` · **Status:** partially-solved

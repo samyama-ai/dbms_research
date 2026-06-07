@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/legacy-redundancy-detection
+title: "Redundancy and Anomaly Detection in Legacy Schemas"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Redundancy and Anomaly Detection in Legacy Schemas
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/legacy-redundancy-detection` · **Status:** partially-solved

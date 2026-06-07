@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/multi-query-synopsis-sharing
+title: "Multi-Query Synopsis Sharing"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Query Synopsis Sharing
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/multi-query-synopsis-sharing` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/index-under-drift
+title: "Index maintenance under schema/data drift"
+topic: 04-indexing-access-methods
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Index maintenance under schema/data drift
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/index-under-drift` · **Status:** empirically-open

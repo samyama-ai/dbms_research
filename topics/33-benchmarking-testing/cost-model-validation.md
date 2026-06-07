@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/cost-model-validation
+title: "Cost-Model Validation and Calibration"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-Model Validation and Calibration
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/cost-model-validation` · **Status:** open

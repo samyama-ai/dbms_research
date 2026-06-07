@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/learned-layout-codesign
+title: "End-to-End Learned Storage-Layout Co-Design"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-End Learned Storage-Layout Co-Design
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/learned-layout-codesign` · **Status:** open

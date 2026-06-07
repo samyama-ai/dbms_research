@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/fpga-partial-reconfiguration
+title: "Partial reconfiguration for query acceleration"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Partial reconfiguration for query acceleration
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/fpga-partial-reconfiguration` · **Status:** open

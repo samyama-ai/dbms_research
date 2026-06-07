@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/execution-on-compressed-data
+title: "Query execution over compressed data"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query execution over compressed data
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/execution-on-compressed-data` · **Status:** partially-solved

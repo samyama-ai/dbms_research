@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/error-bounded-compression-optimal
+title: "Optimal error-bounded streaming compression"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal error-bounded streaming compression
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/error-bounded-compression-optimal` · **Status:** open

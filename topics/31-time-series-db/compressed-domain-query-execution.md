@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/compressed-domain-query-execution
+title: "Compression-aware query execution"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compression-aware query execution
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/compressed-domain-query-execution` · **Status:** partially-solved

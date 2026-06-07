@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-decision-explainability
+title: "Explainability and Debuggability of Learned Decisions"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Explainability and Debuggability of Learned Decisions
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-decision-explainability` · **Status:** open

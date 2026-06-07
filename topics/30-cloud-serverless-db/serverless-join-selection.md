@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/serverless-join-selection
+title: "Serverless join-algorithm selection"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Serverless join-algorithm selection
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/serverless-join-selection` · **Status:** open

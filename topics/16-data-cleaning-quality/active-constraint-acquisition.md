@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/active-constraint-acquisition
+title: "Active Learning for Constraint Acquisition"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Active Learning for Constraint Acquisition
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/active-constraint-acquisition` · **Status:** partially-solved

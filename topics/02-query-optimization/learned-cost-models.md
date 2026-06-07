@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/learned-cost-models
+title: "Learned cost models with reliability guarantees"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned cost models with reliability guarantees
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/learned-cost-models` · **Status:** empirically-open

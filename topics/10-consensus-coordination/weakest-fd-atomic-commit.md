@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/weakest-fd-atomic-commit
+title: "Weakest Failure Detector for Commit"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Weakest Failure Detector for Commit
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/weakest-fd-atomic-commit` · **Status:** partially-solved

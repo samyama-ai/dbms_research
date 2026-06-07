@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/knowledge-graph-repair
+title: "Repairing Knowledge Graphs and Linked Data"
+topic: 16-data-cleaning-quality
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Repairing Knowledge Graphs and Linked Data
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/knowledge-graph-repair` · **Status:** empirically-open

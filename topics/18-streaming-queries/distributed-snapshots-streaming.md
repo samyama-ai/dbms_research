@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/distributed-snapshots-streaming
+title: "Consistent distributed snapshots for stateful operators"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consistent distributed snapshots for stateful operators
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/distributed-snapshots-streaming` · **Status:** partially-solved

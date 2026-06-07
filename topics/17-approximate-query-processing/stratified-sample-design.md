@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/stratified-sample-design
+title: "Optimal Stratified Sample Design"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Stratified Sample Design
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/stratified-sample-design` · **Status:** open

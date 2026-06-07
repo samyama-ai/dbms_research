@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/compressed-operator-completeness
+title: "Direct Computation on Compressed Columns"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Direct Computation on Compressed Columns
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/compressed-operator-completeness` · **Status:** partially-solved

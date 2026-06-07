@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/schema-mapping-minimization
+title: "Schema Mapping Optimization and Minimality"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Schema Mapping Optimization and Minimality
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/schema-mapping-minimization` · **Status:** partially-solved

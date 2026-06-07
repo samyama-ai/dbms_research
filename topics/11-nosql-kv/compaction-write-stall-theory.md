@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/compaction-write-stall-theory
+title: "Compaction Write-Stall Theory"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compaction Write-Stall Theory
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/compaction-write-stall-theory` · **Status:** open

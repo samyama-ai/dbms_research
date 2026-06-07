@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/provenance-storage-overhead
+title: "Provenance Storage Overhead Bounds"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provenance Storage Overhead Bounds
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/provenance-storage-overhead` · **Status:** open

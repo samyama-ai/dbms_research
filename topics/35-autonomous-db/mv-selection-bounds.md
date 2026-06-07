@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/mv-selection-bounds
+title: "Materialized View Selection Bounds"
+topic: 35-autonomous-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Materialized View Selection Bounds
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/mv-selection-bounds` · **Status:** partially-solved

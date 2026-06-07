@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/wco-subgraph-matching
+title: "Practical worst-case-optimal subgraph matching"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Practical worst-case-optimal subgraph matching
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/wco-subgraph-matching` · **Status:** partially-solved

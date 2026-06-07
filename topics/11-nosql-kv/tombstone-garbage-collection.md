@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/tombstone-garbage-collection
+title: "Optimal Tombstone Garbage Collection"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Tombstone Garbage Collection
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/tombstone-garbage-collection` · **Status:** open

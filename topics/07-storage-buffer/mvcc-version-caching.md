@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/mvcc-version-caching
+title: "Snapshot/MVCC Version Page Caching"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Snapshot/MVCC Version Page Caching
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/mvcc-version-caching` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/mutation-testing-sql
+title: "Mutation Testing for SQL and Schemas"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mutation Testing for SQL and Schemas
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/mutation-testing-sql` · **Status:** partially-solved

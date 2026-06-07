@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/vector-graph-queries
+title: "Vector-augmented graph query processing"
+topic: 21-graph-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Vector-augmented graph query processing
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/vector-graph-queries` · **Status:** empirically-open

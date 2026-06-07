@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/beyond-agm-degree-bounds
+title: "Beyond-AGM bounds with functional dependencies"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Beyond-AGM bounds with functional dependencies
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/beyond-agm-degree-bounds` · **Status:** partially-solved

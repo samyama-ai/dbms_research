@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/reverse-data-management-tractability
+title: "Reverse Data Management Tractability"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Reverse Data Management Tractability
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/reverse-data-management-tractability` · **Status:** open

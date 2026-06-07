@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/plan-cost-sensitivity
+title: "End-to-End Plan-Cost Sensitivity to CE Error"
+topic: 26-cardinality-estimation
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-End Plan-Cost Sensitivity to CE Error
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/plan-cost-sensitivity` · **Status:** empirically-open

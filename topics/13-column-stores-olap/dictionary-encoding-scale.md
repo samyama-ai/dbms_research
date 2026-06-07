@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/dictionary-encoding-scale
+title: "String/Dictionary Encoding at Scale"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # String/Dictionary Encoding at Scale
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/dictionary-encoding-scale` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/mapping-discovery-from-examples
+title: "Mapping Discovery From Data Examples"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mapping Discovery From Data Examples
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/mapping-discovery-from-examples` · **Status:** partially-solved

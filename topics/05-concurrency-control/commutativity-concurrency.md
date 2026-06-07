@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/commutativity-concurrency
+title: "Commutativity-Based Concurrency Exploitation"
+topic: 05-concurrency-control
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Commutativity-Based Concurrency Exploitation
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/commutativity-concurrency` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/lsm-compaction-scheduling
+title: "Optimal LSM Compaction Scheduling"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal LSM Compaction Scheduling
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/lsm-compaction-scheduling` · **Status:** open

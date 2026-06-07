@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/rum-tradeoff-lower-bound
+title: "Closing the RUM tradeoff lower bound"
+topic: 04-indexing-access-methods
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Closing the RUM tradeoff lower bound
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/rum-tradeoff-lower-bound` · **Status:** open

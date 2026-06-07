@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/range-similarity-search
+title: "Range and threshold similarity search"
+topic: 28-vector-similarity-search
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Range and threshold similarity search
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/range-similarity-search` · **Status:** partially-solved

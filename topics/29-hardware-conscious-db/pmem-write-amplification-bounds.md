@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/pmem-write-amplification-bounds
+title: "Persistent-memory write-amplification bounds"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Persistent-memory write-amplification bounds
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/pmem-write-amplification-bounds` · **Status:** open

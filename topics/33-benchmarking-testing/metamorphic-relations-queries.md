@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/metamorphic-relations-queries
+title: "Metamorphic Relations for Query Engines"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Metamorphic Relations for Query Engines
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/metamorphic-relations-queries` · **Status:** partially-solved

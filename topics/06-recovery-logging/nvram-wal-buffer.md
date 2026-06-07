@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/nvram-wal-buffer
+title: "Non-volatile WAL buffer semantics"
+topic: 06-recovery-logging
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Non-volatile WAL buffer semantics
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/nvram-wal-buffer` · **Status:** empirically-open

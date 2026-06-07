@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/native-vs-relational-storage
+title: "Native graph storage vs. relational backing"
+topic: 21-graph-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Native graph storage vs. relational backing
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/native-vs-relational-storage` · **Status:** empirically-open

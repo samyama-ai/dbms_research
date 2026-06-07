@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/skew-resilient-key-distribution
+title: "Skew-Resilient Key Distribution"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Skew-Resilient Key Distribution
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/skew-resilient-key-distribution` · **Status:** open

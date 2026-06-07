@@ -1,3 +1,15 @@
+---
+id: 23-database-security/hru-safety-decidability
+title: "Safety of Propagating Access Rights"
+topic: 23-database-security
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Safety of Propagating Access Rights
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/hru-safety-decidability` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/adversarial-robustness-ann
+title: "Adversarial robustness of ANN indexes"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adversarial robustness of ANN indexes
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/adversarial-robustness-ann` · **Status:** open

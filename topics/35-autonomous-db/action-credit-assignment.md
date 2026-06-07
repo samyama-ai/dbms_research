@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/action-credit-assignment
+title: "Credit Assignment Across Actions"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Credit Assignment Across Actions
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/action-credit-assignment` · **Status:** open

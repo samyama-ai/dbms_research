@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/correlated-subquery-estimation
+title: "Correlated Predicates Across Subqueries"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Correlated Predicates Across Subqueries
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/correlated-subquery-estimation` · **Status:** open

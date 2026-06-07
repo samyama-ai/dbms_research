@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/remote-io-cost-model
+title: "Disaggregated-storage I/O cost models"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disaggregated-storage I/O cost models
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/remote-io-cost-model` · **Status:** partially-solved

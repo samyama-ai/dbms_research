@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/constraint-aware-imputation
+title: "Imputation Under Constraints"
+topic: 16-data-cleaning-quality
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Imputation Under Constraints
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/constraint-aware-imputation` · **Status:** open

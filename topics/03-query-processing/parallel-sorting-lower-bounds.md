@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/parallel-sorting-lower-bounds
+title: "Massively parallel sorting lower bounds"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Massively parallel sorting lower bounds
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/parallel-sorting-lower-bounds` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/time-travel-cost-models
+title: "Time-Travel Query Cost Models"
+topic: 19-temporal-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Time-Travel Query Cost Models
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/time-travel-cost-models` · **Status:** empirically-open

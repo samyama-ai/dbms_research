@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/cardinality-error-propagation
+title: "Cardinality estimation error propagation through plans"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality estimation error propagation through plans
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/cardinality-error-propagation` · **Status:** open

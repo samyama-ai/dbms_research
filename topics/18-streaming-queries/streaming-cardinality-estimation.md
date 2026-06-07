@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/streaming-cardinality-estimation
+title: "Streaming cardinality and rate estimation for optimization"
+topic: 18-streaming-queries
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Streaming cardinality and rate estimation for optimization
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/streaming-cardinality-estimation` · **Status:** empirically-open

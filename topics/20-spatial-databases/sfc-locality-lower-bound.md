@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/sfc-locality-lower-bound
+title: "Space-filling-curve locality lower bounds"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Space-filling-curve locality lower bounds
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/sfc-locality-lower-bound` · **Status:** partially-solved

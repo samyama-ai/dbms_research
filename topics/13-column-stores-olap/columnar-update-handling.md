@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/columnar-update-handling
+title: "Updates and Deletes in Column Stores"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Updates and Deletes in Column Stores
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/columnar-update-handling` · **Status:** partially-solved

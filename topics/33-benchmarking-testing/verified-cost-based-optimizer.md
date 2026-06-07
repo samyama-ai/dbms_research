@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/verified-cost-based-optimizer
+title: "Mechanized Proof of a Cost-Based Optimizer"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Mechanized Proof of a Cost-Based Optimizer
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/verified-cost-based-optimizer` · **Status:** open

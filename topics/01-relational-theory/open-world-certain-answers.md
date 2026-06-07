@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/open-world-certain-answers
+title: "Open-World Certain Answers Complexity"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Open-World Certain Answers Complexity
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/open-world-certain-answers` · **Status:** partially-solved

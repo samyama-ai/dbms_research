@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/synopsis-information-limits
+title: "Information-Theoretic Limits of CE Synopses"
+topic: 26-cardinality-estimation
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Information-Theoretic Limits of CE Synopses
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/synopsis-information-limits` · **Status:** partially-solved

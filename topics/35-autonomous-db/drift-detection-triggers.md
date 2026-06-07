@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/drift-detection-triggers
+title: "Concept Drift Detection for Triggers"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Concept Drift Detection for Triggers
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/drift-detection-triggers` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/lsm-secondary-indexing
+title: "Secondary indexing on LSM-trees"
+topic: 04-indexing-access-methods
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Secondary indexing on LSM-trees
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/lsm-secondary-indexing` · **Status:** partially-solved

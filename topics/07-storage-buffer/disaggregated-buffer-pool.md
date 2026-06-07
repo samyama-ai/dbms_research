@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/disaggregated-buffer-pool
+title: "Buffer Management for Disaggregated Memory"
+topic: 07-storage-buffer
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Buffer Management for Disaggregated Memory
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/disaggregated-buffer-pool` · **Status:** empirically-open

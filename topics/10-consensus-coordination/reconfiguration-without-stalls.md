@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/reconfiguration-without-stalls
+title: "Reconfiguration Without Quorum Stalls"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Reconfiguration Without Quorum Stalls
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/reconfiguration-without-stalls` · **Status:** open

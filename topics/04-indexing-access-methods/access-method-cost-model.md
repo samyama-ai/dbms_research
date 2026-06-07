@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/access-method-cost-model
+title: "Unified cost model for access-method design"
+topic: 04-indexing-access-methods
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Unified cost model for access-method design
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/access-method-cost-model` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/sampling-over-joins
+title: "Unbiased Sampling Over Joins"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Unbiased Sampling Over Joins
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/sampling-over-joins` · **Status:** partially-solved

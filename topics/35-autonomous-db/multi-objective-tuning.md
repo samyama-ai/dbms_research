@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/multi-objective-tuning
+title: "Multi-Objective Autonomous Tuning"
+topic: 35-autonomous-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Objective Autonomous Tuning
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/multi-objective-tuning` · **Status:** partially-solved

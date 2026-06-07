@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/continuous-rollup-maintenance
+title: "Continuous-query rollup maintenance"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Continuous-query rollup maintenance
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/continuous-rollup-maintenance` · **Status:** partially-solved

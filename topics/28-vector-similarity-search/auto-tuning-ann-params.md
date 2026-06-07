@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/auto-tuning-ann-params
+title: "Right-sizing index parameters automatically"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Right-sizing index parameters automatically
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/auto-tuning-ann-params` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/human-in-the-loop-dependency-validation
+title: "Human-in-the-Loop Dependency Validation"
+topic: 34-schema-design-normalization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Human-in-the-Loop Dependency Validation
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/human-in-the-loop-dependency-validation` · **Status:** empirically-open

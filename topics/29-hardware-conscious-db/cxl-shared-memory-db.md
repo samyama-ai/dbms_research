@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/cxl-shared-memory-db
+title: "Coherence-free CXL-shared-memory databases"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Coherence-free CXL-shared-memory databases
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/cxl-shared-memory-db` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/schema-synthesis-complexity
+title: "Dependency-Driven Schema Synthesis Complexity"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Dependency-Driven Schema Synthesis Complexity
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/schema-synthesis-complexity` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/gap-filling-semantics
+title: "Gap-filling and interpolation semantics"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Gap-filling and interpolation semantics
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/gap-filling-semantics` · **Status:** open

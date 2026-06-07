@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/prefetch-depth-control
+title: "Cardinality-Aware Prefetch Depth Control"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cardinality-Aware Prefetch Depth Control
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/prefetch-depth-control` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/end-to-end-architecture
+title: "End-to-End Self-Driving Architecture"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # End-to-End Self-Driving Architecture
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/end-to-end-architecture` · **Status:** open

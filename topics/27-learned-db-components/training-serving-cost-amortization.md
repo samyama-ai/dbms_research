@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/training-serving-cost-amortization
+title: "Training and Serving Cost Amortization"
+topic: 27-learned-db-components
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Training and Serving Cost Amortization
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/training-serving-cost-amortization` · **Status:** empirically-open

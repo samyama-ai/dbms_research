@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/estimate-consistency-monotonicity
+title: "Subset/Superset Consistency of Estimates"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Subset/Superset Consistency of Estimates
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/estimate-consistency-monotonicity` · **Status:** open

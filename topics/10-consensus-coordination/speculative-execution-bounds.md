@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/speculative-execution-bounds
+title: "Speculative Execution Rollback Bounds"
+topic: 10-consensus-coordination
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Speculative Execution Rollback Bounds
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/speculative-execution-bounds` · **Status:** empirically-open

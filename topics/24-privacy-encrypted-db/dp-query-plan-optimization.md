@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/dp-query-plan-optimization
+title: "Differentially Private Query Plan Optimization"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Differentially Private Query Plan Optimization
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/dp-query-plan-optimization` · **Status:** open

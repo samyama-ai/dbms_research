@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/multitenant-work-sharing
+title: "Multi-tenant query-result and plan sharing"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-tenant query-result and plan sharing
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/multitenant-work-sharing` · **Status:** partially-solved

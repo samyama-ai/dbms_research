@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/gpu-query-execution
+title: "GPU-resident join and aggregation execution"
+topic: 03-query-processing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU-resident join and aggregation execution
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/gpu-query-execution` · **Status:** empirically-open

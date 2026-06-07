@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/cross-system-transfer
+title: "Cross-System Transfer of Policies"
+topic: 35-autonomous-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-System Transfer of Policies
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/cross-system-transfer` · **Status:** empirically-open

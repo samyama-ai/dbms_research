@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/algebraic-completeness
+title: "Expressive Completeness of Algebraic Query Languages"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Expressive Completeness of Algebraic Query Languages
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/algebraic-completeness` · **Status:** partially-solved

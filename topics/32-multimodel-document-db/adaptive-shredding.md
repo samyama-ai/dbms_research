@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/adaptive-shredding
+title: "Adaptive shredding of nested data"
+topic: 32-multimodel-document-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive shredding of nested data
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/adaptive-shredding` · **Status:** empirically-open

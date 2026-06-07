@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/subsequence-distance-indexing
+title: "Indexing for distance-based subsequence queries"
+topic: 31-time-series-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Indexing for distance-based subsequence queries
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/subsequence-distance-indexing` · **Status:** partially-solved

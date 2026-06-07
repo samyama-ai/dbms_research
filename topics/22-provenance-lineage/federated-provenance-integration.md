@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/federated-provenance-integration
+title: "Cross-System Federated Provenance"
+topic: 22-provenance-lineage
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cross-System Federated Provenance
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/federated-provenance-integration` · **Status:** open

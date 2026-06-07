@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/temporal-path-queries
+title: "Temporal and time-respecting path queries"
+topic: 21-graph-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal and time-respecting path queries
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/temporal-path-queries` · **Status:** open

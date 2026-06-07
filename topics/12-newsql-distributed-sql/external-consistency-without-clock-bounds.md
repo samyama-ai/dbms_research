@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/external-consistency-without-clock-bounds
+title: "Clock-uncertainty-free external consistency"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Clock-uncertainty-free external consistency
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/external-consistency-without-clock-bounds` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/robust-plans-under-uncertainty
+title: "Robust Optimization Under Estimation Uncertainty"
+topic: 26-cardinality-estimation
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Robust Optimization Under Estimation Uncertainty
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/robust-plans-under-uncertainty` · **Status:** partially-solved

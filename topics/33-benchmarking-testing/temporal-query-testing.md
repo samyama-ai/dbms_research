@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/temporal-query-testing
+title: "Time-Travel and Temporal Query Testing"
+topic: 33-benchmarking-testing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Time-Travel and Temporal Query Testing
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/temporal-query-testing` · **Status:** open

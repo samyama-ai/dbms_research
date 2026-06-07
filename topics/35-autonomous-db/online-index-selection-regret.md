@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/online-index-selection-regret
+title: "Online Index Selection with Regret Bounds"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Online Index Selection with Regret Bounds
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/online-index-selection-regret` · **Status:** open

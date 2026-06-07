@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/watermark-lateness-bounds
+title: "Watermark generation with provable lateness bounds"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Watermark generation with provable lateness bounds
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/watermark-lateness-bounds` · **Status:** open

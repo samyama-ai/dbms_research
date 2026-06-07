@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/schema-matching-lower-bounds
+title: "Schema Matching Quality Lower Bounds"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Schema Matching Quality Lower Bounds
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/schema-matching-lower-bounds` · **Status:** open

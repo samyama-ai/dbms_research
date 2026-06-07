@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/group-commit-latency-tradeoff
+title: "Group Commit vs Latency Tradeoff"
+topic: 14-main-memory-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Group Commit vs Latency Tradeoff
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/group-commit-latency-tradeoff` · **Status:** partially-solved

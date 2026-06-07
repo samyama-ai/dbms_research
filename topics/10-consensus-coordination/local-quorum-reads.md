@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/local-quorum-reads
+title: "Quorum Reads Without Round Trips"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Quorum Reads Without Round Trips
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/local-quorum-reads` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/wcoj-parallel-hardware
+title: "Worst-case-optimal joins on parallel hardware"
+topic: 29-hardware-conscious-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal joins on parallel hardware
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/wcoj-parallel-hardware` · **Status:** open

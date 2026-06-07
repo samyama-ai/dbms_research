@@ -1,3 +1,15 @@
+---
+id: 23-database-security/dynamic-sod-enforcement
+title: "Dynamic Separation of Duty Enforcement"
+topic: 23-database-security
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Dynamic Separation of Duty Enforcement
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/dynamic-sod-enforcement` · **Status:** open

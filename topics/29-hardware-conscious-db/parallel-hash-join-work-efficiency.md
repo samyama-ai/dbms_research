@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/parallel-hash-join-work-efficiency
+title: "Provably work-efficient parallel hash joins"
+topic: 29-hardware-conscious-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provably work-efficient parallel hash joins
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/parallel-hash-join-work-efficiency` · **Status:** partially-solved

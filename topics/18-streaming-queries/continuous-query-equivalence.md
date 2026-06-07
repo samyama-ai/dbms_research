@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/continuous-query-equivalence
+title: "Continuous query containment and equivalence"
+topic: 18-streaming-queries
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Continuous query containment and equivalence
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/continuous-query-equivalence` · **Status:** open

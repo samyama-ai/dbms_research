@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/blocking-recall-guarantees
+title: "Blocking With Recall Guarantees at Scale"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Blocking With Recall Guarantees at Scale
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/blocking-recall-guarantees` · **Status:** open

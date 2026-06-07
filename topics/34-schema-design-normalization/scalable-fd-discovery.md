@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/scalable-fd-discovery
+title: "Exact Functional-Dependency Discovery at Scale"
+topic: 34-schema-design-normalization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Exact Functional-Dependency Discovery at Scale
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/scalable-fd-discovery` · **Status:** partially-solved

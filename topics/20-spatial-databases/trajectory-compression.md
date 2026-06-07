@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/trajectory-compression
+title: "Trajectory compression with query guarantees"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Trajectory compression with query guarantees
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/trajectory-compression` · **Status:** partially-solved

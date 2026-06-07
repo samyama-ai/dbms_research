@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/schema-on-read-typing
+title: "Type systems for schema-on-read access"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Type systems for schema-on-read access
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/schema-on-read-typing` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/verifiable-billing
+title: "Verifiable billing for cloud query services"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifiable billing for cloud query services
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/verifiable-billing` · **Status:** open

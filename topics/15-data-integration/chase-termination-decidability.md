@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/chase-termination-decidability
+title: "Chase Termination Decidability Gap"
+topic: 15-data-integration
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Chase Termination Decidability Gap
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/chase-termination-decidability` · **Status:** open

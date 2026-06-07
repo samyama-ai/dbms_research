@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/quorum-systems-skewed-workloads
+title: "Optimal read/write quorum systems for skewed workloads"
+topic: 09-replication-consistency
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal read/write quorum systems for skewed workloads
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/quorum-systems-skewed-workloads` · **Status:** open

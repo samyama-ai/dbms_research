@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/deterministic-interactive-transactions
+title: "One-shot vs interactive deterministic transactions"
+topic: 12-newsql-distributed-sql
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # One-shot vs interactive deterministic transactions
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/deterministic-interactive-transactions` · **Status:** partially-solved

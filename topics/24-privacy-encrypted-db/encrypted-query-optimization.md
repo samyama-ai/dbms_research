@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/encrypted-query-optimization
+title: "Encrypted Query Optimization and Planning"
+topic: 24-privacy-encrypted-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Encrypted Query Optimization and Planning
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/encrypted-query-optimization` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/serializable-mvcc-single-read
+title: "Serializable MVCC With One Version Read"
+topic: 05-concurrency-control
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Serializable MVCC With One Version Read
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/serializable-mvcc-single-read` · **Status:** open

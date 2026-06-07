@@ -1,3 +1,15 @@
+---
+id: 23-database-security/fine-grained-rewriting
+title: "Query Rewriting for Fine-Grained Access"
+topic: 23-database-security
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query Rewriting for Fine-Grained Access
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/fine-grained-rewriting` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/window-join-state-lower-bounds
+title: "Lower bounds for window-join state"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower bounds for window-join state
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/window-join-state-lower-bounds` · **Status:** partially-solved

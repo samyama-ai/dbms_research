@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/adaptive-compaction-switching
+title: "Adaptive Compaction Policy Switching"
+topic: 11-nosql-kv
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Adaptive Compaction Policy Switching
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/adaptive-compaction-switching` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/deterministic-dynamic-rwsets
+title: "Deterministic execution with dynamic read/write sets"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Deterministic execution with dynamic read/write sets
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/deterministic-dynamic-rwsets` · **Status:** open

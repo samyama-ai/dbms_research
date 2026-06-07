@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/deterministic-replay
+title: "Deterministic replay for nondeterministic operators"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Deterministic replay for nondeterministic operators
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/deterministic-replay` · **Status:** partially-solved

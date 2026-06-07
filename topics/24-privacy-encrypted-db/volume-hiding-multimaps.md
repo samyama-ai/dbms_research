@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/volume-hiding-multimaps
+title: "Volume-Hiding Encrypted Multi-Maps"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Volume-Hiding Encrypted Multi-Maps
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/volume-hiding-multimaps` · **Status:** partially-solved

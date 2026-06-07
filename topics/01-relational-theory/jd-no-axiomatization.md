@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/jd-no-axiomatization
+title: "MVD/JD Inference Without a Complete Axiomatization"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # MVD/JD Inference Without a Complete Axiomatization
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/jd-no-axiomatization` · **Status:** open

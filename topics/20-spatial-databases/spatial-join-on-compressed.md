@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/spatial-join-on-compressed
+title: "Spatial joins on compressed/encoded data"
+topic: 20-spatial-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spatial joins on compressed/encoded data
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/spatial-join-on-compressed` · **Status:** empirically-open

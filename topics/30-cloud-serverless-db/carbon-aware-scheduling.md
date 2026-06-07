@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/carbon-aware-scheduling
+title: "Energy- and carbon-aware cloud query scheduling"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Energy- and carbon-aware cloud query scheduling
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/carbon-aware-scheduling` · **Status:** empirically-open

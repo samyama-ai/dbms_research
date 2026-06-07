@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/compression-aware-distance
+title: "Compression-aware distance estimation"
+topic: 28-vector-similarity-search
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Compression-aware distance estimation
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/compression-aware-distance` · **Status:** partially-solved

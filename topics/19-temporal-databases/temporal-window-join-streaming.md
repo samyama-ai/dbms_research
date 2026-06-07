@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/temporal-window-join-streaming
+title: "Temporal Window Join Streaming Bounds"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal Window Join Streaming Bounds
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-window-join-streaming` · **Status:** open

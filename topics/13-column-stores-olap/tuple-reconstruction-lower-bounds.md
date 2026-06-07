@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/tuple-reconstruction-lower-bounds
+title: "Tuple Reconstruction Cost Lower Bounds"
+topic: 13-column-stores-olap
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tuple Reconstruction Cost Lower Bounds
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/tuple-reconstruction-lower-bounds` · **Status:** open

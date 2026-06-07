@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/business-rules-to-constraints
+title: "Embedding Business Rules as Schema Constraints"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Embedding Business Rules as Schema Constraints
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/business-rules-to-constraints` · **Status:** open

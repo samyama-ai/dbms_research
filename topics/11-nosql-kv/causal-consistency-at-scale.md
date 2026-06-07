@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/causal-consistency-at-scale
+title: "Causal Consistency at Scale"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Causal Consistency at Scale
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/causal-consistency-at-scale` · **Status:** partially-solved

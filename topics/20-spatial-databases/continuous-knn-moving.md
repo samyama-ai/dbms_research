@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/continuous-knn-moving
+title: "Continuous kNN over moving queries"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Continuous kNN over moving queries
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/continuous-knn-moving` · **Status:** partially-solved

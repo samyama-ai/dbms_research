@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/forward-backward-private-sse
+title: "Forward/Backward Private Dynamic SSE"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Forward/Backward Private Dynamic SSE
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/forward-backward-private-sse` · **Status:** partially-solved

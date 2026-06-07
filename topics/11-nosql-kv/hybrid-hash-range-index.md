@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/hybrid-hash-range-index
+title: "Hybrid Hash-Range Index Structures"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid Hash-Range Index Structures
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/hybrid-hash-range-index` · **Status:** open

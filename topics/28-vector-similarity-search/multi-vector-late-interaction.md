@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/multi-vector-late-interaction
+title: "Multi-vector and late-interaction search"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-vector and late-interaction search
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/multi-vector-late-interaction` · **Status:** empirically-open

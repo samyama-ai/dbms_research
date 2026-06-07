@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/aries-formal-verification
+title: "Provably correct ARIES variants"
+topic: 06-recovery-logging
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provably correct ARIES variants
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/aries-formal-verification` · **Status:** partially-solved

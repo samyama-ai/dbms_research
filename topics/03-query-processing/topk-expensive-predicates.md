@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/topk-expensive-predicates
+title: "Top-k with expensive or ML predicates"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Top-k with expensive or ML predicates
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/topk-expensive-predicates` · **Status:** open

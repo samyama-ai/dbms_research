@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/groupby-result-cardinality
+title: "Group-By / Aggregation Result Cardinality"
+topic: 26-cardinality-estimation
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Group-By / Aggregation Result Cardinality
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/groupby-result-cardinality` · **Status:** open

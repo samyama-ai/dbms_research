@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/encoded-predicate-pushdown
+title: "Selection Pushdown into Encoded Scans"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Selection Pushdown into Encoded Scans
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/encoded-predicate-pushdown` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/cache-oblivious-sorting
+title: "Cache-oblivious in-memory sorting"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache-oblivious in-memory sorting
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/cache-oblivious-sorting` · **Status:** partially-solved

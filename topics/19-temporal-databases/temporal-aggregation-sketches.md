@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/temporal-aggregation-sketches
+title: "Temporal Aggregation Sketches"
+topic: 19-temporal-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Temporal Aggregation Sketches
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/temporal-aggregation-sketches` · **Status:** partially-solved

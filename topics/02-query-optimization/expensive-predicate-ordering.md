@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/expensive-predicate-ordering
+title: "Optimizing queries with expensive predicates"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimizing queries with expensive predicates
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/expensive-predicate-ordering` · **Status:** partially-solved

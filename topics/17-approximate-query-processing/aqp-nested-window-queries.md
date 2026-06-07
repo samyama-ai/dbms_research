@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/aqp-nested-window-queries
+title: "AQP for Nested and Window Queries"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # AQP for Nested and Window Queries
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/aqp-nested-window-queries` · **Status:** open

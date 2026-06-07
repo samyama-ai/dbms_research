@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/wco-enumeration-delay
+title: "Worst-case-optimal enumeration with delay guarantees"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal enumeration with delay guarantees
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/wco-enumeration-delay` · **Status:** partially-solved

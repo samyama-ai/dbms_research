@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/near-data-pushdown
+title: "Near-data processing operator pushdown"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Near-data processing operator pushdown
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/near-data-pushdown` · **Status:** empirically-open

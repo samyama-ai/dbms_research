@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/polystore-data-placement
+title: "Optimal data placement across polystore tiers"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal data placement across polystore tiers
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/polystore-data-placement` · **Status:** open

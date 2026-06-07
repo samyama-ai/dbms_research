@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/spot-instance-resilience
+title: "Spot-instance-resilient query execution"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Spot-instance-resilient query execution
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/spot-instance-resilience` · **Status:** empirically-open

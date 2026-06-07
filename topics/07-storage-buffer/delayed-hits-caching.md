@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/delayed-hits-caching
+title: "Competitive Caching with Delayed Hits"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Competitive Caching with Delayed Hits
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/delayed-hits-caching` · **Status:** partially-solved

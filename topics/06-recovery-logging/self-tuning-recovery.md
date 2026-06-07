@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/self-tuning-recovery
+title: "Self-tuning recovery parameters"
+topic: 06-recovery-logging
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Self-tuning recovery parameters
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/self-tuning-recovery` · **Status:** empirically-open

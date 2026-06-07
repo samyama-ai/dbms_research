@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/bounded-staleness-guarantees
+title: "Bounded-Staleness Read Guarantees"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bounded-Staleness Read Guarantees
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/bounded-staleness-guarantees` · **Status:** partially-solved

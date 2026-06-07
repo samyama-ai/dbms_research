@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/tsdb-cost-based-optimization
+title: "Cost-based optimization for TSDB query plans"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-based optimization for TSDB query plans
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/tsdb-cost-based-optimization` · **Status:** open

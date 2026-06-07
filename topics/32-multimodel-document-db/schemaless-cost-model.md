@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/schemaless-cost-model
+title: "Cost model for schemaless document scans"
+topic: 32-multimodel-document-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost model for schemaless document scans
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/schemaless-cost-model` · **Status:** empirically-open

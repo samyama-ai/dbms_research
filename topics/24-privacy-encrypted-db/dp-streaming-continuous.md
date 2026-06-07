@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/dp-streaming-continuous
+title: "DP for Streaming and Continuous Queries"
+topic: 24-privacy-encrypted-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # DP for Streaming and Continuous Queries
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/dp-streaming-continuous` · **Status:** partially-solved

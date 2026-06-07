@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/cq-treewidth-submodular-width
+title: "Tractable CQs via Treewidth/Submodular Width"
+topic: 01-relational-theory
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tractable CQs via Treewidth/Submodular Width
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/cq-treewidth-submodular-width` · **Status:** partially-solved

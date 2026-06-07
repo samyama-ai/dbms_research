@@ -1,3 +1,15 @@
+---
+id: 26-cardinality-estimation/degree-constrained-bounds
+title: "Worst-Case-Optimal Bounds with Degree Constraints"
+topic: 26-cardinality-estimation
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-Case-Optimal Bounds with Degree Constraints
 
 > **Topic:** Cardinality Estimation & Statistics · **ID:** `26-cardinality-estimation/degree-constrained-bounds` · **Status:** partially-solved

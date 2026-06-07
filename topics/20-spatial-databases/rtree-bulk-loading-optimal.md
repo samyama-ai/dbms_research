@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/rtree-bulk-loading-optimal
+title: "Optimal R-tree bulk-loading objective"
+topic: 20-spatial-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal R-tree bulk-loading objective
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/rtree-bulk-loading-optimal` · **Status:** partially-solved

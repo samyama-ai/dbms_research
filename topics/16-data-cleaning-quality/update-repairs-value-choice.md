@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/update-repairs-value-choice
+title: "Update-Based Repairs with Value Imputation"
+topic: 16-data-cleaning-quality
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Update-Based Repairs with Value Imputation
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/update-repairs-value-choice` · **Status:** open

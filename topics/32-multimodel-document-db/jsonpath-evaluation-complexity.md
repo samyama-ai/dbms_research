@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/jsonpath-evaluation-complexity
+title: "Complexity of JSONPath query evaluation"
+topic: 32-multimodel-document-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Complexity of JSONPath query evaluation
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/jsonpath-evaluation-complexity` · **Status:** partially-solved

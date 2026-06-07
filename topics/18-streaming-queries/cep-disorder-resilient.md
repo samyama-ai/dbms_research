@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/cep-disorder-resilient
+title: "Disorder-resilient event-pattern (CEP) matching"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disorder-resilient event-pattern (CEP) matching
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/cep-disorder-resilient` · **Status:** partially-solved

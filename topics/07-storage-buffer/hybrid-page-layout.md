@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/hybrid-page-layout
+title: "Optimal Page Layout for Mixed OLTP/OLAP Access"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal Page Layout for Mixed OLTP/OLAP Access
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/hybrid-page-layout` · **Status:** open

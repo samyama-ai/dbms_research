@@ -1,3 +1,15 @@
+---
+id: 23-database-security/access-pattern-leakage
+title: "Access-Pattern Leakage Quantification"
+topic: 23-database-security
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Access-Pattern Leakage Quantification
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/access-pattern-leakage` · **Status:** partially-solved

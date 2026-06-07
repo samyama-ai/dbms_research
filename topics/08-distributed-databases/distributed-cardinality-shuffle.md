@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/distributed-cardinality-shuffle
+title: "Distributed Cardinality for Repartitioning"
+topic: 08-distributed-databases
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed Cardinality for Repartitioning
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/distributed-cardinality-shuffle` · **Status:** empirically-open

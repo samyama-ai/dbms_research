@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/document-relational-rewriting
+title: "Query rewriting between document and relational"
+topic: 32-multimodel-document-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Query rewriting between document and relational
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/document-relational-rewriting` · **Status:** partially-solved

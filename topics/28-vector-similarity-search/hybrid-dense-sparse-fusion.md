@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/hybrid-dense-sparse-fusion
+title: "Hybrid dense-sparse retrieval fusion"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid dense-sparse retrieval fusion
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/hybrid-dense-sparse-fusion` · **Status:** empirically-open

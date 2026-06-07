@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/crowd-cleaning-cost
+title: "Crowd-Powered Cleaning Cost Optimization"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Crowd-Powered Cleaning Cost Optimization
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/crowd-cleaning-cost` · **Status:** partially-solved

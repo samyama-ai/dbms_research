@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-ce-error-guarantees
+title: "Worst-Case Error Guarantees for Learned CE"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-Case Error Guarantees for Learned CE
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-ce-error-guarantees` · **Status:** open

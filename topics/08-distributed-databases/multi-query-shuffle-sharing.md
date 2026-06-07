@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/multi-query-shuffle-sharing
+title: "Multi-Query Shuffle Sharing"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Query Shuffle Sharing
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/multi-query-shuffle-sharing` · **Status:** open

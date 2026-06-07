@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/bounded-staleness-coordination
+title: "Bounded Staleness Coordination"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bounded Staleness Coordination
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/bounded-staleness-coordination` · **Status:** partially-solved

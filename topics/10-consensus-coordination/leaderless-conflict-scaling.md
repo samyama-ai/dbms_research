@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/leaderless-conflict-scaling
+title: "Leaderless Consensus Conflict Scaling"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Leaderless Consensus Conflict Scaling
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/leaderless-conflict-scaling` · **Status:** partially-solved

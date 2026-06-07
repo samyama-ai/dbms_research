@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/crash-consistency-testing
+title: "Crash-Consistency Testing of Storage Engines"
+topic: 33-benchmarking-testing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Crash-Consistency Testing of Storage Engines
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/crash-consistency-testing` · **Status:** empirically-open

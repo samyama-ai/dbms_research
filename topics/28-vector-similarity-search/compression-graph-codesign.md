@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/compression-graph-codesign
+title: "Joint compression and graph co-design"
+topic: 28-vector-similarity-search
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Joint compression and graph co-design
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/compression-graph-codesign` · **Status:** open

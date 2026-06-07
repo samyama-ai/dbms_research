@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/distributed-plan-optimization
+title: "Distributed and cloud-aware plan optimization"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distributed and cloud-aware plan optimization
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/distributed-plan-optimization` · **Status:** open

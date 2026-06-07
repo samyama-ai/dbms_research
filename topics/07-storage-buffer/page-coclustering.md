@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/page-coclustering
+title: "Page Clustering / Co-Location for Locality"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Page Clustering / Co-Location for Locality
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/page-coclustering` · **Status:** open

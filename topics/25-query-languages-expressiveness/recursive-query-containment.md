@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/recursive-query-containment
+title: "Containment of Conjunctive Queries with Recursion"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Containment of Conjunctive Queries with Recursion
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/recursive-query-containment` · **Status:** partially-solved

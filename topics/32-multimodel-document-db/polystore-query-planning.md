@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/polystore-query-planning
+title: "Polystore query planning over heterogeneous engines"
+topic: 32-multimodel-document-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Polystore query planning over heterogeneous engines
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/polystore-query-planning` · **Status:** partially-solved

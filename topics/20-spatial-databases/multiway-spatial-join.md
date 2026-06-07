@@ -1,3 +1,15 @@
+---
+id: 20-spatial-databases/multiway-spatial-join
+title: "Multi-way spatial join optimization"
+topic: 20-spatial-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-way spatial join optimization
 
 > **Topic:** Spatial & Spatiotemporal Databases · **ID:** `20-spatial-databases/multiway-spatial-join` · **Status:** open

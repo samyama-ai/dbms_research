@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/bounded-equivalence-smt
+title: "Bounded-Equivalence Oracle via SMT"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bounded-Equivalence Oracle via SMT
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/bounded-equivalence-smt` · **Status:** partially-solved

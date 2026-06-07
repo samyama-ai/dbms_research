@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/sparql-wco-evaluation
+title: "Worst-case-optimal RDF/SPARQL evaluation"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal RDF/SPARQL evaluation
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/sparql-wco-evaluation` · **Status:** partially-solved

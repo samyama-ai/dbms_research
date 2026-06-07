@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/multitenant-buffer-sizing
+title: "Buffer Pool Sizing Under Multi-Tenant Contention"
+topic: 07-storage-buffer
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Buffer Pool Sizing Under Multi-Tenant Contention
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/multitenant-buffer-sizing` · **Status:** partially-solved

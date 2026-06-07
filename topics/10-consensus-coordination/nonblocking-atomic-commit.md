@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/nonblocking-atomic-commit
+title: "Non-Blocking Atomic Commit at Scale"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Non-Blocking Atomic Commit at Scale
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/nonblocking-atomic-commit` · **Status:** open

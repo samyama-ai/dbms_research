@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/hybrid-binary-wcoj-optimization
+title: "Optimal hybrid binary/WCOJ plans"
+topic: 03-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal hybrid binary/WCOJ plans
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/hybrid-binary-wcoj-optimization` · **Status:** open

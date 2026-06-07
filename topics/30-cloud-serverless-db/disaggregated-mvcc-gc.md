@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/disaggregated-mvcc-gc
+title: "Disaggregated MVCC garbage collection"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Disaggregated MVCC garbage collection
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/disaggregated-mvcc-gc` · **Status:** open

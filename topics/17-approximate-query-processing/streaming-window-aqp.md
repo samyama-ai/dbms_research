@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/streaming-window-aqp
+title: "AQP Over Streaming and Sliding Windows"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # AQP Over Streaming and Sliding Windows
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/streaming-window-aqp` · **Status:** partially-solved

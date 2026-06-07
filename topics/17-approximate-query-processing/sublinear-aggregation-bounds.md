@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/sublinear-aggregation-bounds
+title: "Sublinear-Time Aggregation Lower Bounds"
+topic: 17-approximate-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Sublinear-Time Aggregation Lower Bounds
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/sublinear-aggregation-bounds` · **Status:** partially-solved

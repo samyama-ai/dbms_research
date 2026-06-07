@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/optimal-group-commit-policy
+title: "Optimal group-commit policy"
+topic: 06-recovery-logging
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal group-commit policy
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/optimal-group-commit-policy` · **Status:** empirically-open

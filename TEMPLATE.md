@@ -1,6 +1,18 @@
+---
+id: <NN-topic-slug>/<problem-slug>        # stable identity — never change once assigned
+title: "<Problem Title>"
+topic: <NN-topic-slug>
+status: open | partially-solved | empirically-open | solved-but-impractical | stale
+first_added: <YYYY-MM>                     # iteration it first appeared
+last_reviewed: <YYYY-MM>                   # iteration last verified
+last_substantive_update: <YYYY-MM>
+stale_since: ""                            # set to <YYYY-MM> when no longer actively worked
+provenance: synthesized                    # synthesized | verified
+---
+
 # <Problem Title>
 
-> **Topic:** <topic name> · **ID:** `<NN-topic-slug>/<problem-slug>` · **Status:** <open | partially solved | solved-but-impractical | empirically-open>
+> **Topic:** <topic name> · **ID:** `<NN-topic-slug>/<problem-slug>` · **Status:** <open | partially-solved | solved-but-impractical | empirically-open>
 
 ## 1. Problem Statement
 

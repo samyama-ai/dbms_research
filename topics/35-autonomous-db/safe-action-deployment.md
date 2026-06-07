@@ -1,3 +1,15 @@
+---
+id: 35-autonomous-db/safe-action-deployment
+title: "Safe Online Action Deployment"
+topic: 35-autonomous-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Safe Online Action Deployment
 
 > **Topic:** Self-Driving / Autonomous Databases · **ID:** `35-autonomous-db/safe-action-deployment` · **Status:** open

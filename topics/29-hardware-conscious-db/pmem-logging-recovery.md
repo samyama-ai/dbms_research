@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/pmem-logging-recovery
+title: "Persistent-memory logging and recovery"
+topic: 29-hardware-conscious-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Persistent-memory logging and recovery
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/pmem-logging-recovery` · **Status:** partially-solved

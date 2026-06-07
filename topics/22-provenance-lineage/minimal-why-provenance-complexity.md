@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/minimal-why-provenance-complexity
+title: "Minimal Why-Provenance Complexity"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Minimal Why-Provenance Complexity
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/minimal-why-provenance-complexity` · **Status:** partially-solved

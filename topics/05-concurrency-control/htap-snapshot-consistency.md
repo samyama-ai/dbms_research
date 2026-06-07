@@ -1,3 +1,15 @@
+---
+id: 05-concurrency-control/htap-snapshot-consistency
+title: "Hybrid OLTP/OLAP Snapshot Consistency"
+topic: 05-concurrency-control
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hybrid OLTP/OLAP Snapshot Consistency
 
 > **Topic:** Concurrency Control · **ID:** `05-concurrency-control/htap-snapshot-consistency` · **Status:** empirically-open

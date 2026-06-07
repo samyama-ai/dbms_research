@@ -1,3 +1,15 @@
+---
+id: 31-time-series-db/in-db-forecasting-bounds
+title: "In-database forecasting with error bounds"
+topic: 31-time-series-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # In-database forecasting with error bounds
 
 > **Topic:** Time-Series Databases · **ID:** `31-time-series-db/in-db-forecasting-bounds` · **Status:** open

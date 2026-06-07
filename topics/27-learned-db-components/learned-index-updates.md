@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/learned-index-updates
+title: "Learned Indexes Under Updates"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Indexes Under Updates
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/learned-index-updates` · **Status:** open

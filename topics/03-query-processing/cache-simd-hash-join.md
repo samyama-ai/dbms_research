@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/cache-simd-hash-join
+title: "Cache- and SIMD-optimal hash joins"
+topic: 03-query-processing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cache- and SIMD-optimal hash joins
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/cache-simd-hash-join` · **Status:** empirically-open

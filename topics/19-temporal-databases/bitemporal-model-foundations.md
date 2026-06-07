@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/bitemporal-model-foundations
+title: "Bitemporal Conceptual Data Model Foundations"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Bitemporal Conceptual Data Model Foundations
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/bitemporal-model-foundations` · **Status:** open

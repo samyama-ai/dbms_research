@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/interval-index-maintenance
+title: "Long-Lived Interval Index Maintenance"
+topic: 19-temporal-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Long-Lived Interval Index Maintenance
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/interval-index-maintenance` · **Status:** partially-solved

@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/partition-tolerant-progress
+title: "Consensus Under Network Partitions"
+topic: 10-consensus-coordination
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consensus Under Network Partitions
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/partition-tolerant-progress` · **Status:** partially-solved

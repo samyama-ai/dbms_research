@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/distributed-fault-injection
+title: "Fault Injection for Distributed Databases"
+topic: 33-benchmarking-testing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Fault Injection for Distributed Databases
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/distributed-fault-injection` · **Status:** empirically-open

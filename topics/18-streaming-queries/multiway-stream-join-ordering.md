@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/multiway-stream-join-ordering
+title: "Multi-way stream join ordering at runtime"
+topic: 18-streaming-queries
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-way stream join ordering at runtime
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/multiway-stream-join-ordering` · **Status:** empirically-open

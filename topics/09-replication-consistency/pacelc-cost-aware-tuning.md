@@ -1,3 +1,15 @@
+---
+id: 09-replication-consistency/pacelc-cost-aware-tuning
+title: "Energy/cost-aware PACELC operating points"
+topic: 09-replication-consistency
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Energy/cost-aware PACELC operating points
 
 > **Topic:** Replication & Consistency · **ID:** `09-replication-consistency/pacelc-cost-aware-tuning` · **Status:** empirically-open

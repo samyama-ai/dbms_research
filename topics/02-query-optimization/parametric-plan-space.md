@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/parametric-plan-space
+title: "Parametric query optimization plan-space size"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Parametric query optimization plan-space size
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/parametric-plan-space` · **Status:** partially-solved

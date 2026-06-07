@@ -1,3 +1,15 @@
+---
+id: 23-database-security/multi-tenant-isolation
+title: "Multi-Tenant Isolation Guarantees"
+topic: 23-database-security
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-Tenant Isolation Guarantees
 
 > **Topic:** Database Security & Access Control · **ID:** `23-database-security/multi-tenant-isolation` · **Status:** empirically-open

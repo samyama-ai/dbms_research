@@ -1,3 +1,15 @@
+---
+id: 32-multimodel-document-db/schema-flexibility-benchmarks
+title: "Benchmarks and theory for schema flexibility"
+topic: 32-multimodel-document-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Benchmarks and theory for schema flexibility
 
 > **Topic:** Multi-Model & Document Databases · **ID:** `32-multimodel-document-db/schema-flexibility-benchmarks` · **Status:** open

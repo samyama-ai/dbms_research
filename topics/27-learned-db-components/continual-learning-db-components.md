@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/continual-learning-db-components
+title: "Lifelong / Continual Learning for DB Components"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lifelong / Continual Learning for DB Components
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/continual-learning-db-components` · **Status:** open

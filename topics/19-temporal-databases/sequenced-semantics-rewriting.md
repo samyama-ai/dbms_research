@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/sequenced-semantics-rewriting
+title: "Sequenced Semantics Query Rewriting"
+topic: 19-temporal-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Sequenced Semantics Query Rewriting
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/sequenced-semantics-rewriting` · **Status:** partially-solved

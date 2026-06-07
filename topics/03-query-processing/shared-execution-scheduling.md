@@ -1,3 +1,15 @@
+---
+id: 03-query-processing/shared-execution-scheduling
+title: "Multi-query / shared execution scheduling"
+topic: 03-query-processing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Multi-query / shared execution scheduling
 
 > **Topic:** Query Processing & Execution · **ID:** `03-query-processing/shared-execution-scheduling` · **Status:** partially-solved

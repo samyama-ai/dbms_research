@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/randomized-round-complexity
+title: "Randomized Consensus Round Complexity"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Randomized Consensus Round Complexity
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/randomized-round-complexity` · **Status:** open

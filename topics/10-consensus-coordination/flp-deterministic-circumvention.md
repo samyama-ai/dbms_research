@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/flp-deterministic-circumvention
+title: "Deterministic FLP Circumvention"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Deterministic FLP Circumvention
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/flp-deterministic-circumvention` · **Status:** open

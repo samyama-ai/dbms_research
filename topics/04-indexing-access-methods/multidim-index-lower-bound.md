@@ -1,3 +1,15 @@
+---
+id: 04-indexing-access-methods/multidim-index-lower-bound
+title: "Worst-case-optimal multidimensional index"
+topic: 04-indexing-access-methods
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Worst-case-optimal multidimensional index
 
 > **Topic:** Indexing & Access Methods · **ID:** `04-indexing-access-methods/multidim-index-lower-bound` · **Status:** open

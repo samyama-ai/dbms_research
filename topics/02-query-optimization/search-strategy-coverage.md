@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/search-strategy-coverage
+title: "Top-down vs. bottom-up search space coverage"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Top-down vs. bottom-up search space coverage
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/search-strategy-coverage` · **Status:** partially-solved

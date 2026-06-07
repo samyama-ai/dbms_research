@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/correlation-clustering-er
+title: "Correlation Clustering for ER at Scale"
+topic: 15-data-integration
+status: solved-but-impractical
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Correlation Clustering for ER at Scale
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/correlation-clustering-er` · **Status:** solved-but-impractical

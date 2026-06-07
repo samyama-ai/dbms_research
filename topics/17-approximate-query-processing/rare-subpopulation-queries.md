@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/rare-subpopulation-queries
+title: "Rare Subpopulation and Outlier Queries"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Rare Subpopulation and Outlier Queries
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/rare-subpopulation-queries` · **Status:** open

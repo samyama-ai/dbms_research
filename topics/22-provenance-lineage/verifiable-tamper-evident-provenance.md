@@ -1,3 +1,15 @@
+---
+id: 22-provenance-lineage/verifiable-tamper-evident-provenance
+title: "Tamper-Evident Verifiable Provenance"
+topic: 22-provenance-lineage
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tamper-Evident Verifiable Provenance
 
 > **Topic:** Provenance & Lineage · **ID:** `22-provenance-lineage/verifiable-tamper-evident-provenance` · **Status:** partially-solved

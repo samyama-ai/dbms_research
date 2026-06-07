@@ -1,3 +1,15 @@
+---
+id: 24-privacy-encrypted-db/enclave-side-channel-resistant
+title: "Side-Channel-Resistant Enclave Query Execution"
+topic: 24-privacy-encrypted-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Side-Channel-Resistant Enclave Query Execution
 
 > **Topic:** Privacy & Encrypted Databases · **ID:** `24-privacy-encrypted-db/enclave-side-channel-resistant` · **Status:** empirically-open

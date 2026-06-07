@@ -1,3 +1,15 @@
+---
+id: 18-streaming-queries/exactly-once-minimal-coordination
+title: "Exactly-once semantics at minimal coordination cost"
+topic: 18-streaming-queries
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Exactly-once semantics at minimal coordination cost
 
 > **Topic:** Streaming & Continuous Queries · **ID:** `18-streaming-queries/exactly-once-minimal-coordination` · **Status:** partially-solved

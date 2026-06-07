@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/lsh-beyond-worst-case
+title: "LSH beyond worst-case data distributions"
+topic: 28-vector-similarity-search
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # LSH beyond worst-case data distributions
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/lsh-beyond-worst-case` · **Status:** partially-solved

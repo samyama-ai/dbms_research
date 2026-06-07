@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/memory-pressure-spilling
+title: "Buffer Management Under Strict Memory Pressure (Spilling)"
+topic: 07-storage-buffer
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Buffer Management Under Strict Memory Pressure (Spilling)
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/memory-pressure-spilling` · **Status:** empirically-open

@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/distinct-count-sketch-frontier
+title: "Distinct-Count Sketches Beyond HLL"
+topic: 17-approximate-query-processing
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Distinct-Count Sketches Beyond HLL
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/distinct-count-sketch-frontier` · **Status:** empirically-open

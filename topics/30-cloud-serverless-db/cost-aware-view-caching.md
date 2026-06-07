@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/cost-aware-view-caching
+title: "Cost-aware materialized-view and cache placement"
+topic: 30-cloud-serverless-db
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Cost-aware materialized-view and cache placement
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/cost-aware-view-caching` · **Status:** open

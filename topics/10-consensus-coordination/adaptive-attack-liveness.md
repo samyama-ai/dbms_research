@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/adaptive-attack-liveness
+title: "Consensus Liveness Under Adaptive Attacks"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consensus Liveness Under Adaptive Attacks
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/adaptive-attack-liveness` · **Status:** open

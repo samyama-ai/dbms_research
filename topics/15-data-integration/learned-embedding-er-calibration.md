@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/learned-embedding-er-calibration
+title: "Learned Embedding ER Calibration"
+topic: 15-data-integration
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Embedding ER Calibration
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/learned-embedding-er-calibration` · **Status:** empirically-open

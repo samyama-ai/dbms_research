@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/plan-explainability
+title: "Explainability and debuggability of plan choices"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Explainability and debuggability of plan choices
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/plan-explainability` · **Status:** open

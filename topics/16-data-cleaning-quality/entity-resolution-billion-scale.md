@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/entity-resolution-billion-scale
+title: "Entity Resolution at Billion-Record Scale"
+topic: 16-data-cleaning-quality
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Entity Resolution at Billion-Record Scale
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/entity-resolution-billion-scale` · **Status:** empirically-open

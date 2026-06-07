@@ -1,3 +1,15 @@
+---
+id: 01-relational-theory/chase-termination-tgds
+title: "Chase Termination for Arbitrary TGDs"
+topic: 01-relational-theory
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Chase Termination for Arbitrary TGDs
 
 > **Topic:** Relational Model & Dependency Theory · **ID:** `01-relational-theory/chase-termination-tgds` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 25-query-languages-expressiveness/existential-rules-evaluation
+title: "Termination and Magic-Sets for Existential Rules"
+topic: 25-query-languages-expressiveness
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Termination and Magic-Sets for Existential Rules
 
 > **Topic:** Query Languages & Expressiveness · **ID:** `25-query-languages-expressiveness/existential-rules-evaluation` · **Status:** partially-solved

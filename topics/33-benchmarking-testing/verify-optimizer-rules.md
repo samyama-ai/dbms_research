@@ -1,3 +1,15 @@
+---
+id: 33-benchmarking-testing/verify-optimizer-rules
+title: "Verifying Query Optimizer Transformation Rules"
+topic: 33-benchmarking-testing
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Verifying Query Optimizer Transformation Rules
 
 > **Topic:** Benchmarking, Testing & Verification · **ID:** `33-benchmarking-testing/verify-optimizer-rules` · **Status:** partially-solved

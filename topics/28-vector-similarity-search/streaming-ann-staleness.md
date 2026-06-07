@@ -1,3 +1,15 @@
+---
+id: 28-vector-similarity-search/streaming-ann-staleness
+title: "Streaming ANN with bounded staleness"
+topic: 28-vector-similarity-search
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Streaming ANN with bounded staleness
 
 > **Topic:** Vector Databases & Similarity Search · **ID:** `28-vector-similarity-search/streaming-ann-staleness` · **Status:** empirically-open

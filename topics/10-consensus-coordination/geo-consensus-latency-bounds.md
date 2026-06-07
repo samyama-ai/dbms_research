@@ -1,3 +1,15 @@
+---
+id: 10-consensus-coordination/geo-consensus-latency-bounds
+title: "Tight Latency Bounds for Geo-Consensus"
+topic: 10-consensus-coordination
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tight Latency Bounds for Geo-Consensus
 
 > **Topic:** Consensus & Coordination · **ID:** `10-consensus-coordination/geo-consensus-latency-bounds` · **Status:** open

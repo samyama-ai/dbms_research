@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/dp-enumeration-scaling
+title: "Optimal dynamic-programming join enumeration scaling"
+topic: 02-query-optimization
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Optimal dynamic-programming join enumeration scaling
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/dp-enumeration-scaling` · **Status:** partially-solved

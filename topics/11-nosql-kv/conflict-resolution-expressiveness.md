@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/conflict-resolution-expressiveness
+title: "Conflict Resolution Expressiveness"
+topic: 11-nosql-kv
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Conflict Resolution Expressiveness
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/conflict-resolution-expressiveness` · **Status:** open

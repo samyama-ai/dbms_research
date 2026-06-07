@@ -1,3 +1,15 @@
+---
+id: 15-data-integration/crowd-er-question-selection
+title: "Crowd/Human-in-the-Loop ER Optimization"
+topic: 15-data-integration
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Crowd/Human-in-the-Loop ER Optimization
 
 > **Topic:** Data Integration & Schema Mapping · **ID:** `15-data-integration/crowd-er-question-selection` · **Status:** partially-solved

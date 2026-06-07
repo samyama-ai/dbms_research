@@ -1,3 +1,15 @@
+---
+id: 29-hardware-conscious-db/gpu-aggregation-skew
+title: "GPU group-by and aggregation under skew"
+topic: 29-hardware-conscious-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # GPU group-by and aggregation under skew
 
 > **Topic:** Hardware-Conscious Databases · **ID:** `29-hardware-conscious-db/gpu-aggregation-skew` · **Status:** empirically-open

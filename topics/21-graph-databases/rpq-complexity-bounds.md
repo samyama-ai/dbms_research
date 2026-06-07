@@ -1,3 +1,15 @@
+---
+id: 21-graph-databases/rpq-complexity-bounds
+title: "Tight bounds for regular path query evaluation"
+topic: 21-graph-databases
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Tight bounds for regular path query evaluation
 
 > **Topic:** Graph Databases & Graph Query Processing · **ID:** `21-graph-databases/rpq-complexity-bounds` · **Status:** partially-solved

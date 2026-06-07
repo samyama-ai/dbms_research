@@ -1,3 +1,15 @@
+---
+id: 34-schema-design-normalization/order-numeric-dependency-design
+title: "Numeric and Order/Differential Dependency Design"
+topic: 34-schema-design-normalization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Numeric and Order/Differential Dependency Design
 
 > **Topic:** Schema Design & Normalization · **ID:** `34-schema-design-normalization/order-numeric-dependency-design` · **Status:** open

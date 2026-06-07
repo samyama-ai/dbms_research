@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/learned-join-optimizers
+title: "Learned/RL join-order optimizers vs. classical"
+topic: 02-query-optimization
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned/RL join-order optimizers vs. classical
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/learned-join-optimizers` · **Status:** empirically-open

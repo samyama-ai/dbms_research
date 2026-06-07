@@ -1,3 +1,15 @@
+---
+id: 11-nosql-kv/consistency-aware-caching
+title: "Consistency-Aware Caching"
+topic: 11-nosql-kv
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Consistency-Aware Caching
 
 > **Topic:** NoSQL & Key-Value Stores · **ID:** `11-nosql-kv/consistency-aware-caching` · **Status:** partially-solved

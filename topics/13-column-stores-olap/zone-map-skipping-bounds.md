@@ -1,3 +1,15 @@
+---
+id: 13-column-stores-olap/zone-map-skipping-bounds
+title: "Zone Maps and Min/Max Skipping Bounds"
+topic: 13-column-stores-olap
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Zone Maps and Min/Max Skipping Bounds
 
 > **Topic:** Column Stores & OLAP · **ID:** `13-column-stores-olap/zone-map-skipping-bounds` · **Status:** partially-solved

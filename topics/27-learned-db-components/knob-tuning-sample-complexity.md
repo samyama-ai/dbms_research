@@ -1,3 +1,15 @@
+---
+id: 27-learned-db-components/knob-tuning-sample-complexity
+title: "Sample Complexity of Knob Tuning"
+topic: 27-learned-db-components
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Sample Complexity of Knob Tuning
 
 > **Topic:** Learned Database Components · **ID:** `27-learned-db-components/knob-tuning-sample-complexity` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 07-storage-buffer/learned-eviction-guarantees
+title: "Learned Buffer Eviction with Worst-Case Guarantees"
+topic: 07-storage-buffer
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Learned Buffer Eviction with Worst-Case Guarantees
 
 > **Topic:** Storage & Buffer Management · **ID:** `07-storage-buffer/learned-eviction-guarantees` · **Status:** open

@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/workload-forecasting-scaling
+title: "Workload-forecasting for scale-to-zero"
+topic: 30-cloud-serverless-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Workload-forecasting for scale-to-zero
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/workload-forecasting-scaling` · **Status:** empirically-open

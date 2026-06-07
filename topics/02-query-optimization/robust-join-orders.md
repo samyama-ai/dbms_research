@@ -1,3 +1,15 @@
+---
+id: 02-query-optimization/robust-join-orders
+title: "Provably good cost-model-robust join orders"
+topic: 02-query-optimization
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Provably good cost-model-robust join orders
 
 > **Topic:** Query Optimization · **ID:** `02-query-optimization/robust-join-orders` · **Status:** open

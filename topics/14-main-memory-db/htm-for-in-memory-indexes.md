@@ -1,3 +1,15 @@
+---
+id: 14-main-memory-db/htm-for-in-memory-indexes
+title: "Hardware Transactional Memory for Indexes"
+topic: 14-main-memory-db
+status: empirically-open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Hardware Transactional Memory for Indexes
 
 > **Topic:** Main-Memory Databases · **ID:** `14-main-memory-db/htm-for-in-memory-indexes` · **Status:** empirically-open

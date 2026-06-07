@@ -1,3 +1,15 @@
+---
+id: 16-data-cleaning-quality/blocking-recall-guarantees
+title: "Blocking with Recall Guarantees"
+topic: 16-data-cleaning-quality
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Blocking with Recall Guarantees
 
 > **Topic:** Data Cleaning & Quality · **ID:** `16-data-cleaning-quality/blocking-recall-guarantees` · **Status:** partially-solved

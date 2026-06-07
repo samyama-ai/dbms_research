@@ -1,3 +1,15 @@
+---
+id: 30-cloud-serverless-db/serverless-shuffle
+title: "Serverless OLAP shuffle without warm workers"
+topic: 30-cloud-serverless-db
+status: partially-solved
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Serverless OLAP shuffle without warm workers
 
 > **Topic:** Cloud & Serverless Databases · **ID:** `30-cloud-serverless-db/serverless-shuffle` · **Status:** partially-solved

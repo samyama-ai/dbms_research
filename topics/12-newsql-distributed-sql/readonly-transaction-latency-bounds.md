@@ -1,3 +1,15 @@
+---
+id: 12-newsql-distributed-sql/readonly-transaction-latency-bounds
+title: "Read-only transaction latency lower bounds"
+topic: 12-newsql-distributed-sql
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Read-only transaction latency lower bounds
 
 > **Topic:** NewSQL & Distributed SQL · **ID:** `12-newsql-distributed-sql/readonly-transaction-latency-bounds` · **Status:** open

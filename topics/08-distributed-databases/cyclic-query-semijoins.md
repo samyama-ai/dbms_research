@@ -1,3 +1,15 @@
+---
+id: 08-distributed-databases/cyclic-query-semijoins
+title: "Semijoin Reducers for Cyclic Queries"
+topic: 08-distributed-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Semijoin Reducers for Cyclic Queries
 
 > **Topic:** Distributed Query Processing · **ID:** `08-distributed-databases/cyclic-query-semijoins` · **Status:** open

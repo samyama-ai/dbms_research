@@ -1,3 +1,15 @@
+---
+id: 17-approximate-query-processing/correlated-attribute-histograms
+title: "Histograms Under Attribute Correlation"
+topic: 17-approximate-query-processing
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Histograms Under Attribute Correlation
 
 > **Topic:** Approximate Query Processing · **ID:** `17-approximate-query-processing/correlated-attribute-histograms` · **Status:** open

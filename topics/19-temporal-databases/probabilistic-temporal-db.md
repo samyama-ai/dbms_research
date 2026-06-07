@@ -1,3 +1,15 @@
+---
+id: 19-temporal-databases/probabilistic-temporal-db
+title: "Probabilistic Temporal Databases"
+topic: 19-temporal-databases
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Probabilistic Temporal Databases
 
 > **Topic:** Temporal Databases · **ID:** `19-temporal-databases/probabilistic-temporal-db` · **Status:** open

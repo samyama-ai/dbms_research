@@ -7,6 +7,11 @@ Master topic index: `TAXONOMY.md`.
 
 ## Conventions
 - **One problem = one file.** Filename is the problem slug, kebab-case, `.md`.
+- **Every problem file starts with YAML provenance frontmatter** (`id`, `title`, `topic`,
+  `status`, `first_added`, `last_reviewed`, `last_substantive_update`, `stale_since`,
+  `provenance`) — see `TEMPLATE.md`. `id` is the stable identity and must NEVER change once
+  assigned; it is how periodic refreshes diff iterations (survived / new / stale). Backfill
+  tool: `tools/add_provenance.py`. Refresh process: `dbms_cloud/wiki/refresh-runbook.md`.
 - Every problem file MUST contain all 9 sections from `TEMPLATE.md` in order.
 - **References must be real.** Cite canonical work confidently; do NOT fabricate URLs,
   DOIs, or paper titles. If unsure of a URL, cite author/title/venue/year without a link.

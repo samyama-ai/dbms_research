@@ -1,3 +1,15 @@
+---
+id: 06-recovery-logging/logging-overhead-lower-bounds
+title: "Lower bounds on logging overhead"
+topic: 06-recovery-logging
+status: open
+first_added: 2026-06
+last_reviewed: 2026-06
+last_substantive_update: 2026-06
+stale_since: ""
+provenance: synthesized
+---
+
 # Lower bounds on logging overhead
 
 > **Topic:** Recovery, Logging & Durability · **ID:** `06-recovery-logging/logging-overhead-lower-bounds` · **Status:** open
