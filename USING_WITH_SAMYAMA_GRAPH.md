@@ -11,8 +11,9 @@ Apache-2.0 graph-vector database) and query with OpenCypher in a couple of minut
 account, no cloud, one binary.
 
 ```
-1,053 Problems · 35 Topics · 2,954 Papers · 4,069 Researchers · 3,825 future directions
-18,881 nodes · 39,142 edges · 12.7 MB snapshot
+1,053 Problems · 35 Topics · 2,954 Papers · 3,962 Researchers · 3,825 future directions
+18,774 nodes · 38,620 edges · 12.7 MB snapshot
+Researchers are resolved against DBLP: 1,823 carry a dblp_pid / profile-page link + affiliation.
 ```
 
 > The snapshot is generated from the Markdown in this repo by an extraction pipeline.
@@ -91,7 +92,8 @@ q() { curl -s -H 'Content-Type: application/json' -d "{\"query\":\"$1\"}" \
 ```
 
 Key properties: `Problem{title, slug, statement, status}`, `Topic{name, slug}`,
-`Paper{title, year, venue, url}`, `Person{name}`, `FutureDirection{text}`.
+`Paper{title, year, venue, url}`, `Person{name, dblp_pid, dblp_url, orcid, affiliation, aliases}`,
+`FutureDirection{text}`.
 
 ---
 
@@ -139,6 +141,17 @@ Co-authorship — who collaborates with whom:
 MATCH (a:Person)<-[:AUTHORED_BY]-(:Paper)-[:AUTHORED_BY]->(b:Person)
 WHERE a.name = "Dan Suciu" AND a.name <> b.name
 RETURN b.name AS collaborator, count(*) AS papers ORDER BY papers DESC LIMIT 8
+```
+
+Jump straight to a researcher's **DBLP profile page** (researchers are resolved to DBLP
+PIDs, so name variants collapse to one node — e.g. `A. Ailamaki`/`Ailamaki`/`Anastassia
+Ailamaki` → one `Anastasia Ailamaki`):
+
+```cypher
+MATCH (per:Person)-[:ACTIVE_ON]->(p:Problem)
+WHERE per.dblp_url IS NOT NULL
+RETURN per.name, per.dblp_url, per.affiliation, count(p) AS problems
+ORDER BY problems DESC LIMIT 10
 ```
 
 ### The people and papers behind a problem
