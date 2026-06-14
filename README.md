@@ -36,6 +36,7 @@ It is meant as a **map of where the hard questions are** — for graduate studen
 - 🗺️ **[`TAXONOMY.md`](./TAXONOMY.md)** — the 35-topic map with scope descriptions.
 - 📇 **[`INDEX.md`](./INDEX.md)** — flat, clickable list of all 1,053 problems grouped by topic.
 - 📐 **[`TEMPLATE.md`](./TEMPLATE.md)** — the 10-section schema every problem page follows.
+- 🎓 **[DB Internals Explained](https://dbms.samyama.cloud)** — an interactive companion that teaches how the machinery actually *works* (indexes, joins, cardinality estimation, the optimizer, execution plans, transactions, recovery, storage, and operations) across 8 engines. A friendly on-ramp before diving into the open problems here.
 
 **Browsing tips**
 - New to an area? Open the topic's `README.md` (e.g. [`topics/02-query-optimization/`](./topics/02-query-optimization/)) for a one-paragraph overview and a status-tagged index of its problems.
