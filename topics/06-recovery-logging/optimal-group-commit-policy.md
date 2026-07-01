@@ -4,8 +4,8 @@ title: "Optimal group-commit policy"
 topic: 06-recovery-logging
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -46,6 +46,7 @@ The clean abstractions (bulk-service, ski-rental) are tight, but they discard ex
 - Learned/RL-based commit and I/O batching controllers, extending the learned-systems agenda (MIT DSAIL, CMU) to durability control *(frontier — verify)*.
 - Disaggregated-log durability (cloud OLTP: Aurora, Socrates, Neon, PolarDB) reframes the batch target as a remote quorum, changing $c$ from a local `fsync` to a network-tail-latency distribution; optimal batching there is largely unstudied analytically *(frontier — verify)*.
 - Persistent-memory / CXL durability domains shrink $c$ toward zero, which questions whether group commit should exist at all for some tiers.
+- A **closed-loop** analysis addresses the self-clocking core §6 flags: when commit arrivals are throttled by the very latency they incur, batch size reaches a fixed point $K^\star(N,F_0,\delta,Z)$ (closed queueing network / MVA), a **parameter-free greedy** policy stays within $\sim0.1\%$ of the best oracle-tuned timer at every load, and above a device-set threshold $\lambda^\star=2/F_0$ the $\sqrt{}$-rule timer collapses exactly onto greedy — making tuning *vacuous* and explaining the deployed "set `commit_delay`$\approx0$" folklore (validated on real EBS-gp3 vs instance-NVMe `fsync` and a PostgreSQL `commit_delay` sweep). Modest delta over Aether flush-pipelining and open-loop Deb–Serfozo, both credited (Samyama, arXiv:2606.18187) *(frontier — verify)*.
 
 ## 8. Future Work
 - A unifying model with provable regret under non-stationary, closed-loop arrivals.
@@ -59,6 +60,7 @@ The clean abstractions (bulk-service, ski-rental) are tight, but they discard ex
 - **[Foundational]** Deb, R. K. & Serfozo, R. F. *Optimal Control of Batch Service Queues.* Advances in Applied Probability, 1973. — [DOI](https://doi.org/10.2307/1426040)
 - **[Foundational]** Karlin, A., Manasse, M., McGeoch, L. & Owicki, S. *Competitive Randomized Algorithms for Nonuniform Problems (ski rental / rent-or-buy).* Algorithmica, 1994. — [DOI](https://doi.org/10.1007/BF01189993)
 - **[Foundational]** DeWitt, D. et al. *Implementation Techniques for Main Memory Database Systems.* SIGMOD, 1984. (Early group-commit batching analysis.) — [DOI](https://doi.org/10.1145/602259.602261)
+- **[SOTA]** Samyama Research. *Group Commit Self-Clocks: Why Tuning Is Unnecessary Above a Device-Set Load Threshold.* arXiv:2606.18187 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.18187) · [code](https://github.com/samyama-ai/group-commit-policy)
 
 ## 10. Worked Example
 

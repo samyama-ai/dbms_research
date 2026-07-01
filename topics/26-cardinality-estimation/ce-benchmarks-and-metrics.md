@@ -4,8 +4,8 @@ title: "Cardinality Estimation Benchmarks & Metrics"
 topic: 26-cardinality-estimation
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -42,6 +42,7 @@ Foundations:
 - **Workload-SOTA:** **Join Order Benchmark (JOB)** over IMDb (Leis et al., VLDB 2015) — realistic correlations, the de-facto plan-quality benchmark; **STATS-CEB / the CE benchmark** (Han et al., VLDB 2022) — diverse multi-join queries with true cardinalities and update scenarios; **CEB** (Negi et al.) — large generated workloads with labels; **job-light** for quick learned-CE tests.
 - **Metric-SOTA:** q-error is standard; **Flow-Loss** (Negi et al., VLDB 2021) optimizes a differentiable surrogate of plan cost instead of q-error, explicitly targeting plan-faithfulness; runtime/plan-regret reporting in the "Are We Ready…" study (Wang et al., VLDB 2021).
 - *(frontier — verify)* recent benchmarks add drift/update axes and tail-q-error and regret as first-class reported metrics.
+- **Regret-regime metrics (2026):** framing metric-faithfulness as error propagation through the plan-selection argmin yields *ACS* (average-case sub-optimality) — a cardinality-free closed form that empirically predicts large-error query regret on STATS-CEB (Spearman $\rho\approx0.54$) and on *real* PostgreSQL runtime ($\rho\approx0.42$) where q-error does not ($\rho\approx0.05$ / $-0.16$); it positions q-error, ACS, and worst-case MSO (Haritsa plan diagrams) as small-/large-/worst-case regret regimes. Modest delta over Wolf's per-plan robustness (VLDB 2018) and Moerkotte's $q^4$ bound, both credited (Samyama, arXiv:2606.15600).
 
 ## 4. Upper Bound
 
@@ -83,6 +84,7 @@ We have good *workloads* (JOB, STATS-CEB) but no *metric* that is both cheap and
 - **[Survey/SOTA]** Han, Wu, Wu, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3503585.3503586), [arXiv](https://arxiv.org/abs/2109.05877)
 - **[Survey/SOTA]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [DOI](https://doi.org/10.14778/3461535.3461552), [DBLP](https://dblp.org/rec/journals/pvldb/WangQWWZ21.html)
 - **[SOTA]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021. — [GitHub](https://github.com/learnedsystems/CEB)
+- **[SOTA]** Samyama Research. *When Does q-error Predict Plan Regret? Three Regimes of Cardinality-Estimation Error.* arXiv:2606.15600 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.15600) · [code](https://github.com/samyama-ai/ce-metric-eval)
 
 ## 10. Worked Example
 

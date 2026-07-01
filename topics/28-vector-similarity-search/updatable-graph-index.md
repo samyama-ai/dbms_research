@@ -4,8 +4,8 @@ title: "Updatable graph indexes under churn"
 topic: 28-vector-similarity-search
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -44,7 +44,7 @@ Variants: insert-only (append), delete-heavy (tombstoning vs. true removal), and
 Systems demonstrate that churn *can* be absorbed with acceptable recall (FreshDiskANN, segment merges), but there is **no guarantee** on long-run recall drift, no proven amortized cost for the repair invariant on HNSW/Vamana, and no characterization of when rebuilds become unavoidable. The gap: between provably-dynamic-but-impractical structures (cover trees) and practical-but-unproven graph indexes. Closing it needs a potential-function analysis of $\alpha$-RNG repair under churn, plus a lower bound on the recall–repair-cost tradeoff.
 
 ## 7. Current Research (as of June 2026)
-Active: streaming/fresh graph indexes (FreshDiskANN line, Microsoft Research; StreamingDiskANN), out-of-distribution and drift-robust ANN (the big-ann-benchmarks "streaming" and "OOD" tracks, NeurIPS 2023+) *(frontier — verify)*. Work on **filtered + streaming** combined (label-aware updates) and on disk/SSD-resident dynamic graphs with bounded write amplification *(frontier — verify)*. Interest in formal analysis of $\alpha$-RNG repair and in incremental reconstruction to avoid full rebuilds is emerging at SIGMOD/VLDB *(frontier — verify)*.
+Active: streaming/fresh graph indexes (FreshDiskANN line, Microsoft Research; StreamingDiskANN), out-of-distribution and drift-robust ANN (the big-ann-benchmarks "streaming" and "OOD" tracks, NeurIPS 2023+) *(frontier — verify)*. Work on **filtered + streaming** combined (label-aware updates) and on disk/SSD-resident dynamic graphs with bounded write amplification *(frontier — verify)*. Interest in formal analysis of $\alpha$-RNG repair and in incremental reconstruction to avoid full rebuilds is emerging at SIGMOD/VLDB *(frontier — verify)*. A recent result on *when* to repair shows **navigability-signal-triggered local edge repair** protects **tail** recall under bursty churn: firing consolidation on a drift signal (rather than a fixed clock) Pareto-beats fixed-cadence repair at matched repair budget, improving worst-case recall@10 by up to $\sim$2 pts on SIFT-128 and $\sim$5 pts on 784-d Fashion-MNIST under scarce-budget bursts, with the signal a lead indicator ($\rho\approx0.95$). Honest scope: the *mean*-recall gain is small ($<0.5$ pt) — the effect is on the tail, not the average (Samyama Research, arXiv submission under review) *(frontier — verify)*.
 
 ## 8. Future Work
 - Provable amortized cost + recall-drift bounds for HNSW/Vamana under churn.
@@ -59,6 +59,7 @@ Active: streaming/fresh graph indexes (FreshDiskANN line, Microsoft Research; St
 - **[Foundational]** A. Beygelzimer, S. Kakade, J. Langford. *Cover Trees for Nearest Neighbor.* ICML, 2006. — [DOI](https://doi.org/10.1145/1143844.1143857)
 - **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457550)
 - **[Survey]** H. V. Simhadri, et al. *Results of the NeurIPS Big-ANN Benchmarks (Streaming/OOD tracks).* NeurIPS Competition Track, 2023. — [arXiv](https://arxiv.org/abs/2409.17424)
+- **[SOTA]** Samyama Research. *When to Repair a Graph ANN Index: Navigability-Signal-Triggered Local Repair Protects Tail Recall Under Bursty Churn.* arXiv (cs.IR; submission under review), 2026. — [code](https://github.com/samyama-ai/updatable-graph-index)
 
 ## 10. Worked Example
 

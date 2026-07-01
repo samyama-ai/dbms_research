@@ -4,8 +4,8 @@ title: "Memory-bandwidth-bound scan optimization"
 topic: 29-hardware-conscious-db
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -48,6 +48,7 @@ The gap is between **achieved scan throughput and the roofline**, and it is **cl
 - Aggregate-bandwidth-aware scheduling for many-core scans hitting the shared memory-controller wall.
 - GPU and CXL-memory scan kernels where bandwidth modeling is first-order.
 - Groups: TUM (Neumann, Boncz/CWI collaborations), CWI (Boncz/Afroozeh), Meta Velox, DuckDB Labs.
+- A **predictive bandwidth-fraction law** now fills the §8 gap: because decode value-throughput $T_\text{dec}$ is (empirically) *bit-width-independent* — set by layout/strategy, not the packed width $b$ — the achieved bandwidth fraction is $f=\min(1,\ T_\text{dec}\,b/(8\beta))$ with ridge $b^\star=8\beta/T_\text{dec}$. Validated single-thread on two ISAs (x86 AVX2 and Apple-M4 NEON; median $|f-\hat f|$ 0.027 / 0.003, the ridge shifting $29\to67$ bits with the M4's $\sim4\times$ bandwidth), and plugging FastLanes' $T_\text{dec}\approx140$ Gval/s reproduces its "decode-free at 3 bits" as the large-$T_\text{dec}$ limit; branch-free predicates win a mid-selectivity band and zone-skipping is clustering- not selectivity-gated. Modest delta over Polychroniou–Ross (DaMoN 2015) and Zeng et al. (PVLDB 2024) (Samyama, arXiv:2606.22423) *(frontier — verify)*.
 
 ## 8. Future Work
 
@@ -63,6 +64,7 @@ The gap is between **achieved scan throughput and the roofline**, and it is **cl
 - **[SOTA]** Lang, H., Mühlbauer, T., Funke, F., Boncz, P., Neumann, T., Kemper, A. *Data Blocks: Hybrid OLTP and OLAP on Compressed Storage.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2882925)
 - **[SOTA]** Kuschewski, M., Sauerwein, D., Alhomssi, A., Leis, V. *BtrBlocks: Efficient Columnar Compression for Data Lakes.* SIGMOD, 2023. — [DOI](https://doi.org/10.1145/3589263)
 - **[SOTA]** Afroozeh, A., Boncz, P. *The FastLanes Compression Layout: Decoding >100 Billion Integers per Second with Scalar Code.* VLDB, 2023. — [DOI](https://doi.org/10.14778/3598581.3598587)
+- **[SOTA]** Samyama Research. *When Is a Columnar Scan Bandwidth-Bound? A Decode-Throughput Law and Its Cross-Hardware Validation.* arXiv:2606.22423 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.22423) · [code](https://github.com/samyama-ai/bandwidth-bound-scan)
 
 ## 10. Worked Example
 

@@ -4,8 +4,8 @@ title: "Workload-Adaptive Bloom Filter Tuning"
 topic: 11-nosql-kv
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -43,7 +43,7 @@ Information-theoretic: any approximate-membership filter with FPR $\varepsilon$ 
 **Empirically open.** The static convex optimum is solved; what remains genuinely open in practice: (1) the workload signal $a_i$ (per-range negative-access frequency) is *non-stationary* and must be estimated online — the joint problem of *estimation + allocation + reconstruction-cost* has no closed-form optimal policy; (2) per-key-range allocation interacts with compaction, which destroys and rebuilds filters, so the effective objective is a coupled control problem; (3) which filter *type* per region (Bloom vs ribbon vs cuckoo vs adaptive) is best is workload-dependent and decided empirically. The theory gives the bits-per-FPR floor; the *systems* question of total memory at fixed effective FPR under drift is settled only by benchmarks, not bounds.
 
 ## 7. Current Research (as of June 2026)
-Active: learned filters (Kraska et al.'s *learned Bloom filters* and *sandwiched* variants) that exploit key structure to beat the entropy bound when keys are learnable; ribbon-filter deployment in RocksDB; reinforcement-learning / bandit bit-allocators that adapt to drift; range-capable adaptive filters merging SuRF/Rosetta with hotness awareness *(frontier — verify)*. Groups: DASlab (Idreos), Stony Brook/CMU (Bender, Farach-Colton, Pandey on quotient/adaptive filters), Mitzenmacher/Reviriego on adaptive cuckoo, Meta RocksDB team. Frontier: provable regret bounds for online per-range allocation under compaction-induced rebuilds *(frontier — verify)*.
+Active: learned filters (Kraska et al.'s *learned Bloom filters* and *sandwiched* variants) that exploit key structure to beat the entropy bound when keys are learnable; ribbon-filter deployment in RocksDB; reinforcement-learning / bandit bit-allocators that adapt to drift; range-capable adaptive filters merging SuRF/Rosetta with hotness awareness *(frontier — verify)*. Groups: DASlab (Idreos), Stony Brook/CMU (Bender, Farach-Colton, Pandey on quotient/adaptive filters), Mitzenmacher/Reviriego on adaptive cuckoo, Meta RocksDB team. Frontier: provable regret bounds for online per-range allocation under compaction-induced rebuilds *(frontier — verify)*. A closed-form analysis of the **value of adaptivity** gives three validated laws: a **log-law** (optimal bits/key is affine in log access-frequency, slope $1/\ln^2 2\approx2.081$ — a re-reading of Monkey); a **robustness law** (excess read cost from hotness misestimation $\approx D/2$, with $D$ the frequency-weighted variance of log-hotness error, plus immunity to a common misestimation factor); and an **adaptivity-value frontier** $V\approx\tfrac12(r/r^\star)^2$, $r^\star=\sqrt{2(C_\text{unif}-C_\text{orac})/C_\text{orac}}$, separating three regimes — counter-intuitively, *more* skew raises $r^\star$ so continuous tracking matters *less*. Validated on real Twitter cache traces and RocksDB; modest analytical delta over Monkey/ElasticBF/Mnemosyne (SIGMOD 2025) (Samyama, arXiv:2606.18138) *(frontier — verify)*.
 
 ## 8. Future Work
 - A unified online allocator with regret bounds that accounts for compaction-driven filter rebuild costs.
@@ -58,6 +58,7 @@ Active: learned filters (Kraska et al.'s *learned Bloom filters* and *sandwiched
 - **[SOTA]** M. A. Bender, M. Farach-Colton, M. Goswami, R. Johnson, S. McCauley, S. Singh. *Bloom Filters, Adaptivity, and the Dictionary Problem.* FOCS, 2018. — [arXiv](https://arxiv.org/abs/1711.01616)
 - **[SOTA]** Y. Li, C. Tian, F. Guo, C. Li, Y. Xu. *ElasticBF: Elastic Bloom Filter with Hotness Awareness for Boosting Read Performance.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/li-yongkun)
 - **[Foundational]** T. Kraska, A. Beutel, E. H. Chi, J. Dean, N. Polyzotis. *The Case for Learned Index Structures.* SIGMOD, 2018. — [arXiv](https://arxiv.org/abs/1712.01208)
+- **[SOTA]** Samyama Research. *The Value of Adaptivity in LSM Bloom-Filter Tuning: A Log-Law and a Two-Clock Frontier.* arXiv:2606.18138 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.18138) · [code](https://github.com/samyama-ai/lsm-bloom-allocation)
 
 ## 10. Worked Example
 

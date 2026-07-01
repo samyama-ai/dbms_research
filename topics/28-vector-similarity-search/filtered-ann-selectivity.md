@@ -4,8 +4,8 @@ title: "Filtered ANN with predicate selectivity guarantees"
 topic: 28-vector-similarity-search
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -47,7 +47,7 @@ No clean theoretical upper bound spans all selectivities. Practically: ACORN-sty
 Systems handle the *ends* of the selectivity spectrum well (pre-filter at low $s$, post-filter at high $s$) but the **middle regime** and **adversarial low-selectivity correlated predicates** cause recall or latency cliffs. The gap is between (a) heuristics with strong benchmark numbers but no guarantees and (b) the absence of any structure provably uniform across $s$. Closing it needs either a structural index with a proven per-predicate navigability+recall bound, or a lower bound establishing that uniform performance is impossible without $\Omega(1/s)$ resource cost.
 
 ## 7. Current Research (as of June 2026)
-Active: predicate-agnostic graph construction (ACORN line) and label-aware graphs (Filtered/Streaming-DiskANN, Microsoft Research, Indyk/Gollapudi collaborators); cost-based filter strategy selection inside vector DBs (Milvus, Weaviate engineering). Emerging: range-filter ANN over numeric attributes via segment-tree / hierarchical partition indexes (e.g., "iRangeGraph", SeRF-style window filters) *(frontier — verify)*; benchmarks with controlled selectivity sweeps becoming standard *(frontier — verify)*. Joint learned cardinality estimation + ANN cost models is an open systems direction.
+Active: predicate-agnostic graph construction (ACORN line) and label-aware graphs (Filtered/Streaming-DiskANN, Microsoft Research, Indyk/Gollapudi collaborators); cost-based filter strategy selection inside vector DBs (Milvus, Weaviate engineering). Emerging: range-filter ANN over numeric attributes via segment-tree / hierarchical partition indexes (e.g., "iRangeGraph", SeRF-style window filters) *(frontier — verify)*; benchmarks with controlled selectivity sweeps becoming standard *(frontier — verify)*. Joint learned cardinality estimation + ANN cost models is an open systems direction. A **phase-transition account** of strategy selection frames selectivity as an order parameter (pre/post/in-filter = phases) and shows estimation error causes plan regret only in *critical regions* near phase boundaries: the in-filter connectivity cliff is a site-percolation transition at $s_c\approx0.83/M$ (degree-set, $n$-independent), criticality requires a constrained budget $B<\sqrt{kn}$, and the regret wedge obeys a finite-size-scaling collapse across two decades of $n$ (validated on SIFT1M). Modest-conceptual delta — strategy selection itself is prior art (Gan–Wang; AlloyDB adaptive filtering; Vespa) (Samyama, arXiv:2606.16341) *(frontier — verify)*.
 
 ## 8. Future Work
 - A single index with provable recall/latency uniform over selectivity.
@@ -62,6 +62,7 @@ Active: predicate-agnostic graph construction (ACORN line) and label-aware graph
 - **[SOTA]** S. J. Subramanya, et al. *DiskANN.* NeurIPS, 2019. — [DBLP](https://dblp.org/rec/conf/nips/SubramanyaDSKK19.html)
 - **[Systems]** J. Wang, et al. *Milvus: A Purpose-Built Vector Data Management System.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3457550)
 - **[SOTA]** C. Zuo, M. Qiao, W. Zhou, F. Li, D. Deng. *SeRF: Segment Graph for Range-Filtering Approximate Nearest Neighbor Search.* SIGMOD, 2024. — [DOI](https://doi.org/10.1145/3639324)
+- **[SOTA]** Samyama Research. *Filtered ANN as a Phase Transition: When Selectivity-Estimation Error Causes Plan Regret.* arXiv:2606.16341 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.16341) · [code](https://github.com/samyama-ai/filtered-ann-regret)
 
 ## 10. Worked Example
 

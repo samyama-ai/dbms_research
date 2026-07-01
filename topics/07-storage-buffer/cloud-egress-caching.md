@@ -4,8 +4,8 @@ title: "Cloud Storage Caching with Egress Cost"
 topic: 07-storage-buffer
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-07
+last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 ---
@@ -65,6 +65,7 @@ Marked **empirically-open**. Generic generalized-caching theory supplies tight-u
 - **Learning-augmented caching with cost predictions** specialized to egress-billed misses. *(frontier — verify)*
 - **Cross-cloud / multi-region** placement+caching to minimize inter-region egress (data-gravity economics). *(frontier — verify)*
 - Serverless data caches that amortize per-invocation fetch fees via batching/coalescing.
+- An **exact offline dollar-optimum** now supplies the billing-faithful reference §6/§8 call for: the uniform-object-size cost optimum is an integral interval LP (totally unimodular; equivalently a min-cost flow on the time line), with a *cost-FOO* bound for variable sizes. Measured against it, deployed heuristics show a **heterogeneity-regret law** (LRU dollar-regret grows with miss-cost CV, Spearman $0.87$; cost-aware GDSF cuts it), a **contention frontier** (GDSF residual regret collapses to $\approx0$ at budget $B=N_\text{exp}$), and a **crossover** $s^\star=\text{GET\_fee}/\text{egress\_rate}$ predicting when dollar-aware caching pays. On real Twitter-twemcache and Wikipedia-CDN traces the large-regret regime needs high heterogeneity, high reuse, *and* a tight budget simultaneously — which neither trace hits (an honest negative). GDSF, Bansal–Buchbinder–Naor, and FOO all credited (Samyama, arXiv:2606.20539) *(frontier — verify)*.
 
 ## 8. Future Work
 
@@ -81,6 +82,7 @@ Marked **empirically-open**. Generic generalized-caching theory supplies tight-u
 - **[SOTA]** Antoniadis, Coester, Eliáš, Polak, Simon. *Online Metric Algorithms with Untrusted Predictions.* ICML, 2020. — [arXiv](https://arxiv.org/abs/2003.02144)
 - **[SOTA]** Dageville, Cruanes, Zukowski, et al. *The Snowflake Elastic Data Warehouse.* SIGMOD, 2016. — [DOI](https://doi.org/10.1145/2882903.2903741)
 - **[Survey]** Karlsson, Mahalingam. *Do We Need Replacement Algorithms? Cost-Aware Caching Surveys.* (cost-aware caching literature), 2000s. *(unverified)* — [DBLP search](https://dblp.org/search?q=cost-aware%20caching%20replacement)
+- **[SOTA]** Samyama Research. *Caching for Dollars, Not Hits: An Exact Offline Reference for Cloud-Egress Caching and the Crossover That Decides When It Pays.* arXiv:2606.20539 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.20539) · [code](https://github.com/samyama-ai/cloud-egress-cache)
 
 ## 10. Worked Example
 
