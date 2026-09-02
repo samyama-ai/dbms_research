@@ -4,8 +4,8 @@ title: "Spatial joins on compressed/encoded data"
 topic: 20-spatial-databases
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
 ---
@@ -44,6 +44,8 @@ We have strong heuristics (key-domain filtering, progressive refinement) but **n
 ## 7. Current Research (as of June 2026)
 Directions: predicate-pushdown into columnar/encoded geometry (GeoArrow/GeoParquet ecosystems) *(frontier — verify)*; learned and grammar-/topology-aware geometry codecs that expose coarse predicates without full decode *(frontier — verify)*; succinct geometry indexes (wavelet-tree / SFC-key joins) for in-memory analytics; and GPU joins directly over Morton-encoded points. Active groups: Sedona/GeoArrow maintainers, columnar-spatial-storage groups (e.g. work around SpatialParquet), and the succinct-data-structures community (Navarro lineage) bridging to geometry.
 
+A reproducible attack on the *true* objective (bytes decoded, not pairs compared): over a Douglas–Peucker level-of-detail ladder, a **progressive certificate join** certified by a two-sided Hausdorff-margin test returns the provably exact intersection join while decoding **3.4–16.8× (median 5.9×) fewer vertices** than decompress-then-refine, and ≈4.9× fewer than the single-approximation multi-step baseline of Brinkhoff et al. (1994), with zero correctness violations across 31 workloads on US Census TIGER water polygons. The characterisation — the **decode-work law** — is that decode work is governed by each pair's signed-clearance margin, i.e. how close the pair sits to the predicate flip, which is the decompression-sensitive complexity §6 asks for, stated empirically rather than proved (Samyama, arXiv:2607.01182) *(frontier — verify)*.
+
 ## 8. Future Work
 - A formal *decompression-sensitive* complexity model for spatial predicates.
 - Predicate-aware (join-aware) lossy/lossless geometry codecs with certificate margins.
@@ -57,6 +59,7 @@ Directions: predicate-pushdown into columnar/encoded geometry (GeoArrow/GeoParqu
 - **[SOTA]** GeoArrow / GeoParquet specifications. *Columnar Encodings for Geometry.* OGC / Apache, 2022–2024. — [GeoArrow](https://geoarrow.org/) · [GeoParquet](https://geoparquet.org/)
 - **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
 
+- **[SOTA]** Samyama Research. *The Decode-Work Law: Margin-Governed, Provably-Exact Spatial Joins over Compressed Geometry.* arXiv:2607.01182 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2607.01182) · [code](https://github.com/samyama-ai/spatial-join-on-compressed)
 ## 10. Worked Example
 
 Join two polygons stored progressively (Douglas–Peucker hierarchies), testing **intersects**. Each polygon has $1{,}000$ vertices; full decode = $1{,}000$ coordinate pairs each.

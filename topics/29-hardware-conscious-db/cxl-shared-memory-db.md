@@ -4,8 +4,8 @@ title: "Coherence-free CXL-shared-memory databases"
 topic: 29-hardware-conscious-db
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
 ---
@@ -61,7 +61,7 @@ From the RDMA/disaggregated lineage, one-sided read-optimized B+-trees (Sherman)
 
 - **[Foundational]** Herlihy, M. P., Wing, J. M. *Linearizability: A Correctness Condition for Concurrent Objects.* ACM TOPLAS, 1990. — [DOI](https://doi.org/10.1145/78969.78972)
 - **[Foundational]** Herlihy, M. *Wait-Free Synchronization.* ACM TOPLAS, 1991. — [DOI](https://doi.org/10.1145/114005.102808)
-- **[SOTA]** Dragojević, A., Narayanan, D., Castro, M., Hodson, O. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevic)
+- **[SOTA]** Dragojević, A., Narayanan, D., Castro, M., Hodson, O. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-dragojevic.pdf)
 - **[SOTA]** Wang, Q. et al. *Sherman: A Write-Optimized Distributed B+Tree Index on Disaggregated Memory.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2112.07320)
 - **[SOTA]** Li, H. et al. *Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2203.00241)
 - **[SOTA]** Maruf, H. A. et al. *TPP: Transparent Page Placement for CXL-Enabled Tiered Memory.* ASPLOS, 2023. — [arXiv](https://arxiv.org/abs/2206.02878)

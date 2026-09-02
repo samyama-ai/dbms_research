@@ -4,8 +4,8 @@ title: "Differential Testing Across Heterogeneous DBMSs"
 topic: 33-benchmarking-testing
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
 ---
@@ -64,6 +64,7 @@ The gap is between (a) pragmatic differential testing that finds many real bugs 
 - LLM-assisted triage to auto-classify disagreements as benign vs. bug, with human-in-the-loop confirmation *(frontier — verify)*.
 - Restricting generated queries to an **engine-invariant fragment** so differential testing becomes sound by construction.
 - Groups: Manuel Rigger (NUS), Taesoo Kim's group (APOLLO), DuckDB/ClickHouse/Cockroach engineering teams, formal-SQL-semantics groups (Cheung/Chu/Suciu).
+- For the **floating-point** slice of the divergence theory §1 calls for, the decisive quantity turns out to be the engine's *algorithm*, not the query. Taking ground truth as the exact rational value of the stored doubles (arithmetic, not another engine), each discrepancy classifies as *exact*, *bounded* or *indeterminate*, with relative error obeying $\mathrm{rel\_err} \le C_A(n,u)\,\kappa_f^{\,p}$ and a testability boundary $\kappa^\star_{f,A} = (1/C_A)^{1/p}$ beyond which **no** oracle can separate a bug from rounding. SUM/AVG are the linear case $p=1$; variance is $p=2$ one-pass and $p=1$ for Welford. Across eight engines in four classes the measured exponent recovers each algorithm. Honest negative: the sweep found **no engine bug** — zero anomalies is evidence the oracle is sound, not that the engines are correct (Samyama, arXiv:2609.00381) *(frontier — verify)*.
 
 ## 8. Future Work
 
@@ -80,6 +81,7 @@ The gap is between (a) pragmatic differential testing that finds many real bugs 
 - **[Foundational]** A. K. Chandra, P. M. Merlin. *Optimal Implementation of Conjunctive Queries.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
 - **[Survey]** R. B. Evans, A. Savoia. *Differential Testing: A New Approach to Change Detection.* ESEC/FSE, 2007. — [DOI](https://doi.org/10.1145/1287624.1287707)
 
+- **[SOTA]** Samyama Research. *Bounded, Indeterminate, or a Bug: A Condition-Aware Oracle for Differential Testing of SQL Aggregates.* arXiv:2609.00381 (cs.DB; cs.SE), 2026. — [arXiv](https://arxiv.org/abs/2609.00381) · [code](https://github.com/samyama-ai/numeric-semantics-oracle)
 ## 10. Worked Example
 
 Run one query on three engines over table `t(name TEXT)` with rows $\{$`'apple'`, `NULL`, `'Banana'`$\}$:

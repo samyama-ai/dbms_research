@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Generates INDEX.md — flat list of all problems, grouped by topic.
 set -euo pipefail
+# Pin collation: without it `sort` orders differently under en_US.UTF-8 vs C,
+# so INDEX.md churns depending on whose machine regenerated it.
+export LC_ALL=C
 out=INDEX.md
 total=$(find topics -name '*.md' ! -name 'README.md' | wc -l | tr -d ' ')
 {
