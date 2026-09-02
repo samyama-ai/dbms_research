@@ -19,6 +19,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -218,21 +219,68 @@ LINK_CACHE = os.path.join(os.path.expanduser("~"), ".cache", "dbms_research-link
 # The report states each tier, so "0 failures" can never quietly mean "0 failures among the
 # half we bothered to check".
 DEFERRED_HOSTS = {"dblp.org", "dblp.uni-trier.de"}
+# Publishers that answer 403 to any non-browser client. Their URLs embed a DOI, so the
+# identifier is checkable even though the page is not fetchable. Probing them produced 138
+# warnings that all meant "the publisher blocked us" -- noise that trains you to skip the
+# output, exactly the argument for excluding "IEEE TBD" from the placeholder check.
+DOI_BEARING_HOSTS = {"doi.org", "dl.acm.org", "ieeexplore.ieee.org", "link.springer.com",
+                     "onlinelibrary.wiley.com", "www.sciencedirect.com"}
+# 2xx that mean "alive". 202 Accepted shows up on a few publisher endpoints.
+ALIVE = {200, 201, 202, 203, 204, 301, 302, 303, 307, 308}
 
 
 def classify(u):
     host = u.split("/")[2].lower() if "://" in u else ""
     if host in DEFERRED_HOSTS:
         return "deferred"
-    if host == "doi.org":
+    if host in DOI_BEARING_HOSTS:
         return "doi"
+    if host == "arxiv.org":
+        return "arxiv"
     return "probe"
 
 
-def check_dois(urls, seen):
+def check_arxiv(urls, seen):
+    """Resolve arXiv ids in ONE API call instead of 483 HTTP probes.
+
+    Probing them individually gets us rate-limited, and the resulting connection
+    failures (code 0) are indistinguishable from dead links: the first sweep reported
+    138 of them, and three spot-checked by hand were all live. A false alarm that looks
+    exactly like a real one is worse than no check.
+    """
+    ids = []
     for u in urls:
-        doi = u.split("doi.org/", 1)[1] if "doi.org/" in u else ""
-        if not re.match(r"^10\.\d{4,9}/\S+$", doi):
+        m = re.search(r"arxiv\.org/abs/([a-z-]+/\d{7}|\d{4}\.\d{4,5})", u)
+        if m:
+            ids.append((m.group(1), u))
+        else:
+            warn(f"{seen[u][0]}: unparseable arXiv URL: {u}")
+    for i in range(0, len(ids), 100):
+        chunk = ids[i:i + 100]
+        q = "id_list=" + ",".join(a for a, _ in chunk) + f"&max_results={len(chunk)}"
+        try:
+            req = urllib.request.Request("https://export.arxiv.org/api/query?" + q,
+                                         headers={"User-Agent": "dbms_research-audit/1.0"})
+            with urllib.request.urlopen(req, timeout=90) as r:
+                body = r.read().decode()
+        except Exception as e:
+            fail(f"--links: arXiv API unreachable ({e}); {len(chunk)} ids UNVERIFIED")
+            continue
+        found = set(re.findall(r"arxiv\.org/abs/([a-z-]*/?\d+\.?\d*)v\d+", body))
+        for aid, u in chunk:
+            if aid not in found and aid.split("/")[-1] not in {f.split("/")[-1] for f in found}:
+                fail(f"{seen[u][0]}: arXiv does not return {aid}: {u}")
+        time.sleep(3)                      # arXiv API etiquette
+
+
+def check_dois(urls, seen):
+    """Validate the DOI these URLs carry. They cannot be fetched (403 by design)."""
+    for u in urls:
+        m = re.search(r"(10\.\d{4,9}/\S+)$", u)
+        if not m:
+            warn(f"{seen[u][0]}: publisher URL with no extractable DOI: {u}")
+            continue
+        if not re.match(r"^10\.\d{4,9}/\S+$", m.group(1)):
             fail(f"{seen[u][0]}: malformed DOI: {u}")
 
 
@@ -251,6 +299,7 @@ def check_links(files):
           file=sys.stderr, flush=True)
 
     check_dois(tiers.get("doi", []), seen)
+    check_arxiv(tiers.get("arxiv", []), seen)
 
     probe_set = tiers.get("probe", [])
     os.makedirs(os.path.dirname(LINK_CACHE), exist_ok=True)
@@ -263,6 +312,7 @@ def check_links(files):
     todo = [u for u in probe_set if u not in done]
     print(f"  probing {len(probe_set)} ({len(todo)} new); "
           f"{len(tiers.get('doi', []))} DOIs syntax-only; "
+          f"{len(tiers.get('arxiv', []))} arXiv via API; "
           f"{len(tiers.get('deferred', []))} DBLP deferred (rate limits)",
           file=sys.stderr, flush=True)
 
@@ -287,7 +337,7 @@ def check_links(files):
              f"do NOT read this run as clean.")
     for u in sorted(probe_set):
         code = done.get(u)
-        if code is None or code in (200, 301, 302, 303, 307, 308):
+        if code is None or code in ALIVE:
             continue
         where = seen[u][0] + (f" (+{len(seen[u])-1})" if len(seen[u]) > 1 else "")
         (fail if code in (404, 410) else warn)(f"{where}: HTTP {code} {u}")

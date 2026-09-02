@@ -4,8 +4,8 @@ title: "Consensus for Disaggregated Memory"
 topic: 10-consensus-coordination
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
 ---
@@ -66,7 +66,7 @@ Active directions: consensus and transactions natively over **CXL 3.0 shared/fab
 - **[Foundational]** Michael Fischer, Nancy Lynch, Michael Paterson. *Impossibility of Distributed Consensus with One Faulty Process.* JACM, 1985. — [DOI](https://doi.org/10.1145/3149.214121)
 - **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Igor Zablotchi. *The Impact of RDMA on Agreement.* PODC, 2019. — [DOI](https://doi.org/10.1145/3293611.3331601)
 - **[SOTA]** Marcos K. Aguilera, Naama Ben-David, Rachid Guerraoui, Virendra Marathe, Athanasios Xygkis, Igor Zablotchi. *Microsecond Consensus for Microsecond Applications (Mu).* OSDI, 2020. — [USENIX](https://www.usenix.org/conference/osdi20/presentation/aguilera)
-- **[SOTA]** Aleksandar Dragojević, Dushyanth Narayanan, Miguel Castro, Orion Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/conference/nsdi14/technical-sessions/dragojevic)
+- **[SOTA]** Aleksandar Dragojević, Dushyanth Narayanan, Miguel Castro, Orion Hodson. *FaRM: Fast Remote Memory.* NSDI, 2014. — [USENIX](https://www.usenix.org/system/files/conference/nsdi14/nsdi14-paper-dragojevic.pdf)
 - **[Foundational]** Michael C. Loui, Hosame H. Abu-Amara. *Memory Requirements for Agreement Among Unreliable Asynchronous Processes.* Advances in Computing Research, 1987. — [DBLP search](https://dblp.org/search?q=Memory+Requirements+for+Agreement+Among+Unreliable+Asynchronous+Processes)
 
 ## 10. Worked Example
