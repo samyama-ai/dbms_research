@@ -192,7 +192,7 @@ def probe(u):
         try:
             r = urllib.request.Request(u, method=method,
                                        headers={"User-Agent": "dbms_research-audit/1.0"})
-            with urllib.request.urlopen(r, timeout=20) as resp:
+            with urllib.request.urlopen(r, timeout=12) as resp:
                 return u, resp.status
         except Exception as e:
             code = getattr(e, "code", None)
@@ -203,15 +203,94 @@ def probe(u):
     return u, 0
 
 
+LINK_CACHE = os.path.join(os.path.expanduser("~"), ".cache", "dbms_research-linkcheck.tsv")
+
+# Link checking is tiered by host, because a flat HTTP sweep of this catalog does not work.
+# Measured 2026-09-02: doi.org (1,768 of 3,278 URLs) answers 403 to a non-browser client, so
+# probing it is 54% noise and no signal, and the refresh runbook warns DBLP rate-limits per
+# IP. A flat sweep ran at ~6 URLs/45s -- about 7 hours to produce mostly false alarms.
+#
+#   doi.org   -> syntax-checked against the DOI grammar, not resolved (403s us by design)
+#   arxiv.org -> probed; cheap and reliable
+#   dblp.org  -> NOT probed. The runbook forbids hammering it.
+#   the rest  -> ordinary HTTP probe -- the ~500 URLs that actually rot
+#
+# The report states each tier, so "0 failures" can never quietly mean "0 failures among the
+# half we bothered to check".
+DEFERRED_HOSTS = {"dblp.org", "dblp.uni-trier.de"}
+
+
+def classify(u):
+    host = u.split("/")[2].lower() if "://" in u else ""
+    if host in DEFERRED_HOSTS:
+        return "deferred"
+    if host == "doi.org":
+        return "doi"
+    return "probe"
+
+
+def check_dois(urls, seen):
+    for u in urls:
+        doi = u.split("doi.org/", 1)[1] if "doi.org/" in u else ""
+        if not re.match(r"^10\.\d{4,9}/\S+$", doi):
+            fail(f"{seen[u][0]}: malformed DOI: {u}")
+
+
 def check_links(files):
+    """Resolve external URLs, tiered by host, checkpointing after every probe.
+
+    The first version buffered results to the end, so a kill mid-sweep left a one-line log
+    and nothing else -- an unfinished check that could be mistaken for a clean one. Results
+    are appended as they land, so the sweep resumes instead of restarting.
+    """
     seen = urls_in(files)
-    print(f"  resolving {len(seen)} unique URLs ...", file=sys.stderr)
-    with cf.ThreadPoolExecutor(max_workers=8) as ex:
-        for u, code in ex.map(probe, seen):
-            if code in (200, 301, 302, 303, 307, 308):
-                continue
-            where = seen[u][0] + (f" (+{len(seen[u])-1})" if len(seen[u]) > 1 else "")
-            (fail if code in (404, 410) else warn)(f"{where}: HTTP {code} {u}")
+    tiers = {}
+    for u in seen:
+        tiers.setdefault(classify(u), []).append(u)
+    print("  tiers: " + ", ".join(f"{k}={len(v)}" for k, v in sorted(tiers.items())),
+          file=sys.stderr, flush=True)
+
+    check_dois(tiers.get("doi", []), seen)
+
+    probe_set = tiers.get("probe", [])
+    os.makedirs(os.path.dirname(LINK_CACHE), exist_ok=True)
+    done = {}
+    if os.path.exists(LINK_CACHE):
+        for line in open(LINK_CACHE, encoding="utf-8"):
+            p = line.rstrip("\n").split("\t")
+            if len(p) == 2 and p[1].lstrip("-").isdigit():
+                done[p[0]] = int(p[1])
+    todo = [u for u in probe_set if u not in done]
+    print(f"  probing {len(probe_set)} ({len(todo)} new); "
+          f"{len(tiers.get('doi', []))} DOIs syntax-only; "
+          f"{len(tiers.get('deferred', []))} DBLP deferred (rate limits)",
+          file=sys.stderr, flush=True)
+
+    if todo:
+        # as_completed, NOT ex.map: map yields in submission order, so one slow URL
+        # (two 20s timeouts for the HEAD-then-GET retry) stalls every write behind it.
+        # Measured: 90s in, zero rows on disk -- which defeats the point of checkpointing.
+        with open(LINK_CACHE, "a", encoding="utf-8") as cache, \
+                cf.ThreadPoolExecutor(max_workers=8) as ex:
+            futs = {ex.submit(probe, u): u for u in todo}
+            for n, fut in enumerate(cf.as_completed(futs), 1):
+                u, code = fut.result()
+                cache.write(f"{u}\t{code}\n")
+                cache.flush()
+                done[u] = code
+                if n % 100 == 0:
+                    print(f"    {n}/{len(todo)}", file=sys.stderr, flush=True)
+
+    missing = [u for u in probe_set if u not in done]
+    if missing:
+        fail(f"--links did not finish: {len(missing)} URLs never probed. Re-run to resume; "
+             f"do NOT read this run as clean.")
+    for u in sorted(probe_set):
+        code = done.get(u)
+        if code is None or code in (200, 301, 302, 303, 307, 308):
+            continue
+        where = seen[u][0] + (f" (+{len(seen[u])-1})" if len(seen[u]) > 1 else "")
+        (fail if code in (404, 410) else warn)(f"{where}: HTTP {code} {u}")
 
 
 def check_ours(files):
