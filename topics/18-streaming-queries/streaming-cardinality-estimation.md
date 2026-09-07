@@ -8,6 +8,7 @@ last_reviewed: 2026-06
 last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Streaming cardinality and rate estimation for optimization

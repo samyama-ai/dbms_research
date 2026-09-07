@@ -4,10 +4,11 @@ title: "Federated Query Certain Answers Online"
 topic: 15-data-integration
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Federated Query Certain Answers Online
@@ -77,7 +78,7 @@ Active directions: extending **PDQ** with cost/latency-aware and **anytime** pla
 
 ## 9. Key References
 
-- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995. — [DOI](https://doi.org/10.1145/212433.220198)
+- **[Foundational]** A. Rajaraman, Y. Sagiv, J. D. Ullman. *Answering Queries Using Templates with Binding Patterns.* PODS, 1995. — [DOI](https://doi.org/10.1145/212433.220199)
 - **[Foundational]** O. Duschka, M. Genesereth, A. Levy. *Recursive Query Plans for Data Integration.* J. Logic Programming, 2000. — [DOI](https://doi.org/10.1016/S0743-1066(99)00025-4)
 - **[Foundational]** M. Lenzerini. *Data Integration: A Theoretical Perspective.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543644)
 - **[SOTA]** A. Deutsch, B. Ludäscher, A. Nash. *Rewriting Queries Using Views with Access Patterns under Integrity Constraints.* Theoretical Computer Science, 2007. — [DOI](https://doi.org/10.1016/j.tcs.2006.11.008)

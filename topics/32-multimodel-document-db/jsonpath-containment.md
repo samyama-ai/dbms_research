@@ -4,10 +4,11 @@ title: "Containment and equivalence of JSON path queries"
 topic: 32-multimodel-document-db
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Containment and equivalence of JSON path queries
@@ -58,7 +59,7 @@ The decisive boundary results: tree-pattern containment with `{/, //, [], *}` is
 - Sound incomplete procedures with completeness guarantees on practical fragments, wired into real optimizers.
 
 ## 9. Key References
-- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/602382.602385)
+- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/543613.543623)
 - **[Foundational]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346333)
 - **[SOTA]** P. Bourhis, J. Reutter, F. Suárez, D. Vrgoč. *JSON: Data model, query languages and schema specification.* PODS, 2017. — [arXiv](https://arxiv.org/abs/1701.02221)
 - **[Survey]** T. Schwentick. *XPath Query Containment.* SIGMOD Record, 2004. — [DOI](https://doi.org/10.1145/974121.974140)

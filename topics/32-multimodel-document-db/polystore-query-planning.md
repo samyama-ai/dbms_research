@@ -4,10 +4,11 @@ title: "Polystore query planning over heterogeneous engines"
 topic: 32-multimodel-document-db
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Polystore query planning over heterogeneous engines
@@ -61,7 +62,7 @@ This differs from multi-model optimization *within one engine* (see multimodel-q
 - **[SOTA]** R. Pottinger, A. Halevy. *MiniCon: A Scalable Algorithm for Answering Queries Using Views.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100048)
 - **[SOTA]** R. Bonaque, B. Cautis, F. Goasdoué, I. Manolescu (Estocada/Tatooine). *Mixed-instance querying / view-based polystore rewriting.* VLDB / EDBT, 2016. — [HAL](https://inria.hal.science/hal-01321201v2)
 - **[Survey]** A. Halevy. *Answering Queries Using Views: A Survey.* VLDB Journal, 2001. — [DOI](https://doi.org/10.1007/s007780100054)
-- **[Foundational]** L. Mackert, G. Lohman. *R* Optimizer Validation and Performance Evaluation for Distributed Queries.* VLDB, 1986. — [DBLP](https://dblp.org/rec/conf/vldb/MackertL86.html)
+- **[Foundational]** L. Mackert, G. Lohman. *R\* Optimizer Validation and Performance Evaluation for Distributed Queries.* VLDB, 1986. — [DBLP](https://dblp.org/rec/conf/vldb/MackertL86.html)
 
 ## 10. Worked Example
 

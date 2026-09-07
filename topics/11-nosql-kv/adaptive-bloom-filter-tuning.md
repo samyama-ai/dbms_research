@@ -8,6 +8,7 @@ last_reviewed: 2026-07
 last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Workload-Adaptive Bloom Filter Tuning

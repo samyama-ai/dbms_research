@@ -4,10 +4,11 @@ title: "Durable lock-free data structures"
 topic: 06-recovery-logging
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Durable lock-free data structures
@@ -72,7 +73,7 @@ Active directions: detectable recoverable objects and their inherent cost (Attiy
 - **[Foundational]** Joseph Izraelevitz, Hammurabi Mendes, Michael L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
 - **[SOTA]** Michal Friedman, Naama Ben-David, Yuanhao Wei, Guy Blelloch, Erez Petrank. *NVTraverse: In NVRAM Data Structures, the Destination Is More Important than the Journey.* PLDI, 2020. — [arXiv](https://arxiv.org/abs/2004.02841)
 - **[SOTA]** Se Kwon Lee, Jayashree Mohan, Sanidhya Kashyap, Taesoo Kim, Vijay Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [arXiv](https://arxiv.org/abs/1909.13670)
-- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3164135.3164147)
+- **[SOTA]** Joy Arulraj, Justin Levandoski, Umar Farooq Minhas, Per-Åke Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3187009.3164147)
 
 ## 10. Worked Example
 

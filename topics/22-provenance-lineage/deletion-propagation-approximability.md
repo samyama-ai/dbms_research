@@ -4,10 +4,11 @@ title: "Deletion Propagation Approximability"
 topic: 22-provenance-lineage
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Deletion Propagation Approximability
@@ -68,7 +69,7 @@ Active: **resilience with self-joins** (Gatterbauer, Meliou, Makhija) — recent
 
 - **[Foundational]** Buneman, Khanna, Tan. *On Propagation of Deletions and Annotations Through Views.* PODS, 2002. — [DOI](https://doi.org/10.1145/543613.543633)
 - **[SOTA]** Kimelfeld, Vondrák, Williams. *Maximizing Conjunctive Views in Deletion Propagation.* PODS, 2011 (ACM TODS, 2012). — [DOI (PODS)](https://doi.org/10.1145/1989284.1989308) · [DOI (TODS)](https://doi.org/10.1145/2389241.2389243)
-- **[SOTA]** Freire, Gatterbauer, Immerman, Meliou. *The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1507.00674) · [DOI](https://doi.org/10.14778/2850583.2850594)
+- **[SOTA]** Freire, Gatterbauer, Immerman, Meliou. *The Complexity of Resilience and Responsibility for Self-Join-Free Conjunctive Queries.* VLDB, 2015. — [arXiv](https://arxiv.org/abs/1507.00674) · [DOI](https://doi.org/10.14778/2850583.2850592)
 - **[Foundational]** Cong, Fan, Geerts. *Annotation Propagation Revisited for Key Preserving Views.* CIKM, 2006. — [DOI](https://doi.org/10.1145/1183614.1183705)
 - **[Survey]** Cheney, Chiticariu, Tan. *Provenance in Databases: Why, How, and Where.* Foundations and Trends in Databases, 2009. — [DOI](https://doi.org/10.1561/1900000006)
 

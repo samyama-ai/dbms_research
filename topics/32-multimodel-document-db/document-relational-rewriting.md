@@ -4,10 +4,11 @@ title: "Query rewriting between document and relational"
 topic: 32-multimodel-document-db
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Query rewriting between document and relational
@@ -55,7 +56,7 @@ Verified query compilers and equivalence checkers (e.g., **Cosette**-style SMT/r
 - **[Foundational]** S. Abiteboul, R. Hull, V. Vianu. *Foundations of Databases.* Addison-Wesley, 1995. — [full text](http://webdam.inria.fr/Alice/)
 - **[Foundational]** A. Chandra, P. Merlin. *Optimal Implementation of Conjunctive Queries in Relational Databases.* STOC, 1977. — [DOI](https://doi.org/10.1145/800105.803397)
 - **[SOTA]** K. Ong, Y. Papakonstantinou, R. Vernoux. *The SQL++ Query Language: Configurable, Unifying and Semi-structured.* arXiv:1405.3631, 2014. — [arXiv](https://arxiv.org/abs/1405.3631)
-- **[SOTA]** A. Deutsch, L. Popa, V. Tannen. *Query Reformulation with Constraints.* SIGMOD Record, 2006. — [DOI](https://doi.org/10.1145/1147376.1147377)
+- **[SOTA]** A. Deutsch, L. Popa, V. Tannen. *Query Reformulation with Constraints.* SIGMOD Record, 2006. — [DOI](https://doi.org/10.1145/1121995.1122010)
 - **[Foundational]** J. N. Foster et al. *Combinators for Bidirectional Tree Transformations (Lenses).* ACM TOPLAS, 2007. — [DOI](https://doi.org/10.1145/1232420.1232424)
 
 ## 10. Worked Example

@@ -4,10 +4,11 @@ title: "Persistent Memory Lock-Free Indexes"
 topic: 14-main-memory-db
 status: empirically-open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Persistent Memory Lock-Free Indexes
@@ -124,7 +125,7 @@ results on emulated/CXL persistent memory.
 ## 9. Key References
 
 - **[Foundational]** J. Izraelevitz, H. Mendes, M. L. Scott. *Linearizability of Persistent Memory Objects under a Full-System-Crash Failure Model.* DISC, 2016. — [DOI](https://doi.org/10.1007/978-3-662-53426-7_23)
-- **[SOTA]** J. Arulraj, J. Levandoski, U. F. Minhas, P.-A. Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.14778/3164135.3164147)
+- **[SOTA]** J. Arulraj, J. Levandoski, U. F. Minhas, P.-A. Larson. *BzTree: A High-Performance Latch-free Range Index for Non-Volatile Memory.* VLDB, 2018. — [DOI](https://doi.org/10.1145/3187009.3164147)
 - **[SOTA]** S. K. Lee, J. Mohan, S. Kashyap, T. Kim, V. Chidambaram. *RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes.* SOSP, 2019. — [arXiv](https://arxiv.org/abs/1909.13670)
 - **[SOTA]** D. Hwang, W. Kim, Y. Won, B. Nam. *Endurable Transient Inconsistency in Byte-Addressable Persistent B+-Tree (FAST&FAIR).* FAST, 2018. — [USENIX](https://www.usenix.org/conference/fast18/presentation/hwang)
 - **[Foundational]** M. Friedman, M. Herlihy, V. Marathe, E. Petrank. *A Persistent Lock-Free Queue for Non-Volatile Memory.* PPoPP, 2018. — [DOI](https://doi.org/10.1145/3178487.3178490)

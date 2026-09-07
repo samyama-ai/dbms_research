@@ -9,12 +9,15 @@ Master topic index: `TAXONOMY.md`.
 - **One problem = one file.** Filename is the problem slug, kebab-case, `.md`.
 - **Every problem file starts with YAML provenance frontmatter** (`id`, `title`, `topic`,
   `status`, `first_added`, `last_reviewed`, `last_substantive_update`, `stale_since`,
-  `provenance`) — see `TEMPLATE.md`. `id` is the stable identity and must NEVER change once
+  `provenance`, `refs_checked`) — see `TEMPLATE.md`. `id` is the stable identity and must NEVER change once
   assigned; it is how periodic refreshes diff iterations (survived / new / stale). Backfill
   tool: `tools/add_provenance.py`. Refresh process: `dbms_cloud/wiki/refresh-runbook.md`.
 - Every problem file MUST contain all 9 sections from `TEMPLATE.md` in order.
 - **References must be real.** Cite canonical work confidently; do NOT fabricate URLs,
   DOIs, or paper titles. If unsure of a URL, cite author/title/venue/year without a link.
+  This is machine-checked: `tools/verify_refs.py` and the `tools/dblp_*.py` passes resolve
+  every section-9 reference and compare the *resolved* title to the *cited* one, which is
+  what catches a live DOI attached to a different paper. See `tools/README.md`.
 - **Flag the frontier.** Any claim about 2025–2026 SOTA that exceeds reliable knowledge
   gets `*(frontier — verify)*` inline. Knowledge horizon ≈ January 2026.
 - **Math first.** Each file states the formal model and the key theorem(s) it rests on.

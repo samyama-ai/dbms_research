@@ -4,10 +4,11 @@ title: "Revocation Cascade Complexity"
 topic: 23-database-security
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Revocation Cascade Complexity
@@ -66,7 +67,7 @@ Active directions: **graph-based authorization at scale** (Google **Zanzibar**, 
 - **[Foundational]** Griffiths, P.P., Wade, B.W. *An Authorization Mechanism for a Relational Database System.* ACM TODS, 1976. — [DOI](https://doi.org/10.1145/320473.320482)
 - **[Foundational]** Fagin, R. *On an Authorization Mechanism.* ACM TODS, 1978. — [DOI](https://doi.org/10.1145/320263.320288)
 - **[Foundational]** Bertino, E., Samarati, P., Jajodia, S. *An Extended Authorization Model for Relational Databases.* IEEE TKDE, 1997. — [DOI](https://doi.org/10.1109/69.567051)
-- **[SOTA]** Hagström, Å., Jajodia, S., Parisi-Presicce, F., Wijesekera, D. *Revocations — A Classification.* IEEE CSFW/POLICY, 2001. — [DOI](https://doi.org/10.1109/CSFW.2001.930133)
+- **[SOTA]** Hagström, Å., Jajodia, S., Parisi-Presicce, F., Wijesekera, D. *Revocations — A Classification.* IEEE CSFW/POLICY, 2001. — [DOI](https://doi.org/10.1109/CSFW.2001.930135)
 - **[SOTA]** Henzinger, M., Krinninger, S., Nanongkai, D., Saranurak, T. *Unifying and Strengthening Hardness for Dynamic Problems via the Online Matrix-Vector Multiplication Conjecture.* STOC, 2015. — [DOI](https://doi.org/10.1145/2746539.2746609) · [arXiv](https://arxiv.org/abs/1511.06773)
 - **[SOTA]** Pang, R., et al. *Zanzibar: Google's Consistent, Global Authorization System.* USENIX ATC, 2019. — [USENIX](https://www.usenix.org/conference/atc19/presentation/pang)
 

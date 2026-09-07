@@ -4,10 +4,11 @@ title: "Real-Time Concurrency Control Guarantees"
 topic: 05-concurrency-control
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Real-Time Concurrency Control Guarantees
@@ -63,7 +64,7 @@ Directions: predictable-latency in-memory transactional engines with WCET-style 
 - **[Foundational]** Abbott, R.; Garcia-Molina, H. *Scheduling Real-Time Transactions: A Performance Evaluation.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/132271.132276)
 - **[Foundational]** Haritsa, J.; Carey, M.; Livny, M. *Data Access Scheduling in Firm Real-Time Database Systems.* Real-Time Systems, 1992. — [DOI](https://doi.org/10.1007/BF00365312)
 - **[Foundational]** Baruah, S.; Koren, G.; Mishra, B.; Raghunathan, A.; Rosier, L.; Shasha, D. *On-line Scheduling in the Presence of Overload.* FOCS, 1991. — [DOI](https://doi.org/10.1109/SFCS.1991.185354)
-- **[SOTA]** Vestal, S. *Preemptive Scheduling of Multi-criticality Systems with Varying Degrees of Execution Time Assurance.* RTSS, 2007. — [DOI](https://doi.org/10.1109/RTSS.2007.35)
+- **[SOTA]** Vestal, S. *Preemptive Scheduling of Multi-criticality Systems with Varying Degrees of Execution Time Assurance.* RTSS, 2007. — [DOI](https://doi.org/10.1109/RTSS.2007.47)
 - **[Survey]** Ramamritham, K.; Son, S.; DiPippo, L. *Real-Time Databases and Data Services.* Real-Time Systems, 2004. — [DOI](https://doi.org/10.1023/B:TIME.0000045317.37980.a5)
 
 ## 10. Worked Example

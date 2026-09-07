@@ -4,10 +4,11 @@ title: "Inclusion Dependency and Foreign-Key Discovery"
 topic: 34-schema-design-normalization
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Inclusion Dependency and Foreign-Key Discovery
@@ -58,7 +59,7 @@ Active threads: (1) GPU/columnar-vectorized IND discovery and incremental/stream
 - **[Foundational]** Casanova, M.A., Fagin, R., Papadimitriou, C.H. *Inclusion Dependencies and Their Interaction with Functional Dependencies.* PODS / JCSS, 1984. — [DOI](https://doi.org/10.1016/0022-0000(84)90075-8)
 - **[Foundational]** Chandra, A., Vardi, M. *The Implication Problem for Functional and Inclusion Dependencies is Undecidable.* SIAM J. Computing, 1985. — [DOI](https://doi.org/10.1137/0214049)
 - **[SOTA]** Papenbrock, F., Kruse, S., Quiané-Ruiz, J.-A., Naumann, F. *Divide & Conquer-based Inclusion Dependency Discovery (BINDER).* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2752939.2752946)
-- **[SOTA]** Bauckmann, J., Leser, U., Naumann, F. *Efficiently Detecting Inclusion Dependencies (SPIDER).* ICDE, 2007. — [DOI](https://doi.org/10.1109/ICDE.2007.369009) · [DBLP](https://dblp.org/rec/conf/icde/BauckmannLNT07.html)
+- **[SOTA]** Bauckmann, J., Leser, U., Naumann, F. *Efficiently Detecting Inclusion Dependencies (SPIDER).* ICDE, 2007. — [DOI](https://doi.org/10.1109/ICDE.2007.369032) · [DBLP](https://dblp.org/rec/conf/icde/BauckmannLNT07.html)
 - **[SOTA]** Rostin, A., Albrecht, O., Bauckmann, J., Naumann, F., Leser, U. *A Machine Learning Approach to Foreign Key Discovery.* WebDB, 2009. — [DBLP](https://dblp.org/rec/conf/webdb/RostinABNL09.html)
 - **[Survey]** Abiteboul, S., Hull, R., Vianu, V. *Foundations of Databases.* Addison-Wesley, 1995 (IND theory, Ch. 9). — [DBLP](https://dblp.org/db/books/dbtext/abiteboul95.html)
 

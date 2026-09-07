@@ -27,7 +27,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOPICS = os.path.join(ROOT, "topics")
 
 REQUIRED_FM = ["id", "title", "topic", "status", "first_added",
-               "last_reviewed", "last_substantive_update", "stale_since", "provenance"]
+               "last_reviewed", "last_substantive_update", "stale_since", "provenance",
+               "refs_checked"]
+# refs_checked is the iteration in which every reference in section 9 was resolved
+# against DBLP / Crossref / DataCite / arXiv (tools/verify_refs.py and the
+# tools/dblp_*.py passes). It is deliberately NOT "provenance: verified": the
+# references were machine-checked, the prose was not.
+ITER_RE = re.compile(r"^\d{4}-\d{2}$")
 VALID_STATUS = {"open", "partially-solved", "empirically-open", "solved-but-impractical", "stale"}
 VALID_PROV = {"synthesized", "verified"}
 SECTIONS = ["1. Problem Statement", "2. Mathematical Foundations", "3. State of the Art",

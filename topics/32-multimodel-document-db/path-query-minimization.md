@@ -4,10 +4,11 @@ title: "XML/JSON path query minimization"
 topic: 32-multimodel-document-db
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # XML/JSON path query minimization
@@ -51,7 +52,7 @@ JSON-specific path minimization is being re-derived from the XPath theory becaus
 - Incremental re-minimization as schema drifts.
 
 ## 9. Key References
-- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/602382.602383)
+- **[Foundational]** G. Miklau, D. Suciu. *Containment and Equivalence for a Fragment of XPath.* JACM, 2004. — [DOI](https://doi.org/10.1145/543613.543623)
 - **[Foundational]** S. Amer-Yahia, S. Cho, L. Lakshmanan, D. Srivastava. *Tree Pattern Query Minimization.* The VLDB Journal, 2002. — [DOI](https://doi.org/10.1007/s00778-002-0076-7)
 - **[Foundational]** F. Neven, T. Schwentick. *XPath Containment in the Presence of Disjunction, DTDs, and Variables.* ICDT, 2003. — [DOI](https://doi.org/10.1007/3-540-36285-1_21)
 - **[SOTA]** M. Benedikt, W. Fan, F. Geerts. *XPath Satisfiability in the Presence of DTDs.* JACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346333)

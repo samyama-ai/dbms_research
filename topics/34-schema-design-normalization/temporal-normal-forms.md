@@ -4,10 +4,11 @@ title: "Temporal and Bitemporal Normal Forms"
 topic: 34-schema-design-normalization
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Temporal and Bitemporal Normal Forms
@@ -57,7 +58,7 @@ Active threads: extending the **information-theoretic normal-form** program (Are
 ## 9. Key References
 - **[Foundational]** C. S. Jensen, R. T. Snodgrass, M. D. Soo. *Extending Existing Dependency Theory to Temporal Databases.* IEEE TKDE, 1996. — [DOI](https://doi.org/10.1109/69.536250)
 - **[Foundational]** J. Wijsen. *Temporal FDs on Complex Objects.* ACM TODS, 1999. — [DOI](https://doi.org/10.1145/310701.310715)
-- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1071596.1071600)
+- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/773153.773155)
 - **[Foundational]** C. Beeri, P. A. Bernstein. *Computational Problems Related to the Design of Normal Form Relational Schemas.* ACM TODS, 1979. — [DOI](https://doi.org/10.1145/320064.320066)
 - **[Survey]** R. T. Snodgrass. *Developing Time-Oriented Database Applications in SQL.* Morgan Kaufmann, 2000. — [DBLP](https://dblp.org/rec/books/mk/Snodgrass99.html)
 - **[SOTA]** K. Kulkarni, J.-E. Michels. *Temporal Features in SQL:2011.* ACM SIGMOD Record, 2012. — [DOI](https://doi.org/10.1145/2380776.2380786)

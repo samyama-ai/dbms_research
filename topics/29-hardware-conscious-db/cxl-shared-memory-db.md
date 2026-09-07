@@ -8,6 +8,7 @@ last_reviewed: 2026-09
 last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Coherence-free CXL-shared-memory databases

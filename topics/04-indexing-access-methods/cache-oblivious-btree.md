@@ -4,10 +4,11 @@ title: "Cache-oblivious dynamic B-tree optimality"
 topic: 04-indexing-access-methods
 status: solved-but-impractical
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Cache-oblivious dynamic B-tree optimality
@@ -54,7 +55,7 @@ Directions: simplified PMA variants with lower rebalancing constants; "rewired"/
 - **[Foundational]** Frigo, Leiserson, Prokop, Ramachandran. *Cache-Oblivious Algorithms.* FOCS, 1999. — [DBLP](https://dblp.org/rec/conf/focs/FrigoLPR99.html)
 - **[Foundational]** Bender, Demaine, Farach-Colton. *Cache-Oblivious B-Trees.* FOCS, 2000. — [DBLP](https://dblp.org/rec/conf/focs/BenderDF00.html)
 - **[SOTA]** Brodal, Fagerberg, Jacob. *Cache-Oblivious Search Trees via Binary Trees of Small Height.* SODA, 2002. — [DBLP](https://dblp.org/rec/conf/soda/BrodalFJ02.html)
-- **[SOTA]** Bender, Duan, Iacono, Wu. *A Locality-Preserving Cache-Oblivious Dynamic Dictionary.* SODA, 2002 / J. Algorithms. — [DOI](https://doi.org/10.1016/j.jalgor.2004.07.002)
+- **[SOTA]** Bender, Duan, Iacono, Wu. *A Locality-Preserving Cache-Oblivious Dynamic Dictionary.* SODA, 2002 / J. Algorithms. — [DOI](https://doi.org/10.1016/j.jalgor.2004.04.014)
 
 ## 10. Worked Example
 
