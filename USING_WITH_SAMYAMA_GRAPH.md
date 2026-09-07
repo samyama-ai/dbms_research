@@ -12,7 +12,7 @@ account, no cloud, one binary.
 
 ```
 1,053 Problems · 35 Topics · 2,954 Papers · 3,939 Researchers · 3,825 future directions
-18,751 nodes · 38,539 edges · 12.7 MB snapshot
+20,019 nodes · 39,393 edges · 12.8 MB snapshot  (iteration `2026-09`)
 Researchers are resolved against DBLP: 1,966 carry a dblp_pid / profile-page link + affiliation.
 ```
 
@@ -37,7 +37,7 @@ Leave it running. Everything below talks to the HTTP API on `:8080`.
 
 ```bash
 curl -L -o dbms-research.sgsnap \
-  https://github.com/samyama-ai/samyama-graph/releases/download/kg-snapshots-v7/dbms-research.sgsnap
+  https://github.com/samyama-ai/samyama-graph/releases/download/kg-snapshots-v10/dbms-research.sgsnap
 ```
 
 (`.sgsnap` is Samyama-Graph's portable, gzip'd JSON-Lines snapshot format.)
@@ -125,11 +125,18 @@ Most prolific researchers in the catalog, and what one of them is active on:
 MATCH (pap:Paper)-[:AUTHORED_BY]->(per:Person)
 RETURN per.name AS author, count(pap) AS papers ORDER BY papers DESC LIMIT 5
 ```
-> Dan Suciu (62), Thomas Neumann (51), Surajit Chaudhuri (38), Alfons Kemper (36) …
+> Thomas Neumann (51), Samuel Madden (38), Alfons Kemper (36) …
+>
+> Bare surnames (`Wang`, `Suciu`) also appear near the top. They are surname-only
+> mentions lifted from citation text, and they are deliberately **not** merged into a
+> full-name node: a surname alone does not identify a person. Resolution under-merges
+> rather than risk a false merge — before iteration `2026-09` it did merge them, which
+> pinned 63 nodes onto arbitrary DBLP profiles, the systems `Aurora` and `Calvin`
+> among them.
 
 ```cypher
 MATCH (per:Person)-[:ACTIVE_ON]->(p:Problem)
-WHERE per.name = "Dan Suciu"
+WHERE per.name = "Thomas Neumann"
 RETURN p.title LIMIT 10
 ```
 > Instance-optimal join evaluation · Worst-Case-Optimal Distributed Joins ·
@@ -139,7 +146,7 @@ Co-authorship — who collaborates with whom:
 
 ```cypher
 MATCH (a:Person)<-[:AUTHORED_BY]-(:Paper)-[:AUTHORED_BY]->(b:Person)
-WHERE a.name = "Dan Suciu" AND a.name <> b.name
+WHERE a.name = "Thomas Neumann" AND a.name <> b.name
 RETURN b.name AS collaborator, count(*) AS papers ORDER BY papers DESC LIMIT 8
 ```
 
