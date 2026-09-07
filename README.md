@@ -53,7 +53,7 @@ Apache-2.0) and query with OpenCypher in ~2 minutes:
 ```bash
 # with samyama running on :8080
 curl -L -o dbms-research.sgsnap \
-  https://github.com/samyama-ai/samyama-graph/releases/download/kg-snapshots-v7/dbms-research.sgsnap
+  https://github.com/samyama-ai/samyama-graph/releases/download/kg-snapshots-v10/dbms-research.sgsnap
 curl -F file=@dbms-research.sgsnap http://localhost:8080/api/snapshot/import
 ```
 
@@ -63,7 +63,7 @@ WHERE per.name = "Dan Suciu" RETURN p.title
 ```
 
 → **[`USING_WITH_SAMYAMA_GRAPH.md`](./USING_WITH_SAMYAMA_GRAPH.md)** for the full walkthrough,
-the schema (18,751 nodes / 38,539 edges; researchers resolved to DBLP profiles), and a
+the schema (20,019 nodes / 39,393 edges; researchers resolved to DBLP profiles), and a
 dozen ready-to-run queries.
 
 ## Topics
