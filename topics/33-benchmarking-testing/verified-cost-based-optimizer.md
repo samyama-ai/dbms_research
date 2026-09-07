@@ -4,10 +4,12 @@ title: "Mechanized Proof of a Cost-Based Optimizer"
 topic: 33-benchmarking-testing
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
+refs_unverified: 1
 ---
 
 # Mechanized Proof of a Cost-Based Optimizer
@@ -62,7 +64,7 @@ Directions: (1) extending Datacert/DBCert toward a verified *optimizing* path, l
 - **[Foundational]** Leroy. *Formal Verification of a Realistic Compiler (CompCert).* CACM, 2009. — [DOI](https://doi.org/10.1145/1538788.1538814) · [PDF](https://xavierleroy.org/publi/compcert-CACM.pdf)
 - **[Foundational]** Selinger, Astrahan, Chamberlin, Lorie, Price. *Access Path Selection in a Relational Database Management System.* SIGMOD, 1979. — [DOI](https://doi.org/10.1145/582095.582099) · [DBLP](https://dblp.org/rec/conf/sigmod/SelingerACLP79.html)
 - **[SOTA]** Benzaken, Contejean, et al. *A Coq Formalization of the Relational Data Model / DBCert verified SQL compilation.* ESOP / journal, 2014–2019. — [DOI](https://doi.org/10.1007/978-3-642-54833-8_11) · [DBLP](https://dblp.org/rec/conf/esop/BenzakenCD14.html)
-- **[SOTA]** Auerbach, Hirzel, et al. *Q*cert: A Verified Query Compiler.* (project / SIGMOD demo), 2017. — [project](https://querycert.github.io/)
+- **[SOTA]** Auerbach, Hirzel, et al. *Q\*cert: A Verified Query Compiler.* (project / SIGMOD demo), 2017. — [project](https://querycert.github.io/)
 - **[SOTA]** Zhou, Arulraj, et al. *SPES: A Symbolic Approach to Proving Query Equivalence Under Bag Semantics.* ICDE, 2022. — [arXiv](https://arxiv.org/abs/2004.00481)
 - **[Foundational]** Ibaraki, Kameda. *On the Optimal Nesting Order for Computing N-Relational Joins.* ACM TODS, 1984. — [DOI](https://doi.org/10.1145/1270.1498) · [DBLP](https://dblp.org/rec/journals/tods/IbarakiK84.html)
 

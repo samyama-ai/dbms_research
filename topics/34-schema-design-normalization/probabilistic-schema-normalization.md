@@ -4,10 +4,11 @@ title: "Normalization Under Probabilistic and Uncertain Data"
 topic: 34-schema-design-normalization
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Normalization Under Probabilistic and Uncertain Data
@@ -54,7 +55,7 @@ Active directions: bridging **factorized databases / FDB** (Olteanu, Schleich) w
 ## 9. Key References
 - **[Foundational]** D. Suciu, D. Olteanu, C. Ré, C. Koch. *Probabilistic Databases.* Morgan & Claypool, 2011. — [DOI](https://doi.org/10.1007/978-3-031-01879-4)
 - **[Foundational]** N. Dalvi, D. Suciu. *Efficient Query Evaluation on Probabilistic Databases.* VLDB Journal, 2007. — [DOI](https://doi.org/10.1007/s00778-006-0004-3)
-- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/1067298.1067302)
+- **[Foundational]** M. Arenas, L. Libkin. *An Information-Theoretic Approach to Normal Forms for Relational and XML Data.* JACM, 2005. — [DOI](https://doi.org/10.1145/773153.773155)
 - **[SOTA]** D. Olteanu, M. Schleich. *Factorized Databases.* ACM SIGMOD Record, 2016. — [DOI](https://doi.org/10.1145/3003665.3003667)
 - **[Foundational]** I. F. Ilyas, V. Markl, P. Haas, P. Brown, A. Aboulnaga. *CORDS: Automatic Discovery of Correlations and Soft Functional Dependencies.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007641)
 - **[Survey]** T. Papenbrock et al. *Functional Dependency Discovery: An Experimental Evaluation of Seven Algorithms.* PVLDB, 2015. — [DOI](https://doi.org/10.14778/2794367.2794377)

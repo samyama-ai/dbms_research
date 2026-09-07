@@ -4,10 +4,11 @@ title: "Open-World Certain Answers Semantics"
 topic: 15-data-integration
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Open-World Certain Answers Semantics
@@ -64,7 +65,7 @@ Active threads: **OCWA$^*$** and label-driven semantics (Libkin school) generali
 - **[Foundational]** S. Abiteboul, O. Duschka. *Complexity of answering queries using materialized views.* PODS, 1998. — [DOI](https://doi.org/10.1145/275487.275516)
 - **[SOTA]** L. Libkin. *Data exchange and incomplete information.* PODS, 2006. — [DOI](https://doi.org/10.1145/1142351.1142360)
 - **[SOTA]** A. Hernich. *Answering non-monotonic queries in relational data exchange.* ICDT, 2010 / Logical Methods in CS, 2011. — [arXiv](https://arxiv.org/abs/1107.1456)
-- **[SOTA]** G. Gottlob, A. Nash. *Efficient core computation in data exchange.* Journal of the ACM, 2008. — [DOI](https://doi.org/10.1145/1391289.1391293)
+- **[SOTA]** G. Gottlob, A. Nash. *Efficient core computation in data exchange.* Journal of the ACM, 2008. — [DOI](https://doi.org/10.1145/1346330.1346334)
 - **[Survey]** L. Libkin. *Certain answers as objects and knowledge.* Artificial Intelligence, 2016. — [DOI](https://doi.org/10.1016/j.artint.2015.11.004)
 
 ## 10. Worked Example

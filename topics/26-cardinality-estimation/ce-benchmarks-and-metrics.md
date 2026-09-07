@@ -8,6 +8,8 @@ last_reviewed: 2026-07
 last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
+refs_unverified: 1
 ---
 
 # Cardinality Estimation Benchmarks & Metrics

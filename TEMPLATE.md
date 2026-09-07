@@ -7,7 +7,10 @@ first_added: <YYYY-MM>                     # iteration it first appeared
 last_reviewed: <YYYY-MM>                   # iteration last verified
 last_substantive_update: <YYYY-MM>
 stale_since: ""                            # set to <YYYY-MM> when no longer actively worked
-provenance: synthesized                    # synthesized | verified
+provenance: synthesized                    # synthesized | verified (of the PROSE)
+refs_checked: <YYYY-MM>                    # iteration every section-9 reference was
+                                           # resolved against DBLP/Crossref/DataCite/arXiv
+refs_unverified: <N>                       # omit when 0; count of references no source could confirm
 ---
 
 # <Problem Title>

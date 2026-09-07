@@ -4,10 +4,11 @@ title: "End-to-end exactly-once with external side effects"
 topic: 18-streaming-queries
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # End-to-end exactly-once with external side effects
@@ -73,7 +74,7 @@ The theoretical boundary is **closed in the negative**: with idempotence or tran
 - **[Foundational]** S. Gilbert, N. Lynch. *Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (CAP).* ACM SIGACT News, 2002. — [DOI](https://doi.org/10.1145/564585.564601)
 - **[SOTA]** P. Carbone, G. Fóra, S. Ewen, S. Haridi, K. Tzoumas. *Lightweight Asynchronous Snapshots for Distributed Dataflows (ABS).* arXiv:1506.08603, 2015. — [arXiv](https://arxiv.org/abs/1506.08603)
 - **[SOTA]** P. Carbone, A. Katsifodimos, S. Ewen, V. Markl, S. Haridi, K. Tzoumas. *Apache Flink: Stream and Batch Processing in a Single Engine.* IEEE Data Eng. Bulletin, 2015. — [DBLP](https://dblp.org/rec/journals/debu/CarboneKEMHT15.html)
-- **[Foundational]** C. Mohan, B. Lindsay, R. Obermarck. *Transaction Management in the R* Distributed Database Management System.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7266)
+- **[Foundational]** C. Mohan, B. Lindsay, R. Obermarck. *Transaction Management in the R\* Distributed Database Management System.* ACM TODS, 1986. — [DOI](https://doi.org/10.1145/7239.7266)
 
 ## 10. Worked Example
 

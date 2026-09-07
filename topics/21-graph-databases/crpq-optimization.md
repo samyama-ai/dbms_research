@@ -4,10 +4,12 @@ title: "Conjunctive regular path query optimization"
 topic: 21-graph-databases
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
+refs_unverified: 2
 ---
 
 # Conjunctive regular path query optimization
@@ -64,7 +66,7 @@ CRPQ **evaluation/containment** combined complexity is high: Boolean CRPQ evalua
 
 ## 9. Key References
 
-- **[Foundational]** Consens, Mendelzon. *GraphLog / Expressing structural queries.* and Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998. — [DOI](https://doi.org/10.1145/275487.275503) (Florescu–Levy–Suciu)
+- **[Foundational]** Consens, Mendelzon. *GraphLog / Expressing structural queries.* and Florescu, Levy, Suciu. *Query Containment for Conjunctive Queries with Regular Expressions.* PODS 1998. — [DOI](https://doi.org/10.1145/74224.74247) (Florescu–Levy–Suciu)
 - **[Foundational]** Barceló, Libkin, Reutter (and Romero, Vardi). *Querying Graphs with Data / CRPQ tractability.* — Barceló. *Querying Graph Databases.* PODS 2013 (tutorial/survey). — [DOI](https://doi.org/10.1145/2463664.2465216)
 - **[Foundational]** Abo Khamis, Ngo, Rudra. *PANDA: submodular-width joins.* PODS 2016 (applied to CRPQ atoms). — [arXiv](https://arxiv.org/abs/1612.02503) *(the PANDA algorithm is Abo Khamis, Ngo, Suciu, "What do Shannon-type Inequalities, Submodular Width, and Disjunctive Datalog have to do with one another?", PODS 2017; the 2016 PODS paper by Abo Khamis–Ngo–Rudra is FAQ, arXiv 1504.04044)*
 - **[SOTA]** Vrgoč, Rojas, Angles, Arenas, et al. *MillenniumDB.* 2023. — [arXiv](https://arxiv.org/abs/2111.01540)

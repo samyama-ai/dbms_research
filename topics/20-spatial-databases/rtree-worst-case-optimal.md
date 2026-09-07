@@ -4,10 +4,11 @@ title: "Worst-case-optimal dynamic R-tree"
 topic: 20-spatial-databases
 status: open
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Worst-case-optimal dynamic R-tree
@@ -53,11 +54,11 @@ Work continues on **kinetic and dynamic external structures** (Arge, Larsen, Yi 
 
 ## 9. Key References
 - **[Foundational]** A. Guttman. *R-Trees: A Dynamic Index Structure for Spatial Searching.* SIGMOD, 1984. — [DOI](https://doi.org/10.1145/971697.602266)
-- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R*-tree: An Efficient and Robust Access Method for Points and Rectangles.* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93597.98741)
+- **[Foundational]** N. Beckmann, H.-P. Kriegel, R. Schneider, B. Seeger. *The R\*-tree: An Efficient and Robust Access Method for Points and Rectangles.* SIGMOD, 1990. — [DOI](https://doi.org/10.1145/93597.98741)
 - **[SOTA]** L. Arge, M. de Berg, H. Haverkort, K. Yi. *The Priority R-Tree: A Practically Efficient and Worst-Case Optimal R-Tree.* SIGMOD, 2004. — [DOI](https://doi.org/10.1145/1007568.1007608)
 - **[Foundational]** L. Arge, V. Samoladas, J. S. Vitter. *On Two-Dimensional Indexability and Optimal Range Search Indexing.* PODS, 1999. — [DOI](https://doi.org/10.1145/303976.304010)
 - **[Foundational]** A. Aggarwal, J. S. Vitter. *The Input/Output Complexity of Sorting and Related Problems.* Communications of the ACM, 1988. — [DOI](https://doi.org/10.1145/48529.48535)
-- **[SOTA]** N. Beckmann, B. Seeger. *A Revised R*-tree in Comparison with Related Index Structures.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559929)
+- **[SOTA]** N. Beckmann, B. Seeger. *A Revised R\*-tree in Comparison with Related Index Structures.* SIGMOD, 2009. — [DOI](https://doi.org/10.1145/1559845.1559929)
 
 ## 10. Worked Example
 

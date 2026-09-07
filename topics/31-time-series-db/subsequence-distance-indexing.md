@@ -4,10 +4,11 @@ title: "Indexing for distance-based subsequence queries"
 topic: 31-time-series-db
 status: partially-solved
 first_added: 2026-06
-last_reviewed: 2026-06
-last_substantive_update: 2026-06
+last_reviewed: 2026-09
+last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
+refs_checked: 2026-09
 ---
 
 # Indexing for distance-based subsequence queries
@@ -71,7 +72,7 @@ For low-intrinsic-dimension Euclidean data the gap is small: iSAX-family indices
 - **[Foundational]** C. Faloutsos, M. Ranganathan, Y. Manolopoulos. *Fast Subsequence Matching in Time-Series Databases (GEMINI).* SIGMOD, 1994. — [DOI](https://doi.org/10.1145/191839.191925)
 - **[Foundational]** J. Shieh, E. Keogh. *iSAX: Indexing and Mining Terabyte Sized Time Series.* KDD, 2008. — [DOI](https://doi.org/10.1145/1401890.1401966)
 - **[SOTA]** K. Zoumpatianos, S. Idreos, T. Palpanas. *ADS: the Adaptive Data Series Index.* VLDB Journal, 2016. — [DOI](https://doi.org/10.1007/s00778-016-0442-5)
-- **[SOTA]** M. Linardi, T. Palpanas. *ULISSE: ULtra Compact Index for Variable-Length Similarity Search.* ICDE, 2018 / VLDBJ. — [IEEE](https://ieeexplore.ieee.org/document/8509370) — [DOI](https://doi.org/10.1109/ICDE.2018.00164)
+- **[SOTA]** M. Linardi, T. Palpanas. *ULISSE: ULtra Compact Index for Variable-Length Similarity Search.* ICDE, 2018 / VLDBJ. — [IEEE](https://ieeexplore.ieee.org/document/8509370) — [DOI](https://doi.org/10.1109/ICDE.2018.00149)
 - **[Foundational]** R. Weber, H.-J. Schek, S. Blott. *A Quantitative Analysis and Performance Study for Similarity-Search Methods in High-Dimensional Spaces.* VLDB, 1998. — [DBLP](https://dblp.org/rec/conf/vldb/WeberSB98.html)
 - **[Survey]** T. Palpanas, V. Beckmann. *Report on Data Series Management.* SIGMOD Record, 2019. — [DBLP search](https://dblp.org/search?q=Palpanas+Beckmann+data+series+management+2019)
 
