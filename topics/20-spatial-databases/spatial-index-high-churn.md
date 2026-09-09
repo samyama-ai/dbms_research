@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Updatable spatial index under high churn
