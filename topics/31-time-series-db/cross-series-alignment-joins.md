@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Cross-series alignment and join semantics
@@ -62,7 +61,7 @@ Directions: native worst-case-optimal temporal joins in columnar engines (DataFu
 - **[Foundational]** Ngo, Porat, Ré, Rudra. *Worst-Case Optimal Join Algorithms.* PODS, 2012 (JACM 2018). — [arXiv](https://arxiv.org/abs/1203.1952)
 - **[SOTA]** Veldhuizen. *Leapfrog Triejoin: A Simple, Worst-Case Optimal Join Algorithm.* ICDT, 2014. — [arXiv](https://arxiv.org/abs/1210.0481)
 - **[Foundational]** Atallah, Tsotras et al.; and DeWitt, Naughton, Schneider. *An Evaluation of Non-Equijoin (Band Join) Algorithms.* VLDB, 1991. — [VLDB PDF](https://www.vldb.org/conf/1991/P443.PDF)
-- **[SOTA]** Whitehouse (kdb+/q). *As-of Joins (`aj`).* Kx documentation. (canonical systems reference) — [Kx docs](https://code.kx.com/q/ref/aj/)
+- **[Docs]** Whitehouse (kdb+/q). *As-of Joins (`aj`).* Kx documentation. (canonical systems reference) — [Kx docs](https://code.kx.com/q/ref/aj/)
 - **[Survey]** Jensen, Snodgrass. *Temporal Database Management.* (entry in Encyclopedia of Database Systems), 2009. — [DBLP search](https://dblp.org/search?q=Jensen%20Snodgrass%20Temporal%20Database%20Encyclopedia)
 
 ## 10. Worked Example

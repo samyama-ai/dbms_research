@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Tightening HLC drift bounds
@@ -63,7 +62,7 @@ For *well-behaved* clocks the bounds are essentially tight (matching Lundelius�
 - **[Foundational]** L. Lamport. *Time, Clocks, and the Ordering of Events in a Distributed System.* CACM, 1978. — [DOI](https://doi.org/10.1145/359545.359563)
 - **[Foundational]** J. Lundelius, N. Lynch. *An Upper and Lower Bound for Clock Synchronization.* Information and Control, 1984. — [DOI](https://doi.org/10.1016/S0019-9958(84)80033-9)
 - **[SOTA]** J. Corbett et al. *Spanner: Google's Globally-Distributed Database* (TrueTime context). OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
-- **[SOTA]** CockroachDB Labs. *Living Without Atomic Clocks* (HLC + max-offset / uncertainty restarts design write-up). Cockroach Labs, 2016+. — [blog](https://www.cockroachlabs.com/blog/living-without-atomic-clocks/)
+- **[Docs]** CockroachDB Labs. *Living Without Atomic Clocks* (HLC + max-offset / uncertainty restarts design write-up). Cockroach Labs, 2016+. — [blog](https://www.cockroachlabs.com/blog/living-without-atomic-clocks/)
 
 ## 10. Worked Example
 

@@ -9,7 +9,6 @@ last_substantive_update: 2026-07
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Cardinality Estimation Benchmarks & Metrics
@@ -85,7 +84,7 @@ We have good *workloads* (JOB, STATS-CEB) but no *metric* that is both cheap and
 - **[SOTA]** Negi, Marcus, Kipf, Mao, Tatbul, Kraska, Alizadeh. *Flow-Loss: Learning Cardinality Estimates that Matter.* VLDB, 2021. — [DOI](https://doi.org/10.14778/3476249.3476259), [arXiv](https://arxiv.org/abs/2101.04964)
 - **[Survey/SOTA]** Han, Wu, Wu, et al. *Cardinality Estimation in DBMS: A Comprehensive Benchmark Evaluation (STATS-CEB).* VLDB, 2022. — [DOI](https://doi.org/10.14778/3503585.3503586), [arXiv](https://arxiv.org/abs/2109.05877)
 - **[Survey/SOTA]** Wang, Qu, Wu, Wang, Zhou. *Are We Ready for Learned Cardinality Estimation?* VLDB, 2021. — [DOI](https://doi.org/10.14778/3461535.3461552), [DBLP](https://dblp.org/rec/journals/pvldb/WangQWWZ21.html)
-- **[SOTA]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021. — [GitHub](https://github.com/learnedsystems/CEB)
+- **[Artifact]** Negi, Marcus, Mao, Tatbul, Kraska, Alizadeh. *Cardinality Estimation Benchmark (CEB).* (artifact/workload), 2021. — [GitHub](https://github.com/learnedsystems/CEB)
 - **[SOTA]** Samyama Research. *When Does q-error Predict Plan Regret? Three Regimes of Cardinality-Estimation Error.* arXiv:2606.15600 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2606.15600) · [code](https://github.com/samyama-ai/ce-metric-eval)
 
 ## 10. Worked Example

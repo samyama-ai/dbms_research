@@ -18,6 +18,13 @@ Master topic index: `TAXONOMY.md`.
   This is machine-checked: `tools/verify_refs.py` and the `tools/dblp_*.py` passes resolve
   every section-9 reference and compare the *resolved* title to the *cited* one, which is
   what catches a live DOI attached to a different paper. See `tools/README.md`.
+- **Cite a source as what it is.** `[Docs]` for vendor documentation or a specification,
+  `[Artifact]` for a repository, benchmark or dataset. These are real sources that no
+  bibliographic database indexes, and the checker skips them on that basis — so tagging
+  one `[SOTA]` makes it read as a paper nobody can find.
+- **Cite a paper by its own title**, not a paraphrase. "Is Learned Query Optimization
+  Ready" is not a title a reader can look up; "Is Your Learned Query Optimizer Behaving
+  As You Expect? A Machine Learning Perspective" is.
 - **Flag the frontier.** Any claim about 2025–2026 SOTA that exceeds reliable knowledge
   gets `*(frontier — verify)*` inline. Knowledge horizon ≈ January 2026.
 - **Math first.** Each file states the formal model and the key theorem(s) it rests on.
