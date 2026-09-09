@@ -54,6 +54,11 @@ python3 tools/verify_refs.py --refs refs.jsonl --cache res_arxiv.jsonl --kind ar
   Use one worker.
 - **`ThreadPoolExecutor.map` yields in submission order**, so one slow identifier stalls
   every write behind it and a killed sweep loses them. Use `as_completed` and flush per line.
+- **An escaped asterisk is not a delimiter.** A literal `*` inside a title is written
+  `R\*-tree` so it does not close the markdown emphasis. A closing-delimiter regex of
+  `\*([^*]+?)\*` then parses the title as `The R\` and reports six real papers as having
+  no record. The fix that escaped them and the checker that reads them landed in the same
+  commit.
 - **The catalogue shortens titles**, and *Encyclopedia of Database Systems* has thousands of
   one-word entries. Score a fuzzy match symmetrically (`/max`), or "Adaptive." matches
   everything.
