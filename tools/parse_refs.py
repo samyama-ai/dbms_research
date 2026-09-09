@@ -10,7 +10,11 @@ REF_RE = re.compile(
     r'^- \*\*\[(?P<tag>[^\]]+)\]\*\*\s+'      # [Foundational] / [SOTA] / ...
     r'(?P<rest>.*)$'
 )
-TITLE_RE = re.compile(r'\*(?P<title>[^*]+?)\.?\*')
+# A literal asterisk inside a title is escaped in the markdown (`R\*-tree`,
+# `Q\*cert`) so it does not close the emphasis. The closing delimiter is
+# therefore an asterisk NOT preceded by a backslash; matching any asterisk
+# truncates those titles to `The R\` and reports real papers as missing.
+TITLE_RE = re.compile(r'\*(?P<title>(?:[^*]|(?<=\\)\*)+?)\.?(?<!\\)\*')
 # Elsevier DOIs embed parentheses (10.1016/S0049-237X(08)72018-4), so a
 # non-greedy [^)]+ truncates the URL and the DOI 404s. Allow one level of
 # nesting inside the link target.
@@ -26,7 +30,9 @@ def parse_line(line):
     tm = TITLE_RE.search(rest)
     if not tm:
         return None
-    title = tm.group('title').strip()
+    # Undo the markdown escape so downstream sees the real title: DBLP has
+    # `The R*-tree`, not `The R\*-tree`.
+    title = tm.group('title').strip().replace('\\*', '*')
     authors = rest[:tm.start()].strip().rstrip('.').strip()
     tail = rest[tm.end():]
     # venue/year sit between the title and the first link (or end of line)
