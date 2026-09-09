@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Learned/RL join-order optimizers vs. classical
@@ -70,7 +69,7 @@ Genuinely open and **empirical**: learned optimizers *sometimes* beat classical 
 - **[SOTA]** Marcus, Negi, Mao, et al. *Neo: A Learned Query Optimizer.* VLDB, 2019. — [arXiv](https://arxiv.org/abs/1904.03711)
 - **[SOTA]** Yang, Chiang, Luan, et al. *Balsa: Learning a Query Optimizer Without Expert Demonstrations.* SIGMOD, 2022. — [arXiv](https://arxiv.org/abs/2201.01441)
 - **[SOTA]** Marcus, Negi, Mao, et al. *Bao: Making Learned Query Optimization Practical.* SIGMOD, 2021. — [DOI](https://doi.org/10.1145/3448016.3452838)
-- **[Survey]** Lehmann, Behr, et al. / Han, Wu, et al. *Is Learned Query Optimization Ready / A Comprehensive Benchmark.* VLDB, 2023–2024. — [PDF](https://www.vldb.org/pvldb/vol17/p1565-lehmann.pdf)
+- **[Survey]** C. Lehmann, P. Behr, et al. *Is Your Learned Query Optimizer Behaving As You Expect? A Machine Learning Perspective.* PVLDB, 2024. — [DOI](https://doi.org/10.14778/3654621.3654625)
 
 ## 10. Worked Example
 

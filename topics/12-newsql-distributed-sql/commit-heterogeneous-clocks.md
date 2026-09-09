@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Commit protocol for heterogeneous replica clocks
@@ -66,7 +65,7 @@ Aurora DSQL's clock architecture and the broader ClockBound ecosystem are pushin
 - **[Foundational]** Kulkarni, Demirbas, et al. *Logical Physical Clocks (HLC).* OPODIS, 2014. — [DOI](https://doi.org/10.1007/978-3-319-14472-6_2)
 - **[Foundational]** Srikanth, Toueg. *Optimal Clock Synchronization.* JACM, 1987. — [DOI](https://doi.org/10.1145/28869.28876)
 - **[SOTA]** Ren, Li, Abadi. *SLOG: Serializable, Low-latency, Geo-replicated Transactions.* VLDB, 2019. — [DOI](https://doi.org/10.14778/3342263.3342647)
-- **[SOTA]** Demirbas et al. *ClockBound and bounded-error time for distributed databases.* (AWS TimeSync ecosystem), 2021–. — [GitHub](https://github.com/aws/clock-bound)
+- **[Artifact]** Demirbas et al. *ClockBound and bounded-error time for distributed databases.* (AWS TimeSync ecosystem), 2021–. — [GitHub](https://github.com/aws/clock-bound)
 - **[Survey]** Lamport, Melliar-Smith. *Synchronizing Clocks in the Presence of Faults.* JACM, 1985. — [DOI](https://doi.org/10.1145/2455.2457)
 
 ## 10. Worked Example

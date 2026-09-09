@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Recovery under partial/torn writes
@@ -71,7 +70,7 @@ Active threads: exploiting NVMe atomic-write and CXL semantics to remove doublew
 
 - **[Foundational]** C. Mohan, Don Haderle, Bruce Lindsay, Hamid Pirahesh, Peter Schwarz. *ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging.* ACM TODS, 1992. — [DOI](https://doi.org/10.1145/128765.128770)
 - **[Foundational]** Jim Gray, Andreas Reuter. *Transaction Processing: Concepts and Techniques.* Morgan Kaufmann, 1993. — [DBLP](https://dblp.org/rec/books/mk/GrayR93.html)
-- **[SOTA]** Ashvin Goel, Bhavish Aggarwal, et al. / InnoDB engineering. *The InnoDB Doublewrite Buffer.* (MySQL/InnoDB reference manual and design notes). — [MySQL manual](https://dev.mysql.com/doc/refman/8.0/en/innodb-doublewrite-buffer.html)
+- **[Docs]** Ashvin Goel, Bhavish Aggarwal, et al. / InnoDB engineering. *The InnoDB Doublewrite Buffer.* (MySQL/InnoDB reference manual and design notes). — [MySQL manual](https://dev.mysql.com/doc/refman/8.0/en/innodb-doublewrite-buffer.html)
 - **[SOTA]** Jayashree Mohan, Ashlie Martinez, Soujanya Ponnapalli, Pandian Raju, Vijay Chidambaram. *Finding Crash-Consistency Bugs with Bounded Black-Box Crash Testing (B³ / CrashMonkey).* OSDI, 2018. — [arXiv](https://arxiv.org/abs/1810.02904)
 - **[Survey]** Vijay Chidambaram. *Orderless and Eventually Durable File Systems / crash consistency.* (PhD thesis and surveys on crash consistency), 2015. — [PhD thesis](https://research.cs.wisc.edu/adsl/Publications/vijayc-thesis15.pdf)
 

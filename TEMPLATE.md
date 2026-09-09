@@ -67,6 +67,13 @@ Open directions researchers in the area have articulated.
 - **[Foundational]** Author(s). *Title.* Venue, Year. (link if stable)
 - **[SOTA]** Author(s). *Title.* Venue, Year.
 - **[Survey]** Author(s). *Title.* Venue, Year.
+- **[Docs]** Vendor or project documentation, or a format specification.
+- **[Artifact]** A code repository, benchmark or dataset.
+
+`[Docs]` and `[Artifact]` mark a source that is real and citable but is **not a
+paper**, so no bibliographic database indexes it. The reference checker skips
+them for that reason: counting vendor documentation as "no DBLP record" reads as
+a missing paper and buries the ones that are.
 
 ---
 *Part of the [DBMS Research catalog](../../README.md). Schema: [TEMPLATE.md](../../TEMPLATE.md).*

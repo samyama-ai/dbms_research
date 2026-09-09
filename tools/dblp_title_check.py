@@ -108,14 +108,25 @@ def main():
           f'{time.time()-t0:.0f}s', file=sys.stderr)
     unmatched = []
     hit = 0
+    # A reference tagged [Docs] or [Artifact] is vendor documentation, a
+    # specification or a code artifact -- a real, citable source that DBLP does
+    # not index because it is not a paper. Counting those as "no bibliographic
+    # record" reads as a missing paper and buries the ones that are.
+    NON_BIBLIOGRAPHIC = {'Docs', 'Artifact'}
+    non_biblio = 0
     for r in refs:
+        if r.get('tag') in NON_BIBLIOGRAPHIC:
+            non_biblio += 1
+            continue
         vs = title_variants(r['title'])
         if any(v in found for v in vs):
             hit += 1
         else:
             unmatched.append({'file': r['file'], 'title': r['title'],
                               'year': r['year'], 'venue': r['venue']})
-    print(f'references with a DBLP record: {hit}/{len(refs)}', file=sys.stderr)
+    print(f'references with a DBLP record: {hit}/{len(refs) - non_biblio}'
+          f'  ({non_biblio} tagged [Docs]/[Artifact], not expected in DBLP)',
+          file=sys.stderr)
     json.dump({'matched': found, 'unmatched': unmatched},
               open(args.out, 'w', encoding='utf-8'), ensure_ascii=False)
 

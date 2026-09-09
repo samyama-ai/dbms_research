@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Counting and Enumeration Complexity of CQs
@@ -82,7 +81,7 @@ For **self-join-free CQs** the picture is essentially **closed and tight**: free
 - **[SOTA]** Ngo, H.Q., Ré, C., Rudra, A. *Skew Strikes Back: New Developments in the Theory of Join Algorithms.* SIGMOD Record, 2014. — [arXiv](https://arxiv.org/abs/1310.3314)
 - **[SOTA]** Berkholz, C., Keppeler, J., Schweikardt, N. *Answering Conjunctive Queries under Updates.* PODS, 2017. — [DOI](https://doi.org/10.1145/3034786.3034789)
 - **[SOTA]** Carmeli, N., Kröll, M. *On the Enumeration Complexity of Unions of Conjunctive Queries.* PODS, 2019. — [arXiv](https://arxiv.org/abs/1812.03831)
-- **[Survey]** Schweikardt, N., Segoufin, L., Vigny, A. *Enumeration for FO/CQ Queries: A Survey.* (Database theory enumeration surveys), 2020. — [DBLP search](https://dblp.org/search?q=Schweikardt+Segoufin+Vigny+enumeration)
+- **[Survey]** N. Schweikardt, L. Segoufin, A. Vigny. *Enumeration for FO Queries over Nowhere Dense Graphs.* JACM, 2022. — [DOI](https://doi.org/10.1145/3517035)
 
 ## 10. Worked Example
 

@@ -9,7 +9,6 @@ last_substantive_update: 2026-06
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Dynamic resharding of live transactional data
@@ -127,7 +126,7 @@ change the cost model by making "resharding" partly a metadata operation
 - **[Foundational]** Ongaro, Ousterhout. *In Search of an Understandable Consensus Algorithm (Raft).* USENIX ATC, 2014. — [USENIX](https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro)
 - **[Foundational]** Corbett et al. *Spanner: Google's Globally-Distributed Database.* OSDI, 2012. — [USENIX](https://www.usenix.org/conference/osdi12/technical-sessions/presentation/corbett)
 - **[SOTA]** Adya, Myers, Howell, Elson, Meek, Khemani, Fulger, Gu, Bhuvanagiri, Hunter, Peon, Kai, Shraer, Merchant, Lev-Ari. *Slicer: Auto-Sharding for Datacenter Applications.* OSDI, 2016. — [USENIX](https://www.usenix.org/conference/osdi16/technical-sessions/presentation/adya)
-- **[Systems]** The Vitess Project. *VReplication and Online Resharding.* (PlanetScale/CNCF documentation), 2019–. — [Vitess docs](https://vitess.io/docs/user-guides/configuration-advanced/resharding/)
+- **[Docs]** The Vitess Project. *VReplication and Online Resharding.* (PlanetScale/CNCF documentation), 2019–. — [Vitess docs](https://vitess.io/docs/user-guides/configuration-advanced/resharding/)
 - **[Foundational]** Mirrokni, Thorup, Zadimoghaddam. *Consistent Hashing with Bounded Loads.* SODA, 2018. — [arXiv](https://arxiv.org/abs/1608.01350)
 - **[Foundational]** Lamport, Malkhi, Zhou. *Vertical Paxos and Primary-Backup Replication.* PODC, 2009. — [DOI](https://doi.org/10.1145/1582716.1582783)
 

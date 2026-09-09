@@ -9,7 +9,6 @@ last_substantive_update: 2026-09
 stale_since: ""
 provenance: synthesized
 refs_checked: 2026-09
-refs_unverified: 1
 ---
 
 # Spatial joins on compressed/encoded data
@@ -58,7 +57,7 @@ A reproducible attack on the *true* objective (bytes decoded, not pairs compared
 - **[Foundational]** Brinkhoff, Kriegel, Seeger. *Efficient Processing of Spatial Joins Using R-trees.* SIGMOD, 1993. — [ACM](https://dl.acm.org/doi/10.1145/170035.170075)
 - **[Foundational]** Patel, DeWitt. *Partition Based Spatial-Merge Join.* SIGMOD, 1996. — [ACM](https://dl.acm.org/doi/10.1145/235968.233338) · [DBLP](https://dblp.org/rec/conf/sigmod/PatelD96.html)
 - **[SOTA]** Pandey et al. *How Good Are Modern Spatial Analytics Systems? (and SpatialParquet / columnar-spatial line).* VLDB, 2018–2023. — [DOI](https://doi.org/10.14778/3236187.3236213) · [DBLP](https://dblp.org/rec/journals/pvldb/PandeyKNK18.html)
-- **[SOTA]** GeoArrow / GeoParquet specifications. *Columnar Encodings for Geometry.* OGC / Apache, 2022–2024. — [GeoArrow](https://geoarrow.org/) · [GeoParquet](https://geoparquet.org/)
+- **[Docs]** GeoArrow / GeoParquet specifications. *Columnar Encodings for Geometry.* OGC / Apache, 2022–2024. — [GeoArrow](https://geoarrow.org/) · [GeoParquet](https://geoparquet.org/)
 - **[Survey]** Navarro. *Compact Data Structures: A Practical Approach.* Cambridge University Press, 2016. — [DOI](https://doi.org/10.1017/CBO9781316588284)
 
 - **[SOTA]** Samyama Research. *The Decode-Work Law: Margin-Governed, Provably-Exact Spatial Joins over Compressed Geometry.* arXiv:2607.01182 (cs.DB), 2026. — [arXiv](https://arxiv.org/abs/2607.01182) · [code](https://github.com/samyama-ai/spatial-join-on-compressed)
