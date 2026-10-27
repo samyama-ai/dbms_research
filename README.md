@@ -66,6 +66,37 @@ WHERE per.name = "Dan Suciu" RETURN p.title
 the schema (20,019 nodes / 39,393 edges; researchers resolved to DBLP profiles), and a
 dozen ready-to-run queries.
 
+### What happened when we rebuilt it from the literature
+
+The graph above is built from this catalog alone. We also built a second one: the same catalog
+carried in unchanged, under an **evidence layer** harvested from OpenAlex and linked to these
+problems by typed, provenance-carrying edges. What that found about *this* catalog:
+
+| | |
+|---|---|
+| Problems that gained at least one evidence paper | **579** of 1,053 |
+| Problems with papers bearing on them that this catalog **never cites** | **336**, carrying 770 such papers |
+| Papers after 2015 reaching the problems | 873, of which **480 are new to this catalog** |
+| Researchers resolved to an ORCID | 2,181 (this catalog alone gives none) |
+| Extracted per-paper problems that ground to a catalog problem | 25% of 5,058 |
+
+Two results are worth reading against the honesty note below.
+
+**The 15 unverifiable references hold up.** This catalog flags 15 references no bibliographic
+source confirms. OpenAlex does not find them either — an independent check reaching the same
+answer, not a clearance.
+
+**No problem status here was changed, and that is deliberate.** The system proposes a status
+change with its evidence; it never applies one. Across both this catalog and its AI sibling it
+proposed 4, and we then hand-checked **every** `solves` and `refutes` verdict it produced — all
+41, not a sample. **9 were correct, 30 partly correct, 2 wrong.** No `refutes` verdict (0 of 34)
+disproves an open problem, and only 1 of 7 `solves` closes the question its problem statement
+calls central. Treat any automated claim that a problem is settled, including ours, as a lead.
+
+Every number above is at [`open-problems-as-data`](https://github.com/samyama-ai/open-problems-as-data)
+(tag `v1.0-paper29`), with the queries, the per-question results and the full hand check. The
+state of this catalog that those numbers describe is tagged here as **`v1.0-paper29`**.
+
 ## Topics
 
 | # | Topic | Problems |
